@@ -27,14 +27,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
     /// <seealso cref="com.mirle.ibg3k0.stc.Data.SecsData.SXFY" />
     public class S2F42 : SXFY
     {
+
+
         /// <summary>
-        /// 0：Acknowledge. Command has been performed. 
-        /// 1：Command does not exist. 
-        /// 2：Cannot perform now. 
-        /// 3：At least one parameter is invalid. 
-        /// 4：Acknowledge. Command will be performed with completion signaled later by an event.
-        /// 5：Rejected. Already in desired condition.
-        /// 6：No such object exists
+        /// The RCMD
         /// </summary>
         [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
         public string HCACK;
@@ -55,16 +51,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 
         public class RPYITEM : SXFY
         {
-            [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 40)]
+            [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
             public string CPNAME;
-            /// <summary>
-            /// 1：Parameter name (CPNAME) does not exist
-            /// 2：Illegal value specified for CPVAL. 
-            /// 3：Illegal format specified for CPVAL. 
-            /// >3：Other equipment-specific error
-            /// </summary>
             [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
-            public string CPACK;
+            public string[] CPACK;
+
         }
+
+
     }
 }

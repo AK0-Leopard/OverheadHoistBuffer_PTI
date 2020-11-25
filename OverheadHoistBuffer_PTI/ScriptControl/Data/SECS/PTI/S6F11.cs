@@ -1806,7 +1806,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_66_DVVAL VIDITEM_66_DVVAL_HandoffType;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_67_DVVAL VIDITEM_67_DVVAL_IDreadStatus;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_68_DVVAL VIDITEM_68_DVVAL_RecoeryOption;
-      
+
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_70_DVVAL VIDITEM_70_DVVAL_CraneID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_70_SV VIDITEM_70_SV_CraneID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_72_SV VIDITEM_72_SV_UnitInfo;
@@ -1817,7 +1817,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_82_DVVAL VIDITEM_82_DVVAL_AlarmText;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_83_DVVAL VIDITEM_83_DVVAL_UnitID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_84_DVVAL VIDITEM_84_DVVAL_ErrorNumber;
-        
+
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_114_DVVAL VIDITEM_114_DVVAL_SpecVersion;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_115_DVVAL VIDITEM_115_DVVAL_PortID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_115_SV VIDITEM_115_SV_PortID;

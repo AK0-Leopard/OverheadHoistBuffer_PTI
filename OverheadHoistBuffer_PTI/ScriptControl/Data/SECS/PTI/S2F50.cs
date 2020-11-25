@@ -24,10 +24,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 
         public class REPITEM : SXFY
         {
-            [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 40)]
+            [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
             public string CPNAME;
-            [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
-            public string CPACK;
+            [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_LIST, Length = 1)]
+            public string CEPACK;
         }
     }
 }

@@ -8,7 +8,28 @@ using com.mirle.ibg3k0.stc.Data.SecsData;
 
 namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 {
-    class S9F11 : SXFY
+    /// <summary>
+    /// Class S9F11.
+    /// </summary>
+    /// <seealso cref="com.mirle.ibg3k0.stc.Data.SecsData.SXFY" />
+    public class S9F11 : SXFY
     {
+        /// <summary>
+        /// The MHEAD
+        /// </summary>
+        [SecsElement(Index = 1, ListSpreadOut = true, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
+        public string MHEAD;
+
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="S9F11"/> class.
+        /// </summary>
+        public S9F11()
+        {
+            StreamFunction = "S9F11";
+            StreamFunctionName = "Data Too Long";
+            W_Bit = 1;
+        }
     }
 }

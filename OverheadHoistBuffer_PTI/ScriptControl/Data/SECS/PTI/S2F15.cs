@@ -31,8 +31,6 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         /// The ecvitems
         /// </summary>
         [SecsElement(Index = 1, ListSpreadOut = true)]
-        //[SecsElement(Index = 1, ListElementType = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER,
-        //     ListElementLength = 1)]
         public ECVITEM[] ECVITEMS;
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             /// <summary>
             /// The ecv
             /// </summary>
-            [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+            [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 80)]
             public string ECV;
         }
     }

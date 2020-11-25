@@ -28,8 +28,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
     public class S2F32 : SXFY
     {
         /// <summary>
-        /// 0：New time accepted. 
-        /// 1：Error. Local system time not updated. 
+        /// The tiack
         /// </summary>
         [SecsElement(Index = 1, ListSpreadOut = true, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
         public string TIACK;

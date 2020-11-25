@@ -28,7 +28,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
     public class S2F33 : SXFY
     {
         /// <summary>
-        /// Always "0" for this system. 
+        /// The time
         /// </summary>
         [SecsElement(Index = 1, ListSpreadOut = true, Type = SecsElement.SecsElementType.TYPE_4_BYTE_UNSIGNED_INTEGER, Length = 1)]
         public string DATAID;
@@ -49,14 +49,14 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public class RPTITEM : SXFY
         {
             [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER, Length = 1)]
-            public string REPTID;
+            public string RPTID;
             [SecsElement(Index = 2, ListElementType = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER, ListElementLength = 1)]
             public string[] VIDS;
 
         }
         public Dictionary<string, string[]> ToDictionary()
         {
-            return RPTITEMS.ToDictionary(report_item => report_item.REPTID.Trim(), report_item => report_item.VIDS);
+            return RPTITEMS.ToDictionary(report_item => report_item.RPTID.Trim(), report_item => report_item.VIDS);
         }
     }
 }
