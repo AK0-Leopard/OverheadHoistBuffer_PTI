@@ -25,7 +25,7 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.stc.Data.SecsData;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
-using com.mirle.ibg3k0.sc.Data.SECS.ASE;
+using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;

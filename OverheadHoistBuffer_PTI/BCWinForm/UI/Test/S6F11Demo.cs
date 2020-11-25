@@ -1,5 +1,5 @@
 ﻿using com.mirle.ibg3k0.sc;
-using com.mirle.ibg3k0.sc.Data.SECS.ASE;
+using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using System;
 using System.Collections.Generic;

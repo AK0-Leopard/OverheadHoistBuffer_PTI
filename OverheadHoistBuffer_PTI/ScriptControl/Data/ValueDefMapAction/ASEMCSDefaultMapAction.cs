@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Transactions;
-using com.mirle.ibg3k0.sc.Data.SECS.ASE;
+using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -4442,7 +4442,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //if (!isProcess(s2f37)) { return; }
                 Boolean isValid = true;
                 //Boolean isEnable = SCUtility.isMatche(s2f37.CEED, SECSConst.CEED_Enable);
-                Boolean isEnable = s2f37.CEED[0] == 255;
+                Boolean isEnable = s2f37.CEED == 255;
                 //Boolean isEnable = s2f37.CEED == true;
 
                 scApp.TransferService.TransferServiceLogger.Info(
