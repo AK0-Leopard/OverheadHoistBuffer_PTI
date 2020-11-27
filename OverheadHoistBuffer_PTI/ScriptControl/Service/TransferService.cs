@@ -2044,6 +2044,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (status == COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH)
                         {
                             reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
+                            reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
+                            CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
+                            reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
                         }
                     }
                     #endregion
@@ -2130,6 +2133,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         else
                         {
                             reportBLL.ReportTransferInitiated(cmd.CMD_ID);
+                            reportBLL.ReportVehicleAssigned(cmd.CMD_ID); // PTI需要上報
                         }
 
                         Thread.Sleep(100);
@@ -2137,8 +2141,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         reportBLL.ReportCraneActive(cmd.CMD_ID, ohtName);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE: //入料抵達
+                        reportBLL.ReportVehicleArrived(cmd.CMD_ID, status); // PTI需要上報
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOADING: //入料中
+                        reportBLL.ReportTransferring(cmd.CMD_ID); // PTI需要上報
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE: //入料完成
 
@@ -2183,6 +2189,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                     + "OHB >> PLC|Port_WriteBoxCstID 對 " + ohtCmd.DESTINATION + " 寫入 " + GetCstLog(ohtToPort)
                                 );
                             }
+                            reportBLL.ReportVehicleArrived(cmd.CMD_ID, status); // PTI需要上報
                         }
                         else
                         {
@@ -2194,6 +2201,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         break;
                     case COMMAND_STATUS_BIT_INDEX_UNLOADING:   //出料進行中
+                        reportBLL.ReportVehicleDepositStarted(cmd.CMD_ID); // PTI需要上報
                         break;
                     case COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE: //出料完成
 
@@ -2240,7 +2248,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         break;
                     case COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH: //命令完成
-
+                        CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
 
                         if (cmd.TRANSFERSTATE == E_TRAN_STATUS.Canceling)
@@ -2291,6 +2299,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
 
                         EmptyShelf();   //每次命令結束，檢查儲位狀態
+                        reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
+                        reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
                         break;
                     #endregion
                     #region 異常流程
@@ -2559,12 +2569,16 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (isUnitType(loadCstData.Carrier_LOC, UnitType.CRANE) == false)
                             {
                                 loadCstData.Carrier_LOC = ohtName;
-                                reportBLL.ReportCarrierTransferring(cmd, loadCstData, ohtName);
+                                //reportBLL.ReportCarrierTransferring(cmd, loadCstData, ohtName);
+                                reportBLL.ReportVehicleAcquireStarted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
+                                reportBLL.ReportCarrierInstalled(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
+                                reportBLL.ReportVehicleAcquireCompleted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
+                                reportBLL.ReportVehicleDeparted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
                             }
 
                             if (shelfDefBLL.isExist(cmd.HOSTSOURCE))
                             {
-                                reportBLL.ReportZoneCapacityChange(cmd.HOSTSOURCE, null);
+                                //reportBLL.ReportZoneCapacityChange(cmd.HOSTSOURCE, null);// PTI修改--
                             }
                         }
                         else
@@ -2652,7 +2666,9 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (cmd != null)
                     {
-                        reportBLL.ReportTransferCompleted(cmd, unLoadCstData, ResultCode.Successful);
+                        reportBLL.ReportCarrierRemoved(cmd.CMD_ID);//PTI需要
+                        reportBLL.ReportVehicleDepositCompleted(cmd.CMD_ID);//PTI需要
+                        
 
                         if (isCVPort(dest))
                         {
@@ -3595,7 +3611,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             + " 補報 ReportTransferInitiated、ReportCraneActive、ReportCarrierTransferring、ReportZoneCapacityChange"
                         );
 
-                        reportBLL.ReportTransferInitiated(cmd.CMD_ID);
+                        reportBLL.ReportTransferInitiated(cmd.CMD_ID);// PTI需要上報
+                        reportBLL.ReportVehicleAssigned(cmd.CMD_ID);// PTI需要上報
                         reportBLL.ReportCraneActive(cmd.CMD_ID, cmd?.CRANE ?? "");
 
                         old_dbData.Carrier_LOC = cmd?.CRANE ?? "";

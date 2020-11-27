@@ -78,19 +78,19 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendQueryLotID(string cstID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendClearBoxMoveReq(string boxID, string portID, List<AMCSREPORTQUEUE> reportQueues = null);
 
-        //public abstract bool S6F11SendTransferring(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleArrived(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleAcquireStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleAcquireCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleDeparted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleDepositStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferring(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleArrived(string vhID, int status,List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleAcquireStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleAcquireCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleDeparted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleDepositStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         //public abstract bool S6F11SendCarrierInstalled(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         //public abstract bool S6F11SendCarrierRemoved(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null);
-        //public abstract bool S6F11SendVehicleUnassinged(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleUnassigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
 
 
         //public abstract bool S6F11SendVehicleInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -189,20 +189,20 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
             return null;
         }
 
-        //public override bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
         //public override bool S6F11SendCarrierInstalled(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null)
         //{
         //    return true;
         //}
 
-        //public override bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
         //public override bool S6F11SendCarrierRemoved(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null)
         //{
@@ -405,10 +405,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
             return true;
         }
 
-        //public override bool S6F11SendTransferring(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendTransferring(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
         public override bool S6F11SendTSCAutoCompleted()
         {
@@ -435,40 +435,40 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
             return true;
         }
 
-        //public override bool S6F11SendVehicleAcquireCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleAcquireCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleAcquireStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleAcquireStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleArrived(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleArrived(string vhID, int status, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleDeparted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleDeparted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
-        //public override bool S6F11SendVehicleDepositStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleDepositStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
         //public override bool S6F11SendVehicleInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         //{
@@ -480,10 +480,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         //    return true;
         //}
 
-        //public override bool S6F11SendVehicleUnassinged(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        //{
-        //    return true;
-        //}
+        public override bool S6F11SendVehicleUnassigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
 
 
 

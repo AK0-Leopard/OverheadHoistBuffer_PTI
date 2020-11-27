@@ -408,7 +408,75 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferInitiated(cmd_id, reportQueues);
             return isSuccsess;
         }
-        public  bool ReportTransferPaused(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        #region PTI 新增使用
+        public bool ReportVehicleAssigned(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAssigned(cmd_id, reportQueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleArrived(string cmd_id, int status, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleArrived(cmd_id, status, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportTransferring(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferring(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleAcquireStarted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAcquireStarted(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportCarrierInstalled(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalled(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleAcquireCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAcquireCompleted(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleDeparted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDeparted(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleDepositStarted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDepositStarted(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportCarrierRemoved(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleDepositCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDepositCompleted(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportVehicleUnassigned(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleUnassigned(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        #endregion
+        public bool ReportTransferPaused(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferPaused(cmd_id, reportQueues);

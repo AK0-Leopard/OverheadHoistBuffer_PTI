@@ -115,6 +115,20 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 }
 
                 [Serializable]
+                public class VIDITEM_77_SV : SXFY
+                {
+                    [SecsElement(Index = 1)]
+                    public VIDITEM_720_SV TransferInfo;
+                    [SecsElement(Index = 2)]
+                    public VIDITEM_56_DVVAL CARRIER_LOC_OBJ;
+                    public VIDITEM_77_SV()
+                    {
+                        TransferInfo = new VIDITEM_720_SV();
+                        CARRIER_LOC_OBJ = new VIDITEM_56_DVVAL();
+                    }
+                }
+
+                [Serializable]
                 public class VIDITEM_107_SV : SXFY
                 {
                     [SecsElement(Index = 1, ListSpreadOut = true)]
@@ -202,13 +216,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 }
 
                 [Serializable]
-                public class VIDITEM_11_SV : SXFY
+                public class VIDITEM_59_SV : SXFY
                 {
                     [SecsElement(Index = 1)]
                     public VIDITEM_58_DVVAL COMMAND_ID_OBJ;
                     [SecsElement(Index = 2)]
                     public VIDITEM_62_DVVAL PRIORITY_OBJ;
-                    public VIDITEM_11_SV()
+                    public VIDITEM_59_SV()
                     {
                         COMMAND_ID_OBJ = new VIDITEM_58_DVVAL();
                         PRIORITY_OBJ = new VIDITEM_62_DVVAL();
@@ -232,13 +246,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 1)]
                     public VIDITEM_722_DVVAL TRANSFER_STATE_OBJ;
                     [SecsElement(Index = 2)]
-                    public VIDITEM_11_SV COMMAND_INFO_OBJ;
+                    public VIDITEM_59_SV COMMAND_INFO_OBJ;
                     [SecsElement(Index = 3)]
                     public VIDITEM_720_SV TRANSFER_INFO_OBJ;
                     public VIDITEM_13_SV()
                     {
                         TRANSFER_STATE_OBJ = new VIDITEM_722_DVVAL();
-                        COMMAND_INFO_OBJ = new VIDITEM_11_SV();
+                        COMMAND_INFO_OBJ = new VIDITEM_59_SV();
                         TRANSFER_INFO_OBJ = new VIDITEM_720_SV();
                     }
                 }
@@ -1535,15 +1549,12 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 1)]
                     public VIDITEM_54_DVVAL CARRIER_ID_OBJ;
                     [SecsElement(Index = 2)]
-                    public VIDITEM_179_DVVAL BOX_ID_OBJ; 
-                    [SecsElement(Index = 3)]
                     public VIDITEM_65_DVVAL SOURCE_ID_OBJ ;
-                    [SecsElement(Index = 4)]
+                    [SecsElement(Index = 3)]
                     public VIDITEM_60_DVVAL DESTINATION_ID_OBJ ;
                     public VIDITEM_720_SV()
                     {
                         CARRIER_ID_OBJ = new VIDITEM_54_DVVAL();
-                        BOX_ID_OBJ = new VIDITEM_179_DVVAL();
                         SOURCE_ID_OBJ = new VIDITEM_65_DVVAL();
                         DESTINATION_ID_OBJ = new VIDITEM_60_DVVAL();
                     }
@@ -1682,6 +1693,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             VIDITEM_51_SV_EnhancedCarriers = new S6F11.RPTINFO.RPTITEM.VIDITEM_51_SV();
             VIDITEM_73_DVVAL_SCState = new S6F11.RPTINFO.RPTITEM.VIDITEM_73_SV();
             VIDITEM_76_SV_EnhancedTransfers = new S6F11.RPTINFO.RPTITEM.VIDITEM_76_SV();
+            VIDITEM_77_SV_TransferCompleteInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_77_SV();
             VIDITEM_107_SV_EnhancedActiveZones = new S6F11.RPTINFO.RPTITEM.VIDITEM_107_SV();
             VIDITEM_118_SV_CurrentPortStates = new S6F11.RPTINFO.RPTITEM.VIDITEM_118_SV();
             VIDITEM_350_SV_CurrEqPortStatus = new S6F11.RPTINFO.RPTITEM.VIDITEM_350_SV();
@@ -1689,7 +1701,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             VIDITEM_360_SV_UnitAlarmList = new S6F11.RPTINFO.RPTITEM.VIDITEM_360_SV();
 
             VIDITEM_10_SV_EnhancedCarrierInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_10_SV();
-            VIDITEM_11_SV_CommandInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_11_SV();
+            VIDITEM_59_SV_CommandInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_59_SV();
             VIDITEM_12_DVVAL_InstallTime = new S6F11.RPTINFO.RPTITEM.VIDITEM_12_DVVAL();
             VIDITEM_13_SV_EnhancedTransferCmd = new S6F11.RPTINFO.RPTITEM.VIDITEM_13_SV();
             VIDITEM_15_DVVAL_EmptyCarrier = new S6F11.RPTINFO.RPTITEM.VIDITEM_15_DVVAL();
@@ -1702,7 +1714,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             VIDITEM_56_SV_CarrierLoc = new S6F11.RPTINFO.RPTITEM.VIDITEM_56_SV();
             VIDITEM_58_DVVAL_CommandID = new S6F11.RPTINFO.RPTITEM.VIDITEM_58_DVVAL();
 
-            VIDITEM_60_DVVAL_DestPort = new S6F11.RPTINFO.RPTITEM.VIDITEM_60_DVVAL();
+            VIDITEM_60_DVVAL_Dest = new S6F11.RPTINFO.RPTITEM.VIDITEM_60_DVVAL();
             VIDITEM_60_SV_DestPort = new S6F11.RPTINFO.RPTITEM.VIDITEM_60_SV();
             VIDITEM_61_ECV_EqpName = new S6F11.RPTINFO.RPTITEM.VIDITEM_61_ECV();
             VIDITEM_62_DVVAL_Priority = new S6F11.RPTINFO.RPTITEM.VIDITEM_62_DVVAL();
@@ -1774,6 +1786,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_51_SV VIDITEM_51_SV_EnhancedCarriers;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_73_SV VIDITEM_73_DVVAL_SCState;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_76_SV VIDITEM_76_SV_EnhancedTransfers;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_77_SV VIDITEM_77_SV_TransferCompleteInfo;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_107_SV VIDITEM_107_SV_EnhancedActiveZones;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_118_SV VIDITEM_118_SV_CurrentPortStates;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_350_SV VIDITEM_350_SV_CurrEqPortStatus;
@@ -1781,7 +1794,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_360_SV VIDITEM_360_SV_UnitAlarmList;
 
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_10_SV VIDITEM_10_SV_EnhancedCarrierInfo;
-        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_11_SV VIDITEM_11_SV_CommandInfo;
+        //public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_11_SV VIDITEM_11_SV_CommandInfo;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_12_DVVAL VIDITEM_12_DVVAL_InstallTime;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_13_SV VIDITEM_13_SV_EnhancedTransferCmd;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_15_DVVAL VIDITEM_15_DVVAL_EmptyCarrier;
@@ -1793,8 +1806,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_56_DVVAL VIDITEM_56_DVVAL_CarrierLoc;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_56_SV VIDITEM_56_SV_CarrierLoc;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_58_DVVAL VIDITEM_58_DVVAL_CommandID;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_59_SV VIDITEM_59_SV_CommandInfo;
 
-        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_60_DVVAL VIDITEM_60_DVVAL_DestPort;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_60_DVVAL VIDITEM_60_DVVAL_Dest;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_60_SV VIDITEM_60_SV_DestPort;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_61_ECV VIDITEM_61_ECV_EqpName;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_62_DVVAL VIDITEM_62_DVVAL_Priority;

@@ -2101,10 +2101,14 @@ namespace com.mirle.ibg3k0.sc.Service
             if (eventType == EventType.Vhloading)
             {
                 scApp.VehicleBLL.doLoading(eqpt.VEHICLE_ID);
+                scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
+                                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOADING);
             }
             else if (eventType == EventType.Vhunloading)
             {
                 scApp.VehicleBLL.doUnloading(eqpt.VEHICLE_ID);
+                scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
+                                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOADING);
             }
             Task.Run(() => scApp.FlexsimCommandDao.setVhEventTypeToFlexsimDB(eqpt.VEHICLE_ID, eventType));
         }
@@ -3429,9 +3433,9 @@ namespace com.mirle.ibg3k0.sc.Service
             switch (eventType)
             {
                 case EventType.LoadArrivals:
+                    scApp.VehicleBLL.doLoadArrivals(eqpt.VEHICLE_ID, current_adr_id, current_sec_id);
                     scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
                                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE);
-                    scApp.VehicleBLL.doLoadArrivals(eqpt.VEHICLE_ID, current_adr_id, current_sec_id);
                     break;
                 case EventType.LoadComplete:
                     //scApp.TransferService.BoxLocationChange_LoadComplete(carrier_id, eqpt.VEHICLE_ID); //B0.01 
@@ -3440,9 +3444,9 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.VehicleBLL.doLoadComplete(eqpt.VEHICLE_ID, current_adr_id, current_sec_id, carrier_id);
                     break;
                 case EventType.UnloadArrivals:
+                    scApp.VehicleBLL.doUnloadArrivals(eqpt.VEHICLE_ID, current_adr_id, current_sec_id);
                     scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
                                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE);
-                    scApp.VehicleBLL.doUnloadArrivals(eqpt.VEHICLE_ID, current_adr_id, current_sec_id);
                     break;
                 case EventType.UnloadComplete:
                     //scApp.TransferService.BoxLocationChange_UnloadComplete(carrier_id, unload_port_id); //B0.01 

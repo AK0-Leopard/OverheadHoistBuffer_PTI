@@ -27,7 +27,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
     public class S2F37 : SXFY
     {
         [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_BOOLEAN, Length = 1)]
-        public int CEED;
+        public int[] CEED;
         /// <summary>
         /// A zero-length list means all CEIDs.
         /// </summary>
