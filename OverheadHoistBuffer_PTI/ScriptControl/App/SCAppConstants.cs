@@ -546,7 +546,26 @@ namespace com.mirle.ibg3k0.sc.App
         }
         /***************************************************/
         #region Line
-
+        public class LineMaintenanceControlState
+        {
+            public enum MaintenanceControlState
+            {
+                Maintenance_Enable = 1,
+                Maintenance_Disable = 2,
+            }
+            public static string checkMaintenanceMode(MaintenanceControlState MaintenanceMode)
+            {
+                if (MaintenanceMode == MaintenanceControlState.Maintenance_Enable)
+                {
+                    return SECSConst.MaintenanceCrtMode_Enable;
+                }
+                else if (MaintenanceMode == MaintenanceControlState.Maintenance_Disable)
+                {
+                    return SECSConst.MaintenanceCrtMode_Disable;
+                }
+                return string.Empty;
+            }
+        }
         public class LineHostControlState
         {
             public enum HostControlState

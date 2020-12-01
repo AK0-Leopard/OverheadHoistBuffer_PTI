@@ -52,7 +52,16 @@ namespace com.mirle.ibg3k0.sc.Data.SECS
             HostCrtMode_On_Line_Remote
         };
         #endregion Host Control Mode
+        #region Maintenance Control Mode
+        public static readonly string MaintenanceCrtMode_Enable = "1";
+        public static readonly string MaintenanceCrtMode_Disable = "2";
 
+        public static readonly string[] Maintenance_CRT_MODE =
+        {
+            MaintenanceCrtMode_Enable,
+            MaintenanceCrtMode_Disable
+        };
+        #endregion Maintenance Control Mode
         #region Vehicle State
         public static readonly string VHSTATE_NotRelated = "0";
         public static readonly string VHSTATE_Removed = "1";

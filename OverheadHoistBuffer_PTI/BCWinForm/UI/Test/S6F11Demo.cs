@@ -138,7 +138,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             comboBox7.Items.Clear();
 
-            PortDef port = BCApp.SCApplication.PortDefBLL.GetPortData(comboBox5.Text);
+            PortDef port = BCApp.SCApplication.PortDefBLL.GetPortDataByID(comboBox5.Text);
             if (port == null)
             {
                 return;

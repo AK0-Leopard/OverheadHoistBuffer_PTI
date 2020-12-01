@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static com.mirle.ibg3k0.sc.ALINE;
 using static com.mirle.ibg3k0.sc.App.SCAppConstants.LineHostControlState;
+using static com.mirle.ibg3k0.sc.App.SCAppConstants.LineMaintenanceControlState;
 
 namespace com.mirle.ibg3k0.bc.winform.UI
 {
@@ -33,7 +34,23 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     hsmsconn_stat ? Color.Black : Color.White);
             }
         }
-
+        MaintenanceControlState maintenance_state;
+        MaintenanceControlState Maintenance_STAT
+        {
+            get { return maintenance_state; }
+            set
+            {
+                maintenance_state = value;
+                if (maintenance_state == MaintenanceControlState.Maintenance_Disable)
+                {
+                    setInfo(txtMaintenanceMode, "Disable", Color.Green, Color.Black);
+                }
+                else if (maintenance_state == MaintenanceControlState.Maintenance_Enable)
+                {
+                    setInfo(txtMaintenanceMode, "Enable", Color.Red, Color.White);
+                }
+            }
+        }
         HostControlState hostconn_stat;
         HostControlState HostConn_STAT
         {
@@ -160,6 +177,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             SCApplication scApp = SCApplication.getInstance();
             HostConn_STAT = scApp.getEQObjCacheManager().getLine().Host_Control_State;
             SCStat_STAT = scApp.getEQObjCacheManager().getLine().SCStats;
+            Maintenance_STAT = scApp.getEQObjCacheManager().getLine().maintenance_Stats;
         }
 
         private void HostModeChg_Form_FormClosed(object sender, FormClosedEventArgs e)
@@ -182,6 +200,16 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void butLcsPause_Click(object sender, EventArgs e)
         {
             Task.Run(() => scApp.LineService.TSCStateToPause(sc.Data.SECS.CSOT.SECSConst.PAUSE_REASON_OP));
+        }
+
+        private void butMaintenanceEnable_Click(object sender, EventArgs e)
+        {
+            scApp.LineService.enableMaintenanceMode();
+        }
+
+        private void butMaintenanceDisable_Click(object sender, EventArgs e)
+        {
+            scApp.LineService.disnableMaintenanceMode();
         }
     }
 }

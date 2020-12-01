@@ -1114,7 +1114,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //string command_id = string.Empty;
             string port_id = s2F41.REPITEMS.CommandID_CP.CPVAL_ASCII;
             int port_type = Convert.ToInt32(s2F41.REPITEMS.PRIORITY_CP.CPVAL_U2);
-            var port_item = scApp.PortDefBLL.GetPortData(port_id);
+            var port_item = scApp.PortDefBLL.GetPortDataByID(port_id);
 
             if (port_item == null)
             {
@@ -1528,6 +1528,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         line.UnitAlarmStateListChecked = true;
                         s1f4.SV[i] = buildUnitAlarmListVIDItem();
                     }
+                    else if (s1f3.SVID[i] == SECSConst.VID_ActiveVehicles)
+                    {
+                        line.ActiveVehiclesChecked = true;
+                        s1f4.SV[i] = buildActiveVehicles();
+                    }
+                    //else if (s1f3.SVID[i] == SECSConst.VID_Maintenance_State)
+                    //{
+                    //    line.ActiveVehiclesChecked = true;
+                    //    s1f4.SV[i] = buildActiveVehicles();
+                    //}
                     //else if (s1f3.SVID[i] == SECSConst.VID_CurrEq_Port_Status)
                     //{
                     //    line.EnhancedTransfersChecked = true;
@@ -1648,11 +1658,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //List<APORTSTATION> port_station = scApp.getEQObjCacheManager().getALLPortStation();
             string ohbName = scApp.getEQObjCacheManager().getLine().LINE_ID;
             //List<PortDef> port_station = scApp.PortDefBLL.GetOHB_PortData(ohbName); 
-            List<PortDef> port_station = scApp.PortDefBLL.GetOHB_CVPortData(ohbName);
-
+            List<PortDef> port_station = scApp.PortDefBLL.GetPortData_WithCV_WithShelf(ohbName);
             int port_count = port_station.Count;
 
-            string control_state = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
+            //string control_state = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
             S6F11.RPTINFO.RPTITEM.VIDITEM_118_SV viditem_118 = new S6F11.RPTINFO.RPTITEM.VIDITEM_118_SV();
             viditem_118.PORT_INFO_OBJ = new S6F11.RPTINFO.RPTITEM.VIDITEM_354_SV[port_count];
             for (int j = 0; j < port_count; j++)
@@ -1673,23 +1682,29 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_350_SV buildCurrentEqPortStatusVIDItem()
         {
+            
+            //List<APORTSTATION> port_station = scApp.getEQObjCacheManager().getALLPortStation();
+            string ohbName = scApp.getEQObjCacheManager().getLine().LINE_ID;
+            //List<PortDef> port_station = scApp.PortDefBLL.GetOHB_PortData(ohbName); 
+            List<PortDef> port_station = scApp.PortDefBLL.GetPortData_WithCV_WithEQ(ohbName);
+            int port_count = port_station.Count;
             S6F11.RPTINFO.RPTITEM.VIDITEM_350_SV viditem_350 = new S6F11.RPTINFO.RPTITEM.VIDITEM_350_SV();
-            viditem_350.EQ_PORT_INFO_OBJ = new S6F11.RPTINFO.RPTITEM.VIDITEM_356_SV[0];
-            //for(int i = 0;i < viditem_350.EQ_PORT_INFO_OBJ.Length;i++)
-            //{
-            //    viditem_350.EQ_PORT_INFO_OBJ[i] = new S6F11.RPTINFO.RPTITEM.VIDITEM_356_SV();
-            //    viditem_350.EQ_PORT_INFO_OBJ[i].PORT_ID_OBJ.PORT_ID = "123123";
-            //    viditem_350.EQ_PORT_INFO_OBJ[i].PORT_TRANSFTER_STATE_OBJ.PORT_TRANSFER_STATE = "1";
-            //    viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = "1";
-            //    viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = "1";
-            //}
+            viditem_350.EQ_PORT_INFO_OBJ = new S6F11.RPTINFO.RPTITEM.VIDITEM_356_SV[port_count];
+            for (int i = 0; i < port_count; i++)
+            {
+                viditem_350.EQ_PORT_INFO_OBJ[i] = new S6F11.RPTINFO.RPTITEM.VIDITEM_356_SV();
+                viditem_350.EQ_PORT_INFO_OBJ[i].PORT_ID_OBJ.PORT_ID = port_station[i].PLCPortID;
+                viditem_350.EQ_PORT_INFO_OBJ[i].PORT_TRANSFTER_STATE_OBJ.PORT_TRANSFER_STATE = ((int)port_station[i].State).ToString();
+                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = ((int)port_station[i].PortType).ToString();
+                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = "1"; // 這個要再確認
+            }
             return viditem_350;
         }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_351_SV buildCurrentPortTypesVIDItem()
         {
             string ohbName = scApp.getEQObjCacheManager().getLine().LINE_ID;
             //List<PortDef> port_station = scApp.PortDefBLL.GetOHB_PortData(ohbName);
-            List<PortDef> port_station = scApp.PortDefBLL.GetOHB_CVPortData(ohbName);
+            List<PortDef> port_station = scApp.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(ohbName);
 
             int port_count = port_station.Count;
 
@@ -1758,6 +1773,19 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 viditem_51.ENHANCED_CARRIER_INFO[i].BOX_ID_OBJ.BOX_ID = cassettedata[i].BOXID;
             }
             return viditem_51;
+        }
+        private S6F11.RPTINFO.RPTITEM.VIDITEM_53_SV buildActiveVehicles()
+        {
+            List<AVEHICLE> vehicledata = scApp.VehicleBLL.loadAllVehicle();
+            S6F11.RPTINFO.RPTITEM.VIDITEM_53_SV viditem_53 = new S6F11.RPTINFO.RPTITEM.VIDITEM_53_SV();
+            viditem_53.VEHICLEINFO_OBJ = new S6F11.RPTINFO.RPTITEM.VIDITEM_71_SV[vehicledata.Count];
+            for (int i = 0; i < vehicledata.Count; i++)
+            {
+                viditem_53.VEHICLEINFO_OBJ[i] = new S6F11.RPTINFO.RPTITEM.VIDITEM_71_SV();
+                viditem_53.VEHICLEINFO_OBJ[i].VEHICLE_ID.Crane_ID = vehicledata[i].VEHICLE_ID;
+                viditem_53.VEHICLEINFO_OBJ[i].VEHICLESTATE.Vehicle_State = vehicledata[i].VEHICLE_TYPE.ToString();
+            }
+            return viditem_53;
         }
         //private S6F11.RPTINFO.RPTITEM.VIDITEM_119_SV buildEnhancedVehiclesVIDItem()
         //{
@@ -4649,7 +4677,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 SXFY abortSecs = null;
                 String rtnMsg = string.Empty;
 
-                //if (!isSend(s6f11)) return true;
+                if (!isSend(s6f11)) return true; // PTI需要上報
 
                 SCUtility.RecodeReportInfo(queue.VEHICLE_ID, queue.MCS_CMD_ID, s6f11, s6f11.CEID);
                 SCUtility.secsActionRecordMsg(scApp, false, s6f11);

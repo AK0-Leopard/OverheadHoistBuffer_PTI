@@ -60,7 +60,14 @@ namespace com.mirle.ibg3k0.sc.Service
             line.Secs_Link_Stat = SCAppConstants.LinkStatus.LinkFail;
             line.connInfoUpdate_Disconnection();
         }
-
+        public void enableMaintenanceMode()
+        {
+            line.maintenance_Stats = SCAppConstants.LineMaintenanceControlState.MaintenanceControlState.Maintenance_Enable;
+        }
+        public void disnableMaintenanceMode()
+        {
+            line.maintenance_Stats = SCAppConstants.LineMaintenanceControlState.MaintenanceControlState.Maintenance_Disable;
+        }
         private void Line_LineStatusChange(object sender, EventArgs e)
         {
             PublishLineInfo(sender, null);

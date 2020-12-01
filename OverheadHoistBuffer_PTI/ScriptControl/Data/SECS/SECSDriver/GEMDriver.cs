@@ -551,7 +551,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
                 S5F3 s5f3 = ((S5F3)e.secsHandler.Parse<S5F3>(e));
                 SCUtility.secsActionRecordMsg(scApp, true, s5f3);
                 //if (isProcess(s5f3)) { return; }
-                Boolean isEnable = SCUtility.isMatche(s5f3.ALED, SECSConst.ALED_Enable);
+                //Boolean isEnable = SCUtility.isMatche(s5f3.ALED, SECSConst.ALED_Enable);
+                Boolean isEnable = s5f3.ALED[0] == 1;
                 string alarm_code = s5f3.ALID;
 
                 scApp.TransferService.TransferServiceLogger.Info(

@@ -81,13 +81,52 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
-        public List<PortDef> LoadCVPort(DBConnection_EF conn, string ohbName)
+        public List<PortDef> LoadALLPort_WithoutShelf(DBConnection_EF conn, string ohbName)
         {
             try
             {
                 var port = from a in conn.PortDef
                            where a.OHBName == ohbName
                                   && (a.UnitType == "OHCV"
+                                   || a.UnitType == "AGV"
+                                   || a.UnitType == "NTB"
+                                   || a.UnitType == "STK"
+                                   || a.UnitType == "AGVZONE"
+                                     )
+                           select a;
+                return port.ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
+        public List<PortDef> LoadPort_WithCV_WithShelf(DBConnection_EF conn, string ohbName)
+        {
+            try
+            {
+                var port = from a in conn.PortDef
+                           where a.OHBName == ohbName
+                                  && (a.UnitType == "OHCV"
+                                   || a.UnitType == "SHELF")
+                           select a;
+                return port.ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
+        public List<PortDef> LoadPort_WithCV_WithEQ(DBConnection_EF conn, string ohbName)
+        {
+            try
+            {
+                var port = from a in conn.PortDef
+                           where a.OHBName == ohbName
+                                  && (a.UnitType == "OHCV"
+                                   || a.UnitType == "EQ"
                                    || a.UnitType == "AGV"
                                    || a.UnitType == "NTB"
                                    || a.UnitType == "STK"

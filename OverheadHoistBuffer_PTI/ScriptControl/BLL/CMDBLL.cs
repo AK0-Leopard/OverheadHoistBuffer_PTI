@@ -2524,7 +2524,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     E_CMD_TYPE cmd_type = default(E_CMD_TYPE);
 
                     //確認 source 是否為Port
-                    bool source_is_a_port = scApp.PortDefBLL.GetPortData(hostsource) != null;
+                    bool source_is_a_port = scApp.PortDefBLL.GetPortDataByID(hostsource) != null;
                     if (source_is_a_port)
                     {
                         scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
@@ -2614,7 +2614,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     E_CMD_TYPE cmd_type = default(E_CMD_TYPE);
 
                     //確認 source 是否為Port
-                    bool source_is_a_port = scApp.PortDefBLL.GetPortData(hostsource) != null;
+                    bool source_is_a_port = scApp.PortDefBLL.GetPortDataByID(hostsource) != null;
                     if (source_is_a_port)
                     {
                         scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);

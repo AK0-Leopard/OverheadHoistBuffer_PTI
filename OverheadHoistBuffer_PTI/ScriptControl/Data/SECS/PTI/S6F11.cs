@@ -267,31 +267,47 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                         ENPTY_CARRIER = string.Empty;
                     }
                 }
-               //[Serializable]
-               //public class VIDITEM_51_SV : SXFY
-               //{
-               //    [SecsElement(Index = 1, ListSpreadOut = true)]
-               //    //public VIDITEM_10[] ENHANCED_CARRIER_INFO;
-               //    public VIDITEM_55_SV[] CARRIER_INFO_OBJ;
-               //}
+                //[Serializable]
+                //public class VIDITEM_51_SV : SXFY
+                //{
+                //    [SecsElement(Index = 1, ListSpreadOut = true)]
+                //    //public VIDITEM_10[] ENHANCED_CARRIER_INFO;
+                //    public VIDITEM_55_SV[] CARRIER_INFO_OBJ;
+                //}
 
-               //[Serializable]
-               //public class VIDITEM_52_SV : SXFY
-               //{
-               //    [SecsElement(Index = 1, ListSpreadOut = true)]
-               //    //public VIDITEM_10[] ENHANCED_CARRIER_INFO;
-               //    public VIDITEM_66_SV[] TRANSFER_COMMAND_OBJ;
-               //}
+                //[Serializable]
+                //public class VIDITEM_52_SV : SXFY
+                //{
+                //    [SecsElement(Index = 1, ListSpreadOut = true)]
+                //    //public VIDITEM_10[] ENHANCED_CARRIER_INFO;
+                //    public VIDITEM_66_SV[] TRANSFER_COMMAND_OBJ;
+                //}
 
-               //[Serializable]
-               //public class VIDITEM_53_SV : SXFY
-               //{
-               //    [SecsElement(Index = 1, ListSpreadOut = true)]
-               //    public VIDITEM_71_SV[] VEHICLEINFO_OBJ;
-               //}
+                [Serializable]
+                public class VIDITEM_53_SV : SXFY
+                {
+                    [SecsElement(Index = 1, ListSpreadOut = true)]
+                    public VIDITEM_71_SV[] VEHICLEINFO_OBJ;
+                    public VIDITEM_53_SV()
+                    {
+                        VEHICLEINFO_OBJ = new VIDITEM_71_SV[0];
+                    }
+                }
 
-
-               [Serializable]
+                [Serializable]
+                public class VIDITEM_71_SV : SXFY
+                {
+                    [SecsElement(Index = 1, ListSpreadOut = true)]
+                    public VIDITEM_70_SV VEHICLE_ID;
+                    [SecsElement(Index = 2, ListSpreadOut = true)]
+                    public VIDITEM_72_DVVAL VEHICLESTATE;
+                    public VIDITEM_71_SV()
+                    {
+                        VEHICLE_ID = new VIDITEM_70_SV();
+                        VEHICLESTATE = new VIDITEM_72_DVVAL();
+                    }
+                }
+                [Serializable]
                 public class VIDITEM_54_DVVAL : SXFY
                 {
                     [SecsElement(Index = 1, ListSpreadOut = true, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
@@ -681,6 +697,16 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     public VIDITEM_72_SV()
                     {
                         UNITSTATE = new VIDITEM_74_DVVAL();
+                    }
+                }
+                [Serializable]
+                public class VIDITEM_72_DVVAL : SXFY
+                {
+                    [SecsElement(Index = 1, ListSpreadOut = true, Type = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER, Length = 1)]
+                    public string Vehicle_State;
+                    public VIDITEM_72_DVVAL()
+                    {
+                        Vehicle_State = string.Empty;
                     }
                 }
                 [Serializable]
@@ -1730,6 +1756,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             VIDITEM_70_DVVAL_CraneID = new S6F11.RPTINFO.RPTITEM.VIDITEM_70_DVVAL();
             VIDITEM_70_SV_CraneID = new S6F11.RPTINFO.RPTITEM.VIDITEM_70_SV();
             VIDITEM_72_SV_UnitInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_72_SV();
+            VIDITEM_72_DVVAL_VehicleState = new S6F11.RPTINFO.RPTITEM.VIDITEM_72_DVVAL();
             VIDITEM_74_DVVAL_UnitState = new S6F11.RPTINFO.RPTITEM.VIDITEM_74_DVVAL();
 
             VIDITEM_80_DVVAL_CommandType = new S6F11.RPTINFO.RPTITEM.VIDITEM_80_DVVAL();
@@ -1824,6 +1851,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_70_DVVAL VIDITEM_70_DVVAL_CraneID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_70_SV VIDITEM_70_SV_CraneID;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_72_SV VIDITEM_72_SV_UnitInfo;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_72_DVVAL VIDITEM_72_DVVAL_VehicleState;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_74_DVVAL VIDITEM_74_DVVAL_UnitState;
 
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_80_DVVAL VIDITEM_80_DVVAL_CommandType;

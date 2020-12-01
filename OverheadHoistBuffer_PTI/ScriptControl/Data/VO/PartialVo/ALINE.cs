@@ -5,13 +5,13 @@ using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
-using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using Stateless;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static com.mirle.ibg3k0.sc.App.SCAppConstants.LineMaintenanceControlState;
 
 namespace com.mirle.ibg3k0.sc
 {
@@ -149,6 +149,20 @@ namespace com.mirle.ibg3k0.sc
                 {
                     unitAlarmStateListChecked = value;
                     OnPropertyChanged(BCFUtility.getPropertyName(() => this.UnitAlarmStateListChecked));
+                }
+            }
+        }
+        private bool activeVehiclesChecked = false;
+        public bool ActiveVehiclesChecked
+        {
+            get
+            { return activeVehiclesChecked; }
+            set
+            {
+                if (activeVehiclesChecked != value)
+                {
+                    activeVehiclesChecked = value;
+                    OnPropertyChanged(BCFUtility.getPropertyName(() => this.ActiveVehiclesChecked));
                 }
             }
         }
@@ -1152,7 +1166,7 @@ namespace com.mirle.ibg3k0.sc
         //{
         //    get { return TSC_state_machine.State; }
         //}
-
+        public MaintenanceControlState maintenance_Stats = MaintenanceControlState.Maintenance_Disable;
         public const string CONTEXT_KEY_WORD_LINE_STATUS_HAS_CHANGE = "LineStatusChange";
 
         //private UInt16 currentShelfEnableCount = 0;

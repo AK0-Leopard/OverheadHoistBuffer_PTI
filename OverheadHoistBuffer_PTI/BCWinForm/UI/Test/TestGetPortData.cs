@@ -32,7 +32,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             transferService = BCApp.SCApplication.TransferService;
             line = BCApp.SCApplication.getEQObjCacheManager().getLine();
-            portList = BCApp.SCApplication.PortDefBLL.GetOHB_CVPortData(line.LINE_ID);
+            portList = BCApp.SCApplication.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(line.LINE_ID);
 
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
@@ -359,7 +359,7 @@ namespace com.mirle.ibg3k0.bc.winform
 
         public void GetPortData()
         {
-            dataGridView1.DataSource = BCApp.SCApplication.PortDefBLL.GetOHB_CVPortData(line.LINE_ID);
+            dataGridView1.DataSource = BCApp.SCApplication.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(line.LINE_ID);
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
@@ -491,7 +491,7 @@ namespace com.mirle.ibg3k0.bc.winform
         private void button30_Click(object sender, EventArgs e)
         {
             BCApp.SCApplication.TransferService.AlliniPortData();
-            List<PortDef> portDefList = BCApp.SCApplication.PortDefBLL.GetOHB_CVPortData(line.LINE_ID);
+            List<PortDef> portDefList = BCApp.SCApplication.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(line.LINE_ID);
             foreach (PortDef portDefData in portDefList)
             {
                 if (portDefData.State == E_PORT_STATUS.InService)

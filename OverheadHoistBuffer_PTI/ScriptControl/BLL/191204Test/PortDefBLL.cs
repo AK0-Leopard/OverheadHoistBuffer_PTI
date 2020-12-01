@@ -187,13 +187,43 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public List<PortDef> GetOHB_CVPortData(string ohbName)
+        public List<PortDef> GetOHB_ALLPortData_WithoutShelf(string ohbName)
         {
             try
             {
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
-                    return portdefDao.LoadCVPort(con, ohbName);
+                    return portdefDao.LoadALLPort_WithoutShelf(con, ohbName);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return null;
+            }
+        }
+        public List<PortDef> GetPortData_WithCV_WithShelf(string ohbName)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    return portdefDao.LoadPort_WithCV_WithShelf(con, ohbName);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return null;
+            }
+        }
+        public List<PortDef> GetPortData_WithCV_WithEQ(string ohbName)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    return portdefDao.LoadPort_WithCV_WithEQ(con, ohbName);
                 }
             }
             catch (Exception ex)
@@ -264,7 +294,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public PortDef GetPortData(string PortID)
+        public PortDef GetPortDataByID(string PortID)
         {
             try
             {
@@ -330,7 +360,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public List<PortDef> getAGVPortData()
         {
             string ohbName = scApp.getEQObjCacheManager().getLine().LINE_ID;
-            List<PortDef> AGV_station = scApp.PortDefBLL.GetOHB_CVPortData(ohbName).
+            List<PortDef> AGV_station = scApp.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(ohbName).
                 Where(data => data.UnitType == "AGV"
                 ).ToList();
             return AGV_station;

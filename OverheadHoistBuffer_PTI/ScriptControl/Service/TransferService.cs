@@ -268,7 +268,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 lineData.UnitType = UnitType.LINE.ToString();
                 AddPortINIData(lineData);
 
-                foreach (var v in portDefBLL.GetOHB_CVPortData(line.LINE_ID))
+                foreach (var v in portDefBLL.GetOHB_ALLPortData_WithoutShelf(line.LINE_ID))
                 {
                     for (int i = 1; i <= (int)v.Stage; i++)
                     {
@@ -557,7 +557,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public void updateAGVStation()  //定時更新AGV狀態
         {
-            foreach (var v in scApp.PortDefBLL.GetOHB_CVPortData(line.LINE_ID))
+            foreach (var v in scApp.PortDefBLL.GetOHB_ALLPortData_WithoutShelf(line.LINE_ID))
             {
                 string portName = v.PLCPortID.Trim();
                 if (isUnitType(portName, UnitType.AGV))
@@ -3798,7 +3798,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (portDefBLL != null)
                 {
-                    if (portDefBLL.GetPortData(portID).PortType != portType)
+                    if (portDefBLL.GetPortDataByID(portID).PortType != portType)
                     {
                         portDefBLL.UpdataPortType(portID.Trim(), portType);
                     }
@@ -3873,7 +3873,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 if (portDefBLL != null)
                 {
-                    PortDef portDB = portDefBLL.GetPortData(portName.Trim());
+                    PortDef portDB = portDefBLL.GetPortDataByID(portName.Trim());
 
                     if (portDB.State != service)
                     {
@@ -4439,7 +4439,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             E_PORT_STATUS agvZoneInOutService = E_PORT_STATUS.OutOfService;
 
-            PortDef agvZone = portDefBLL.GetPortData(agvZoneName.Trim());
+            PortDef agvZone = portDefBLL.GetPortDataByID(agvZoneName.Trim());
 
             if (agvZone_ConnectedRealAGVPortRunDown)
             {
@@ -5634,7 +5634,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (isUnitType(readData.Carrier_LOC, UnitType.AGV))
                 {
-                    PortDef dbPortDef = portDefBLL.GetPortData(readData.Carrier_LOC);
+                    PortDef dbPortDef = portDefBLL.GetPortDataByID(readData.Carrier_LOC);
                     if (dbPortDef.AGVState == E_PORT_STATUS.InService)
                     {
                         readData.CSTID = CarrierReadFailAtTargetAGV(readData.Carrier_LOC);
@@ -6089,7 +6089,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             try
             {
-                var portData = scApp.PortDefBLL.GetPortData(portID);
+                var portData = scApp.PortDefBLL.GetPortDataByID(portID);
 
                 //依離目的port距離，升冪排序
                 var dbCstData = cassette_dataBLL.loadCassetteData()
@@ -7449,6 +7449,16 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 ShelfDef shelf = shelfDefBLL.loadShelfDataByID(shelfID);
                 shelfDefBLL.UpdateEnableByID(shelfID, enable);
+                PortDef shelfport = portDefBLL.GetPortDataByID(shelfID);
+                if(enable == true)
+                {
+                    portDefBLL.UpdataPortService(shelfID, E_PORT_STATUS.InService);
+                }
+                else
+                {
+                    portDefBLL.UpdataPortService(shelfID, E_PORT_STATUS.OutOfService);
+                }
+                
                 ZoneDef zone = zoneBLL.loadZoneDataByID(shelf.ZoneID);
                 reportBLL.ReportShelfStatusChange(zone);
                 return "OK";
@@ -7985,7 +7995,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 int numOfAGVStation = GetAGVPort(AGVStationID).Count();
                 agvcTriggerAlarmCheck(AGVStationID, AGVCFromEQToStationCmdNum);
                 //此AGVStation虛擬port是 Out of service 擇要拒絕AGVC
-                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortData(AGVStationID);
+                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortDataByID(AGVStationID);
                 if (portDefByAGVStationID.State == E_PORT_STATUS.OutOfService)
                 {
                     //若為4個Port 的虛擬Port
@@ -8819,7 +8829,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 int numOfAGVStation = GetAGVPort(AGVStationID).Count();   //確認目前選的AGV Station 有多少個Port
                 agvcTriggerAlarmCheck(AGVStationID, AGVCFromEQToStationCmdNum);
                 //此AGVStation虛擬port是 Out of service 擇要拒絕AGVC
-                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortData(AGVStationID);
+                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortDataByID(AGVStationID);
                 if (portDefByAGVStationID.State == E_PORT_STATUS.OutOfService)
                 {
                     //若為4個Port 的虛擬Port
@@ -9053,7 +9063,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 int numOfAGVStation = GetAGVPort(AGVStationID).Count();   //確認目前選的AGV Station 有多少個Port
                 agvcTriggerAlarmCheck(AGVStationID, AGVCFromEQToStationCmdNum);
                 //此AGVStation虛擬port是 Out of service 擇要拒絕AGVC
-                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortData(AGVStationID);
+                PortDef portDefByAGVStationID = scApp.PortDefBLL.GetPortDataByID(AGVStationID);
                 if (portDefByAGVStationID.State == E_PORT_STATUS.OutOfService)
                 {
                     isOK = ChangeReturnDueToAGVCCmdNum(AGVCFromEQToStationCmdNum); //A20.07.10.0

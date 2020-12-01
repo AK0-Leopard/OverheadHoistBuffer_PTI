@@ -51,9 +51,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtCommuntion = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.skinGroupBox4 = new CCWin.SkinControl.SkinGroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.butMaintenanceEnable = new System.Windows.Forms.Button();
+            this.butMaintenanceDisable = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtMaintenanceMode = new System.Windows.Forms.Label();
             this.skinGroupBox3.SuspendLayout();
             this.skinGroupBox2.SuspendLayout();
             this.skinGroupBox1.SuspendLayout();
+            this.skinGroupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // skinGroupBox3
@@ -358,11 +366,110 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // skinGroupBox4
+            // 
+            this.skinGroupBox4.BackColor = System.Drawing.Color.Transparent;
+            this.skinGroupBox4.BorderColor = System.Drawing.Color.Black;
+            this.skinGroupBox4.Controls.Add(this.label10);
+            this.skinGroupBox4.Controls.Add(this.label11);
+            this.skinGroupBox4.Controls.Add(this.butMaintenanceEnable);
+            this.skinGroupBox4.Controls.Add(this.butMaintenanceDisable);
+            this.skinGroupBox4.Controls.Add(this.label12);
+            this.skinGroupBox4.Controls.Add(this.txtMaintenanceMode);
+            this.skinGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.skinGroupBox4.Font = new System.Drawing.Font("Arial", 15.75F);
+            this.skinGroupBox4.ForeColor = System.Drawing.Color.Black;
+            this.skinGroupBox4.Location = new System.Drawing.Point(9, 316);
+            this.skinGroupBox4.Name = "skinGroupBox4";
+            this.skinGroupBox4.Radius = 20;
+            this.skinGroupBox4.RectBackColor = System.Drawing.SystemColors.Control;
+            this.skinGroupBox4.RoundStyle = CCWin.SkinClass.RoundStyle.All;
+            this.skinGroupBox4.Size = new System.Drawing.Size(264, 279);
+            this.skinGroupBox4.TabIndex = 74;
+            this.skinGroupBox4.TabStop = false;
+            this.skinGroupBox4.Text = "Maintenance";
+            this.skinGroupBox4.TitleBorderColor = System.Drawing.Color.Black;
+            this.skinGroupBox4.TitleRadius = 10;
+            this.skinGroupBox4.TitleRectBackColor = System.Drawing.Color.LightSkyBlue;
+            this.skinGroupBox4.TitleRoundStyle = CCWin.SkinClass.RoundStyle.All;
+            // 
+            // label10
+            // 
+            this.label10.Enabled = false;
+            this.label10.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label10.Location = new System.Drawing.Point(62, 105);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(156, 23);
+            this.label10.TabIndex = 78;
+            this.label10.Text = "Mode Change";
+            // 
+            // label11
+            // 
+            this.label11.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label11.Location = new System.Drawing.Point(61, 32);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(156, 23);
+            this.label11.TabIndex = 77;
+            this.label11.Text = "Current Status";
+            // 
+            // butMaintenanceEnable
+            // 
+            this.butMaintenanceEnable.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.butMaintenanceEnable.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold);
+            this.butMaintenanceEnable.ForeColor = System.Drawing.Color.Black;
+            this.butMaintenanceEnable.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.butMaintenanceEnable.Location = new System.Drawing.Point(49, 178);
+            this.butMaintenanceEnable.Name = "butMaintenanceEnable";
+            this.butMaintenanceEnable.Size = new System.Drawing.Size(168, 35);
+            this.butMaintenanceEnable.TabIndex = 20;
+            this.butMaintenanceEnable.Text = "Enable";
+            this.butMaintenanceEnable.UseVisualStyleBackColor = true;
+            this.butMaintenanceEnable.Click += new System.EventHandler(this.butMaintenanceEnable_Click);
+            // 
+            // butMaintenanceDisable
+            // 
+            this.butMaintenanceDisable.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.butMaintenanceDisable.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold);
+            this.butMaintenanceDisable.ForeColor = System.Drawing.Color.Black;
+            this.butMaintenanceDisable.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.butMaintenanceDisable.Location = new System.Drawing.Point(49, 131);
+            this.butMaintenanceDisable.Name = "butMaintenanceDisable";
+            this.butMaintenanceDisable.Size = new System.Drawing.Size(168, 35);
+            this.butMaintenanceDisable.TabIndex = 21;
+            this.butMaintenanceDisable.Text = "Disable";
+            this.butMaintenanceDisable.UseVisualStyleBackColor = true;
+            this.butMaintenanceDisable.Click += new System.EventHandler(this.butMaintenanceDisable_Click);
+            // 
+            // label12
+            // 
+            this.label12.BackColor = System.Drawing.Color.DimGray;
+            this.label12.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label12.Location = new System.Drawing.Point(-6, 97);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(270, 1);
+            this.label12.TabIndex = 69;
+            this.label12.Text = "label12";
+            // 
+            // txtMaintenanceMode
+            // 
+            this.txtMaintenanceMode.BackColor = System.Drawing.Color.Lime;
+            this.txtMaintenanceMode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtMaintenanceMode.Font = new System.Drawing.Font("Arial", 14.25F);
+            this.txtMaintenanceMode.ForeColor = System.Drawing.Color.Black;
+            this.txtMaintenanceMode.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtMaintenanceMode.Location = new System.Drawing.Point(41, 59);
+            this.txtMaintenanceMode.Name = "txtMaintenanceMode";
+            this.txtMaintenanceMode.Size = new System.Drawing.Size(187, 29);
+            this.txtMaintenanceMode.TabIndex = 36;
+            this.txtMaintenanceMode.Text = "Enable";
+            this.txtMaintenanceMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // HostModeChg_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 328);
+            this.ClientSize = new System.Drawing.Size(952, 562);
+            this.Controls.Add(this.skinGroupBox4);
             this.Controls.Add(this.skinGroupBox3);
             this.Controls.Add(this.skinGroupBox2);
             this.Controls.Add(this.skinGroupBox1);
@@ -373,6 +480,7 @@
             this.skinGroupBox2.ResumeLayout(false);
             this.skinGroupBox2.PerformLayout();
             this.skinGroupBox1.ResumeLayout(false);
+            this.skinGroupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -401,5 +509,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label txtCommuntion;
         private System.Windows.Forms.Timer timer1;
+        private CCWin.SkinControl.SkinGroupBox skinGroupBox4;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button butMaintenanceEnable;
+        private System.Windows.Forms.Button butMaintenanceDisable;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label txtMaintenanceMode;
     }
 }

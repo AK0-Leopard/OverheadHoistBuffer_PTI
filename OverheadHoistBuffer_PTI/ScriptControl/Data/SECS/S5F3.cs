@@ -28,7 +28,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS
     public class S5F3 : SXFY
     {
         [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
-        public string ALED;
+        public int[] ALED;
         [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_4_BYTE_UNSIGNED_INTEGER, Length = 4)]
         public string ALID;
 
