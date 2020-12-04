@@ -1533,11 +1533,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         line.ActiveVehiclesChecked = true;
                         s1f4.SV[i] = buildActiveVehicles();
                     }
-                    //else if (s1f3.SVID[i] == SECSConst.VID_Maintenance_State)
-                    //{
-                    //    line.ActiveVehiclesChecked = true;
-                    //    s1f4.SV[i] = buildActiveVehicles();
-                    //}
+                    else if (s1f3.SVID[i] == SECSConst.VID_Maintenance_State)
+                    {
+                        line.ActiveVehiclesChecked = true;
+                        s1f4.SV[i] = buildMaitenanceStatus();
+                    }
                     //else if (s1f3.SVID[i] == SECSConst.VID_CurrEq_Port_Status)
                     //{
                     //    line.EnhancedTransfersChecked = true;
@@ -1786,6 +1786,20 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 viditem_53.VEHICLEINFO_OBJ[i].VEHICLESTATE.Vehicle_State = vehicledata[i].VEHICLE_TYPE.ToString();
             }
             return viditem_53;
+        }
+        private S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL buildMaitenanceStatus()
+        {
+            List<AVEHICLE> vehicledata = scApp.VehicleBLL.loadAllVehicle();
+            S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL viditem_370 = new S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL();
+            if(line.maintenance_Stats == SCAppConstants.LineMaintenanceControlState.MaintenanceControlState.Maintenance_Enable)
+            {
+                viditem_370.MaintState.MAINT_STATE = "1";
+            }
+            else
+            {
+                viditem_370.MaintState.MAINT_STATE = "2";
+            }
+            return viditem_370;
         }
         //private S6F11.RPTINFO.RPTITEM.VIDITEM_119_SV buildEnhancedVehiclesVIDItem()
         //{
@@ -2982,7 +2996,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.CARRIER_ID;    //20/07/16 美微說 AbortInitiated、AbortCompleted，所帶的 CARRIER_ID、BOX 是填CMD的
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cmd.BOX_ID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Abort_Completed, Vids);
                 if (reportQueues == null)
@@ -3017,7 +3031,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Abort_Failed, Vids);
@@ -3054,7 +3068,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.CARRIER_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cmd.BOX_ID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Abort_Initiated, Vids);
                 if (reportQueues == null)
@@ -3089,7 +3103,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Completed, Vids);
@@ -3126,7 +3140,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Failed, Vids);
                 if (reportQueues == null)
@@ -3171,7 +3185,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cstLoc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Initiated, Vids);
@@ -3212,7 +3226,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd?.CMD_ID ?? "";
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette?.BOXID ?? "";
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette?.Carrier_LOC ?? "";
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_65_DVVAL_SourceID.SOURCE_ID = cmd.HOSTSOURCE;
                 Vids.VIDITEM_60_DVVAL_Dest.DESTINATION_ID = cmd.HOSTDESTINATION;
                 Vids.VIDITEM_62_DVVAL_Priority.PRIORITY = cmd.PRIORITY.ToString();
@@ -3260,7 +3274,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmdID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cstLoc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
 
                 //Vids.VIDITEM_60_DVVAL_DestPort.DESTINATION_ID = cmd.HOSTDESTINATION;
 
@@ -3311,7 +3325,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Pause, Vids);
@@ -3349,7 +3363,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = boxID;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Resumed, Vids);
@@ -3384,7 +3398,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = ohtName;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transferring, Vids);
@@ -3416,7 +3430,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Installed, Vids);
                 if (reportQueues == null)
@@ -3448,7 +3462,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
 
                 scApp.CassetteDataBLL.DeleteCSTbyCstBoxID(cassette.CSTID, cassette.BOXID);
@@ -3565,12 +3579,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Stored, Vids);
                 if (reportQueues == null)
                 {
-                    S6F11SendMessage(mcs_queue);
+                    //S6F11SendMessage(mcs_queue); // PTI需要 --
                 }
                 else
                 {
@@ -3600,7 +3614,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_60_DVVAL_Dest.DESTINATION_ID = cmd.HOSTDESTINATION;
 
                 //if (scApp.ShelfDefBLL.isExist(cmd.HOSTDESTINATION))
@@ -3690,7 +3704,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Wait_In, Vids);
                 if (reportQueues == null)
@@ -3726,7 +3740,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 //if (cst.Stage != 0)
                 //{
                 //    Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename.Remove(9);
@@ -4038,7 +4052,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Zone_Capacity_Change, Vids);
                 if (reportQueues == null)
                 {
-                    S6F11SendMessage(mcs_queue);
+                    //S6F11SendMessage(mcs_queue); // PTI 需要 --
                 }
                 else
                 {
@@ -4071,7 +4085,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;                
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
 
                 Vids.VIDITEM_65_DVVAL_SourceID.SOURCE_ID = cmd.HOSTSOURCE;
                 Vids.VIDITEM_60_DVVAL_Dest.DESTINATION_ID = cmd.HOSTDESTINATION;
@@ -4349,12 +4363,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_890_DVVAL_RequestCount.REQUEST_COUNT = ReqCount;
-                Vids.VIDITEM_370_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zoneName;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zoneName;
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Empty_Box_Supply, Vids);
                 if (reportQueues == null)
                 {
-                    S6F11SendMessage(mcs_queue);
+                    //S6F11SendMessage(mcs_queue); // PTI需要 --
                 }
                 else
                 {
@@ -4576,7 +4590,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                                 vid_item = Vids.VIDITEM_179_DVVAL_BOXID;
                                 break;
                             case SECSConst.VID_Carrier_Zone_Name:
-                                vid_item = Vids.VIDITEM_370_DVVAL_CarrierZoneName;
+                                vid_item = Vids.VIDITEM_9999_DVVAL_CarrierZoneName;
                                 break;
                             case SECSConst.VID_Transfer_Info:
                                 vid_item = Vids.VIDITEM_720_SV_TransferInfo;
@@ -4629,7 +4643,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             };
             return queue;
         }
-        protected override Boolean isSend(SXFY sxfy)
+        protected override Boolean isSend(SXFY sxfy, string portID)
         {
             Boolean result = false;
             try
@@ -4642,6 +4656,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         s6f11.CEID == SECSConst.CEID_Control_Status_Remote)
                     {
                         return true;
+                    }
+                }
+                if(portID != null && portID!="")
+                {
+                    List<PortDef> ports= scApp.PortDefBLL.GetPortData_WithReportMCSFlag_Enable(portID);
+                    if(ports.Count() == 0)
+                    {
+                        return false;
                     }
                 }
                 result = scApp.getEQObjCacheManager().getLine().Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.On_Line_Local ||
@@ -4672,12 +4694,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 LogHelper.setCallContextKey_ServiceID(CALL_CONTEXT_KEY_WORD_SERVICE_ID_MCS);
 
                 S6F11 s6f11 = (S6F11)SCUtility.ToObject(queue.SERIALIZED_SXFY);
-
+                string portID = queue.PORT_ID.Trim();
                 S6F12 s6f12 = null;
                 SXFY abortSecs = null;
                 String rtnMsg = string.Empty;
 
-                if (!isSend(s6f11)) return true; // PTI需要上報
+                if (!isSend(s6f11, portID)) return true; // PTI需要上報
 
                 SCUtility.RecodeReportInfo(queue.VEHICLE_ID, queue.MCS_CMD_ID, s6f11, s6f11.CEID);
                 SCUtility.secsActionRecordMsg(scApp, false, s6f11);

@@ -443,8 +443,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public const string VID_Unit_Alarm_Info = "361";
         public const string VID_Maint_State = "362";
 
-        public const string VID_Carrier_Zone_Name = "370";
-        //public const string VID_Maintenance_State = "370";
+        public const string VID_Carrier_Zone_Name = "9999";
+        public const string VID_Maintenance_State = "370";
 
         public const string VID_Port_Type_Info = "601";
         public const string VID_Port_Unit_Type = "602";

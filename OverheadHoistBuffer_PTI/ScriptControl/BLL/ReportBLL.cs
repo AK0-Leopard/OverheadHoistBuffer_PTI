@@ -310,16 +310,16 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
         public bool ReportAlarmCleared(ACMD_MCS CMD_MCS, ALARM ALARM, string unitid, string unitstate)
-        {      
+        {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmCleared(CMD_MCS, ALARM,  unitid,  unitstate);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmCleared(CMD_MCS, ALARM, unitid, unitstate);
             return isSuccsess;
         }
 
         public bool ReportAlarmSet(ACMD_MCS CMD_MCS, ALARM ALARM, string unitid, string unitstate, string RecoveryOption)
         {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmSet( CMD_MCS,  ALARM,  unitid,  unitstate,  RecoveryOption);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmSet(CMD_MCS, ALARM, unitid, unitstate, RecoveryOption);
             return isSuccsess;
         }
 
@@ -355,33 +355,33 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public  bool ReportTransferAbortCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportTransferAbortCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(cmd_id, reportQueues);
             return isSuccsess;
         }
 
-        public  bool ReportTransferAbortFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportTransferAbortFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortFailed(cmd_id, reportQueues);
             return isSuccsess;
         }
 
-        public  bool ReportTransferAbortInitiated(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportTransferAbortInitiated(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortInitiated(cmd_id, reportQueues);
             return isSuccsess;
         }
-        public  bool ReportTransferCancelCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportTransferCancelCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelCompleted(cmd_id, reportQueues);
             return isSuccsess;
         }
-        public  bool ReportTransferCancelFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportTransferCancelFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelFailed(cmd_id, reportQueues);
@@ -560,14 +560,14 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool ReportUnitAlarmSet(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmSet(unitID,  alarmID, alarmTest, reportQueues);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmSet(unitID, alarmID, alarmTest, reportQueues);
             return isSuccsess;
         }
 
         public bool ReportUnitAlarmCleared(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmCleared(unitID,  alarmID, alarmTest, reportQueues);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmCleared(unitID, alarmID, alarmTest, reportQueues);
             return isSuccsess;
         }
 
@@ -592,7 +592,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public  bool ReportCraneOutEscape(string craneID, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool ReportCraneOutEscape(string craneID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCraneOutEscape(craneID, reportQueues);
@@ -686,6 +686,10 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool ReportPortTypeChanging(string port_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
+            //if (scApp.PortDefBLL.GetPortData_WithReportMCSFlag_Enable(port_id) == null)
+            //{
+            //    return isSuccsess;
+            //}
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeChanging(port_id, reportQueues);
             return isSuccsess;
         }
@@ -693,7 +697,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool ReportCarrierBoxIDRename(string cstID, string boxID, string cstLOC, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierBoxIDRename(cstID,  boxID,  cstLOC, reportQueues);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierBoxIDRename(cstID, boxID, cstLOC, reportQueues);
             return isSuccsess;
         }
 
@@ -715,7 +719,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public void Send(string ceid, VIDCollection vids)
         {
-            (iBSEMDriver as ASEMCSDefaultMapAction).SendS6F11(ceid, vids); 
+            (iBSEMDriver as ASEMCSDefaultMapAction).SendS6F11(ceid, vids);
         }
 
 

@@ -141,6 +141,21 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                 throw;
             }
         }
+        public List<PortDef> LoadPort_WithReportMCSFlag_Enable(DBConnection_EF conn, string port_ID)
+        {
+            try
+            {
+                var port = from a in conn.PortDef
+                           where a.PLCPortID.Trim() == port_ID.Trim() && a.ReportMCSFlag.Trim() == "Y"
+                           select a;
+                return port.ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
         //A20.06.12
         public List<PortDef> LoadAGVPortByStationID(DBConnection_EF conn, string ohbName, string AGVStationID)
         {

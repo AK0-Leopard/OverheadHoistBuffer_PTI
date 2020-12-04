@@ -788,7 +788,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
             }
             return result;
         }
-        protected virtual Boolean isSend(SXFY sxfy)
+        protected virtual Boolean isSend(SXFY sxfy, string portID)
         {
             Boolean result = false;
             try

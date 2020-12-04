@@ -196,7 +196,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 2, ListSpreadOut = true)]
                     public VIDITEM_56_DVVAL CARRIER_LOC_OBJ;
                     [SecsElement(Index = 3, ListSpreadOut = true)]
-                    public VIDITEM_370_DVVAL CARRIER_ZONE_NAME_OBJ;
+                    public VIDITEM_9999_DVVAL CARRIER_ZONE_NAME_OBJ;
                     [SecsElement(Index = 4, ListSpreadOut = true)]
                     public VIDITEM_12_DVVAL INSTALL_TIME_OBJ;
                     [SecsElement(Index = 5, ListSpreadOut = true)]
@@ -208,7 +208,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     {
                         CARRIER_ID_OBJ = new VIDITEM_54_DVVAL();
                         CARRIER_LOC_OBJ = new VIDITEM_56_DVVAL();
-                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_370_DVVAL();
+                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_9999_DVVAL();
                         INSTALL_TIME_OBJ = new VIDITEM_12_DVVAL();
                         CARRIER_STATE = new VIDITEM_203_DVVAL();
                         BOX_ID_OBJ = new VIDITEM_179_DVVAL();
@@ -337,13 +337,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 3, ListSpreadOut = true)]
                     public VIDITEM_56_DVVAL CARRIER_LOC_OBJ;
                     [SecsElement(Index = 2, ListSpreadOut = true)]
-                    public VIDITEM_370_DVVAL CARRIER_ZONE_NAME_OBJ;
+                    public VIDITEM_9999_DVVAL CARRIER_ZONE_NAME_OBJ;
 
                     public VIDITEM_55_DVVAL()
                     {
                         CARRIER_ID_OBJ = new VIDITEM_54_DVVAL();
                         CARRIER_LOC_OBJ = new VIDITEM_56_DVVAL();
-                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_370_DVVAL();
+                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_9999_DVVAL();
                     }
 
                     public string CARRIER_ID
@@ -372,13 +372,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 2, ListSpreadOut = true)]
                     public VIDITEM_56_SV CARRIER_LOC_OBJ;
                     [SecsElement(Index = 3, ListSpreadOut = true)]
-                    public VIDITEM_370_SV CARRIER_ZONE_NAME_OBJ;
+                    public VIDITEM_9999_SV CARRIER_ZONE_NAME_OBJ;
 
                     public VIDITEM_55_SV()
                     {
                         CARRIER_ID_OBJ = new VIDITEM_54_SV();
                         CARRIER_LOC_OBJ = new VIDITEM_56_SV();
-                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_370_SV();
+                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_9999_SV();
                     }
                 }
 
@@ -1527,19 +1527,29 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 [Serializable]
                 public class VIDITEM_370_DVVAL : SXFY
                 {
+                    [SecsElement(Index = 1, ListSpreadOut = true)]
+                    public VIDITEM_362_DVVAL MaintState;
+                    public VIDITEM_370_DVVAL()
+                    {
+                        MaintState = new VIDITEM_362_DVVAL();
+                    }
+                }
+                [Serializable]
+                public class VIDITEM_9999_DVVAL : SXFY
+                {
                     [SecsElement(Index = 1, ListSpreadOut = true,Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
                     public string CARRIER_ZONE_NAME;
-                    public VIDITEM_370_DVVAL()
+                    public VIDITEM_9999_DVVAL()
                     {
                         CARRIER_ZONE_NAME = string.Empty;
                     }
                 }
                 [Serializable]
-                public class VIDITEM_370_SV : SXFY
+                public class VIDITEM_9999_SV : SXFY
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
                     string CARRIER_ZONE_NAME;
-                    public VIDITEM_370_SV()
+                    public VIDITEM_9999_SV()
                     {
                         CARRIER_ZONE_NAME = string.Empty;
                     }
@@ -1789,8 +1799,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             VIDITEM_361_SV_UnitAlarmInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_361_SV();
             VIDITEM_362_DVVAL_MaintState = new S6F11.RPTINFO.RPTITEM.VIDITEM_362_DVVAL();
 
-            VIDITEM_370_DVVAL_CarrierZoneName = new S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL();
-            VIDITEM_370_SV_CarrierZoneName = new S6F11.RPTINFO.RPTITEM.VIDITEM_370_SV();
+            VIDITEM_370_DVVAL_Maintenance = new S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL();
+
+            VIDITEM_9999_DVVAL_CarrierZoneName = new S6F11.RPTINFO.RPTITEM.VIDITEM_9999_DVVAL();
+            VIDITEM_9999_SV_CarrierZoneName = new S6F11.RPTINFO.RPTITEM.VIDITEM_9999_SV();
 
             VIDITEM_601_SV_PortTypeInfo = new S6F11.RPTINFO.RPTITEM.VIDITEM_601_SV();
             VIDITEM_602_DVVAL_PortUnitType = new S6F11.RPTINFO.RPTITEM.VIDITEM_602_DVVAL();
@@ -1883,9 +1895,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_361_SV VIDITEM_361_SV_UnitAlarmInfo;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_362_DVVAL VIDITEM_362_DVVAL_MaintState;
-
-        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL VIDITEM_370_DVVAL_CarrierZoneName;
-        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_370_SV VIDITEM_370_SV_CarrierZoneName;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_370_DVVAL VIDITEM_370_DVVAL_Maintenance;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_9999_DVVAL VIDITEM_9999_DVVAL_CarrierZoneName;
+        public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_9999_SV VIDITEM_9999_SV_CarrierZoneName;
 
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_601_SV VIDITEM_601_SV_PortTypeInfo;
         public com.mirle.ibg3k0.sc.Data.SECS.PTI.S6F11.RPTINFO.RPTITEM.VIDITEM_602_DVVAL VIDITEM_602_DVVAL_PortUnitType;

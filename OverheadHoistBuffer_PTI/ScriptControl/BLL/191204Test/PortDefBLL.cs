@@ -232,6 +232,21 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return null;
             }
         }
+        public List<PortDef> GetPortData_WithReportMCSFlag_Enable( string port_ID)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    return portdefDao.LoadPort_WithReportMCSFlag_Enable(con, port_ID);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return null;
+            }
+        }
         //A20.06.12
         public List<PortDef> GetAGVPortGroupDataByStationID(string ohbName, string stationID)
         {

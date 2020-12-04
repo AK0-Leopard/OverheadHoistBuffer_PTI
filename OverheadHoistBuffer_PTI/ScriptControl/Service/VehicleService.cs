@@ -2713,6 +2713,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //
                     //20200130 Hsinyu Chang
                     scApp.CMDBLL.updateCMD_MCS_BCROnCrane(eqpt.MCS_CMD, new_carrier_id);
+                    read_carrier_id = new_carrier_id;
                     break;
                 case BCRReadResult.BcrNormal:
                     if (!checkHasDuplicateHappend(bcfApp, eqpt, seqNum, eventType, read_carrier_id, old_carrier_id))
