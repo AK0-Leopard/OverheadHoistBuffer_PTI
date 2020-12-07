@@ -1292,7 +1292,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             cmdBLL.updateCMD_MCS_TranStatus(mcsCmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
 
                             reportBLL.ReportTransferInitiated(mcsCmd.CMD_ID.Trim());
-                            reportBLL.ReportTransferCompleted(mcsCmd, null, ResultCode.ZoneIsfull);
+                            //reportBLL.ReportTransferCompleted(mcsCmd, null, ResultCode.ZoneIsfull);
+                            reportBLL.ReportTransferCompleted(mcsCmd, null, ResultCode.OtherErrors);
                             break;
                         }
                         else
@@ -2308,9 +2309,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         OHBC_AlarmSet(ohtName, SCAppConstants.SystemAlarmCode.OHT_Issue.DoubleStorage);
                         OHBC_AlarmCleared(ohtName, SCAppConstants.SystemAlarmCode.OHT_Issue.DoubleStorage);
 
-                        reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
-                        reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
-                        //reportBLL.ReportTransferCompleted(cmd, null, ResultCode.InterlockError);
+                        //reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
+                        //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
+                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.DoubleStorage); // PTI需要上報
 
                         string cstID = CarrierDouble(ohtCmd.DESTINATION.Trim());
                         string boxID = CarrierDouble(ohtCmd.DESTINATION.Trim());
@@ -2324,9 +2325,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         OHBC_AlarmSet(ohtName, SCAppConstants.SystemAlarmCode.OHT_Issue.EmptyRetrieval);
                         OHBC_AlarmCleared(ohtName, SCAppConstants.SystemAlarmCode.OHT_Issue.EmptyRetrieval);
 
-                        reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
-                        reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
-                        //reportBLL.ReportTransferCompleted(cmd, null, ResultCode.InterlockError);
+                        //reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
+                        //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
+                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.EmptyRetrieval); // PTI需要上報
 
                         CassetteData emptyData = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.SOURCE.Trim());
 
@@ -2893,7 +2894,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             ohtBoxData.CSTID = dbCstData.CSTID;
                         }
 
-                        resultCode = ResultCode.BoxID_Mismatch;
+                        //resultCode = ResultCode.BoxID_Mismatch;
+                        resultCode = ResultCode.IDmismatch;
                         idReadStatus = IDreadStatus.mismatch;
                     }
 

@@ -65,12 +65,12 @@ namespace com.mirle.ibg3k0.sc
         {
             public const string Successful = "0";
             public const string OtherErrors = "1";
-            public const string ZoneIsfull = "2";
+            public const string Reservered = "2";
             public const string DuplicateID = "3";
             public const string IDmismatch = "4";
             public const string IDReadFailed = "5";
-            public const string BoxID_ReadFailed = "6";
-            public const string BoxID_Mismatch = "7";
+            public const string DoubleStorage = "6";
+            public const string EmptyRetrieval = "7";
             public const string InterlockError = "64";
         }
 
