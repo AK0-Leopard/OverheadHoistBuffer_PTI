@@ -2338,12 +2338,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     case COMMAND_STATUS_BIT_INDEX_InterlockError:
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
                         reportBLL.ReportTransferCompleted(cmd, null, ResultCode.InterlockError);
-
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT:
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
-                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.InterlockError);   //  20/04/13 MCS 反應說不要報 1 ，改報64
+                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.OtherErrors);   //  20/04/13 MCS 反應說不要報 1 ，改報64 // 20/12/08 PTI需要上報 若需人為介入的問題，必須要用other error
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
                         EmptyShelf();
