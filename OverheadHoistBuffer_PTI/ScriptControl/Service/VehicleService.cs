@@ -2603,23 +2603,17 @@ namespace com.mirle.ibg3k0.sc.Service
                         scApp.VehicleBLL.updataVehicleBOXID(eqpt.VEHICLE_ID, read_carrier_id);
                         if (scApp.CMDBLL.getCMD_OHTCByID(eqpt.OHTC_CMD).CMD_TPYE == E_CMD_TYPE.Scan)
                         {
-                            replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
-                            renameCarrierID: read_carrier_id,
-                            cancelType: CMDCancelType.CmdNone);
+                            replyTranEventReport(bcfApp, eventType, eqpt, seqNum, renameCarrierID: read_carrier_id, cancelType: CMDCancelType.CmdNone);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                               Data: $"BCR miss match happend,but in Scan command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {read_carrier_id}",
-                               VehicleID: eqpt.VEHICLE_ID,
-                               CarrierID: eqpt.BOX_ID);
+                               Data: $"BCR miss match happend,but in Scan command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {read_carrier_id}", 
+                               VehicleID: eqpt.VEHICLE_ID, CarrierID: eqpt.BOX_ID);
                         }
                         else
                         {
-                            replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
-                            renameCarrierID: read_carrier_id,
-                            cancelType: CMDCancelType.CmdCancelIdMismatch);
+                            replyTranEventReport(bcfApp, eventType, eqpt, seqNum, renameCarrierID: read_carrier_id, cancelType: CMDCancelType.CmdCancelIdMismatch);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                               Data: $"BCR miss match happend,start abort command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {read_carrier_id}",
-                               VehicleID: eqpt.VEHICLE_ID,
-                               CarrierID: eqpt.BOX_ID);
+                               Data: $"BCR miss match happend,start abort command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {read_carrier_id}", 
+                               VehicleID: eqpt.VEHICLE_ID, CarrierID: eqpt.BOX_ID);
                         }
                     }
                     // Task.Run(() => doAbortCommand(eqpt, eqpt.OHTC_CMD, CMDCancelType.CmdCancelIdMismatch));

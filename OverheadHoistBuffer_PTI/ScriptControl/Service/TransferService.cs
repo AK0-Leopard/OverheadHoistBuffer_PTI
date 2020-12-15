@@ -2045,9 +2045,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (status == COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH)
                         {
                             reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
-                            reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
-                            CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
-                            reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
+                            //reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
+                            //CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
+                            //reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
                         }
                     }
                     #endregion
@@ -2300,8 +2300,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
 
                         EmptyShelf();   //每次命令結束，檢查儲位狀態
-                        reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
-                        reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
+                        //reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
+                        //reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
                         break;
                     #endregion
                     #region 異常流程
@@ -2331,7 +2331,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         CassetteData emptyData = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.SOURCE.Trim());
 
-                        reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID);
+                        //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
                         break;
@@ -2668,7 +2668,9 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         reportBLL.ReportCarrierRemoved(cmd.CMD_ID);//PTI需要
                         reportBLL.ReportVehicleDepositCompleted(cmd.CMD_ID);//PTI需要
-                        
+                        reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
+                        CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
+                        reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
 
                         if (isCVPort(dest))
                         {
@@ -2911,6 +2913,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
 
                     HaveAccountHaveReal(dbCstData, ohtBoxData, idReadStatus);
+                    reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
                 }
             }
         }
@@ -5786,7 +5789,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (newData.BOXID.Contains("UNKF") && isUnitType(dbData.Carrier_LOC, UnitType.CRANE)
                       )
                     {
-                        cassette_dataBLL.DeleteCSTbyCstBoxID(dbData.CSTID, dbData.BOXID);
+                        //cassette_dataBLL.DeleteCSTbyCstBoxID(dbData.CSTID, dbData.BOXID);
+                        reportBLL.ReportCarrierRemovedCompleted(dbData.CSTID, dbData.BOXID);
                     }
                     else
                     {
@@ -5921,7 +5925,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (datainfo.BOXID.Contains("UNKF") && isUnitType(portCSTData.Carrier_LOC, UnitType.CRANE))
                     {
-                        cassette_dataBLL.DeleteCSTbyCstBoxID(portCSTData.CSTID, portCSTData.BOXID);
+                        //cassette_dataBLL.DeleteCSTbyCstBoxID(portCSTData.CSTID, portCSTData.BOXID);
+                        reportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID); //PTI需要上報
                     }
                     else
                     {
@@ -5956,7 +5961,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         cassette_dataBLL.insertCassetteData(datainfo);
                         if (datainfo.BOXID.Contains("UNKF"))
                         {
-                            reportBLL.ReportCarrierBoxIDRename(datainfo.CSTID, datainfo.BOXID, datainfo.Carrier_LOC);
+                            //reportBLL.ReportCarrierBoxIDRename(datainfo.CSTID, datainfo.BOXID, datainfo.Carrier_LOC);
+                            //reportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID); //PTI需要上報
+                            reportBLL.ReportCarrierInstallCompleted(datainfo);//PTI需要上報
                         }
                         else
                         {

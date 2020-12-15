@@ -3428,7 +3428,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //var cassette = scApp.CassetteDataBLL.loadCassetteDataByCSTID(cst_id);
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
@@ -3460,7 +3460,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var cassette = scApp.CassetteDataBLL.loadCassetteDataByCstBoxID(cst_id, box_id);
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
@@ -3493,7 +3493,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
                 Vids.VIDITEM_66_DVVAL_HandoffType.Handoff_Type = Handoff_Type;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Removed_Port, Vids);
@@ -3577,7 +3577,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
@@ -3612,7 +3612,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
 
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_60_DVVAL_Dest.DESTINATION_ID = cmd.HOSTDESTINATION;
@@ -3702,7 +3702,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
@@ -3738,7 +3738,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 //if (cst.Stage != 0)
@@ -3994,7 +3994,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 //CassetteData cst = scApp.CassetteDataBLL.loadCassetteDataByBoxID(BOXID);
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.CSTID;
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
                 Vids.VIDITEM_67_DVVAL_IDreadStatus.Carrier_ID_Read_Status = IDreadStatus;
