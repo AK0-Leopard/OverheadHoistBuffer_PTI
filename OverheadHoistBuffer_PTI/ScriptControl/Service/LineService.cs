@@ -62,11 +62,15 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public void enableMaintenanceMode()
         {
+            bool isSuccess = true;
             line.maintenance_Stats = SCAppConstants.LineMaintenanceControlState.MaintenanceControlState.Maintenance_Enable;
+            isSuccess = isSuccess && reportBLL.ReportDeviceLogicalStateOnline();
         }
         public void disnableMaintenanceMode()
         {
+            bool isSuccess = true;
             line.maintenance_Stats = SCAppConstants.LineMaintenanceControlState.MaintenanceControlState.Maintenance_Disable;
+            isSuccess = isSuccess && reportBLL.ReportDeviceLogicalStateMaint();
         }
         private void Line_LineStatusChange(object sender, EventArgs e)
         {

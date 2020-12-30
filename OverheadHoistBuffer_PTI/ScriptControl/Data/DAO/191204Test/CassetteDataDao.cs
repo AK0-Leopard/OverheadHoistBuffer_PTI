@@ -111,7 +111,11 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                            &&  (a.Carrier_LOC.StartsWith("10") ||
                                a.Carrier_LOC.StartsWith("11") ||
                                a.Carrier_LOC.StartsWith("21") ||
-                               a.Carrier_LOC.StartsWith("20"))
+                               a.Carrier_LOC.StartsWith("20") ||
+                               a.Carrier_LOC.StartsWith("FO") ||
+                               a.Carrier_LOC.StartsWith("2P") ||
+                               a.Carrier_LOC.StartsWith("2POHT100OHB")
+                               )
                            select a;
                 return port.ToList();
             }

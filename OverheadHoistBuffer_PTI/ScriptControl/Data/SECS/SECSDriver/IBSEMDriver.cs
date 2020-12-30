@@ -27,6 +27,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendTransferResume(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierTransferring(ACMD_MCS cmd, CassetteData cassette, string ohtName, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedCompleted(string cst_id, string box_id, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendDeviceLogicalStateMaint( List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierIdentified(string cst_id, string box_id, App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierInstallCompleted(CassetteData cst_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedFromPort(CassetteData cst, string Handoff_Type, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierResumed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -494,6 +497,21 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
 
         protected override void S2F49ReceiveEnhancedRemoteCommandExtension(object sender, SECSEventArgs e)
         {
+        }
+
+        public override bool S6F11SendDeviceLogicalStateMaint(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+
+        public override bool S6F11SendCarrierIdentified(string cst_id, string box_id,App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+
+        public override bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
         }
     }
 }

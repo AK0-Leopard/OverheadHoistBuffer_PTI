@@ -118,16 +118,25 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 public class VIDITEM_77_SV : SXFY
                 {
                     [SecsElement(Index = 1)]
+                    public VIDITEM_777_SV TransferInfo_;
+                    public VIDITEM_77_SV()
+                    {
+                        TransferInfo_ = new VIDITEM_777_SV();
+                    }
+                }
+                [Serializable]
+                public class VIDITEM_777_SV : SXFY
+                {
+                    [SecsElement(Index = 1)]
                     public VIDITEM_720_SV TransferInfo;
                     [SecsElement(Index = 2)]
                     public VIDITEM_56_DVVAL CARRIER_LOC_OBJ;
-                    public VIDITEM_77_SV()
+                    public VIDITEM_777_SV()
                     {
                         TransferInfo = new VIDITEM_720_SV();
                         CARRIER_LOC_OBJ = new VIDITEM_56_DVVAL();
                     }
                 }
-
                 [Serializable]
                 public class VIDITEM_107_SV : SXFY
                 {
@@ -194,27 +203,20 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                     [SecsElement(Index = 1, ListSpreadOut = true)]
                     public VIDITEM_54_DVVAL CARRIER_ID_OBJ;
                     [SecsElement(Index = 2, ListSpreadOut = true)]
-                    public VIDITEM_56_DVVAL CARRIER_LOC_OBJ;
+                    public VIDITEM_70_DVVAL VehicleID;
                     [SecsElement(Index = 3, ListSpreadOut = true)]
-                    public VIDITEM_9999_DVVAL CARRIER_ZONE_NAME_OBJ;
+                    public VIDITEM_56_DVVAL CARRIER_LOC;
                     [SecsElement(Index = 4, ListSpreadOut = true)]
                     public VIDITEM_12_DVVAL INSTALL_TIME_OBJ;
-                    [SecsElement(Index = 5, ListSpreadOut = true)]
-                    public VIDITEM_203_DVVAL CARRIER_STATE;
-                    [SecsElement(Index = 6, ListSpreadOut = true)]
-                    public VIDITEM_179_DVVAL BOX_ID_OBJ;
 
                     public VIDITEM_10_SV()
                     {
                         CARRIER_ID_OBJ = new VIDITEM_54_DVVAL();
-                        CARRIER_LOC_OBJ = new VIDITEM_56_DVVAL();
-                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_9999_DVVAL();
+                        VehicleID = new VIDITEM_70_DVVAL();
+                        CARRIER_LOC = new VIDITEM_56_DVVAL();
                         INSTALL_TIME_OBJ = new VIDITEM_12_DVVAL();
-                        CARRIER_STATE = new VIDITEM_203_DVVAL();
-                        BOX_ID_OBJ = new VIDITEM_179_DVVAL();
                     }
                 }
-
                 [Serializable]
                 public class VIDITEM_59_SV : SXFY
                 {

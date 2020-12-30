@@ -135,7 +135,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     cassetteDatas = cassetteDatas.Where(cst => cst.Carrier_LOC.StartsWith("10") ||
                                                                cst.Carrier_LOC.StartsWith("11") ||
                                                                cst.Carrier_LOC.StartsWith("21") ||
-                                                               cst.Carrier_LOC.StartsWith("20")).
+                                                               cst.Carrier_LOC.StartsWith("20") ||
+                                                               cst.Carrier_LOC.StartsWith("2POHT100OHB")).
                                                                ToList();
                     List<string> current_cst_at_shelf_id = cassetteDatas.
                         Select(cst => SCUtility.Trim(cst.Carrier_LOC, true)).
@@ -408,7 +409,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     cassetteDatas = cassetteDatas.Where(cst => cst.Carrier_LOC.StartsWith("10") ||
                                                                cst.Carrier_LOC.StartsWith("11") ||
                                                                cst.Carrier_LOC.StartsWith("21") ||
-                                                               cst.Carrier_LOC.StartsWith("20")).
+                                                               cst.Carrier_LOC.StartsWith("20") ||
+                                                               cst.Carrier_LOC.StartsWith("2POHT100OHB")).
                                                                ToList();
                     //取第一筆CST
                     CassetteData chosenCst = cassetteDatas[0];

@@ -44,6 +44,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using static com.mirle.ibg3k0.sc.ACMD_MCS;
 using static com.mirle.ibg3k0.sc.ALINE;
+using static com.mirle.ibg3k0.sc.App.DebugParameter;
 using static com.mirle.ibg3k0.sc.AVEHICLE;
 
 namespace com.mirle.ibg3k0.sc.Service
@@ -654,7 +655,8 @@ namespace com.mirle.ibg3k0.sc.Service
             if (vehicle.HAS_CST == 1)
             {
                 CassetteData nowOHT_CSTdata = new CassetteData();
-                nowOHT_CSTdata.CSTID = "ERROR1";
+                //nowOHT_CSTdata.CSTID = "ERROR1";
+                nowOHT_CSTdata.CSTID = "";
                 nowOHT_CSTdata.BOXID = vehicle.BOX_ID.Trim();
                 nowOHT_CSTdata.Carrier_LOC = craneName;
 
@@ -2146,6 +2148,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOADING: //入料中
                         reportBLL.ReportTransferring(cmd.CMD_ID); // PTI需要上報
+                        reportBLL.ReportVehicleAcquireStarted(cmd.CMD_ID.Trim());
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE: //入料完成
 
@@ -2239,7 +2242,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 string dest = cmd.HOSTDESTINATION.Trim();
 
                                 CassetteData destBoxData = new CassetteData();
-                                destBoxData.CSTID = CarrierReadFail(dest);
+                                //destBoxData.CSTID = CarrierReadFail(dest);
+                                destBoxData.CSTID = "";
                                 destBoxData.BOXID = CarrierReadFail(dest);
                                 destBoxData.Carrier_LOC = dest;
 
@@ -2279,7 +2283,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (dbCstData != null)
                             {
                                 CassetteData ohtBoxData = new CassetteData();
-                                ohtBoxData.CSTID = "ERROR1";
+                                //ohtBoxData.CSTID = "ERROR1";
+                                ohtBoxData.CSTID = "";
                                 ohtBoxData.BOXID = cmd.CARRIER_ID_ON_CRANE.Trim();
                                 ohtBoxData.Carrier_LOC = ohtName.Trim();
                                 ohtBoxData = IDRead(ohtBoxData);
@@ -2313,7 +2318,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
                         reportBLL.ReportTransferCompleted(cmd, null, ResultCode.DoubleStorage); // PTI需要上報
 
-                        string cstID = CarrierDouble(ohtCmd.DESTINATION.Trim());
+                        //string cstID = CarrierDouble(ohtCmd.DESTINATION.Trim());
+                        string cstID = "";
                         string boxID = CarrierDouble(ohtCmd.DESTINATION.Trim());
                         string loc = ohtCmd.DESTINATION;
 
@@ -2392,9 +2398,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (string.IsNullOrWhiteSpace(cmd.CARRIER_ID_ON_CRANE) == false)  //SCAN 流程，車子給空值表示無料
                         {
                             ScanCstData = new CassetteData();
-                            ScanCstData.CSTID = "ERROR1";
+                            ScanCstData.CSTID = "";
                             ScanCstData.BOXID = cmd.CARRIER_ID_ON_CRANE.Trim();
-                            ScanCstData.Carrier_LOC = cmd.HOSTDESTINATION.Trim(); ;
+                            ScanCstData.Carrier_LOC = cmd.HOSTDESTINATION.Trim(); 
                             ScanCstData = IDRead(ScanCstData);
                         }
 
@@ -2414,11 +2420,21 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             HaveAccountNotReal(dbCstData);
                         }
+                        if(isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.SHELF))
+                        {
+                            if (!ScanCstData.BOXID.Contains("UNK"))
+                            {
+                                reportBLL.ReportCarrierIdentified(ScanCstData.CSTID, ScanCstData.BOXID, ScanReportType.successful);
+                            }
+                            else
+                            {
+                                reportBLL.ReportCarrierIdentified(ScanCstData.CSTID, ScanCstData.BOXID, ScanReportType.failed);
+                            }
+                        }
                         break;
                     case COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH: //命令完成
 
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
-
                         break;
                     case COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE: //二重格異常
 
@@ -2426,11 +2442,12 @@ namespace com.mirle.ibg3k0.sc.Service
                     case COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL: //空取異常
                         CassetteData emptyCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
 
+                        reportBLL.ReportCarrierIdentified(emptyCstData.CSTID, emptyCstData.BOXID, ScanReportType.no_carrier);
+
                         if (emptyCstData != null)
                         {
                             HaveAccountNotReal(emptyCstData);
                         }
-
                         break;
                     case COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT:
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
@@ -2475,7 +2492,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            loadCstID = CarrierReadFail(ohtName);
+                            //loadCstID = CarrierReadFail(ohtName);
+                            loadCstID = "";
                             loadBoxID = ohtCmdData.BOX_ID.Trim();
 
                             if (ohtCmdData.BOX_ID.Trim().Contains("ERROR1") || string.IsNullOrWhiteSpace(ohtCmdData.BOX_ID.Trim()))
@@ -2569,8 +2587,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (isUnitType(loadCstData.Carrier_LOC, UnitType.CRANE) == false)
                             {
                                 loadCstData.Carrier_LOC = ohtName;
-                                //reportBLL.ReportCarrierTransferring(cmd, loadCstData, ohtName);
-                                reportBLL.ReportVehicleAcquireStarted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
+                                //reportBLL.ReportCarrierTransferring(cmd, loadCstData, ohtName);// PTI修改
                                 reportBLL.ReportCarrierInstalled(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
                                 reportBLL.ReportVehicleAcquireCompleted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
                                 reportBLL.ReportVehicleDeparted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
@@ -2708,7 +2725,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 CassetteData addCassetteData = unLoadCstData.Clone();
                                 reportBLL.ReportCarrierRemovedCompleted(unLoadCstData.CSTID, unLoadCstData.BOXID);
 
-                                addCassetteData.CSTID = CarrierReadFailAtTargetAGV(addCassetteData.Carrier_LOC);
+                                //addCassetteData.CSTID = CarrierReadFailAtTargetAGV(addCassetteData.Carrier_LOC);
+                                addCassetteData.CSTID = "";
                                 OHBC_InsertCassette(addCassetteData.CSTID, addCassetteData.BOXID, addCassetteData.Carrier_LOC, addCassetteData.Carrier_LOC + " OHT_UnLoadCompleted CST、BOXID讀不到");
                             }
                             QueryLotID(unLoadCstData);
@@ -2824,7 +2842,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
 
                 CassetteData ohtBoxData = new CassetteData();
-                ohtBoxData.CSTID = "ERROR1";
+                ohtBoxData.CSTID = "";
                 ohtBoxData.BOXID = readBOXID;
                 ohtBoxData.Carrier_LOC = ohtName.Trim();
                 ohtBoxData = IDRead(ohtBoxData);
@@ -2848,7 +2866,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
                             if (timeSpan.TotalMinutes < ohtID_MismatchTimeOut && mismatchData.CmdSourcePort == cmd.HOSTSOURCE.Trim())
                             {
-                                ohtBoxData.CSTID = CarrierReadFailAtTargetAGV(ohtBoxData.Carrier_LOC);
+                                //ohtBoxData.CSTID = CarrierReadFailAtTargetAGV(ohtBoxData.Carrier_LOC);
+                                ohtBoxData.CSTID = "";
                             }
 
                             OHT_MismatchData[ohtBoxData.BOXID].TriggerTime = DateTime.Now;
@@ -2892,7 +2911,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         if (dbCstData.BOXID.Contains("UNKF"))
                         {
-                            ohtBoxData.CSTID = dbCstData.CSTID;
+                            //ohtBoxData.CSTID = dbCstData.CSTID;
+                            ohtBoxData.CSTID = "";
                         }
 
                         //resultCode = ResultCode.BoxID_Mismatch;
@@ -2909,7 +2929,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (idReadStatus == IDreadStatus.failed)
                     {
-                        ohtBoxData.CSTID = dbCstData.CSTID;
+                        ohtBoxData.CSTID = "";
                     }
 
                     HaveAccountHaveReal(dbCstData, ohtBoxData, idReadStatus);
@@ -2970,7 +2990,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 CassetteData cstData = new CassetteData();
                 //datainfo.CSTID = function.CassetteID.Trim();        //填CSTID
-                cstData.CSTID = SCUtility.Trim(plcInfo.CassetteID, true);        //填CSTID
+                //cstData.CSTID = SCUtility.Trim(plcInfo.CassetteID, true);        //填CSTID
+                cstData.CSTID = "";       //填CSTID
                 cstData.BOXID = plcInfo.BoxID.Trim();        //填BOXID
                 cstData.Carrier_LOC = plcInfo.EQ_ID.Trim();  //填PortID
                 cstData.CSTState = E_CSTState.Installed;
@@ -3076,12 +3097,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (string.IsNullOrWhiteSpace(cstData.CSTID))
                     {
-                        cstData.CSTID = "ERROR1";
+                        cstData.CSTID = "";
                     }
                 }
                 else
                 {
-                    cstData.CSTID = "ERROR1";
+                    cstData.CSTID = "";
                 }
 
                 cstData = IDRead(cstData);
@@ -3141,7 +3162,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 );
 
                 CassetteData datainfo = new CassetteData();
-                datainfo.CSTID = plcInfo.CassetteID.Trim();        //填CSTID
+                //datainfo.CSTID = plcInfo.CassetteID.Trim();        //填CSTID
+                datainfo.CSTID = "";        //填CSTID
                 datainfo.BOXID = plcInfo.BoxID.Trim();        //填BOXID
                 datainfo.Carrier_LOC = plcInfo.EQ_ID.Trim();  //填Port 名稱
 
@@ -3156,7 +3178,8 @@ namespace com.mirle.ibg3k0.sc.Service
             if (isUnitType(plcInfo.EQ_ID.Trim(), UnitType.AGV))
             {
                 CassetteData datainfo = new CassetteData();
-                datainfo.CSTID = plcInfo.CassetteID.Trim();        //填CSTID
+                //datainfo.CSTID = plcInfo.CassetteID.Trim();        //填CSTID
+                datainfo.CSTID = "";        //填CSTID
                 datainfo.BOXID = plcInfo.BoxID.Trim();        //填BOXID
                 datainfo.Carrier_LOC = plcInfo.EQ_ID.Trim();  //填Port 名稱
 
@@ -5817,8 +5840,15 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "CarrierAbnormal: 有帳無料");
                 CassetteData cstData = dbData.Clone();
-                reportBLL.ReportCarrierRemovedCompleted(dbData.CSTID, dbData.BOXID);
 
+                if (!shelfDefBLL.isExist(cstData.Carrier_LOC))
+                {
+                    reportBLL.ReportCarrierRemovedCompleted(dbData.CSTID, dbData.BOXID);
+                }
+                else
+                {
+                    scApp.CassetteDataBLL.DeleteCSTbyCstBoxID(cstData.CSTID, cstData.BOXID);
+                }
                 if (shelfDefBLL.isExist(cstData.Carrier_LOC))
                 {
                     reportBLL.ReportZoneCapacityChange(cstData.Carrier_LOC, null);
@@ -5838,14 +5868,16 @@ namespace com.mirle.ibg3k0.sc.Service
             if (duBoxID != null && duBoxID.Carrier_LOC != bcrData.Carrier_LOC)    //BOXID 重複
             {
                 newCstData = duBoxID.Clone();
-                newCstData.CSTID = CarrierReadFail(newCstData.Carrier_LOC); //20/07/16 美微說 CSTID 要變 UNKF
+                //newCstData.CSTID = CarrierReadFail(newCstData.Carrier_LOC); //20/07/16 美微說 CSTID 要變 UNKF
+                newCstData.CSTID = ""; //20/07/16 美微說 CSTID 要變 UNKF
                 newCstData.BOXID = CarrierReadduplicate(duBoxID.BOXID);
 
                 if (duCarrID != null)   //同個BOX，CSTID 重複
                 {
                     if (duCarrID.Carrier_LOC == duBoxID.Carrier_LOC)
                     {
-                        newCstData.CSTID = CarrierReadduplicate(bcrData.CSTID);
+                        //newCstData.CSTID = CarrierReadduplicate(bcrData.CSTID);
+                        newCstData.CSTID = "";
                     }
 
                     reportBLL.ReportCarrierRemovedCompleted(duBoxID.CSTID, duBoxID.BOXID);
@@ -5860,7 +5892,8 @@ namespace com.mirle.ibg3k0.sc.Service
             if (duCarrID != null && duCarrID.Carrier_LOC != bcrData.Carrier_LOC && string.IsNullOrWhiteSpace(bcrData.CSTID) == false)    //CSTID 重複
             {
                 newCstData = duCarrID.Clone();
-                newCstData.CSTID = CarrierReadduplicate(bcrData.CSTID);
+                //newCstData.CSTID = CarrierReadduplicate(bcrData.CSTID);
+                newCstData.CSTID = "";
                 newCstData.BOXID = CarrierReadFail(newCstData.Carrier_LOC); //20/07/16 美微說 CSTID 要變 UNKF
 
                 reportBLL.ReportCarrierRemovedCompleted(duCarrID.CSTID, duCarrID.BOXID);
@@ -5904,7 +5937,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 CassetteData datainfo = new CassetteData();
 
                 datainfo.StockerID = "1";
-                datainfo.CSTID = Redis_GetCstID(cstid, boxid);
+                //datainfo.CSTID = Redis_GetCstID(cstid, boxid);
+                datainfo.CSTID ="";
                 datainfo.BOXID = boxid;
                 datainfo.Carrier_LOC = loc;
                 datainfo.LotID = "";
@@ -5949,7 +5983,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         if (cassette_dataBLL.insertCassetteData(datainfo))
                         {
-                            reportBLL.ReportCarrierInstallCompleted(datainfo);
+                            //reportBLL.ReportCarrierInstallCompleted(datainfo); //這邊要確保不能在非vehicle 上建帳 PTI
                             reportBLL.ReportZoneCapacityChange(portName, null);
 
                             QueryLotID(datainfo);
@@ -7458,15 +7492,19 @@ namespace com.mirle.ibg3k0.sc.Service
                 ShelfDef shelf = shelfDefBLL.loadShelfDataByID(shelfID);
                 shelfDefBLL.UpdateEnableByID(shelfID, enable);
                 PortDef shelfport = portDefBLL.GetPortDataByID(shelfID);
-                if(enable == true)
+                if (enable == true)
                 {
                     portDefBLL.UpdataPortService(shelfID, E_PORT_STATUS.InService);
+                    reportBLL.ReportPortInService(shelfID);
+                    reportBLL.ReportUnitAlarmCleared(shelfID, "100999", "Disable shelf");
                 }
                 else
                 {
                     portDefBLL.UpdataPortService(shelfID, E_PORT_STATUS.OutOfService);
+                    reportBLL.ReportPortOutOfService(shelfID);
+                    reportBLL.ReportUnitAlarmSet(shelfID, "100999", "Disable shelf");
                 }
-                
+
                 ZoneDef zone = zoneBLL.loadZoneDataByID(shelf.ZoneID);
                 reportBLL.ReportShelfStatusChange(zone);
                 return "OK";

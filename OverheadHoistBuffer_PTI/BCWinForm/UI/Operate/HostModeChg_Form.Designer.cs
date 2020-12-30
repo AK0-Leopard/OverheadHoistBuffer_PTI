@@ -58,6 +58,7 @@
             this.butMaintenanceDisable = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.txtMaintenanceMode = new System.Windows.Forms.Label();
+            this.btn_OnlineLocal = new System.Windows.Forms.Button();
             this.skinGroupBox3.SuspendLayout();
             this.skinGroupBox2.SuspendLayout();
             this.skinGroupBox1.SuspendLayout();
@@ -167,6 +168,7 @@
             // 
             this.skinGroupBox2.BackColor = System.Drawing.Color.Transparent;
             this.skinGroupBox2.BorderColor = System.Drawing.Color.Black;
+            this.skinGroupBox2.Controls.Add(this.btn_OnlineLocal);
             this.skinGroupBox2.Controls.Add(this.label4);
             this.skinGroupBox2.Controls.Add(this.label6);
             this.skinGroupBox2.Controls.Add(this.butOffline);
@@ -464,6 +466,20 @@
             this.txtMaintenanceMode.Text = "Enable";
             this.txtMaintenanceMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btn_OnlineLocal
+            // 
+            this.btn_OnlineLocal.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btn_OnlineLocal.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold);
+            this.btn_OnlineLocal.ForeColor = System.Drawing.Color.Black;
+            this.btn_OnlineLocal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.btn_OnlineLocal.Location = new System.Drawing.Point(51, 178);
+            this.btn_OnlineLocal.Name = "btn_OnlineLocal";
+            this.btn_OnlineLocal.Size = new System.Drawing.Size(168, 35);
+            this.btn_OnlineLocal.TabIndex = 80;
+            this.btn_OnlineLocal.Text = "Online Local Mode";
+            this.btn_OnlineLocal.UseVisualStyleBackColor = true;
+            this.btn_OnlineLocal.Click += new System.EventHandler(this.btn_OnlineLocal_Click);
+            // 
             // HostModeChg_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -516,5 +532,6 @@
         private System.Windows.Forms.Button butMaintenanceDisable;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label txtMaintenanceMode;
+        private System.Windows.Forms.Button btn_OnlineLocal;
     }
 }

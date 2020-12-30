@@ -340,7 +340,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public const string CEID_Carrier_Removed_Port = "153";
         //public const string CEID_Carrier_Resumed = "154";
         public const string CEID_Carrier_Stored = "155";
-        public const string CEID_Carrier_Stored_Alt = "156";
+        public const string CEID_Carrier_Stored_Alt = "99999";
+        public const string CEID_Carrier_Identified = "156";
         public const string CEID_Shelf_Status_Change = "157";
         public const string CEID_Carrier_Wait_In = "158";
         public const string CEID_Carrier_Wait_Out = "161";
@@ -382,7 +383,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 
         //public const string CEID_LaneInService = "570";
         //public const string CEID_LaneOutOfService = "571";
-
+        public const string CEID_Device_Logical_Maint = "801";
+        public const string CEID_Device_Logical_Online = "802";
 
         //CEID Remark End
         #region CEID Array
@@ -553,7 +555,11 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
 
              CEID_Port_Type_Input,
              CEID_Port_Type_Output,
-             CEID_Port_Type_Changing
+             CEID_Port_Type_Changing,
+
+             CEID_Device_Logical_Maint,
+             CEID_Device_Logical_Online,
+             CEID_Carrier_Identified
         };
         public static Dictionary<string, string> CEID_Dictionary = new Dictionary<string, string>()
         {
@@ -626,6 +632,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             {CEID_Port_Type_Input,"Port_Type_Input"},
             {CEID_Port_Type_Output,"Port_Type_Output"},
             {CEID_Port_Type_Changing,"Port_Type_Changing"},
+
+            {CEID_Device_Logical_Maint,"Device_Logical_Maint"},
+            {CEID_Device_Logical_Online,"Device_Logical_Online"},
+            {CEID_Carrier_Identified,"Carrier_Identified"}
         };
         #endregion CEID Array
         #endregion CEID
@@ -1002,6 +1012,24 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             lock (CEIDAndRPTID_lock)
             {
                 return DicCEIDAndRPTID[ceid];
+            }
+        }
+        public static bool CheckDicCEIDAndRPTID(string ceid)
+        {
+            try
+            {
+                lock (CEIDAndRPTID_lock)
+                {
+                    if (DicCEIDAndRPTID[ceid] != null)
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
         public static List<ARPTID> getDicRPTIDAndVID(string rptID)

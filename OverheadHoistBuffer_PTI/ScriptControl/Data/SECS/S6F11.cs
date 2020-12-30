@@ -320,11 +320,10 @@ namespace com.mirle.ibg3k0.sc.Data.SECS
                 public class VIDITEM_77 : SXFY
                 {
                     [SecsElement(Index = 1, ListSpreadOut = true)]
-                    public TRANSFERCOMPLETEINFO[] TRANCOMPLETEINFO;
+                    public TRANSFERCOMPLETEINFO TRANCOMPLETEINFO;
                     public VIDITEM_77()
                     {
-                        TRANCOMPLETEINFO = new TRANSFERCOMPLETEINFO[1];
-                        TRANCOMPLETEINFO[0] = new TRANSFERCOMPLETEINFO();
+                        TRANCOMPLETEINFO = new TRANSFERCOMPLETEINFO();
                     }
                     [Serializable]
                     public class TRANSFERCOMPLETEINFO : SXFY

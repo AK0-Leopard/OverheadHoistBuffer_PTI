@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 using com.mirle.ibg3k0.bcf.Common;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Data.DAO;
-using com.mirle.ibg3k0.sc.Data.SECS;
+using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using com.mirle.ibg3k0.sc.Data.VO;
 using NLog;
 using com.mirle.ibg3k0.sc.Data;

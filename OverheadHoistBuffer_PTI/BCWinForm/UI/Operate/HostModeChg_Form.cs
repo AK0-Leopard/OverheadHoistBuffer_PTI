@@ -211,5 +211,22 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             scApp.LineService.disnableMaintenanceMode();
         }
+
+        private void btn_OnlineLocal_Click(object sender, EventArgs e)
+        {
+            if (!scApp.LineService.canOnlineWithHost())
+            {
+                MessageBox.Show("Has vh not ready");
+            }
+            else if (scApp.getEQObjCacheManager().getLine().Host_Control_State == HostControlState.On_Line_Local)
+            {
+                MessageBox.Show("On line ready");
+            }
+            else
+            {
+                Task.Run(() => scApp.LineService.OnlineLocalWithHostOp());
+
+            }
+        }
     }
 }

@@ -1135,7 +1135,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool doCancelOrAbortCommandByMCSCmdID(string cancel_abort_mcs_cmd_id, CMDCancelType actType)
         {
             ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(cancel_abort_mcs_cmd_id);
-
+            CassetteData cmd_cst = scApp.CassetteDataBLL.loadCassetteDataByBoxID(mcs_cmd.BOX_ID);
             bool is_success = true;
 
             switch (actType)
@@ -1146,6 +1146,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(cancel_abort_mcs_cmd_id, E_TRAN_STATUS.TransferCompleted);
                         scApp.ReportBLL.ReportTransferCancelInitial(cancel_abort_mcs_cmd_id);
                         scApp.ReportBLL.ReportTransferCancelCompleted(cancel_abort_mcs_cmd_id);
+                        scApp.ReportBLL.ReportTransferCompleted(mcs_cmd, cmd_cst,"0");
                     }
                     else
                     {
@@ -2673,14 +2674,16 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            cancelType = CMDCancelType.CmdNone;
+                            cancelType = CMDCancelType.CmdCancel;
                         }
                         if (!SCUtility.isEmpty(eqpt.MCS_CMD))
                         {
                             ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(eqpt.MCS_CMD);
                             if (mcs_cmd != null)
                             {
-                                new_carrier_id = SCUtility.Trim(mcs_cmd.CARRIER_ID);
+                                //new_carrier_id = SCUtility.Trim(mcs_cmd.CARRIER_ID);
+                                new_carrier_id = "";
+                                is_need_report_install = true;
                             }
                             else
                             {
@@ -2716,6 +2719,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
                         //20200130 Hsinyu Chang
                         scApp.CMDBLL.updateCMD_MCS_BCROnCrane(eqpt.MCS_CMD, read_carrier_id);
+                        CassetteData dbCstData = scApp.CassetteDataBLL.loadCassetteDataByBoxID(read_carrier_id.Trim());
+                        scApp.ReportBLL.ReportCarrierIDRead(dbCstData, "BcrNormal");
                     }
                     break;
             }
@@ -3456,7 +3461,11 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (cmd.HOSTDESTINATION.StartsWith("10") ||
                             cmd.HOSTDESTINATION.StartsWith("11") ||
                             cmd.HOSTDESTINATION.StartsWith("20") ||
-                            cmd.HOSTDESTINATION.StartsWith("21"))
+                            cmd.HOSTDESTINATION.StartsWith("21") ||
+                            cmd.HOSTDESTINATION.StartsWith("2P") || 
+                            cmd.HOSTDESTINATION.StartsWith("FO") ||
+                            cmd.HOSTDESTINATION.StartsWith("2POHT100OHB")
+                            )
                         {
                             scApp.TransferService.OHT_TransferStatus(ohtcCmdID,
                                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE);
@@ -4469,6 +4478,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH);
+                
             }
 
             using (TransactionScope tx = SCUtility.getTransactionScope())

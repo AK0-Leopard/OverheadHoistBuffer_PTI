@@ -121,8 +121,6 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             [SecsElement(Index = 1)]
             public REPITEM_ASCII CARRIERID;
             [SecsElement(Index = 2)]
-            public REPITEM_ASCII BOXID;
-            [SecsElement(Index = 3)]
             public REPITEM_ASCII CARRIERLOC;
         }
     }

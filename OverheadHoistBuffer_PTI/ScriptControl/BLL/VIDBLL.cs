@@ -364,10 +364,10 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             vid_collection.VID_72_VehicleStatus.VEHICLE_STATE = vid_info.VEHICLE_STATE.ToString();
 
-            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO[0].TRANINFO.CARRIER_ID = vid_info.CARRIER_ID;
-            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO[0].TRANINFO.SOURCE_PORT = vid_info.SOURCEPORT;
-            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO[0].TRANINFO.DESTINATION_PORT = vid_info.DESTPORT;
-            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO[0].CARRIER_LOC = vid_info.CARRIER_LOC;
+            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO.TRANINFO.CARRIER_ID = vid_info.CARRIER_ID;
+            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO.TRANINFO.SOURCE_PORT = vid_info.SOURCEPORT;
+            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO.TRANINFO.DESTINATION_PORT = vid_info.DESTPORT;
+            vid_collection.VID_77_TranCmpInfo.TRANCOMPLETEINFO.CARRIER_LOC = vid_info.CARRIER_LOC;
 
             vid_collection.VID_80_CommmandType.COMMAND_TYPE = vid_info.COMMAND_TYPE;
             vid_collection.VID_81_AlarmID.ALARM_ID = vid_info.ALARM_ID;

@@ -30,6 +30,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
+using static com.mirle.ibg3k0.sc.App.DebugParameter;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -505,6 +506,25 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompleted(cstid, boxid, reportQueues);
+            return isSuccsess;
+        }
+        public bool ReportDeviceLogicalStateMaint(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendDeviceLogicalStateMaint(reportQueues);
+            return isSuccsess;
+        }
+        public bool ReportDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendDeviceLogicalStateOnline(reportQueues);
+            return isSuccsess;
+        }
+
+        public bool ReportCarrierIdentified(string cstid, string boxid, ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierIdentified(cstid, boxid, scanReportType, reportQueues);
             return isSuccsess;
         }
         public bool ReportCarrierRemovedFromPort(CassetteData cst, string Handoff_Type, List<AMCSREPORTQUEUE> reportQueues = null)

@@ -2682,7 +2682,7 @@
             <PropertyRef Name="ShelfID" />
           </Key>
           <Property Name="StockerID" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="ShelfID" Type="String" Nullable="false" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="ShelfID" Type="String" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="Stage" Type="Decimal" Nullable="false" Precision="2" Scale="0" />
           <Property Name="Bank_X" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="Bay_Y" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />

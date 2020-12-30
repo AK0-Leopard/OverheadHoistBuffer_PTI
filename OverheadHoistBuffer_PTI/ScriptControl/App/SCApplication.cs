@@ -2336,6 +2336,13 @@ namespace com.mirle.ibg3k0.sc.App
             CV,
             NTB
         }
-
+        public enum ScanReportType
+        {
+            successful = 0,
+            failed = 1,
+            duplicate = 2,
+            mismatch = 3,
+            no_carrier = 4,
+        }
     }
 }
