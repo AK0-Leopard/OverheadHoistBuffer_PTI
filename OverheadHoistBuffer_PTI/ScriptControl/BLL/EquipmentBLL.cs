@@ -210,7 +210,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return eqpt as MaintainSpace;
             }
 
-
+            public List<string> GetAllMaintainDeviceSegments()
+            {
+                var maintain_device_segment_ids = eqObjCacheManager.getAllEquipment().
+                            Where(eq => eq is IMaintainDevice).
+                            Select(maintain_device => (maintain_device as IMaintainDevice).DeviceSegment).
+                            ToList();
+                return maintain_device_segment_ids;
+            }
 
             public List<AEQPT> loadOHCVDevices()
             {

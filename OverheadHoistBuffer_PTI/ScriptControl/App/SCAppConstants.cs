@@ -408,6 +408,7 @@ namespace com.mirle.ibg3k0.sc.App
             public const string VERSION_NAME_ASE_LOOP = "ASE_LOOP";
             public const string VERSION_NAME_ASE_LINE3 = "ASE_LINE3";
             public const string VERSION_NAME_ASE_TEST = "ASE_TEST";
+            public const string VERSION_NAME_Taichung6F_PTI = "Taichung6F_PTI";
         }
 
         #endregion current work version

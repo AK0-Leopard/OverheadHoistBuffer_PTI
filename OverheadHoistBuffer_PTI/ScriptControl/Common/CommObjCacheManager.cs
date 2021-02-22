@@ -42,6 +42,8 @@ namespace com.mirle.ibg3k0.sc.Common
         private List<ASEGMENT> Segments;
         private List<PortDef> PortDefs;
         private List<ReserveEnhanceInfo> ReserveEnhanceInfos;
+        //BlockMaster
+        private List<ABLOCKZONEMASTER> BlockZoneMasters;
         private CommonInfo CommonInfo;
 
         private CommObjCacheManager() { }
@@ -136,6 +138,11 @@ namespace com.mirle.ibg3k0.sc.Common
         private void setValueToPropety<T>(ref T sourceObj, ref T destinationObj)
         {
             BCFUtility.setValueToPropety(ref sourceObj, ref destinationObj);
+        }
+        //Block Master Zone
+        public List<ABLOCKZONEMASTER> getBlockMasterZone()
+        {
+            return BlockZoneMasters;
         }
 
         #region 將最新物件資料，放置入Cache的方法

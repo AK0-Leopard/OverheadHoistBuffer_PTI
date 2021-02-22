@@ -784,6 +784,93 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
+        public bool tryParkRouteHasThroughParkZone(string cur_sec_id, string cur_adr_id, E_VH_TYPE e_VH_TYPE, APARKZONEDETAIL bestParkDetail, out APARKZONEDETAIL throughParkZoneOfNearest)
+        {
+            throughParkZoneOfNearest = null;
+            bool isThroughParkZone = false;
+            try
+            {
+                string[] AllParkAdrThroughSection = scApp.RouteGuide.DownstreamSearchSection_FromSecToAdr
+                        (cur_sec_id, bestParkDetail.ADR_ID, 1);
+                string[] FitParkAdrThroughSection = scApp.CMDBLL.findBestFitRoute(cur_sec_id, AllParkAdrThroughSection, bestParkDetail.ADR_ID, false);
+                List<ASECTION> FitParkAdrThroughSectionObj = scApp.MapBLL.loadSectionBySecIDs(FitParkAdrThroughSection.ToList());
+                List<string> ThroughSectionFromAdr = FitParkAdrThroughSectionObj.Select(sec => sec.FROM_ADR_ID).ToList();
+                List<string> ThroughSectionToAdr = FitParkAdrThroughSectionObj.Select(sec => sec.TO_ADR_ID).ToList();
+                List<string> ThroughSectionFromToAdr = new List<string>();
+                ThroughSectionFromToAdr.AddRange(ThroughSectionFromAdr);
+                ThroughSectionFromToAdr.AddRange(ThroughSectionToAdr);
+                List<APARKZONEMASTER> ThroughParkZones = null;
+                string current_park_type = scApp.getEQObjCacheManager().getLine().Currnet_Park_Type;
+                //DBConnection_EF con = DBConnection_EF.GetContext();
+                //using (DBConnection_EF con = new DBConnection_EF())
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    //APARKZONEMASTER vhParkMaster = parkZoneMasterDao.getByParkingAdr(con, cur_adr_id);
+                    APARKZONEMASTER vhParkMaster = parkZoneMasterDao.getByParkingAdr(con, cur_adr_id, current_park_type);
+                    ThroughParkZones = parkZoneMasterDao.laodParkZoneMasterByAdr(con, ThroughSectionFromToAdr);
+                    List<KeyValuePair<List<APARKZONEDETAIL>, double>> lstParkDetailAndDis = new List<KeyValuePair<List<APARKZONEDETAIL>, double>>();
+                    foreach (APARKZONEMASTER parkZoneMaster in ThroughParkZones)
+                    {
+                        if (vhParkMaster != null &&
+                            SCUtility.isMatche(vhParkMaster.PARK_ZONE_ID, parkZoneMaster.PARK_ZONE_ID))
+                        {
+                            continue;
+                        }
+                        if (SCUtility.isMatche(bestParkDetail.PARK_ZONE_ID, parkZoneMaster.PARK_ZONE_ID))
+                        {
+                            continue;
+                        }
+                        if (parkZoneMaster.VEHICLE_TYPE != e_VH_TYPE)
+                        {
+                            continue;
+                        }
+                        //if (!SCUtility.isMatche(scApp.getEQObjCacheManager().getLine().Currnet_Park_Type, parkZoneMaster.PARK_TYPE_ID))
+                        if (!SCUtility.isMatche(current_park_type, parkZoneMaster.PARK_TYPE_ID))
+                        {
+                            continue;
+                        }
+
+                        List<APARKZONEDETAIL> lastDetail = parkZoneDetailDao.
+                              loadByParkZoneIDAndVhOnAdr(con, parkZoneMaster.PARK_ZONE_ID);
+                        if (lastDetail.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        string[] ReutrnFromAdr2ToAdr = scApp.RouteGuide.DownstreamSearchSection_FromSecToAdr
+                            (cur_sec_id, parkZoneMaster.ENTRY_ADR_ID, 1);
+                        string[] minRoute_From2To = ReutrnFromAdr2ToAdr[0].Split('=');
+
+                        double distance = 0;
+                        if (double.TryParse(minRoute_From2To[1], out distance))
+                        {
+                            lstParkDetailAndDis.Add
+                                (new KeyValuePair<List<APARKZONEDETAIL>, double>(lastDetail, distance));
+                        }
+                        else
+                        {
+                            lstParkDetailAndDis.Add
+                                (new KeyValuePair<List<APARKZONEDETAIL>, double>(lastDetail, double.MaxValue));
+                        }
+                    }
+                    if (lstParkDetailAndDis.Count > 0)
+                    {
+                        lstParkDetailAndDis = lstParkDetailAndDis.OrderBy(o => o.Value).ToList();
+
+                        List<APARKZONEDETAIL> nearbyParkZoneDetails = lstParkDetailAndDis.First().Key.OrderBy(o => o.PRIO).ToList();
+
+                        throughParkZoneOfNearest = nearbyParkZoneDetails.First();
+                        isThroughParkZone = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            return isThroughParkZone;
+        }
+
 
     }
 }

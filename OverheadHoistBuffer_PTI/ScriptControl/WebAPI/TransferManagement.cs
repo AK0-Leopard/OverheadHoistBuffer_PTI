@@ -11,13 +11,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace com.mirle.ibg3k0.sc.WebAPI
 {
     public class TransferManagement : NancyModule
     {
         //SCApplication app = null;
-        const string restfulContentType = "application/json; charset=utf-8";
+        //const string restfulContentType = "application/json; charset=utf-8";
+        const string restfulContentType = "application/xml; charset=utf-8";
+        //const string restfulContentType = "text/xml; charset=utf-8";
         const string urlencodedContentType = "application/x-www-form-urlencoded; charset=utf-8";
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         Timer ThreadTimer = null;
@@ -439,6 +442,64 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 response.ContentType = restfulContentType;
 
                 return response;
+            };
+            //test
+            Get["TransferManagement/TESTForXMLResponse"] = (p) =>
+            {
+                SCApplication scApp = SCApplication.getInstance();
+                string agv_station_port_id = p.AGVStationPortID;
+                XmlDocument xml = new XmlDocument();
+                XmlElement[] XmlElementArray = new XmlElement[8];
+                XmlText[] XmltextArray = new XmlText[8];
+
+                XmlDeclaration xmlDeclaration = xml.CreateXmlDeclaration("1.0", "UTF-8", null);
+                XmlElement root = xml.DocumentElement;
+                xml.InsertBefore(xmlDeclaration, root);
+
+                XmlElementArray[0] = xml.CreateElement(string.Empty, "body", string.Empty);
+                xml.AppendChild(XmlElementArray[0]);
+
+                XmlElementArray[1] = xml.CreateElement(string.Empty, "EQ_Line_ID", string.Empty);
+                XmltextArray[1] = xml.CreateTextNode("LineOHT");
+                XmlElementArray[1].AppendChild(XmltextArray[1]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[1]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[2] = xml.CreateElement(string.Empty, "Port_No", string.Empty);
+                XmltextArray[2] = xml.CreateTextNode("Num1");
+                XmlElementArray[2].AppendChild(XmltextArray[2]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[2]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[3] = xml.CreateElement(string.Empty, "Control_Mode", string.Empty);
+                XmltextArray[3] = xml.CreateTextNode("1"); //OnLine:1/OffLine:0
+                XmlElementArray[3].AppendChild(XmltextArray[3]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[3]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[4] = xml.CreateElement(string.Empty, "Port_Status", string.Empty);
+                XmltextArray[4] = xml.CreateTextNode("LDRQ"); //LDRQ/UDRQ/NORQ
+                XmlElementArray[4].AppendChild(XmltextArray[4]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[4]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[5] = xml.CreateElement(string.Empty, "EQ_Presence_Status", string.Empty);
+                XmltextArray[5] = xml.CreateTextNode("0"); // Empty:0/Presence:1
+                XmlElementArray[5].AppendChild(XmltextArray[5]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[5]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[6] = xml.CreateElement(string.Empty, "Carrier_ID", string.Empty);
+                XmltextArray[6] = xml.CreateTextNode("08SA0001");
+                XmlElementArray[6].AppendChild(XmltextArray[6]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[6]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[7] = xml.CreateElement(string.Empty, "Error", string.Empty);
+                XmltextArray[7] = xml.CreateTextNode("0"); // NoERR:0/ERROR:1
+                XmlElementArray[7].AppendChild(XmltextArray[7]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[7]); // insert the level from XmlElementArray[0]
+
+                XmlElementArray[8] = xml.CreateElement(string.Empty, "Port_Mode", string.Empty);
+                XmltextArray[8] = xml.CreateTextNode("1"); // AUTO:1/MANUAL:0
+                XmlElementArray[8].AppendChild(XmltextArray[8]); // insert the content
+                XmlElementArray[0].AppendChild(XmlElementArray[8]); // insert the level from XmlElementArray[0]
+                return Response.AsXml(xml);
+                
             };
         }
         public enum E_AGVStationTranMode

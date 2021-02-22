@@ -251,6 +251,7 @@
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -519,6 +520,7 @@
     <Compile Include="CONTROL_DATA.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\BackgroundWorkBlockQueue.cs" />
     <Compile Include="Data\BackgroundWorkSample.cs" />
     <Compile Include="Data\DAO\191204Test\CassetteDataDao.cs" />
     <Compile Include="Data\DAO\191204Test\ShelfDefDao.cs" />
@@ -859,6 +861,7 @@
     <Compile Include="Data\VO\MaintainSpace.cs" />
     <Compile Include="Data\VO\MaintainLift.cs" />
     <Compile Include="Data\VO\PartialVo\AADDRESS.cs" />
+    <Compile Include="Data\VO\PartialVo\ABLOCKZONEMASTER.cs" />
     <Compile Include="Data\VO\PartialVo\ASECTION.cs" />
     <Compile Include="Data\VO\PartialVo\ASEGMENT.cs" />
     <Compile Include="Data\VO\PartialVo\APORTSTATION.cs" />

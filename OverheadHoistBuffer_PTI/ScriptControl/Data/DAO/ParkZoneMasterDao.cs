@@ -26,7 +26,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         {
             con.SaveChanges();
         }
-
+        public APARKZONEMASTER getByParkingAdr(DBConnection_EF con, String adr_id, string parkType)
+        {
+            var query = from master in con.APARKZONEMASTER
+                        join detail in con.APARKZONEDETAIL on master.PARK_ZONE_ID equals detail.PARK_ZONE_ID
+                        where detail.ADR_ID == adr_id.Trim() && master.PARK_TYPE_ID == parkType.Trim()
+                        select master;
+            return query.FirstOrDefault();
+        }
         public APARKZONEMASTER getByParkingAdr(DBConnection_EF con, String adr_id)
         {
             var query = from master in con.APARKZONEMASTER

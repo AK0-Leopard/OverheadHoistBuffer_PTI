@@ -2330,6 +2330,28 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
         private long syncTranOHTCommandPoint = 0;
+        public (string[] routeSection, double distance) getShortestRouteSection(string startAdr, string endAdr)
+        {
+            string[] shortest_route = scApp.RouteGuide.DownstreamSearchSection(startAdr, endAdr, 0);
+            return PaserRoute2SectionsAndDistance(shortest_route[0]);
+        }
+
+        private (string[] routeSection, double distance) PaserRoute2SectionsAndDistance(string minRouteInfo)
+        {
+            if (SCUtility.isEmpty(minRouteInfo))
+            {
+                return (null, double.MaxValue);
+            }
+            string route = minRouteInfo.Split('=')[0];
+            string[] routeSection = route.Split(',');
+            string distance = minRouteInfo.Split('=')[1];
+            double idistance = double.MaxValue;
+            if (!double.TryParse(distance, out idistance))
+            {
+                logger.Warn($"fun:{nameof(PaserRoute2SectionsAndDistance)},parse distance fail.Route:{route},distance:{distance}");
+            }
+            return (routeSection, idistance);
+        }
         public bool generateOHTCommand(ACMD_MCS mcs_cmd)
         {
             if (Interlocked.Exchange(ref syncTranOHTCommandPoint, 1) == 0)
@@ -3941,7 +3963,103 @@ namespace com.mirle.ibg3k0.sc.BLL
                 logger.Error(ex, "Exception");
             }
         }
+        public string[] findBestFitRoute(string vh_crt_sec, string[] AllRouteInfo, string targetAdr, bool isMaintainDeviceCommand)
+        {
+            string[] FitRouteSec = null;
+            //try
+            //{
+            List<string> crtByPassSeg = ByPassSegment.ToList();
+            filterByPassSec_VhAlreadyOnSec(vh_crt_sec, crtByPassSeg);
+            filterByPassSec_TargetAdrOnSec(targetAdr, crtByPassSeg);
+            string[] AllRoute = AllRouteInfo[1].Split(';');
+            List<KeyValuePair<string[], double>> routeDetailAndDistance = PaserRoute2SectionsAndDistance(AllRoute);
+            //if (scApp.getEQObjCacheManager().getLine().SegmentPreDisableExcuting)
+            //{
+            //    List<string> nonActiveSeg = scApp.MapBLL.loadNonActiveSegmentNum();
+            //filterByPassSec_VhAlreadyOnSec(vh_crt_sec, nonActiveSeg);
+            //filterByPassSec_TargetAdrOnSec(targetAdr, nonActiveSeg);
 
+            //判斷是該次的命令是否為Maintain device 的Command，如果不是則不能有要通過該Device所在的Segment
+            if (!isMaintainDeviceCommand)
+            {
+                foreach (var routeDetial in routeDetailAndDistance.ToList())
+                {
+                    List<string> maintain_device_ids = scApp.EquipmentBLL.cache.GetAllMaintainDeviceSegments();
+                    List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                    string[] secOfSegments = lstSec.Select(s => s.SEG_NUM).Distinct().ToArray();
+                    bool is_include_maintain_device_segment = secOfSegments.Where(seg => maintain_device_ids.Contains(seg)).Count() != 0;
+                    if (is_include_maintain_device_segment)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                    }
+                }
+            }
+            foreach (var routeDetial in routeDetailAndDistance.ToList())
+            {
+                List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                if (scApp.getEQObjCacheManager().getLine().SegmentPreDisableExcuting)
+                {
+                    List<string> nonActiveSeg = scApp.MapBLL.loadNonActiveSegmentNum();
+                    string[] secOfSegments = lstSec.Select(s => s.SEG_NUM).Distinct().ToArray();
+                    bool isIncludePassSeg = secOfSegments.Where(seg => nonActiveSeg.Contains(seg)).Count() != 0;
+                    if (isIncludePassSeg)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                    }
+                }
+            }
+            foreach (var routeDetial in routeDetailAndDistance.ToList())
+            {
+                List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                List<AVEHICLE> vhs = scApp.VehicleBLL.loadAllErrorVehicle();
+                foreach (AVEHICLE vh in vhs)
+                {
+                    bool IsErrorVhOnPassSection = lstSec.Where(sec => sec.SEC_ID.Trim() == vh.CUR_SEC_ID.Trim()).Count() > 0;
+                    if (IsErrorVhOnPassSection)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                        if (routeDetailAndDistance.Count == 0)
+                        {
+                            throw new VehicleBLL.BlockedByTheErrorVehicleException
+                                ($"Can't find the way to transfer.Because block by error vehicle [{vh.VEHICLE_ID}] on sec [{vh.CUR_SEC_ID}]");
+                        }
+                    }
+                }
+            }
+            //}
+
+            if (routeDetailAndDistance.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (var routeDetial in routeDetailAndDistance)
+            {
+                List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                string[] secOfSegments = lstSec.Select(s => s.SEG_NUM).Distinct().ToArray();
+                bool isIncludePassSeg = secOfSegments.Where(seg => crtByPassSeg.Contains(seg)).Count() != 0;
+                if (isIncludePassSeg)
+                {
+                    continue;
+                }
+                else
+                {
+                    FitRouteSec = routeDetial.Key;
+                    break;
+                }
+            }
+            if (FitRouteSec == null)
+            {
+                routeDetailAndDistance = routeDetailAndDistance.OrderBy(o => o.Value).ToList();
+                FitRouteSec = routeDetailAndDistance.First().Key;
+            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger_VhRouteLog.Error(ex, "Exception");
+            //}
+            return FitRouteSec;
+        }
         public string[] findBestFitRoute(string vh_crt_sec, string[] AllRouteInfo, string targetAdr)
         {
             try

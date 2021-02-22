@@ -14,7 +14,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public Redis redis { get; private set; }
         public Database dataBase { get; private set; }
-
+        public Cache cache { get; private set; }
 
         public void start(SCApplication app)
         {
@@ -680,6 +680,42 @@ namespace com.mirle.ibg3k0.sc.BLL
                     isInBlockZone = blockZoneDetaiDao.IsVHInBlockZoneByEntrySectionID(con, vh_id, entry_sec_id);
                 }
                 return isInBlockZone;
+            }
+
+        }
+        public class Cache
+        {
+            CommObjCacheManager commObjCache;
+            public Cache(CommObjCacheManager _commObjCache)
+            {
+                commObjCache = _commObjCache;
+            }
+            public ABLOCKZONEMASTER getBlockZoneMaster(string entrySectionID)
+            {
+                var block_zone_master = commObjCache.getBlockMasterZone().
+                    Where(block_master => SCUtility.isMatche(block_master.ENTRY_SEC_ID, entrySectionID)).SingleOrDefault();
+                return block_zone_master;
+            }
+            public List<ABLOCKZONEMASTER> loadBlockZoneMasterByReleaseAddress(string releaseAdr)
+            {
+                var block_zone_masters = commObjCache.getBlockMasterZone().
+                    Where(block_master => SCUtility.isMatche(block_master.LEAVE_ADR_ID_1, releaseAdr) ||
+                                          SCUtility.isMatche(block_master.LEAVE_ADR_ID_2, releaseAdr)).
+                    ToList();
+                return block_zone_masters;
+            }
+
+            public List<ABLOCKZONEMASTER> loadBlockZoneMasterBySectionID(string secID)
+            {
+                var block_zone_masters = commObjCache.getBlockMasterZone().
+                    Where(block_master => block_master.GetBlockZoneDetailSectionIDs().Contains(secID)).
+                    ToList();
+                return block_zone_masters;
+            }
+            public List<ABLOCKZONEMASTER> loadAllBlockZoneMaster()
+            {
+                var block_zone_masters = commObjCache.getBlockMasterZone();
+                return block_zone_masters;
             }
 
         }

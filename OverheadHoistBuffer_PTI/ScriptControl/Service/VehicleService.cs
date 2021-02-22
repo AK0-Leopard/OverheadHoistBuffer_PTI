@@ -34,6 +34,7 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using Google.Protobuf.Collections;
 using KingAOP;
+using Mirle.Hlts.Utils;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -2781,7 +2782,118 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return is_happend;
         }
+        private bool IsClosestBlockOfVh(AVEHICLE vh, string blockSecID)
+        {
+            string vh_current_section_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+            string block_entry_section_id = SCUtility.Trim(blockSecID, true);
+            if (block_entry_section_id.Length > 5)
+                block_entry_section_id = block_entry_section_id.Substring(0, 5);
+            ASECTION vh_current_section = scApp.SectionBLL.cache.GetSection(vh_current_section_id);
+            ASECTION block_entry_section = scApp.SectionBLL.cache.GetSection(block_entry_section_id);
 
+            //a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
+            var on_same_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(vh_current_section_id);
+            foreach (AVEHICLE same_section_vh in on_same_section_of_vhs)
+            {
+                if (same_section_vh == vh) continue;
+                if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
+                             $"request vh distance:{vh.ACC_SEC_DIST} orther vh distance:{same_section_vh.ACC_SEC_DIST},so request vh:{vh.VEHICLE_ID} it not closest block vh",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return false;
+                }
+            }
+
+            //b-0.經過"a"的判斷後，如果自己已經是在該Block裡面，則代表該vh已經是最接近這個Block的車子了 //A0.06
+            bool is_already_in_req_block = SCUtility.isMatche(vh_current_section_id, block_entry_section_id);
+            if (is_already_in_req_block)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"vh:{vh.VEHICLE_ID} is already in req block,it is closest block:{block_entry_section_id}",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+                return true;
+            }
+            //b-1.經過"a"的判斷後，如果自己已經是在該Block的前一段Section上，則即為該Block的下一台將要通過的Vh
+            List<string> entry_section_of_previous_section_id =
+            scApp.SectionBLL.cache.GetSectionsByToAddress(block_entry_section.FROM_ADR_ID).
+            Select(section => SCUtility.Trim(section.SEC_ID)).
+            ToList();
+            if (entry_section_of_previous_section_id.Contains(vh_current_section_id))
+            {
+                return true;
+            }
+
+            //  c.如果不是在前一段Section，則需要去找出從vh目前所在位置到該Block的Entry section中，
+            //    將經過的Vh，是否有其他車輛在
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"vh:{vh.VEHICLE_ID} start check it is closest block id:{block_entry_section_id} of vh...",
+               VehicleID: vh.VEHICLE_ID,
+               CarrierID: vh.CST_ID);
+            bool is_Closest = checkIsFirstVh(vh, block_entry_section_id);
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"vh:{vh.VEHICLE_ID} start check it is closest block id:{block_entry_section_id} , check result:{is_Closest}",
+               VehicleID: vh.VEHICLE_ID,
+               CarrierID: vh.CST_ID);
+
+            return is_Closest;
+            //string vh_current_section_of_to_adr = vh_current_section.TO_ADR_ID;
+            //string block_entry_section_of_from_adr = block_entry_section.FROM_ADR_ID;
+            //string[] will_pass_section_ids = scApp.CMDBLL.
+            //                                      getShortestRouteSection(vh_current_section_of_to_adr, block_entry_section_of_from_adr).
+            //                                      routeSection;
+            //if (will_pass_section_ids == null || will_pass_section_ids.Count() == 0)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+            //       Data: $"vh:{vh.VEHICLE_ID} at section:{vh_current_section_id} ,it to address:{vh_current_section_of_to_adr} to block entry section of from adr:{block_entry_section_of_from_adr}," +
+            //             $"can't find the path, not sure if it's the closest vh.",
+            //       VehicleID: vh.VEHICLE_ID,
+            //       CarrierID: vh.CST_ID);
+            //    return false;
+            //}
+            //foreach (string will_pass_section_id in will_pass_section_ids)
+            //{
+            //    var on_will_pass_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(will_pass_section_id);
+            //    if (on_will_pass_section_of_vhs != null && on_will_pass_section_of_vhs.Count > 0)
+            //    {
+            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+            //           Data: $"Has vhs:{string.Join(",", on_will_pass_section_of_vhs.Select(v => v.VEHICLE_ID))} on section:{will_pass_section_id},from adr:{vh_current_section_of_to_adr} to adr:{block_entry_section_of_from_adr}," +
+            //                 $"will pass section ids:{string.Join(",", will_pass_section_ids)},so request vh:{vh.VEHICLE_ID} it not closest block vh",
+            //           VehicleID: vh.VEHICLE_ID,
+            //           CarrierID: vh.CST_ID);
+            //        return false;
+            //    }
+            //}
+            //如果都沒有則該Vh也是下一台將要通過的vh
+            //return true;
+        }
+        private bool checkIsFirstVh(AVEHICLE vh, string reqBlockId)
+        {
+            string vh_id = vh.VEHICLE_ID;
+            string current_sec_id = SCUtility.Trim(vh.CUR_SEC_ID);
+            ASECTION vh_current_sec = scApp.SectionBLL.cache.GetSection(current_sec_id);
+            ASECTION req_block_sec = scApp.SectionBLL.cache.GetSection(reqBlockId);
+            string[] will_pass_section_ids = scApp.CMDBLL.
+                     getShortestRouteSection(vh_current_sec.TO_ADR_ID, req_block_sec.FROM_ADR_ID).
+                     routeSection;
+            foreach (string sec in will_pass_section_ids)
+            {
+                var result = scApp.ReserveBLL.TryAddReservedSection(vh_id, sec,
+                                              sensorDir: HltDirection.Forward,
+                                              isAsk: true);
+                if (!result.OK)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vh_id} Try ask reserve section:{sec},result:{result}",
+                       VehicleID: vh_id);
+                    return false;
+                }
+            }
+            return true;
+        }
         //private void PositionReport_BlockReq(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum, string req_block_id)
         //{
         //    bool isSucess = true;
@@ -2963,11 +3075,21 @@ namespace com.mirle.ibg3k0.sc.Service
             bool isSuccess = false;
             using (TransactionScope tx = SCUtility.getTransactionScope())
             {
+                /****2021/02/17 Make the block request can use the reserve api to decide.*****/
+                ////if (eventType == EventType.BlockReq || eventType == EventType.BlockHidreq)
+                ////    can_block_pass = ProcessBlockReqNew(bcfApp, eqpt, req_block_id);
+                ////if (eventType == EventType.Hidreq || eventType == EventType.BlockHidreq)
+                ////    can_hid_pass = ProcessHIDRequest(bcfApp, eqpt, req_hid_secid);
                 if (eventType == EventType.BlockReq || eventType == EventType.BlockHidreq)
-                    can_block_pass = ProcessBlockReqNew(bcfApp, eqpt, req_block_id);
-                if (eventType == EventType.Hidreq || eventType == EventType.BlockHidreq)
-                    can_hid_pass = ProcessHIDRequest(bcfApp, eqpt, req_hid_secid);
+                {
+                    //A0.05 can_block_pass = ProcessBlockReqNew(bcfApp, eqpt, req_block_id);
+                    var workItem = new com.mirle.ibg3k0.bcf.Data.BackgroundWorkItem(bcfApp, eqpt, eventType, seqNum, req_block_id, req_hid_secid);//A0.05
+                    scApp.BackgroundWorkBlockQueue.triggerBackgroundWork("BlockQueue", workItem);//A0.05
+                    return;//A0.05
+                }
+                /**************************************/
                 isSuccess = replyTranEventReport(bcfApp, eventType, eqpt, seqNum, canBlockPass: can_block_pass, canHIDPass: can_hid_pass);
+
                 if (isSuccess)
                 {
                     tx.Complete();
@@ -3204,7 +3326,90 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return canBlockPass;
         }
+        public bool ProcessBlockReqByReserveModule(BCFApplication bcfApp, AVEHICLE eqpt, string req_block_id)
+        {
+            string vhID = eqpt.VEHICLE_ID;
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"Process block request,request block id:{req_block_id}",
+               VehicleID: eqpt.VEHICLE_ID,
+               CarrierID: eqpt.CST_ID);
+            if (DebugParameter.isForcedPassBlockControl)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: "test flag: Force pass block control is open, will driect reply to vh can pass block",
+                   VehicleID: eqpt.VEHICLE_ID,
+                   CarrierID: eqpt.CST_ID);
+                return true;
+            }
+            else if (DebugParameter.isForcedRejectBlockControl)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: "test flag: Force reject block control is open, will driect reply to vh can't pass block",
+                   VehicleID: eqpt.VEHICLE_ID,
+                   CarrierID: eqpt.CST_ID);
+                return true;
+            }
+            else
+            {
+                lock (block_control_lock_obj)
+                {
+                    var block_master = scApp.BlockControlBLL.cache.getBlockZoneMaster(req_block_id);
+                    if (block_master == null)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"Vh:{eqpt.VEHICLE_ID} ask block:{req_block_id},but this block id not exist!",
+                           VehicleID: eqpt.VEHICLE_ID,
+                           CarrierID: eqpt.CST_ID);
+                        return false;
+                    }
+                    var block_detail_section = block_master.GetBlockZoneDetailSectionIDs();
+                    if (block_detail_section == null || block_detail_section.Count == 0)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"Vh:{eqpt.VEHICLE_ID} ask block:{req_block_id},but this block id of detail is null!",
+                           VehicleID: eqpt.VEHICLE_ID,
+                           CarrierID: eqpt.CST_ID);
+                        return false;
+                    }
+                    bool is_first_vh = isNextPassVh(eqpt, req_block_id);
+                    if (!is_first_vh)
+                    {
+                        return false;
+                    }
+                    foreach (var detail in block_detail_section)
+                    {
+                        HltDirection hltDirection = HltDirection.None;
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"vh:{vhID} Try add reserve section:{detail} ,hlt dir:{hltDirection}...",
+                           VehicleID: vhID);
+                        var result = scApp.ReserveBLL.TryAddReservedSection(vhID, detail,
+                                                                             sensorDir: hltDirection,
+                                                                             isAsk: true);
 
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"vh:{vhID} Try add reserve section:{detail},result:{result}",
+                           VehicleID: vhID);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"current reserve section:{scApp.ReserveBLL.GetCurrentReserveSection()}",
+                           VehicleID: vhID);
+                        if (!result.OK)
+                        {
+                            if (!SCUtility.isEmpty(result.VehicleID))
+                                Task.Run(() => scApp.VehicleBLL.whenVhObstacle(result.VehicleID, vhID));
+                            return false;
+                        }
+                    }
+                    foreach (var detail in block_detail_section)
+                    {
+                        HltDirection hltDirection = HltDirection.None;
+                        var result = scApp.ReserveBLL.TryAddReservedSection(vhID, detail,
+                                                                             sensorDir: hltDirection,
+                                                                             isAsk: false);
+                    }
+                    return true;
+                }
+            }
+        }
         private bool ProcessHIDRequest(BCFApplication bcfApp, AVEHICLE eqpt, string req_hid_secid)
         {
             bool isSuccess = true;
@@ -3529,7 +3734,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
             }
         }
-        private bool replyTranEventReport(BCFApplication bcfApp, EventType eventType, AVEHICLE eqpt, int seq_num,
+        public bool replyTranEventReport(BCFApplication bcfApp, EventType eventType, AVEHICLE eqpt, int seq_num,
                                           bool canBlockPass = false, bool canHIDPass = false, bool canReservePass = false,
                                           string renameCarrierID = "", CMDCancelType cancelType = CMDCancelType.CmdNone,
                                           RepeatedField<ReserveInfo> reserveInfos = null)
@@ -5621,5 +5826,67 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
         #endregion TEST
+
+        private bool isNextPassVh(AVEHICLE vh, string currentRequestBlockID)
+        {
+            try
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"Start check is next pass vh,block id:{currentRequestBlockID}...",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+                bool is_next_pass_vh = false;
+                //ABLOCKZONEMASTER request_block_master = scApp.BlockControlBLL.cache.getBlockZoneMaster(currentRequestBlockID);
+                //先判斷是不是最接近該Block的第一台車，不然會有後車先要到該Block的問題
+                //  a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
+                //  b.判斷是否自己已經是在該Block的前一段Section上，如果是則即為該Block的第一台Vh
+                //  c.如果不是在前一段Section，則需要去找出從vh目前所在位置到該Block的Entry section中，
+                //    是否有其他車輛在
+                is_next_pass_vh = IsClosestBlockOfVh(vh, currentRequestBlockID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"End check is closest block vh,result:{is_next_pass_vh}",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+                return is_next_pass_vh;
+                ////如果判斷出來是該Block下一台要通過的vh，接著就要開始判斷同一組的Block
+                ////1.先判斷該Block是否為合流點，如果是，則需要判斷可以讓哪一邊的先走，如果不是則不用
+                ////2.合流點，需依照
+                ////  a.在等待的車子，所載的CST數量
+                ////  b.在等待的車子，MCS Command的Prioruty Sum的數值
+                ////來決定要先放行哪邊的車子
+                //if (is_next_pass_vh)
+                //{
+                //    if (request_block_master.BLOCK_ZONE_TYPE == E_BLOCK_ZONE_TYPE.Merge)
+                //    {
+                //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                //           Data: $"Start check is next pass block...,block id:{currentRequestBlockID}",
+                //           VehicleID: vh.VEHICLE_ID,
+                //           CarrierID: vh.CST_ID);
+                //        bool is_next_pass_block = isNextPassBlock(vh, currentRequestBlockID);
+                //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                //           Data: $"End check is next pass block,block id:{currentRequestBlockID}, result:{is_next_pass_block}",
+                //           VehicleID: vh.VEHICLE_ID,
+                //           CarrierID: vh.CST_ID);
+                //        return is_next_pass_block;
+                //    }
+                //    else
+                //    {
+                //        return true;
+                //    }
+                //}
+                //else
+                //{
+                //    return false;
+                //}
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: ex,
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+                return false;
+            }
+        }
     }
 }
