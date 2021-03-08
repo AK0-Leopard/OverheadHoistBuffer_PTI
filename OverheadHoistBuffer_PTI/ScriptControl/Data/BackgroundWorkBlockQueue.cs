@@ -47,28 +47,26 @@ namespace com.mirle.ibg3k0.sc.Data
         {
             try
             {
-                using (TransactionScope tx = SCUtility.getTransactionScope())
+                bool can_block_pass = true;
+                bool can_hid_pass = true;
+                bool isSuccess = false;
+                SCApplication scApp = SCApplication.getInstance();
+                //BCFApplication bcfApp, AVEHICLE eqpt, EventType eventType, int seqNum, string req_block_id, string req_hid_secid
+                //Node node = item.Param[0] as Node;
+                BCFApplication bcfApp = item.Param[0] as BCFApplication;
+                AVEHICLE eqpt = item.Param[1] as AVEHICLE;
+                EventType eventType = (EventType)item.Param[2];
+                int seqNum = (int)item.Param[3];
+                string req_block_id = item.Param[4] as string;
+                string req_hid_secid = item.Param[5] as string;
+                //can_block_pass = scApp.VehicleService.ProcessBlockReqNewNew(bcfApp, eqpt, req_block_id);
+                can_block_pass = scApp.VehicleService.ProcessBlockReqByReserveModule(bcfApp, eqpt, req_block_id);
+                if (!can_block_pass)
                 {
-                    bool can_block_pass = true;
-                    bool can_hid_pass = true;
-                    bool isSuccess = false;
-                    SCApplication scApp = SCApplication.getInstance();
-                    //BCFApplication bcfApp, AVEHICLE eqpt, EventType eventType, int seqNum, string req_block_id, string req_hid_secid
-                    //Node node = item.Param[0] as Node;
-                    BCFApplication bcfApp = item.Param[0] as BCFApplication;
-                    AVEHICLE eqpt = item.Param[1] as AVEHICLE;
-                    EventType eventType = (EventType)item.Param[2];
-                    int seqNum = (int)item.Param[3];
-                    string req_block_id = item.Param[4] as string;
-                    string req_hid_secid = item.Param[5] as string;
-                    //can_block_pass = scApp.VehicleService.ProcessBlockReqNewNew(bcfApp, eqpt, req_block_id);
-                    can_block_pass = scApp.VehicleService.ProcessBlockReqByReserveModule(bcfApp, eqpt, req_block_id);
-                    isSuccess = scApp.VehicleService.replyTranEventReport(bcfApp, eventType, eqpt, seqNum, canBlockPass: can_block_pass, canHIDPass: can_hid_pass);
-                    if (isSuccess)
-                    {
-                        tx.Complete();
-                    }
+                    eqpt.LastBlockRequestFailInterval.Restart();
                 }
+
+                isSuccess = scApp.VehicleService.replyTranEventReport(bcfApp, eventType, eqpt, seqNum, canBlockPass: can_block_pass, canHIDPass: can_hid_pass);
             }
             catch (Exception ex)
             {

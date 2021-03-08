@@ -137,8 +137,8 @@
       <HintPath>..\ScriptControl\DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Mirle.Hlts.Utils">
-      <HintPath>..\ScriptControl\DLL\Mirle.Hlts.Utils.dll</HintPath>
+    <Reference Include="Mirle.AK0.Hlt.Utils">
+      <HintPath>..\ScriptControl\DLL\Mirle.AK0.Hlt.Utils.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.10.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

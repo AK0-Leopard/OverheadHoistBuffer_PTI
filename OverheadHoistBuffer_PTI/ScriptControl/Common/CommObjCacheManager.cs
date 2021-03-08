@@ -70,10 +70,16 @@ namespace com.mirle.ibg3k0.sc.Common
 
             Segments = scApp.MapBLL.loadAllSegments();
             Sections = scApp.MapBLL.loadAllSection();
+            BlockZoneMasters = scApp.MapBLL.loadAllBlockZoneMaster();
+
             ReserveEnhanceInfos = scApp.ReserveEnhanceInfoDao.loadReserveInfos(scApp);
             foreach (ASEGMENT segment in Segments)
             {
                 segment.SetSectionList(scApp.SectionBLL);
+            }
+            foreach (ABLOCKZONEMASTER block_zone_master in BlockZoneMasters)
+            {
+                block_zone_master.SetBlockDetailList(scApp.MapBLL);
             }
 
             CommonInfo = new CommonInfo();

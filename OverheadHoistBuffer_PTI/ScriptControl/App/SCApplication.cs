@@ -37,6 +37,8 @@ using com.mirle.ibg3k0.sc.WIF;
 using com.mirle.ibg3k0.stc.Common.SECS;
 using ExcelDataReader;
 using GenericParsing;
+using Mirle.AK0.Hlt.ReserveSection.Map;
+using Mirle.AK0.Hlt.ReserveSection.Map.ViewModels;
 using Nancy;
 using Nancy.Hosting.Self;
 using NLog;
@@ -114,8 +116,8 @@ namespace com.mirle.ibg3k0.sc.App
         private RedisCacheManager redisCacheManager;
         private NatsManager natsManager;
         private ElasticSearchManager elasticSearchManager;
-        private Mirle.Hlts.ReserveSection.Map.MapAPI _reserveSectionAPI { get; set; } //A0.01
-        private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel reserveSectionAPI { get; set; }//A0.01
+        private MapAPI _reserveSectionAPI { get; set; } //A0.01
+        private MapViewModel reserveSectionAPI { get; set; }//A0.01
 
         public HAProxyConnectionTest hAProxyConnectionTest { get; private set; }
         //        const string REDIS_SERVER_CONFIGURATION = "redis.ohxc.mirle.com.tw:6379";
@@ -650,6 +652,7 @@ namespace com.mirle.ibg3k0.sc.App
         /// <value>The background work sample.</value>
         public BackgroundWorkDriver BackgroundWorkSample { get; private set; }              //A0.03
         public BackgroundWorkDriver BackgroundWorkBlockQueue { get; private set; } //A0.01
+        public BackgroundWorkDriver BackgroundWorkProcVehiclePosition { get; private set; }              //A0.03
 
         public IScheduler Scheduler { get; private set; }
 
@@ -848,7 +851,7 @@ namespace com.mirle.ibg3k0.sc.App
         //A0.01
         private void initialReserveSectionAPI()
         {
-            _reserveSectionAPI = new Mirle.Hlts.ReserveSection.Map.MapAPI();
+            _reserveSectionAPI = new MapAPI();
             reserveSectionAPI = _reserveSectionAPI.MapVM;
 
             setHltVehicleInfo();
@@ -1078,6 +1081,7 @@ namespace com.mirle.ibg3k0.sc.App
         {
             BackgroundWorkSample = new BackgroundWorkDriver(new BackgroundWorkSample());            //A0.03
             BackgroundWorkBlockQueue = new BackgroundWorkDriver(new BackgroundWorkBlockQueue());            //A0.01
+            BackgroundWorkProcVehiclePosition = new BackgroundWorkDriver(new BackgroundWorkProcVehiclePosition());            //A0.01
         }
         private void initScheduler()
         {
@@ -1862,7 +1866,7 @@ namespace com.mirle.ibg3k0.sc.App
         {
             return elasticSearchManager;
         }
-        public Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel getReserveSectionAPI()//A0.01
+        public MapViewModel getReserveSectionAPI()//A0.01
         {
             return reserveSectionAPI;
         }

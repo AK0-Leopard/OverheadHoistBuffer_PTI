@@ -1,17 +1,19 @@
 ﻿using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
-using Mirle.Hlts.Utils;
 using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using Mirle.AK0.Hlt.Utils;
+using Mirle.AK0.Hlt.ReserveSection.Map.ViewModels;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
     public class ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel mapAPI { get; set; }
+        private MapViewModel mapAPI { get; set; }
         private sc.Common.CommObjCacheManager commObjCacheManager { get; set; }
 
 
@@ -79,42 +81,28 @@ namespace com.mirle.ibg3k0.sc.BLL
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
             return (adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
         }
-        public HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
-        {
-            var hltvh = mapAPI.HltVehicles.Where(vh => SCUtility.isMatche(vh.ID, vhID)).SingleOrDefault();
-            var clone_hltvh = hltvh.DeepClone();
-            clone_hltvh.SensorDirection = HltDirection.None;
-            clone_hltvh.ForkDirection = HltDirection.None;
-            HltResult result = mapAPI.TryAddOrUpdateVehicle(clone_hltvh);
-            return result;
-        }
-        public HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
+
+        public virtual HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
                                            HltDirection sensorDir, HltDirection forkDir)
         {
             LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
                Data: $"add vh in reserve system: vh:{vhID},x:{vehicleX},y:{vehicleY},angle:{vehicleAngle},speedMmPerSecond:{speedMmPerSecond},sensorDir:{sensorDir},forkDir:{forkDir}",
                VehicleID: vhID);
-            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
-
-            //20200508 暫時不要用小精靈方式釋放路徑
-            //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
-            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
-            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
-            mapAPI.KeepRestSection(hlt_vh);
+            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: false);
             onReserveStatusChange();
+
             return result;
         }
-        public HltResult TryAddVehicleOrUpdate(string vhID, string adrID)
+        public virtual HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
-            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, 0, sensorDirection: Mirle.Hlts.Utils.HltDirection.Forward);
-            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
+            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: HltDirection.NESW);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
             onReserveStatusChange();
 
             return result;
         }
-
         public void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
         {
             //int sec_id = 0;
@@ -159,43 +147,34 @@ namespace com.mirle.ibg3k0.sc.BLL
             return mapAPI.GetVehicleObjectByID(vhID);
         }
 
-        //public HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.Forward, HltDirection forkDir = HltDirection.None, bool isAsk = false)
-        //{
-        //    //int sec_id = 0;
-        //    //int.TryParse(sectionID, out sec_id);
-        //    string sec_id = SCUtility.Trim(sectionID);
-
-        //    HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
-        //    onReserveStatusChange();
-
-        //    return result;
-        //}
-        public HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.Forward, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        public virtual HltResult TryAddReservedSection(string vhID, string sectionID,
+            HltDirection sensorDir = HltDirection.ForwardReverse, HltDirection forkDir = HltDirection.None,
+            DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
-            HltResult result = null;
             string sec_id = SCUtility.Trim(sectionID);
-            //如果詢問的Section是Reserve Enhance的section時，
-            //則要判斷該區塊且之後的Section是否要得到
-            var reserve_enhance_info_check_result = IsReserveEnhanceSection(sectionID);
-            if (reserve_enhance_info_check_result.isEnhanceInfo)
-            {
-                List<string> enhance_control_sections = reserve_enhance_info_check_result.info.EnhanceControlSections;
-                int section_index = enhance_control_sections.IndexOf(sectionID);
-                for (int i = section_index; i < enhance_control_sections.Count; i++)
-                {
-                    result = mapAPI.TryAddReservedSection(vhID, enhance_control_sections[i], sensorDir, forkDir, true);
-                    if (!result.OK)
-                    {
-                        result.Description += $",section:{sectionID} is reserve enhance group:{reserve_enhance_info_check_result.info.GroupID}," +
-                                              $"current has vh:{result.VehicleID}";
-                        return result;
-                    }
-                }
-            }
-            result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            int vehicle_direction = getVehicleDirection(driveDirection);
+            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
+            LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+               Data: $"vh:{vhID} Try add reserve section:{sectionID} dir:{sensorDir},result:{result}",
+               VehicleID: vhID);
             onReserveStatusChange();
 
             return result;
+        }
+
+        private int getVehicleDirection(ProtocolFormat.OHTMessage.DriveDirction driveDirction)
+        {
+            switch (driveDirction)
+            {
+                case ProtocolFormat.OHTMessage.DriveDirction.DriveDirNone:
+                    return 0;
+                case ProtocolFormat.OHTMessage.DriveDirction.DriveDirForward:
+                    return 1;
+                case ProtocolFormat.OHTMessage.DriveDirction.DriveDirReverse:
+                    return -1;
+                default:
+                    return 0;
+            }
         }
 
         private (bool isEnhanceInfo, Data.VO.ReserveEnhanceInfo info) IsReserveEnhanceSection(string sectionID)

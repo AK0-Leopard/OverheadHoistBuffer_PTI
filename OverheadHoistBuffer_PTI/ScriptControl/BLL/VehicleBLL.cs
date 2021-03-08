@@ -22,6 +22,7 @@ using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.iibg3k0.ttc.Common;
+using Mirle.AK0.Hlt.Utils;
 using NLog;
 using StackExchange.Redis;
 using System;
@@ -124,30 +125,77 @@ namespace com.mirle.ibg3k0.sc.BLL
         //        updateVheiclePosition(vh.VEHICLE_ID, current_adr_id, current_sec_id, sec_dis, vhPassEvent);
 
         //}
-        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis,
-                                                       double xAxis, double yAxis)
+        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis)
         {
             vh.CUR_ADR_ID = adr_id;
+            if (vh.CUR_SEC_ID != sec_id)
+            {
+                vh.PRE_SEC_ID = vh.CUR_SEC_ID;
+            }
             vh.CUR_SEC_ID = sec_id;
             vh.CUR_SEG_ID = seg_id;
             vh.ACC_SEC_DIST = sce_dis;
-            vh.X_Axis = xAxis;
-            vh.Y_Axis = yAxis;
-
             //var showObj = scApp.getEQObjCacheManager().CommonInfo.ObjectToShow_list.
             //    Where(o => o.VEHICLE_ID == vh.VEHICLE_ID).SingleOrDefault();
             //showObj.NotifyPropertyChanged(nameof(showObj.ACC_SEC_DIST2Show));
             vh.NotifyVhPositionChange();
             return true;
         }
-        public Mirle.Hlts.Utils.HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, double x_axis, double y_axis, double dirctionAngle, double vehicleAngle, double speed,
-                                                                              Mirle.Hlts.Utils.HltDirection sensorDir, Mirle.Hlts.Utils.HltDirection forkDir)
+
+        public HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, string adrID, double dis, double dirctionAngle, double vehicleAngle, double speed,
+                                                                      HltDirection sensorDir, HltDirection forkDir)
         {
             string vh_id = vh.VEHICLE_ID;
             string section_id = currentSectionID;
-            return reserveBLL.TryAddVehicleOrUpdate(vh_id, section_id, x_axis, y_axis, (float)vehicleAngle, speed, sensorDir, forkDir);
-        }
+            ASECTION sec = scApp.SectionBLL.cache.GetSection(section_id);
+            var from_adr_axis = reserveBLL.GetHltMapAddress(sec.FROM_ADR_ID);
+            var to_adr_axis = reserveBLL.GetHltMapAddress(sec.TO_ADR_ID);
 
+            var vh_axis = tryGetVhAxis(sec.SEC_DIS, dis, from_adr_axis.x, from_adr_axis.y, to_adr_axis.x, to_adr_axis.y);
+            vh.X_Axis = vh_axis.x;
+            vh.Y_Axis = vh_axis.y;
+
+            return reserveBLL.TryAddVehicleOrUpdate(vh_id, section_id, vh_axis.x, vh_axis.y, vh_axis.angle, speed, sensorDir, forkDir);
+        }
+        private (double x, double y, float angle) tryGetVhAxis(double sectionTotalDis, double currentDis, double from_x, double from_y, double to_x, double to_y)
+        {
+            double x = 0;
+            double y = 0;
+            float angle = 0;
+            if (from_x == to_x)
+            {
+                x = from_x;
+                if (from_y > to_y)
+                    y = from_y - currentDis;
+                else
+                    y = from_y + currentDis;
+                angle = 90;
+            }
+            else if (from_y == to_y)
+            {
+                if (from_x > to_x)
+                    x = from_x - currentDis;
+                else
+                    x = from_x + currentDis;
+                y = from_y;
+                angle = 0;
+
+            }
+            else
+            {
+                if (currentDis > (sectionTotalDis / 2))
+                {
+                    x = to_x;
+                    y = to_y;
+                }
+                else
+                {
+                    x = from_x;
+                    y = from_y;
+                }
+            }
+            return (x, y, angle);
+        }
         public void updateVehicleActionStatus(AVEHICLE vh, EventType vhPassEvent)
         {
             vh.VhRecentTranEvent = vhPassEvent;

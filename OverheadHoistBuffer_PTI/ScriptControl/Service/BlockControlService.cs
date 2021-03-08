@@ -69,68 +69,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
             from_adr_of_sections = from_adr_of_sections.Distinct().ToList();
-            foreach (ASECTION from_adr_of_section in from_adr_of_sections)
-            {
-                from_adr_of_section.VehicleEntry += From_adr_of_section_VehicleEntry;
-            }
-            to_adr_of_sections = to_adr_of_sections.Distinct().ToList();
-            foreach (ASECTION to_adr_of_section in to_adr_of_sections)
-            {
-                to_adr_of_section.VehicleLeave += To_adr_of_section_VehicleLeave;
-            }
-
         }
-        private void To_adr_of_section_VehicleLeave(object sender, string e)
-        {
-            try
-            {
-                string vh_id = e;
-                ASECTION leave_section = sender as ASECTION;
-                string leave_section_of_to_adr_id = leave_section.TO_ADR_ID;
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(BlockControlService), Device: VehicleService.DEVICE_NAME_OHx,
-                   Data: $"Start try force release block by leave section:{leave_section.SEC_ID} of to adr id:{leave_section_of_to_adr_id}",
-                   VehicleID: vh_id);
-                forceReleaseBlock(vh_id, leave_section_of_to_adr_id);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn,
-                   Class: nameof(BlockControlService), Device: VehicleService.DEVICE_NAME_OHx,
-                   Data: ex,
-                   VehicleID: e);
-            }
-        }
-        private void From_adr_of_section_VehicleEntry(object sender, string e)
-        {
-            try
-            {
-                string vh_id = e;
-                ASECTION entry_section = sender as ASECTION;
-                string entry_section_of_from_adr_id = entry_section.FROM_ADR_ID;
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(BlockControlService), Device: VehicleService.DEVICE_NAME_OHx,
-                   Data: $"Start try force release block by entry section:{entry_section.SEC_ID} of from adr id:{entry_section_of_from_adr_id}",
-                   VehicleID: vh_id);
-                forceReleaseBlock(vh_id, entry_section_of_from_adr_id);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn,
-                   Class: nameof(BlockControlService), Device: VehicleService.DEVICE_NAME_OHx,
-                   Data: ex,
-                   VehicleID: e);
-            }
-        }
-        private void forceReleaseBlock(string vhID, string checkAddress)
-        {
-            var release_result = vehicleService.doBlockRelease(vhID, checkAddress, false);
-            if (release_result.hasRelease)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(BlockControlService), Device: VehicleService.DEVICE_NAME_OHx,
-                   Data: $"Process block force release by ohxc, release address id:{checkAddress}, " +
-                         $"release entry section id:{release_result.releaseBlockMaster.ENTRY_SEC_ID}",
-                   VehicleID: vhID);
-            }
-        }
-
     }
 }

@@ -224,6 +224,8 @@ namespace com.mirle.ibg3k0.sc
         [JsonIgnore]
         public virtual List<string> Alarms { get; set; }
 
+        [JsonIgnore]
+        public virtual string PRE_SEC_ID { get; set; }
 
 
         [JsonIgnore]
@@ -250,6 +252,9 @@ namespace com.mirle.ibg3k0.sc
         [JsonIgnore]
         [BaseElement(NonChangeFromOtherVO = true)]
         public Stopwatch PositionRefreshTimer = new Stopwatch();
+        [JsonIgnore]
+        [BaseElement(NonChangeFromOtherVO = true)]
+        public Stopwatch LastBlockRequestFailInterval = new Stopwatch();
 
         public int Pixel_Loaction_X = 0;
         public int Pixel_Loaction_Y = 0;

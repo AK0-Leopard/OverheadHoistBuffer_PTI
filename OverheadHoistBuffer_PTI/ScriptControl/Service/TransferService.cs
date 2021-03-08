@@ -32,7 +32,6 @@ using com.mirle.ibg3k0.sc.Data.SECS.ASE;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
-using Mirle.Hlts.Utils;
 using NLog;
 using System;
 using System.Collections.Generic;

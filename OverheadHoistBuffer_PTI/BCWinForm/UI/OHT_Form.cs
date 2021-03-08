@@ -1124,7 +1124,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_continuous_Click(object sender, EventArgs e)
         {
-            //Equipment noticeCar = scApp.getEQObjCacheManager().getEquipmentByEQPTID(cmb_Vehicle.Text.Trim());
             string vh_id = cmb_Vehicle.Text.Trim();
             Task.Run(() =>
             {
@@ -1133,11 +1132,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 if (noticeCar.IsPause)
                 {
                     scApp.VehicleService.PauseRequest(vh_id, PauseEvent.Continue, SCAppConstants.OHxCPauseType.Normal);
-                    //noticeCar.sned_Str39(PauseEvent.Continue, PauseType.OhxC);
                 }
                 else
                 {
-                    //scApp.VehicleBLL.noticeVhPass(vh_id);
                     scApp.VehicleService.noticeVhPass(vh_id);
                 }
             });

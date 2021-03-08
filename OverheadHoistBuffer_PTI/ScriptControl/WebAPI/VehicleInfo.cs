@@ -819,7 +819,6 @@ namespace com.mirle.ibg3k0.sc.WebAPI
 									break;
 
 								case "btn_forceReleaseAllBlock":
-									scApp.VehicleService.forceReleaseBlockControl(vh_id);
 									break;
 
 								case "btn_open_tcp_port":
@@ -859,11 +858,6 @@ namespace com.mirle.ibg3k0.sc.WebAPI
 									break;
 
 								case "btn_forceReleaseALLBlock":
-									scApp.VehicleService.forceReleaseBlockControl();
-									break;
-
-								case "btn_release_block":
-									scApp.VehicleService.reCheckBlockControl(blockzoneQueue);
 									break;
 
 								case "btn_refresh_vh_order_in_seg":

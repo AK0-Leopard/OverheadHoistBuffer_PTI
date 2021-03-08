@@ -154,17 +154,17 @@
     <Reference Include="M2Mqtt.Net">
       <HintPath>DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Map, Version=1.0.7370.25109, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Map, Version=1.0.7453.25069, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.ReserveSection.Map.dll</HintPath>
+      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Vision, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Vision, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.ReserveSection.Vision.dll</HintPath>
+      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.Utils, Version=1.0.7369.31596, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirle.AK0.Hlt.Utils, Version=1.0.7453.24981, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.Utils.dll</HintPath>
+      <HintPath>DLL\Mirle.AK0.Hlt.Utils.dll</HintPath>
     </Reference>
     <Reference Include="MPLCConnectionControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -521,6 +521,7 @@
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\BackgroundWorkBlockQueue.cs" />
+    <Compile Include="Data\BackgroundWorkProcVehiclePosition.cs" />
     <Compile Include="Data\BackgroundWorkSample.cs" />
     <Compile Include="Data\DAO\191204Test\CassetteDataDao.cs" />
     <Compile Include="Data\DAO\191204Test\ShelfDefDao.cs" />
@@ -1102,12 +1103,9 @@
     <Content Include="DLL\BlockControlFramework.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.dll" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.pdb" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.dll" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.pdb" />
-    <Content Include="DLL\Mirle.Hlts.Utils.dll" />
-    <Content Include="DLL\Mirle.Hlts.Utils.pdb" />
+    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
+    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll" />
+    <Content Include="DLL\Mirle.AK0.Hlt.Utils.dll" />
     <Content Include="DLL\MPLC.dll" />
     <Content Include="DLL\MPLC.NetMQ.dll" />
     <Content Include="DLL\MPLCConnectionControl.pdb">
