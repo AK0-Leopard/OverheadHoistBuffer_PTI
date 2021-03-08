@@ -45,6 +45,7 @@
             this.cmb_fromSection = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btn_seachSec2Adr = new System.Windows.Forms.Button();
+            this.SearchAdr2Adr = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lbl_fromAdr
@@ -59,7 +60,7 @@
             // cmb_fromAdr
             // 
             this.cmb_fromAdr.FormattingEnabled = true;
-            this.cmb_fromAdr.Location = new System.Drawing.Point(17, 49);
+            this.cmb_fromAdr.Location = new System.Drawing.Point(16, 54);
             this.cmb_fromAdr.Name = "cmb_fromAdr";
             this.cmb_fromAdr.Size = new System.Drawing.Size(121, 20);
             this.cmb_fromAdr.TabIndex = 1;
@@ -198,11 +199,22 @@
             this.btn_seachSec2Adr.UseVisualStyleBackColor = true;
             this.btn_seachSec2Adr.Click += new System.EventHandler(this.btn_seachSec2Adr_Click);
             // 
+            // SearchAdr2Adr
+            // 
+            this.SearchAdr2Adr.Location = new System.Drawing.Point(305, 48);
+            this.SearchAdr2Adr.Name = "SearchAdr2Adr";
+            this.SearchAdr2Adr.Size = new System.Drawing.Size(128, 30);
+            this.SearchAdr2Adr.TabIndex = 8;
+            this.SearchAdr2Adr.Text = "Search Adr To Adr";
+            this.SearchAdr2Adr.UseVisualStyleBackColor = true;
+            this.SearchAdr2Adr.Click += new System.EventHandler(this.SearchAdr2Adr_Click);
+            // 
             // EngineerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(662, 261);
+            this.Controls.Add(this.SearchAdr2Adr);
             this.Controls.Add(this.cmb_fromSection);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -250,5 +262,6 @@
         private System.Windows.Forms.ComboBox cmb_fromSection;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_seachSec2Adr;
+        private System.Windows.Forms.Button SearchAdr2Adr;
     }
 }

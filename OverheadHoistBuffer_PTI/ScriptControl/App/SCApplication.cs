@@ -822,6 +822,7 @@ namespace com.mirle.ibg3k0.sc.App
             bool importMapFlag = routeGuide.ImportMap();
             //            startBLL();
             initialFloydAlgorithm();
+            initialRouteBan();
 
             initBackgroundWork();               //A0.03
             initScheduler();
@@ -846,6 +847,20 @@ namespace com.mirle.ibg3k0.sc.App
             //bdTableWatcher = new DBTableWatcher(this);
 
 
+        }
+
+        private void initialRouteBan()
+        {
+            var segments = SegmentBLL.cache.GetSegments();
+            NewRouteGuide.resetBanRoute();
+            foreach (ASEGMENT seg in segments)
+            {
+                if (seg.STATUS == E_SEG_STATUS.Closed)
+                {
+                    foreach (var sec in seg.Sections)
+                        NewRouteGuide.banRouteTwoDirect(sec.SEC_ID);
+                }
+            }
         }
 
         //A0.01

@@ -218,6 +218,26 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 return isActive;
             }
+
+            public void EnableSegment(string segID)
+            {
+                ASEGMENT seg = CommObjCacheManager.getSegments().Where(s => s.SEG_NUM.Trim() == segID.Trim())
+                                                  .FirstOrDefault();
+                seg.PRE_DISABLE_FLAG = false;
+                seg.PRE_DISABLE_TIME = null;
+                seg.DISABLE_TIME = null;
+                seg.STATUS = E_SEG_STATUS.Active;
+            }
+
+            public void DisableSegment(string segID)
+            {
+                ASEGMENT seg = CommObjCacheManager.getSegments().Where(s => s.SEG_NUM.Trim() == segID.Trim())
+                                                  .FirstOrDefault();
+                seg.PRE_DISABLE_FLAG = false;
+                seg.PRE_DISABLE_TIME = null;
+                seg.DISABLE_TIME = DateTime.Now;
+                seg.STATUS = E_SEG_STATUS.Closed;
+            }
         }
     }
 }

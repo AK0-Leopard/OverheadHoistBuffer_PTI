@@ -72,69 +72,39 @@ namespace com.mirle.ibg3k0.sc.Service
 
         }
 
-        public void doEnableDisableSegment(string segment_id, E_PORT_STATUS port_status, string laneCutType)
+        public (bool isSuccess, ASEGMENT segment) doEnableDisableSegment(string segment_id, E_PORT_STATUS port_status)
         {
             ASEGMENT segment = null;
             try
             {
-                List<APORTSTATION> port_stations = PortStationBLL.OperateCatch.loadAllPortBySegmentID(segment_id, SectionBLL);
+                //List<APORTSTATION> port_stations = scApp.MapBLL.loadAllPortBySegmentID(segment_id);
 
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
                     using (DBConnection_EF con = DBConnection_EF.GetUContext())
                     {
+
                         switch (port_status)
                         {
                             case E_PORT_STATUS.InService:
-                                segment = RouteGuide.OpenSegment(segment_id);
+                                segment = app.GuideBLL.unbanRouteTwoDirect(segment_id);
+                                app.SegmentBLL.cache.EnableSegment(segment_id);
                                 break;
                             case E_PORT_STATUS.OutOfService:
-                                segment = RouteGuide.CloseSegment(segment_id);
+                                segment = app.GuideBLL.banRouteTwoDirect(segment_id);
+                                app.SegmentBLL.cache.DisableSegment(segment_id);
                                 break;
-                        }
-                        foreach (APORTSTATION port_station in port_stations)
-                        {
-                            PortStationBLL.OperateDB.updatePortStationStatus(port_station.PORT_ID, port_status);
-                            PortStationBLL.OperateCatch.updatePortStationStatus(port_station.PORT_ID, port_status);
                         }
                         tx.Complete();
                     }
                 }
-                List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
-                List<ASECTION> sections = SectionBLL.cache.loadSectionsBySegmentID(segment_id);
-                string segment_start_adr = sections.First().FROM_ADR_ID;
-                string segment_end_adr = sections.Last().TO_ADR_ID;
-                switch (port_status)
-                {
-                    case E_PORT_STATUS.InService:
-                        ReportBLL.newReportLaneInService(segment_start_adr, segment_end_adr, laneCutType, reportqueues);
-                        break;
-                    case E_PORT_STATUS.OutOfService:
-                        ReportBLL.newReportLaneOutOfService(segment_start_adr, segment_end_adr, laneCutType, reportqueues);
-                        break;
-                }
-                foreach (APORTSTATION port_station in port_stations)
-                {
-                    switch (port_status)
-                    {
-                        case E_PORT_STATUS.InService:
-                            ReportBLL.newReportPortInServeice(port_station.PORT_ID, reportqueues);
-                            break;
-                        case E_PORT_STATUS.OutOfService:
-                            ReportBLL.newReportPortOutOfService(port_station.PORT_ID, reportqueues);
-                            break;
-                    }
-                }
-                ReportBLL.newSendMCSMessage(reportqueues);
             }
             catch (Exception ex)
             {
-                segment = null;
                 logger.Error(ex, "Exception:");
             }
-            //return segment;
+            return (segment != null, segment);
         }
-
 
         public void doEnableDisableSegment(string segment_id, E_PORT_STATUS status, ASEGMENT.DisableType disableType, string laneCutType)
         {
@@ -156,10 +126,12 @@ namespace com.mirle.ibg3k0.sc.Service
                             switch (status)
                             {
                                 case E_PORT_STATUS.InService:
-                                    seg_do = RouteGuide.OpenSegment(segment_id, disableType);
+                                    //seg_do = RouteGuide.OpenSegment(segment_id, disableType);
+                                    seg_do = app.GuideBLL.OpenSegment(segment_id, disableType);
                                     break;
                                 case E_PORT_STATUS.OutOfService:
-                                    seg_do = RouteGuide.CloseSegment(segment_id, disableType);
+                                    //seg_do = RouteGuide.CloseSegment(segment_id, disableType);
+                                    seg_do = app.GuideBLL.CloseSegment(segment_id, disableType);
                                     break;
                             }
                             is_status_change = seg_vo.STATUS != seg_do.STATUS;

@@ -1084,7 +1084,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             }
         }
         string[] preSelectionSec = null;
-        private void setSpecifyRail(string[] spacifyPath)
+        public void setSpecifyRail(string[] spacifyPath)
         {
             if (spacifyPath == null)
                 return;

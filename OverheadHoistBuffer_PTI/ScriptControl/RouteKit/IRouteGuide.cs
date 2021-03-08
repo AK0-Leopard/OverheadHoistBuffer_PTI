@@ -28,7 +28,9 @@ namespace com.mirle.ibg3k0.sc.RouteKit
         //List<List<Section>> _TimeWindow(int fromAdr1, int toAdr1, int tofrom2, int toAdr2);
         (List<RouteInfo> stratFromRouteInfoList, List<RouteInfo> fromToRouteInfoList) getStartFromThenFromToRoutesSecToAddrToAddr(int start_sec, int from_addr, int to_addr);
         (List<RouteInfo> stratFromRouteInfoList, List<RouteInfo> fromToRouteInfoList) getStartFromThenFromToRoutesAddrToAddrToAddr(int start_addr, int from_addr, int to_addr);
+        void banRouteOneDirect(string SectionID);
         void banRouteOneDirect(int from, int to);
+        void unbanRouteOneDirect(string SectionID);
         void unbanRouteOneDirect(int from, int to);
         void banRouteTwoDirect(int address_1, int address_2);
         void banRouteTwoDirect(string sectionID);

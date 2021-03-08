@@ -197,5 +197,23 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             mainForm.removeForm(typeof(EngineerForm).Name);
         }
+
+        private void SearchAdr2Adr_Click(object sender, EventArgs e)
+        {
+            string fromAdr = cmb_fromAdr.Text;
+            string toAdr = cmb_toAdr.Text;
+            bool isSuccess = true;
+            List<string> guide_start_to_from_segment_ids = null;
+            List<string> guide_start_to_from_section_ids = null;
+            List<string> guide_start_to_from_address_ids = null;
+            int total_cost = 0;
+
+            (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost)
+                = bcApp.SCApplication.GuideBLL.getGuideInfo(fromAdr, toAdr);
+            if (guide_start_to_from_section_ids == null || guide_start_to_from_section_ids.Count == 0)
+                return;
+            mainForm.setSpecifyRail(guide_start_to_from_section_ids.ToArray());
+
+        }
     }
 }

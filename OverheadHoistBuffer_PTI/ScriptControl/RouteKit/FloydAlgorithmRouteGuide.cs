@@ -635,6 +635,21 @@ namespace com.mirle.ibg3k0.sc.RouteKit
         }
         /////////////////////////////
 
+        public void banRouteOneDirect(string sectionID)
+        {
+            if (!int.TryParse(sectionID, out int sec_id)) return;
+            Section section = getSectionByID(sec_id);
+            if (section != null)
+                banRouteOneDirect(section.address_1, section.address_2);
+        }
+        public void banRouteOneDirectTo2From(string sectionID)
+        {
+            if (!int.TryParse(sectionID, out int sec_id)) return;
+            Section section = getSectionByID(sec_id);
+            if (section != null)
+                banRouteOneDirect(section.address_2, section.address_1);
+        }
+
         public void banRouteOneDirect(int from, int to)
         {
             List<int> banPattern = new List<int>();
@@ -657,6 +672,13 @@ namespace com.mirle.ibg3k0.sc.RouteKit
             {
                 banPatternList.Add(banPattern);
             }
+        }
+        public void unbanRouteOneDirect(string sectionID)
+        {
+            if (!int.TryParse(sectionID, out int sec_id)) return;
+            Section section = getSectionByID(sec_id);
+            if (section != null)
+                unbanRouteOneDirect(section.address_1, section.address_2);
         }
 
         public void unbanRouteOneDirect(int from, int to)

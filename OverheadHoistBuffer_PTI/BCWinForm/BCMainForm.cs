@@ -915,6 +915,11 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             //(openForms["OHT_Form"] as OHT_Form).LeaveMonitorMode();
         }
+        public void setSpecifyRail(string[] secs)
+        {
+            (openForms["OHT_Form"] as OHT_Form).setSpecifyRail(secs);
+        }
+
 
         private void engineerToolStripMenuItem_Click(object sender, EventArgs e)
         {
