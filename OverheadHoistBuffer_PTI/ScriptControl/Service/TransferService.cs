@@ -7303,18 +7303,18 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                 }
             }
-
-            if (boxid.Length != 8)
-            {
-                return "BOX_ID 不為 8 碼";
-            }
-            else
-            {
-                if (ase_ID_Check(boxid) == false)
-                {
-                    return "BOX_ID，不符合 1、2碼為數字，3、4碼為英文，5~8碼為數字+英文混合";
-                }
-            }
+            // PTI 不確定未來需求ID
+            //if (boxid.Length != 8)
+            //{
+            //    return "BOX_ID 不為 8 碼";
+            //}
+            //else
+            //{
+            //    if (ase_ID_Check(boxid) == false)
+            //    {
+            //        return "BOX_ID，不符合 1、2碼為數字，3、4碼為英文，5~8碼為數字+英文混合";
+            //    }
+            //}
 
             CassetteData duCSTID = cassette_dataBLL.loadCassetteDataByCSTID(cstid);
 

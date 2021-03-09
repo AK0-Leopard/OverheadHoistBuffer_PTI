@@ -1848,7 +1848,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.UnloadComplete:
                 case EventType.AdrOrMoveArrivals:
                     PositionReport_ArriveAndComplete(bcfApp, eqpt, seq_num, recive_str.EventType, recive_str.CurrentAdrID, recive_str.CurrentSecID, carrier_id, //B0.01 
-                                                     load_port_id, unload_port_id);                                                                             //B0.01 
+                                                     load_port_id, unload_port_id);//B0.01 
                     break;
                 case EventType.Vhloading:
                 case EventType.Vhunloading:

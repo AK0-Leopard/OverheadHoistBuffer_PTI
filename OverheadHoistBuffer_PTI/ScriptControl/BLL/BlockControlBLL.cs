@@ -19,7 +19,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public void start(SCApplication app)
         {
             scApp = app;
-
+            cache = new Cache(app.getCommObjCacheManager());
 
         }
 
