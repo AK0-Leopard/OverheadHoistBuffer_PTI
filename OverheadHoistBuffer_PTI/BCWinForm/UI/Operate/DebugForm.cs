@@ -264,7 +264,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             {
                 Task.Run(() =>
                 {
-                    var mcs_cmds = bcApp.SCApplication.CMDBLL.loadMCS_Command_Queue();
+                    //var mcs_cmds = bcApp.SCApplication.CMDBLL.loadMCS_Command_Queue();
                     //foreach (var cmd in mcs_cmds)
                     //{
                     //    //bcApp.SCApplication.CMDBLL.updateCMD_MCS_TranStatus2Complete(cmd.CMD_ID, E_TRAN_STATUS.Canceling);

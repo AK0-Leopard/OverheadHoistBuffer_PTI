@@ -1935,6 +1935,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
 
         }
+        public int getCMD_MCSIsUnfinishedCountByPortID(string portID)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.getCMD_MCSIsUnfinishedCountByPortID(con, portID);
+            }
+        }
+
         public List<ACMD_MCS> loadACMD_MCSIsUnfinished()
         {
             //using (DBConnection_EF con = new DBConnection_EF())
