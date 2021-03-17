@@ -2376,8 +2376,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.Transferring);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE: //入料完成
-                        //CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
-                        //cassette_dataBLL.UpdateCSTLoc(sourceCstData.BOXID, ohtName, 1);
+                        CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
+                        cassette_dataBLL.UpdateCSTLoc(sourceCstData.BOXID, ohtName, 1);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE: //出料完成
                         CassetteData dbCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
@@ -4041,7 +4041,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 OHBC_AlarmAllCleared(plcInfo.EQ_ID);
 
-                OHBC_AlarmSet(plcInfo.EQ_ID, ((int)AlarmLst.PORT_CIM_OFF).ToString());
+                // OHBC_AlarmSet(plcInfo.EQ_ID, ((int)AlarmLst.PORT_CIM_OFF).ToString()); // PTI-- 沒有對應 cim on 的訊號確認。
             }
         }
         #region AGV 專有事件
@@ -5982,7 +5982,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         if (cassette_dataBLL.insertCassetteData(datainfo))
                         {
-                            //reportBLL.ReportCarrierInstallCompleted(datainfo); //這邊要確保不能在非vehicle 上建帳 PTI
+                            //reportBLL.ReportCarrierInstallCompleted(datainfo); //PTI需要上報 這邊要確保不能在非vehicle 上建帳 PTI 
                             reportBLL.ReportZoneCapacityChange(portName, null);
 
                             QueryLotID(datainfo);

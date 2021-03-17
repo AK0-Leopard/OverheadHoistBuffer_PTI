@@ -2926,6 +2926,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 string cstLoc = cassette?.Carrier_LOC ?? "";
                 ACMD_OHTC ohtc_cmd = scApp.CMDBLL.getCMD_OHTCByMCScmdID(cmd_id);
                 Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = ohtc_cmd.VH_ID;
+                if (cassette.Carrier_LOC.Contains("CR"))
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = cassette.Carrier_LOC;
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = cassette.Carrier_LOC;
+                }
+                else
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = "";
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = "";
+                }
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd_id;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cstLoc;
@@ -3588,7 +3598,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //var aa = scApp.CassetteDataBLL.loadCassetteData();
                 var cassette = scApp.CassetteDataBLL.loadCassetteDataByCstBoxID(cst_id, box_id);
                 string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
-
+                if (cassette.Carrier_LOC.Contains("CR"))
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = cassette.Carrier_LOC;
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = cassette.Carrier_LOC;
+                }
+                else
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = "";
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = "";
+                }
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;

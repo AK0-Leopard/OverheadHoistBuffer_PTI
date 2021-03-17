@@ -56,14 +56,14 @@ namespace com.mirle.ibg3k0.bc.winform
                 //MessageBox.Show("Test 1.0.0.2");
                 SCUtility.SystemEventLog("Start BC System!!", EventLogEntryType.Information);
                 //檢查是否同名Mutex已存在(表示另一份程式正在執行)
-                if (!m.WaitOne(0, false))
-                {
-                    Console.WriteLine("Only one instance is allowed!");
-                    SCUtility.SystemEventLog("Can Not Execute Multiple OHBC System!!", EventLogEntryType.Warning);
-                    var confirmResult = MessageBox.Show("Can Not Execute Multiple OHBC System!!",
-                            "Confirm Exit OHBC System!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
+                //if (!m.WaitOne(0, false))
+                //{
+                //    Console.WriteLine("Only one instance is allowed!");
+                //    SCUtility.SystemEventLog("Can Not Execute Multiple OHBC System!!", EventLogEntryType.Warning);
+                //    var confirmResult = MessageBox.Show("Can Not Execute Multiple OHBC System!!",
+                //            "Confirm Exit OHBC System!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    return;
+                //}
                 //////檢查是否有重複開啟BC System
                 System.Diagnostics.Process crProcess = System.Diagnostics.Process.GetCurrentProcess();
                 System.Diagnostics.Process[] myProcess = System.Diagnostics.Process.GetProcessesByName(crProcess.ProcessName);

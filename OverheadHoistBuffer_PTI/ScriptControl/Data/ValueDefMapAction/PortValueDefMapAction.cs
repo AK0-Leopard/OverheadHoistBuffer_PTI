@@ -1547,13 +1547,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     function.AssignBoxID = "ERROR1";
                 }
+                // PTI-- 只有box 沒有cassette
+                //function.AssignCassetteID = SCUtility.Trim(cassetteData.CSTID, true);
 
-                function.AssignCassetteID = SCUtility.Trim(cassetteData.CSTID, true);
-
-                if (function.AssignCassetteID.Contains("UNK"))
-                {
-                    function.AssignCassetteID = "ERROR1";
-                }
+                //if (function.AssignCassetteID.Contains("UNK"))
+                //{
+                //    function.AssignCassetteID = "ERROR1";
+                //}
 
                 function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 function.Timestamp = DateTime.Now;

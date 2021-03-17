@@ -1978,7 +1978,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            cancelType = CMDCancelType.CmdNone;
+                            cancelType = CMDCancelType.CmdCancelIdReadFailed;
                         }
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                            Data: $"BCR read fail happend,start abort command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {new_carrier_id} ",
