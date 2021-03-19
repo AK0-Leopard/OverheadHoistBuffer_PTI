@@ -65,46 +65,48 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         /// </summary>
         public override void initStart()
         {
-            scApp = SCApplication.getInstance();
-            tranTasks = scApp.CMDBLL.loadTranTasks();
+            // PTI-- 0318 暫時拿掉 因為啟動有問題
 
-            dicTranTaskSchedule_Clear_Dirty = new Dictionary<string, List<TranTask>>();
-            foreach (var task in tranTasks)
-            {
-                APORTSTATION sourece_port_station = scApp.getEQObjCacheManager().getPortStation(task.SourcePort);
-                APORTSTATION dest_port_station = scApp.getEQObjCacheManager().getPortStation(task.DestinationPort);
-                if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.None)
-                {
-                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
-                    {
-                        dicTranTaskSchedule_Clear_Dirty.Add("N", new List<TranTask>());
-                    }
-                    dicTranTaskSchedule_Clear_Dirty["N"].Add(task);
-                }
-                else if (dest_port_station.ULD_VH_TYPE == E_VH_TYPE.Clean &&
-                         sourece_port_station.LD_VH_TYPE == E_VH_TYPE.Clean)
-                {
-                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
-                    {
-                        dicTranTaskSchedule_Clear_Dirty.Add("CC", new List<TranTask>());
-                    }
-                    dicTranTaskSchedule_Clear_Dirty["CC"].Add(task);
-                }
-                else if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.Dirty)
-                {
-                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
-                    {
-                        dicTranTaskSchedule_Clear_Dirty.Add("D", new List<TranTask>());
-                    }
-                    dicTranTaskSchedule_Clear_Dirty["D"].Add(task);
-                }
-            }
-            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
-                SourcePorts_None = dicTranTaskSchedule_Clear_Dirty["N"].Select(task => task.SourcePort).Distinct().ToList();
-            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
-                SourcePorts_Clear = dicTranTaskSchedule_Clear_Dirty["CC"].Select(task => task.SourcePort).Distinct().ToList();
-            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
-                SourcePorts_Dirty = dicTranTaskSchedule_Clear_Dirty["D"].Select(task => task.SourcePort).Distinct().ToList();
+            //scApp = SCApplication.getInstance();
+            //tranTasks = scApp.CMDBLL.loadTranTasks();
+
+            //dicTranTaskSchedule_Clear_Dirty = new Dictionary<string, List<TranTask>>();
+            //foreach (var task in tranTasks)
+            //{
+            //    APORTSTATION sourece_port_station = scApp.getEQObjCacheManager().getPortStation(task.SourcePort);
+            //    APORTSTATION dest_port_station = scApp.getEQObjCacheManager().getPortStation(task.DestinationPort);
+            //    if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.None)
+            //    {
+            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
+            //        {
+            //            dicTranTaskSchedule_Clear_Dirty.Add("N", new List<TranTask>());
+            //        }
+            //        dicTranTaskSchedule_Clear_Dirty["N"].Add(task);
+            //    }
+            //    else if (dest_port_station.ULD_VH_TYPE == E_VH_TYPE.Clean &&
+            //             sourece_port_station.LD_VH_TYPE == E_VH_TYPE.Clean)
+            //    {
+            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
+            //        {
+            //            dicTranTaskSchedule_Clear_Dirty.Add("CC", new List<TranTask>());
+            //        }
+            //        dicTranTaskSchedule_Clear_Dirty["CC"].Add(task);
+            //    }
+            //    else if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.Dirty)
+            //    {
+            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
+            //        {
+            //            dicTranTaskSchedule_Clear_Dirty.Add("D", new List<TranTask>());
+            //        }
+            //        dicTranTaskSchedule_Clear_Dirty["D"].Add(task);
+            //    }
+            //}
+            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
+            //    SourcePorts_None = dicTranTaskSchedule_Clear_Dirty["N"].Select(task => task.SourcePort).Distinct().ToList();
+            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
+            //    SourcePorts_Clear = dicTranTaskSchedule_Clear_Dirty["CC"].Select(task => task.SourcePort).Distinct().ToList();
+            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
+            //    SourcePorts_Dirty = dicTranTaskSchedule_Clear_Dirty["D"].Select(task => task.SourcePort).Distinct().ToList();
 
         }
         /// <summary>

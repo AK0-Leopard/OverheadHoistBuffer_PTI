@@ -50,7 +50,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         private string[] ByPassSegment = null;
         ParkZoneTypeDao parkZoneTypeDao = null;
         private SCApplication scApp = null;
-
+        private CassetteDataBLL cassette_dataBLL = null; // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
 
 
         ALINE line
@@ -73,6 +73,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return_code_mapDao = scApp.ReturnCodeMapDao;
             shelfdefDao = scApp.ShelfDefDao;
             cassettedataDao = scApp.CassetteDataDao;
+            cassette_dataBLL = scApp.CassetteDataBLL;// PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
             initialByPassSegment();
         }
 
@@ -296,11 +297,28 @@ namespace com.mirle.ibg3k0.sc.BLL
                 #region 卡匣是否存在
                 CassetteData cstData = scApp.CassetteDataBLL.loadCassetteDataByBoxID(box_id);
 
-                if (cstData == null)
+                if ((cstData == null)&& scApp.TransferService.isCVPort(HostSource) != true )
                 {
                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
                     return SECSConst.HCACK_Obj_Not_Exist;
                 }
+                // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
+                else if ((cstData == null) && scApp.TransferService.isCVPort(HostSource))
+                {
+                    CassetteData cstData_FromS2F49 = new CassetteData();
+                    cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
+                    cstData_FromS2F49.CSTID = ""; // 填入空白即可
+                    cstData_FromS2F49.Carrier_LOC = HostSource.Trim();  //填PortID
+                    cstData_FromS2F49.CSTState = E_CSTState.Installed;
+                    cstData_FromS2F49.StockerID = "1";
+                    cstData_FromS2F49.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+                    cstData_FromS2F49.ReadStatus = ((int)ACMD_MCS.IDreadStatus.successful).ToString();
+                    cstData_FromS2F49.Stage = 1;
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F49: BOXID: " + box_id + " 不存在, 但由於是CV Port 自動建帳 PTI用");
+                    cassette_dataBLL.insertCassetteData(cstData_FromS2F49);
+                    cstData = cstData_FromS2F49;
+                }
+                //////////////////
                 #endregion
                 #region 確認命令ID是否重複 
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
@@ -361,7 +379,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     return SECSConst.HCACK_Obj_Not_Exist;
                 }
 
-                if (scApp.TransferService.isCVPort(HostSource))
+                if (scApp.TransferService.isCVPort(HostSource) &&(cstData != null))
                 {
                     if (HostSource.Trim() != cstData.Carrier_LOC.Trim())
                     {

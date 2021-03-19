@@ -912,10 +912,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //1.建立各個Function物件
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 //2.read log
-                //function.Timestamp = DateTime.Now;
-                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                function.Timestamp = DateTime.Now;
+                LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
                 NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
-                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(EQStatusReport), Device: DEVICE_NAME_MTL,
+                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(EQStatusReport), Device: DEVICE_NAME_PORT,
                 //    XID: eqpt.EQPT_ID, Data: function.ToString());
                 //3.logical (include db save)
 
@@ -930,7 +930,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                     bool cstDelete = scApp.TransferService.portTypeChangeOK_CVPort_CstRemove;
                     string log = "PLC IsInputMode: " + function.IsInputMode.ToString();
-
+                    Port_ChangeToInput(false);
+                    scApp.TransferService.TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ")
+                        + "OHB >> PLC| Already input mode set the input request to false");
                     if (cstDelete)
                     {
                         scApp.TransferService.DeleteOHCVPortCst(function.EQ_ID, log);
@@ -978,7 +980,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                     bool cstDelete = scApp.TransferService.portTypeChangeOK_CVPort_CstRemove;
                     string log = "PLC IsOutputMode:" + function.IsOutputMode.ToString();
-
+                    Port_ChangeToOutput(false);
+                    scApp.TransferService.TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ")
+                        + "OHB >> PLC| Already Output mode set the output request to false");
                     if (cstDelete)
                     {
                         scApp.TransferService.DeleteOHCVPortCst(function.EQ_ID, log);

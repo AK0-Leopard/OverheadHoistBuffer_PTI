@@ -251,15 +251,15 @@ namespace com.mirle.ibg3k0.bc.winform
 
             label6.Text = "關聯實際狀態： " + transferService.agvZone_ConnectedRealAGVPortRunDown.ToString();
             label11.Text = "單取單放狀態： " + transferService.oneInoneOutMethodUse.ToString();
-
-            if (transferService.isAGVZone(comboBox3.Text))
-            {
-                label7.Text = "強制讓貨先出去: " + transferService.portINIData[comboBox3.Text].forceRejectAGVCTrigger.ToString();
-            }
-            else
-            {
-                label7.Text = "AGV Zone 名稱輸入錯誤";
-            }
+            // PTI-- 沒有AGV Zone
+            //if (transferService.isAGVZone(comboBox3.Text))
+            //{
+            //    label7.Text = "強制讓貨先出去: " + transferService.portINIData[comboBox3.Text].forceRejectAGVCTrigger.ToString();
+            //}
+            //else
+            //{
+            //    label7.Text = "AGV Zone 名稱輸入錯誤";
+            //}
 
             label8.Text = "ST01: " + transferService.agvcTriggerResult_ST01;
             label9.Text = "ST02: " + transferService.agvcTriggerResult_ST02;

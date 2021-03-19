@@ -1241,7 +1241,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(mcsCmd.HOSTSOURCE);
 
-                            if (sourceCstData == null)
+                            if (sourceCstData == null )
                             {
                                 sourcePortType = false;
                                 TransferServiceLogger.Info
@@ -2180,7 +2180,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             cassette_dataBLL.UpdateCST_DateTime(ohtToPort.BOXID, UpdateCassetteTimeType.TrnDT);
 
-                            if (isCVPort(ohtCmd.DESTINATION) && isAGVZone(ohtCmd.DESTINATION) == false)
+                            if (isCVPort(ohtCmd.DESTINATION) || isAGVZone(ohtCmd.DESTINATION) == true)
                             {
                                 //2020/2/18 Hsinyu Chang: 搬出到port，要通知port準備搬出哪一筆帳
                                 PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(ohtCmd.DESTINATION).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
