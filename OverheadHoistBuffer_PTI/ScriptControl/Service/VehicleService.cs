@@ -2335,7 +2335,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         //scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(eqpt.MCS_CMD);
                         //scApp.CMDBLL.updateCMD_MCS_CmdStatus2LoadComplete(eqpt.MCS_CMD);
                     }
-                    //scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, string.Empty);
+                    scApp.PortStationBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, string.Empty);
                     //CarrierInterfaceSim_LoadComplete(eqpt);
                     break;
                 case EventType.UnloadComplete:
@@ -2348,7 +2348,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         scApp.VIDBLL.upDateVIDCarrierLocInfo(eqpt.VEHICLE_ID, port_station.PORT_ID);
                     }
-                    //scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, carrier_id);
+                    scApp.PortStationBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, carrier_id);
                     // CarrierInterfaceSim_UnloadComplete(eqpt, eqpt.CST_ID);
                     break;
             }
@@ -2967,7 +2967,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
                 case CompleteStatus.CmpStatusUnload:
                 case CompleteStatus.CmpStatusLoadunload:
-                    //scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, cst_id);
+                    scApp.PortStationBLL.OperateCatch.updatePortStationCSTExistStatus(eqpt.CUR_ADR_ID, cst_id);
                     break;
             }
 
