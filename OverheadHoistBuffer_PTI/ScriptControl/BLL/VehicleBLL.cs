@@ -2460,6 +2460,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                 vhs = vhs.Where(vh => SCUtility.isMatche(vh.CUR_SEC_ID, sectionID)).ToList();
                 return vhs;
             }
+
+            public bool HasOrtherVhWillGo(string vhID, string adrID)
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                int go_to_count = vhs.Where(vh => SCUtility.isMatche(vh.ToAdr, adrID) &&
+                                      !SCUtility.isMatche(vh.VEHICLE_ID, vhID)).Count();
+                return go_to_count != 0;
+            }
         }
         public class Web
         {

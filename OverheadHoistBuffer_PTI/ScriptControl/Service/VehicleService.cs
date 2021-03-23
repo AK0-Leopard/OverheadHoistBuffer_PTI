@@ -4253,6 +4253,15 @@ namespace com.mirle.ibg3k0.sc.Service
             foreach (var adr_id in allCanAvoidAdr)
             {
                 if (SCUtility.isMatche(adr_id, willDrivenAwayVh.CUR_ADR_ID)) continue;//如果目前所在的Address與要找的CV Port 一樣的話，要濾掉
+                bool has_vh_will_go = scApp.VehicleBLL.cache.HasOrtherVhWillGo(willDrivenAwayVh.VEHICLE_ID, adr_id);
+                if (has_vh_will_go)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"select avoid adr, but adr id:{adr_id} has vh will go, pass this.",
+                       VehicleID: willDrivenAwayVh.VEHICLE_ID);
+                    continue;
+                }
+
                 var check_result = scApp.GuideBLL.IsRoadWalkable(willDrivenAwayVh.CUR_ADR_ID, adr_id);
                 if (check_result.isSuccess && check_result.distance < min_distance)
                 {
