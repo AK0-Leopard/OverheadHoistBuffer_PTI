@@ -464,6 +464,7 @@
     <Compile Include="BLL\191204Test\CassetteDataBLL.cs" />
     <Compile Include="BLL\191204Test\ShelfDefBLL.cs" />
     <Compile Include="BLL\191204Test\ZoneDefBLL.cs" />
+    <Compile Include="BLL\AddressBLL.cs" />
     <Compile Include="BLL\AlarmBLL.cs" />
     <Compile Include="BLL\BCSystemBLL.cs" />
     <Compile Include="BLL\BlockControlBLL.cs" />

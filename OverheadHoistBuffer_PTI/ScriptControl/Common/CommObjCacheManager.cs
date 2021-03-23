@@ -37,6 +37,7 @@ namespace com.mirle.ibg3k0.sc.Common
         private SCApplication scApp = null;
         //Cache Object
         //Section
+        private List<AADDRESS> Addresses;
         private List<ASECTION> Sections;
         //Segment
         private List<ASEGMENT> Segments;
@@ -67,7 +68,7 @@ namespace com.mirle.ibg3k0.sc.Common
         public void start(SCApplication _app)
         {
             scApp = _app;
-
+            Addresses = scApp.MapBLL.loadAllAddress();
             Segments = scApp.MapBLL.loadAllSegments();
             Sections = scApp.MapBLL.loadAllSection();
             BlockZoneMasters = scApp.MapBLL.loadAllBlockZoneMaster();
@@ -80,6 +81,10 @@ namespace com.mirle.ibg3k0.sc.Common
             foreach (ABLOCKZONEMASTER block_zone_master in BlockZoneMasters)
             {
                 block_zone_master.SetBlockDetailList(scApp.MapBLL);
+            }
+            foreach (AADDRESS addresses in Addresses)
+            {
+                addresses.initialAddressType();
             }
 
             CommonInfo = new CommonInfo();
@@ -136,6 +141,10 @@ namespace com.mirle.ibg3k0.sc.Common
         public List<ReserveEnhanceInfo> getReserveEnhanceInfos()
         {
             return ReserveEnhanceInfos;
+        }
+        public List<AADDRESS> GetAddresses()
+        {
+            return Addresses == null ? new List<AADDRESS>() : Addresses.ToList();
         }
 
         #endregion

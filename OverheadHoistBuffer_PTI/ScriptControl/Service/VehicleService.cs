@@ -1879,14 +1879,115 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        //object reserve_lock = new object();
+        //private void TranEventReportPathReserveReqNew(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum, RepeatedField<ReserveInfo> reserveInfos)
+        //{
+        //    replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, canReservePass: false);
+        //}
         object reserve_lock = new object();
         private void TranEventReportPathReserveReqNew(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum, RepeatedField<ReserveInfo> reserveInfos)
         {
-            replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, canReservePass: false);
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"Process path reserve request,request path id:{reserveInfos.ToString()}",
+               VehicleID: eqpt.VEHICLE_ID,
+               CarrierID: eqpt.CST_ID);
+
+            lock (reserve_lock)
+            {
+                //B0.02 var ReserveResult = IsReserveSuccessNew(eqpt.VEHICLE_ID, reserveInfos);
+                var ReserveResult = IsMultiReserveSuccess(eqpt.VEHICLE_ID, reserveInfos);//B0.02
+                if (ReserveResult.isSuccess)
+                {
+                    //not thing...
+                }
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Reserve section fail,start try drive out vh:{ReserveResult.reservedVhID}",
+                       VehicleID: eqpt.VEHICLE_ID,
+                       CarrierID: eqpt.CST_ID);
+                    //List<string> reserve_fail_sections = reserveInfos.Select(reserve => reserve.ReserveSectionID).ToList();
+                    //Task.Run(() => tryNotifyVhAvoid_New(eqpt.VEHICLE_ID, ReserveResult.reservedVhID, reserve_fail_sections));
+
+                    //在預約失敗以後，會嘗試看能不能將車子趕走
+                    ALINE line = scApp.getEQObjCacheManager().getLine();
+                    if (!IsCMD_MCSCanProcess() ||
+                        line.SCStats == ALINE.TSCState.PAUSED)
+                    {
+                        Task.Run(() => tryDriveOutTheVh(eqpt.VEHICLE_ID, ReserveResult.reservedVhID));
+                    }
+                }
+                //B0.02 replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, canReservePass: ReserveResult.isSuccess, reserveInfos: reserveInfos);
+                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, canReservePass: ReserveResult.isSuccess, reserveInfos: ReserveResult.reserveSuccessInfos);//B0.02
+            }
         }
+        private (bool isSuccess, string reservedVhID, RepeatedField<ReserveInfo> reserveSuccessInfos) IsMultiReserveSuccess
+                (string vhID, RepeatedField<ReserveInfo> reserveInfos, bool isAsk = false)
+        {
+            try
+            {
+                if (DebugParameter.isForcedPassReserve)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: "test flag: Force pass reserve is open, will driect reply to vh pass",
+                       VehicleID: vhID);
+                    return (true, string.Empty, reserveInfos);
+                }
 
-        private long syncPoint_NotifyVhAvoid = 0;
+                //強制拒絕Reserve的要求
+                if (DebugParameter.isForcedRejectReserve)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: "test flag: Force reject reserve is open, will driect reply to vh can't pass",
+                       VehicleID: vhID);
+                    return (false, string.Empty, null);
+                }
+                AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+                if (vh.IsPrepareAvoid)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vhID} is prepare excute avoid action, will reject reserve request.",
+                       VehicleID: vhID);
+                    return (false, string.Empty, null);
+                }
+                if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, null);
 
+                var reserve_success_section = new RepeatedField<ReserveInfo>();
+                bool has_success = false;
+                string final_blocked_vh_id = string.Empty;
+                HltResult result = default(HltResult);
+                foreach (var reserve_info in reserveInfos)
+                {
+                    string reserve_section_id = reserve_info.ReserveSectionID;
+                    HltDirection hltDirection = HltDirection.Forward;
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
+                       VehicleID: vhID);
+                    result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
+                                                                        sensorDir: hltDirection,
+                                                                        isAsk: true);
+                    if (result.OK)
+                    {
+                        reserve_success_section.Add(reserve_info);
+                        has_success |= true;
+                    }
+                    else
+                    {
+                        has_success |= false;
+                        final_blocked_vh_id = result.VehicleID;
+                        break;
+                    }
+                }
+                return (has_success, final_blocked_vh_id, reserve_success_section);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: ex,
+                   Details: $"process function:{nameof(IsMultiReserveSuccess)} Exception");
+                return (false, string.Empty, null);
+            }
+        }
         enum CAN_NOT_AVOID_RESULT
         {
             Normal
@@ -2274,7 +2375,10 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!result.OK)
                     {
                         if (!SCUtility.isEmpty(result.VehicleID))
-                            Task.Run(() => scApp.VehicleBLL.whenVhObstacle(result.VehicleID, vhID));
+                        {
+                            //Task.Run(() => scApp.VehicleBLL.whenVhObstacle(result.VehicleID, vhID));
+                            Task.Run(() => tryDriveOutTheVh(vhID, result.VehicleID));
+                        }
                         return false;
                     }
                 }
@@ -4024,6 +4128,139 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
                 return false;
             }
+        }
+
+        public void CheckObstacleStatusByVehicleView()
+        {
+
+            try
+            {
+                List<AVEHICLE> lstVH = scApp.VehicleBLL.cache.loadVhs();
+                foreach (var vh in lstVH)
+                {
+                    //if (vh.isTcpIpConnect &&
+                    //    (vh.MODE_STATUS == VHModeStatus.AutoLocal ||
+                    //    vh.MODE_STATUS == VHModeStatus.AutoRemote) &&
+                    //    vh.IsObstacle
+                    //    )
+                    if (vh.isTcpIpConnect &&
+                        (vh.MODE_STATUS != VHModeStatus.Manual) &&
+                        vh.IsObstacle
+                        )
+                    {
+                        ASEGMENT seg = scApp.SegmentBLL.cache.GetSegment(vh.CUR_SEG_ID);
+                        AVEHICLE next_vh_on_seg = seg.GetNextVehicle(vh);
+                        if (next_vh_on_seg != null)
+                        {
+                            //scApp.VehicleBLL.whenVhObstacle(next_vh_on_seg.VEHICLE_ID);
+                            //scApp.VehicleBLL.whenVhObstacle(next_vh_on_seg.VEHICLE_ID, vh.VEHICLE_ID);
+                            tryDriveOutTheVh(vh.VEHICLE_ID, next_vh_on_seg.VEHICLE_ID);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
+        private long syncPoint_NotifyVhAvoid = 0;
+
+        private void tryDriveOutTheVh(string willPassVhID, string inTheWayVhID)
+        {
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_NotifyVhAvoid, 1) == 0)
+            {
+                try
+                {
+                    findTheVhOfAvoidAddress(willPassVhID, inTheWayVhID);
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: ex,
+                       Details: $"excute tryNotifyVhAvoid has exception happend.requestVh:{willPassVhID}");
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_NotifyVhAvoid, 0);
+                }
+            }
+        }
+
+        private bool findTheVhOfAvoidAddress(string willPassVhID, string inTheWayVhID)
+        {
+            bool is_success = false;
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                   Data: $"start try drive out vh:{inTheWayVhID}...",
+                                   VehicleID: willPassVhID);
+
+            //確認能否把該Vh趕走
+            AVEHICLE in_the_way_vh = scApp.VehicleBLL.cache.getVhByID(inTheWayVhID);
+            var check_can_creat_avoid_command = canCreatDriveOutCommand(in_the_way_vh);
+            if (check_can_creat_avoid_command.is_can)
+            {
+                //B0.09 var find_result = findAvoidAddressNew(in_the_way_vh);
+                var find_result = findAvoidAddressForFixPort(in_the_way_vh);//B0.09
+                if (find_result.isFind)
+                {
+                    is_success = scApp.CMDBLL.doCreatTransferCommand(inTheWayVhID,
+                                                                         cmd_type: E_CMD_TYPE.Move,
+                                                                         destination_address: find_result.avoidAdr);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Try to notify vh avoid,requestVh:{willPassVhID} reservedVh:{inTheWayVhID} avoid address:{find_result.avoidAdr}," +
+                             $" is success :{is_success}.",
+                       VehicleID: willPassVhID);
+                }
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Can't find the avoid address.",
+                       VehicleID: willPassVhID);
+                }
+            }
+            else
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"start try drive out vh:{inTheWayVhID},but vh status not ready.",
+                   VehicleID: willPassVhID);
+            }
+            return is_success;
+        }
+        private (bool isFind, string avoidAdr) findAvoidAddressForFixPort(AVEHICLE willDrivenAwayVh)
+        {
+            //1.找看看是否有設定的固定避車點。
+            //List<PortDef> can_avoid_cv_port = scApp.PortDefBLL.cache.loadCanAvoidCVPortDefs();
+            List<string> can_avoid_addrress = scApp.AddressBLL.OperateCatch.loadCanAvoidAddressIDs();
+            if (can_avoid_addrress == null || can_avoid_addrress.Count == 0)
+            {
+                return (false, "");
+            }
+            //2.找出離自己最近的一個避車點
+            var find_result = findTheNearestAvoidAddress(willDrivenAwayVh, can_avoid_addrress);
+            if (find_result.isFind)
+            {
+                return (true, find_result.adrID);
+            }
+            else
+            {
+                return (false, "");
+            }
+        }
+        private (bool isFind, string adrID) findTheNearestAvoidAddress(AVEHICLE willDrivenAwayVh, IEnumerable<string> allCanAvoidAdr)
+        {
+            int min_distance = int.MaxValue;
+            string nearest_avoid_adr = null;
+            foreach (var adr_id in allCanAvoidAdr)
+            {
+                if (SCUtility.isMatche(adr_id, willDrivenAwayVh.CUR_ADR_ID)) continue;//如果目前所在的Address與要找的CV Port 一樣的話，要濾掉
+                var check_result = scApp.GuideBLL.IsRoadWalkable(willDrivenAwayVh.CUR_ADR_ID, adr_id);
+                if (check_result.isSuccess && check_result.distance < min_distance)
+                {
+                    min_distance = check_result.distance;
+                    nearest_avoid_adr = adr_id;
+                }
+            }
+            return (!SCUtility.isEmpty(nearest_avoid_adr), nearest_avoid_adr);
         }
     }
 }

@@ -13,20 +13,15 @@ namespace com.mirle.ibg3k0.sc
 {
     public partial class AADDRESS
     {
-        private const int BIT_INDEX_CONTROL = 1;
-        private const int BIT_INDEX_PORT = 2;
-        private const int BIT_INDEX_SEGMENT = 5;
+        private const int BIT_INDEX_AVOID = 1;
 
         public Boolean[] AddressTypeFlags { get; set; }
         public string[] SegmentIDs { get; set; }
 
-        public event EventHandler<string> VehicleRelease;
 
         public void initialAddressType()
         {
-            string s_type = ADR_ID.Substring(0, 2);
-            int.TryParse(s_type, out int type);
-            BitArray b = new BitArray(new int[] { type });
+            BitArray b = new BitArray(new int[] { (Int32)ADRTYPE });
             AddressTypeFlags = new bool[b.Count];
             b.CopyTo(AddressTypeFlags, 0);
         }
@@ -41,18 +36,7 @@ namespace com.mirle.ibg3k0.sc
         }
 
         [JsonIgnore]
-        public bool IsPort
-        { get { return AddressTypeFlags[BIT_INDEX_PORT]; } }
-        [JsonIgnore]
-        public bool IsControl
-        { get { return AddressTypeFlags[BIT_INDEX_CONTROL]; } }
-        [JsonIgnore]
-        public bool IsSegment
-        {
-            get
-            {
-                return AddressTypeFlags[BIT_INDEX_SEGMENT];
-            }
-        }
+        public bool IsAvoidAddress
+        { get { return AddressTypeFlags[BIT_INDEX_AVOID]; } }
     }
 }

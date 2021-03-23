@@ -602,6 +602,7 @@ namespace com.mirle.ibg3k0.sc.App
         public ShelfDefBLL ShelfDefBLL { get; private set; } = null;
         public CassetteDataBLL CassetteDataBLL { get; private set; } = null;
         public ReserveBLL ReserveBLL { get; private set; } = null; //A0.01
+        public AddressBLL AddressBLL { get; private set; } = null;
 
         //WIF
         /// <summary>
@@ -1475,6 +1476,7 @@ namespace com.mirle.ibg3k0.sc.App
             ShelfDefBLL = new ShelfDefBLL();
             CassetteDataBLL = new CassetteDataBLL();
             ReserveBLL = new ReserveBLL(); //A0.01
+            AddressBLL = new AddressBLL();
         }
 
 
@@ -1536,7 +1538,8 @@ namespace com.mirle.ibg3k0.sc.App
             ZoneDefBLL.start(this);
             ShelfDefBLL.start(this);
             CassetteDataBLL.start(this);
-            ReserveBLL.start(this); //A0.01
+            ReserveBLL.start(this);
+            AddressBLL.start(this);
         }
 
         private void startService()
