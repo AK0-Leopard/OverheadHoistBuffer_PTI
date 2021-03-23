@@ -1,27 +1,33 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
+using Z.EntityFramework.Plus;
 
 namespace com.mirle.ibg3k0.sc.Data.DAO
 {
+
     public class CMD_OHTCDao
     {
+        public const string EXPIRE_TAG_NON_FINISH_OHTC_CMD = "EXPIRE_TAG_NON_FINISH_OHTC_CMD";
+
         public void add(DBConnection_EF con, ACMD_OHTC blockObj)
         {
             blockObj.CMD_INSER_TIME = DateTime.Now;
             con.ACMD_OHTC.Add(blockObj);
             con.SaveChanges();
+            QueryCacheManager.ExpireTag(EXPIRE_TAG_NON_FINISH_OHTC_CMD);
         }
 
         public void Update(DBConnection_EF con, ACMD_OHTC cmd)
         {
             con.SaveChanges();
+            QueryCacheManager.ExpireTag(EXPIRE_TAG_NON_FINISH_OHTC_CMD);
         }
         public void Update(DBConnection_EF con, List<ACMD_OHTC> cmds)
         {
             con.SaveChanges();
+            QueryCacheManager.ExpireTag(EXPIRE_TAG_NON_FINISH_OHTC_CMD);
         }
 
         public void DeleteCmdData(DBConnection_EF conn, ACMD_OHTC cmddata)
@@ -30,6 +36,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             {
                 conn.ACMD_OHTC.Remove(cmddata);
                 conn.SaveChanges();
+                QueryCacheManager.ExpireTag(EXPIRE_TAG_NON_FINISH_OHTC_CMD);
             }
             catch (Exception ex)
             {
@@ -205,7 +212,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         public ACMD_OHTC getCMD_OHTCByMCScmdID_And_NotFinishByDest(DBConnection_EF con, string mcs_cmd_id, string dest)
         {
             var query = from cmd in con.ACMD_OHTC
-                        where cmd.CMD_ID_MCS.Trim() == mcs_cmd_id.Trim() 
+                        where cmd.CMD_ID_MCS.Trim() == mcs_cmd_id.Trim()
                             && cmd.CMD_END_TIME == null
                             && cmd.DESTINATION.Trim() == dest.Trim()
                         select cmd;
@@ -243,5 +250,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
             return query.ToList();
         }
+        public List<ACMD_OHTC> loadAllExecuteCmd(DBConnection_EF con)
+        {
+            var query = from cmd in con.ACMD_OHTC
+                        where cmd.CMD_STAUS < E_CMD_STATUS.NormalEnd
+                        orderby cmd.CMD_START_TIME
+                        select cmd;
+            return query.FromCache(EXPIRE_TAG_NON_FINISH_OHTC_CMD).ToList();
+        }
+
     }
 }

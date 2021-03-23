@@ -297,7 +297,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 #region 卡匣是否存在
                 CassetteData cstData = scApp.CassetteDataBLL.loadCassetteDataByBoxID(box_id);
 
-                if ((cstData == null)&& scApp.TransferService.isCVPort(HostSource) != true )
+                if ((cstData == null) && scApp.TransferService.isCVPort(HostSource) != true)
                 {
                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
                     return SECSConst.HCACK_Obj_Not_Exist;
@@ -379,7 +379,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     return SECSConst.HCACK_Obj_Not_Exist;
                 }
 
-                if (scApp.TransferService.isCVPort(HostSource) &&(cstData != null))
+                if (scApp.TransferService.isCVPort(HostSource) && (cstData != null))
                 {
                     if (HostSource.Trim() != cstData.Carrier_LOC.Trim())
                     {
@@ -3435,7 +3435,25 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
         }
-
+        public bool HasCmdWillGoTo(string toAdr)
+        {
+            bool has_cmd_will_go = false;
+            try
+            {
+                List<ACMD_OHTC> excute_cmds = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    excute_cmds = cmd_ohtcDAO.loadAllExecuteCmd(con);
+                }
+                has_cmd_will_go = excute_cmds.Where(cmd => SCUtility.isMatche(cmd.DESTINATION_ADR, toAdr)).Count() > 0;
+                return has_cmd_will_go;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
         public ACMD_OHTC getCMD_OHTCByStatusSending()
         {
             ACMD_OHTC cmd_ohtc = null;
