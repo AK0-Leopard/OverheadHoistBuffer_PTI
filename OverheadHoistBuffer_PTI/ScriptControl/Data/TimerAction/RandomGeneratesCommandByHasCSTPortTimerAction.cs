@@ -67,46 +67,46 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         {
             // PTI-- 0318 暫時拿掉 因為啟動有問題
 
-            //scApp = SCApplication.getInstance();
-            //tranTasks = scApp.CMDBLL.loadTranTasks();
+            scApp = SCApplication.getInstance();
+            tranTasks = scApp.CMDBLL.loadTranTasks();
 
-            //dicTranTaskSchedule_Clear_Dirty = new Dictionary<string, List<TranTask>>();
-            //foreach (var task in tranTasks)
-            //{
-            //    APORTSTATION sourece_port_station = scApp.getEQObjCacheManager().getPortStation(task.SourcePort);
-            //    APORTSTATION dest_port_station = scApp.getEQObjCacheManager().getPortStation(task.DestinationPort);
-            //    if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.None)
-            //    {
-            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
-            //        {
-            //            dicTranTaskSchedule_Clear_Dirty.Add("N", new List<TranTask>());
-            //        }
-            //        dicTranTaskSchedule_Clear_Dirty["N"].Add(task);
-            //    }
-            //    else if (dest_port_station.ULD_VH_TYPE == E_VH_TYPE.Clean &&
-            //             sourece_port_station.LD_VH_TYPE == E_VH_TYPE.Clean)
-            //    {
-            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
-            //        {
-            //            dicTranTaskSchedule_Clear_Dirty.Add("CC", new List<TranTask>());
-            //        }
-            //        dicTranTaskSchedule_Clear_Dirty["CC"].Add(task);
-            //    }
-            //    else if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.Dirty)
-            //    {
-            //        if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
-            //        {
-            //            dicTranTaskSchedule_Clear_Dirty.Add("D", new List<TranTask>());
-            //        }
-            //        dicTranTaskSchedule_Clear_Dirty["D"].Add(task);
-            //    }
-            //}
-            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
-            //    SourcePorts_None = dicTranTaskSchedule_Clear_Dirty["N"].Select(task => task.SourcePort).Distinct().ToList();
-            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
-            //    SourcePorts_Clear = dicTranTaskSchedule_Clear_Dirty["CC"].Select(task => task.SourcePort).Distinct().ToList();
-            //if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
-            //    SourcePorts_Dirty = dicTranTaskSchedule_Clear_Dirty["D"].Select(task => task.SourcePort).Distinct().ToList();
+            dicTranTaskSchedule_Clear_Dirty = new Dictionary<string, List<TranTask>>();
+            foreach (var task in tranTasks)
+            {
+                APORTSTATION sourece_port_station = scApp.getEQObjCacheManager().getPortStation(task.SourcePort);
+                APORTSTATION dest_port_station = scApp.getEQObjCacheManager().getPortStation(task.DestinationPort);
+                if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.None)
+                {
+                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
+                    {
+                        dicTranTaskSchedule_Clear_Dirty.Add("N", new List<TranTask>());
+                    }
+                    dicTranTaskSchedule_Clear_Dirty["N"].Add(task);
+                }
+                else if (dest_port_station.ULD_VH_TYPE == E_VH_TYPE.Clean &&
+                         sourece_port_station.LD_VH_TYPE == E_VH_TYPE.Clean)
+                {
+                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
+                    {
+                        dicTranTaskSchedule_Clear_Dirty.Add("CC", new List<TranTask>());
+                    }
+                    dicTranTaskSchedule_Clear_Dirty["CC"].Add(task);
+                }
+                else if (sourece_port_station.ULD_VH_TYPE == E_VH_TYPE.Dirty)
+                {
+                    if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
+                    {
+                        dicTranTaskSchedule_Clear_Dirty.Add("D", new List<TranTask>());
+                    }
+                    dicTranTaskSchedule_Clear_Dirty["D"].Add(task);
+                }
+            }
+            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("N"))
+                SourcePorts_None = dicTranTaskSchedule_Clear_Dirty["N"].Select(task => task.SourcePort).Distinct().ToList();
+            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("CC"))
+                SourcePorts_Clear = dicTranTaskSchedule_Clear_Dirty["CC"].Select(task => task.SourcePort).Distinct().ToList();
+            if (dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
+                SourcePorts_Dirty = dicTranTaskSchedule_Clear_Dirty["D"].Select(task => task.SourcePort).Distinct().ToList();
 
         }
         /// <summary>
@@ -173,7 +173,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             APORTSTATION source_port_station = null;
             APORTSTATION destination_port_station = null;
             string carrier_id = null;
-            string find_task_type = vh_type.ToString().Substring(0, 1); ;
+            string find_task_type = vh_type.ToString().Substring(0, 1);
             if (unfinished_cmd_count < vh_count)
             {
                 bool is_find = false;
@@ -200,13 +200,41 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     else
                     {
                         task_list_clean.RemoveAt(task_RandomIndex);
-                        if (task_list_clean.Count == 0) return;
+                        if (task_list_clean.Count == 0) break;
                     }
                     SpinWait.SpinUntil(() => false, 1);
                 } while (!is_find);
 
                 if (is_find)
                     sendTranCmd(carrier_id, tranTask.SourcePort, tranTask.DestinationPort);
+                else
+                {
+                    // 若沒有搬送命令可以執行，則判定是否有車輛是沒有命令的。
+                    if (scApp.VehicleBLL.cache.loadNoOHTCmdVh().Count()!=0)
+                    {
+                        //若有，則對其下一走行命令至任一避車點
+                        AVEHICLE choseVehicle = scApp.VehicleBLL.cache.loadNoOHTCmdVh()[0];
+                        string vh_id = choseVehicle.VEHICLE_ID;
+                        List<string> can_avoid_addrress = scApp.AddressBLL.OperateCatch.loadCanAvoidAddressIDs();
+                        if (can_avoid_addrress == null || can_avoid_addrress.Count == 0)
+                        {
+                            //加Log
+                            return;
+                        }
+                        //2.找出離自己最近的一個避車點
+                        var find_result = scApp.VehicleService.findTheNearestAvoidAddress(choseVehicle, can_avoid_addrress);
+                        scApp.CMDBLL.doCreatTransferCommand(vh_id,
+                                            cst_id: "",
+                                            box_id: "",
+                                            lot_id: "",
+                                            cmd_type: E_CMD_TYPE.Move,
+                                            source: "",
+                                            destination: "",
+                                            source_address: "",
+                                            destination_address: find_result.adrID,
+                                            gen_cmd_type: SCAppConstants.GenOHxCCommandType.Auto);
+                    }
+                }
             }
         }
 
@@ -216,7 +244,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             string cmdID = DateTime.Now.ToString("yyyyMMddHHmmssfffff");
             scApp.TransferService.Manual_InsertCmd(source_port, destn_port, sourceCmd: "RandomTest");
             scApp.SysExcuteQualityBLL.creatSysExcuteQuality(cmdID, carrier_id, source_port, destn_port);
-            SpinWait.SpinUntil(() => false, 10000);
+            SpinWait.SpinUntil(() => false, 1000);
             scApp.CMDBLL.checkMCS_TransferCommand();
         }
     }

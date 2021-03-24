@@ -2454,6 +2454,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                            ToList();
             }
 
+            public List<AVEHICLE> loadNoOHTCmdVh()
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                return vhs.Where(vh => SCUtility.isEmpty(vh.OHTC_CMD)&& !SCUtility.isEmpty(vh.CUR_ADR_ID)).
+                           ToList();
+            }
+
             public List<AVEHICLE> loadVhsBySectionID(string sectionID)
             {
                 var vhs = eqObjCacheManager.getAllVehicle();

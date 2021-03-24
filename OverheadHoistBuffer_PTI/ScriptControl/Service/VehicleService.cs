@@ -4246,7 +4246,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return (false, "");
             }
         }
-        private (bool isFind, string adrID) findTheNearestAvoidAddress(AVEHICLE willDrivenAwayVh, IEnumerable<string> allCanAvoidAdr)
+        public (bool isFind, string adrID) findTheNearestAvoidAddress(AVEHICLE willDrivenAwayVh, IEnumerable<string> allCanAvoidAdr)
         {
             int min_distance = int.MaxValue;
             string nearest_avoid_adr = null;
