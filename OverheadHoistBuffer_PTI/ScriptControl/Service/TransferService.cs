@@ -6730,7 +6730,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (alarm.ALAM_LVL == E_ALARM_LVL.Error)
                     {
                         reportBLL.ReportAlarmCleared(mcsCmdData, alarm, alarm.UnitID.Trim(), alarm.UnitState.Trim());
-                        scApp.ReportBLL.ReportAlarmHappend(ErrorStatus.ErrReset, alarm.ALAM_CODE.Trim(), alarm.ALAM_DESC.Trim());
+                        //scApp.ReportBLL.ReportAlarmHappend(ErrorStatus.ErrReset, alarm.ALAM_CODE.Trim(), alarm.ALAM_DESC.Trim());
                         //if (alarmBLL.loadSetAlarmListByEqName(eqID).Count == 1)
                         //{
                         //    scApp.ReportBLL.ReportAlarmHappend(ErrorStatus.ErrReset, alarm.ALAM_CODE.Trim(), alarm.ALAM_DESC.Trim());
