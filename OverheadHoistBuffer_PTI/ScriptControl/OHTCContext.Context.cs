@@ -97,5 +97,7 @@ namespace com.mirle.ibg3k0.sc
         public virtual DbSet<PortDef> PortDef { get; set; }
         public virtual DbSet<VACMD_MCS> VACMD_MCS { get; set; }
         public virtual DbSet<VSECTION_100> VSECTION_100 { get; set; }
+        public virtual DbSet<HCMD_MCS> HCMD_MCS { get; set; }
+        public virtual DbSet<HCMD_OHTC> HCMD_OHTC { get; set; }
     }
 }

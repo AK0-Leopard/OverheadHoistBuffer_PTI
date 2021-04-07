@@ -1409,10 +1409,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     // This function may cause exception if the cmd is not come from MCS or there don't have a MCS cmd.
                     scApp.TransferService.OHT_TransferStatus(cmd_id, vh_id, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE);
-                    if (assignVH.HAS_CST == 1)
-                    {
-                        //scApp.TransferService.OHT_TransferStatus(cmd_id, vh_id, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE);
-                    }
+                    //if (assignVH.HAS_CST == 1)
+                    //{
+                    //    //scApp.TransferService.OHT_TransferStatus(cmd_id, vh_id, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE);
+                    //}
                 }
 
 

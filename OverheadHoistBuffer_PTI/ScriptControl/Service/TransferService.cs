@@ -651,7 +651,7 @@ namespace com.mirle.ibg3k0.sc.Service
             #region 卡匣
             CassetteData dbOHT_CSTdata = cassette_dataBLL.loadCassetteDataByLoc(craneName);
 
-            if (vehicle.HAS_CST == 1)
+            if (vehicle.HAS_BOX == 1)
             {
                 CassetteData nowOHT_CSTdata = new CassetteData();
                 //nowOHT_CSTdata.CSTID = "ERROR1";
@@ -1746,7 +1746,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     AVEHICLE vehicle = scApp.VehicleService.GetVehicleDataByVehicleID(sourceName);
 
-                    if (vehicle.HAS_CST != 0)
+                    if (vehicle.HAS_BOX != 0)
                     {
                         sourcePortType = true;
                     }

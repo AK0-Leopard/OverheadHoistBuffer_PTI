@@ -386,6 +386,22 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
             }
             return query.ToList();
         }
+
+        public void RemoteByBatch(DBConnection_EF con, List<ACMD_MCS> cmd_mcss)
+        {
+            cmd_mcss.ForEach(entity => con.Entry(entity).State = EntityState.Deleted);
+            con.ACMD_MCS.RemoveRange(cmd_mcss);
+            con.SaveChanges();
+        }
+
+        public List<ACMD_MCS> loadFinishCMD_MCS(DBConnection_EF con)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where cmd.TRANSFERSTATE >= E_TRAN_STATUS.TransferCompleted
+                        select cmd;
+            return query.ToList();
+        }
+
     }
 
 }

@@ -385,7 +385,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
             isExecuteLoadUnload = false;
             isVehicleIdle = false;
 
-            p_Presence = eqpt.HAS_CST == 1;
+            p_Presence = eqpt.HAS_BOX == 1;
 
             if (!eqpt.isTcpIpConnect)
             {
@@ -518,7 +518,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                         p_Presence = !p_Presence;
                         SpinWait.SpinUntil(() => !isExecuteLoadUnload, 1000);
                     }
-                    p_Presence = eqpt.HAS_CST == 1;
+                    p_Presence = eqpt.HAS_BOX == 1;
                 }
                 catch (Exception ex)
                 {

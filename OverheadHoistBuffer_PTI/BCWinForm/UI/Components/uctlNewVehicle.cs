@@ -414,7 +414,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                             {
                                 ActionStatus = E_ACTION_STATUS.NOTHING;
                             }
-                            if (vh.HAS_CST == 1)
+                            if (vh.HAS_BOX == 1)
                             {
                                 CSTLoadStatus = E_CST_LOAD_STATUS.LOADED;
                             }
@@ -488,7 +488,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                         {
                             CSTLoadStatus = E_CST_LOAD_STATUS.UNLOADING;
                         }
-                        else if (vh.HAS_CST == 1)
+                        else if (vh.HAS_BOX == 1)
                         {
                             CSTLoadStatus = E_CST_LOAD_STATUS.LOADED;
                         }

@@ -166,13 +166,13 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
                     }
                     else if (s1f3.SVID[i] == SECSConst.VID_Enhanced_Carriers)
                     {
-                        List<AVEHICLE> has_carry_vhs = scApp.getEQObjCacheManager().getAllVehicle().Where(vh => vh.HAS_CST == 1).ToList();
+                        List<AVEHICLE> has_carry_vhs = scApp.getEQObjCacheManager().getAllVehicle().Where(vh => vh.HAS_BOX == 1).ToList();
                         int carry_vhs_count = has_carry_vhs.Count;
                         S6F11.RPTINFO.RPTITEM.VIDITEM_10[] carrier_info = new S6F11.RPTINFO.RPTITEM.VIDITEM_10[carry_vhs_count];
                         for (int j = 0; j < carry_vhs_count; j++)
                         {
                             carrier_info[j] = new S6F11.RPTINFO.RPTITEM.VIDITEM_10();
-                            carrier_info[j].CARRIER_ID_OBJ.CARRIER_ID = has_carry_vhs[j].CST_ID.Trim();
+                            carrier_info[j].CARRIER_ID_OBJ.CARRIER_ID = has_carry_vhs[j].BOX_ID.Trim();
                             carrier_info[j].CARRIER_LOC_OBJ.CARRIER_LOC = has_carry_vhs[j].VEHICLE_ID;
                             carrier_info[j].INSTALL_TIME_OBJ.INSTALLTIME = string.Empty; //TODO 要填入進入的時間
                             carrier_info[j].CARRIER_ZONE_NAME = string.Empty;

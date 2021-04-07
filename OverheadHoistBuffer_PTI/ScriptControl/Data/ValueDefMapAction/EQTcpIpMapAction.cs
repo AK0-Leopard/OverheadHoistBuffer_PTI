@@ -353,7 +353,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 double BlockTime_ms = eqpt.watchBlockTime.ElapsedMilliseconds;
                 double BlockTime_s = BlockTime_ms / 1000;
                 BlockTime_s = Math.Round(BlockTime_s, 1);
-                if (eqpt.HAS_CST == 0)
+                if (eqpt.HAS_BOX == 0)
                 {
                     scApp.SysExcuteQualityBLL.
                         updateSysExecQity_BlockTime2SurceOnTheWay(vh.MCS_CMD, BlockTime_s);

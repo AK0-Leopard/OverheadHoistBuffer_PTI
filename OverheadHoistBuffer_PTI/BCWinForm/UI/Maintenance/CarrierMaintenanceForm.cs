@@ -62,7 +62,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     MessageBox.Show($"Plaese select vh.", "Carrier installed fail.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                else if (vh.HAS_CST == 0)
+                else if (vh.HAS_BOX == 0)
                 {
                     MessageBox.Show($"vh:{vh_id} carrier not exist.can't installed", "Carrier installed fail.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -116,7 +116,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     MessageBox.Show($"Plaese select vh.", "Carrier remove fail.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                else if (vh.HAS_CST == 1)
+                else if (vh.HAS_BOX == 1)
                 {
                     MessageBox.Show($"vh:{vh_id} has carrier.can't remove.", "Carrier remove fail.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;

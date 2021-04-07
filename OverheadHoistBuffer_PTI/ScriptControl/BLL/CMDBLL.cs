@@ -43,7 +43,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         ReturnCodeMapDao return_code_mapDao = null;
         ShelfDefDao shelfdefDao = null;
         CassetteDataDao cassettedataDao = null;
-
+        HCMD_MCSDao hcmd_mcsDao = null;
+        HCMD_OHTCDao hcmd_ohtcDao = null;
         protected static Logger logger_VhRouteLog = LogManager.GetLogger("VhRoute");
         NLog.Logger TransferServiceLogger = NLog.LogManager.GetLogger("TransferServiceLogger");
 
@@ -73,7 +74,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             return_code_mapDao = scApp.ReturnCodeMapDao;
             shelfdefDao = scApp.ShelfDefDao;
             cassettedataDao = scApp.CassetteDataDao;
+
+            hcmd_mcsDao = scApp.HCMD_MCSDao;
+            hcmd_ohtcDao = scApp.HCMD_OHTCDao;
+
             cassette_dataBLL = scApp.CassetteDataBLL;// PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
+
+
             initialByPassSegment();
         }
 
@@ -322,23 +329,30 @@ namespace com.mirle.ibg3k0.sc.BLL
                 #endregion
                 #region 確認命令ID是否重複 
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
-                if (cmd_obj != null)
+                if (cmd_obj != null)//20210326 markchou 檢查到重覆ID，如果命令已經結束，直接移往History Table
                 {
-                    check_result = $"MCS command id:{command_id} 命令已存在.";
+                    scApp.CMDBLL.moveCMD_MCSToHistory(command_id);//移往history
+                    var ohtc_cmd = scApp.CMDBLL.getCMD_OHTCByMCScmdID(command_id);
+                    if (ohtc_cmd != null)
+                    {
+                        scApp.CMDBLL.moveCMD_OHTCToHistory(ohtc_cmd.CMD_ID);
+                    }
 
-                    TransferServiceLogger.Info
-                    (
-                        DateTime.Now.ToString("HH:mm:ss.fff ")
-                        + "MCS >> OHB|S2F50: 命令已存在，"
-                        + " CmdID: " + cmd_obj.CMD_ID
-                        + " CARRIER_ID: " + cmd_obj.CARRIER_ID
-                        + " BOX_ID: " + cmd_obj.BOX_ID
-                        + " 來源: " + cmd_obj.HOSTSOURCE
-                        + " 目的: " + cmd_obj.HOSTDESTINATION
-                        + " 狀態: " + cmd_obj.TRANSFERSTATE
-                    );
+                    //check_result = $"MCS command id:{command_id} 命令已存在.";
 
-                    return SECSConst.HCACK_Rejected;
+                    //TransferServiceLogger.Info
+                    //(
+                    //    DateTime.Now.ToString("HH:mm:ss.fff ")
+                    //    + "MCS >> OHB|S2F50: 命令已存在，"
+                    //    + " CmdID: " + cmd_obj.CMD_ID
+                    //    + " CARRIER_ID: " + cmd_obj.CARRIER_ID
+                    //    + " BOX_ID: " + cmd_obj.BOX_ID
+                    //    + " 來源: " + cmd_obj.HOSTSOURCE
+                    //    + " 目的: " + cmd_obj.HOSTDESTINATION
+                    //    + " 狀態: " + cmd_obj.TRANSFERSTATE
+                    //);
+
+                    //return SECSConst.HCACK_Rejected;
                 }
 
                 var cmdbyBox = scApp.CMDBLL.getCMD_ByBoxID(cstData.BOXID);//.getByCstBoxID(cstData.CSTID ,cstData.BOXID);
@@ -432,9 +446,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                     if (isSourceOnVehicle)
                     {
                         AVEHICLE carray_vh = scApp.VehicleBLL.getVehicleByRealID(HostSource);
-                        if (carray_vh.HAS_CST == 0)
+                        if (carray_vh.HAS_BOX == 0)
                         {
-                            check_result = $"Vh:{HostSource.Trim()},not carray cst.";
+                            check_result = $"Vh:{HostSource.Trim()},do not have box on vehicle.";
                             TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: 車子相關:" + check_result);
                             return SECSConst.HCACK_Rejected;
                         }
@@ -2009,6 +2023,36 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return null;
             }
         }
+
+        public List<ACMD_MCS> loadFinishCMD_MCS()
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.loadFinishCMD_MCS(con);
+            }
+        }
+
+        public void moveCMD_MCSToHistory(string command_id)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                ACMD_MCS mcs_cmd = cmd_mcsDao.getByID(con, command_id);
+                HCMD_MCS hmcs_cmd = mcs_cmd.ToHCMD_MCS();
+                cmd_mcsDao.DeleteCmdData(con, mcs_cmd);
+                hcmd_mcsDao.Add(con, hmcs_cmd);
+            }
+        }
+
+
+
+        public void remoteCMD_MCSByBatch(List<ACMD_MCS> mcs_cmds)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cmd_mcsDao.RemoteByBatch(con, mcs_cmds);
+            }
+        }
+
         private List<ACMD_MCS> list()
         {
             try
@@ -3263,6 +3307,19 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         }
 
+        public void moveCMD_OHTCToHistory(string command_id)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                ACMD_OHTC ohtc_cmd = cmd_ohtcDAO.getByID(con, command_id);
+                HCMD_OHTC hohtc_cmd = ohtc_cmd.ToHCMD_OHTC();
+                cmd_ohtcDAO.DeleteCmdData(con, ohtc_cmd);
+                hcmd_ohtcDao.Add(con, hohtc_cmd);
+            }
+        }
+
+
+
         public bool creatCommand_OHTC(ACMD_OHTC cmd)
         {
             bool isSuccess = true;
@@ -3801,7 +3858,20 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
 
         }
-
+        public List<ACMD_OHTC> loadFinishCMD_OHTC()
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_ohtcDAO.loadFinishCMD_OHT(con);
+            }
+        }
+        public void remoteCMD_OHTCByBatch(List<ACMD_OHTC> cmds)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cmd_ohtcDAO.RemoteByBatch(con, cmds);
+            }
+        }
         //public bool FourceResetVhCmd()
         //{
         //    int count = 0;
@@ -4688,7 +4758,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             try
             {
                 if (SCUtility.isEmpty(cmd_source_adr)
-                || (!SCUtility.isEmpty(cmd_source_adr) && vehicle.HAS_CST == 1))
+                || (!SCUtility.isEmpty(cmd_source_adr) && vehicle.HAS_BOX == 1))
                 {
                     is_need = false;
                 }
@@ -5189,7 +5259,68 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
         #endregion CMD_OHTC_DETAIL
+        #region HCMD_MCS
+        public List<HCMD_MCS> LoadHMCSCmdDataByStartEnd(DateTime startTime, DateTime endTime)  //歷史紀錄
+        {
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return hcmd_mcsDao.LoadCmdDataByStartEnd(con, startTime, endTime);
+            }
+        }
 
+        public void CreatHCMD_MCSs(List<HCMD_MCS> HCMD_MCS)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.AddByBatch(con, HCMD_MCS);
+            }
+        }
+        public List<HCMD_MCS> loadHCMD_MCSBefore6Months()
+        {
+            List<HCMD_MCS> AMCSREPORTQUEUEs;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                AMCSREPORTQUEUEs = hcmd_mcsDao.loadBefore6Months(con);
+            }
+            return AMCSREPORTQUEUEs;
+        }
+
+        public void RemoteHCMD_MCSByBatch(List<HCMD_MCS> hCmdMcs)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.RemoteByBatch(con, hCmdMcs);
+            }
+        }
+        #endregion HCMD_MCS
+        #region HCMD_OHTC
+        public void CreatHCMD_OHTCs(List<HCMD_OHTC> HCMD_OHTC)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtcDao.AddByBatch(con, HCMD_OHTC);
+            }
+        }
+        public List<HCMD_OHTC> loadHCMD_OHTCBefore6Months()
+        {
+            List<HCMD_OHTC> hcmd_ohtc;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtc = hcmd_ohtcDao.loadBefore6Months(con);
+            }
+            return hcmd_ohtc;
+        }
+
+        public void RemoteHCMD_OHTCByBatch(List<HCMD_OHTC> hcmdOHTC)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtcDao.RemoteByBatch(con, hcmdOHTC);
+            }
+        }
+
+        #endregion HCMD_OHTC
         #region Return Code Map
         public ReturnCodeMap getReturnCodeMap(string eq_id, string return_code)
         {

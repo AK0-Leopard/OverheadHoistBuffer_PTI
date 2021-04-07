@@ -18,6 +18,5 @@ namespace com.mirle.ibg3k0.sc
         public E_BLOCK_ZONE_TYPE BLOCK_ZONE_TYPE { get; set; }
         public string LEAVE_ADR_ID_1 { get; set; }
         public string LEAVE_ADR_ID_2 { get; set; }
-
     }
 }

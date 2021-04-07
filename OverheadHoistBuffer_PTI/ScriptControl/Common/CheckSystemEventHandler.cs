@@ -82,7 +82,7 @@ namespace com.mirle.ibg3k0.sc.Common
                         {
                             AVEHICLE vh = app.VehicleBLL.getVehicleByID(vh_id);
 
-                            app.VehicleBLL.DoIdleVehicleHandle_InAction(vh.HAS_CST == 1 ?
+                            app.VehicleBLL.DoIdleVehicleHandle_InAction(vh.HAS_BOX == 1 ?
                                                                         VhLoadCarrierStatus.Exist : VhLoadCarrierStatus.NotExist);
                         }
                         else
