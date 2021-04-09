@@ -14,14 +14,16 @@ namespace com.mirle.ibg3k0.sc.ObjectRelay
     {
         double distance2millimeter = 1000;
         double km2millimeter = 1000000;
-
-
+        App.SCApplication scApp = null;
+        static ALINE line = null;
         //public static BindingList<VehicleObjToShow> ObjectToShow_list = new BindingList<VehicleObjToShow>();
         AVEHICLE vehicle = null;
-        public VehicleObjToShow(AVEHICLE myDatabaseObject, double distance_scale)
+        public VehicleObjToShow(App.SCApplication _scApp, AVEHICLE myDatabaseObject, double distance_scale)
         {
             this.vehicle = myDatabaseObject;
             distance2millimeter = distance_scale;
+            scApp = _scApp;
+            line = scApp.getEQObjCacheManager().getLine();
         }
         [DisplayName("Vh ID")]
         public string VEHICLE_ID
@@ -105,17 +107,34 @@ namespace com.mirle.ibg3k0.sc.ObjectRelay
                 NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.OHTC_CMD));
             }
         }
-        //[DisplayName("CST ID")]
-        //public string cST_ID
-        //{
-        //    get { return vehicle.CST_ID; }
-        //    set
-        //    {
-        //        vehicle.CST_ID = value;
-        //        NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.cST_ID));
-        //    }
-        //}
-
+        [DisplayName("L Port")]
+        public string LoadPort
+        {
+            get
+            {
+                ACMD_OHTC cmd_ohtc = getCurrentCMD_OHTCObj();
+                if (cmd_ohtc == null) return "";
+                return Common.SCUtility.Trim(cmd_ohtc.SOURCE, true);
+            }
+        }
+        [DisplayName("U Port")]
+        public string UnloadPort
+        {
+            get
+            {
+                ACMD_OHTC cmd_ohtc = getCurrentCMD_OHTCObj();
+                if (cmd_ohtc == null) return "";
+                return Common.SCUtility.Trim(cmd_ohtc.DESTINATION, true);
+            }
+        }
+        private ACMD_OHTC getCurrentCMD_OHTCObj()
+        {
+            string ohtc_cmd = Common.SCUtility.Trim(vehicle.OHTC_CMD, true);
+            if (Common.SCUtility.isEmpty(ohtc_cmd)) return null;
+            if (line == null || line.CurrentExcuteCMD_OHTC == null) return null;
+            var cmd = line.CurrentExcuteCMD_OHTC.Where(c => Common.SCUtility.isMatche(c.CMD_ID, ohtc_cmd)).FirstOrDefault();
+            return cmd;
+        }
         [DisplayName("Block pause")]
         public bool bLOCK_PAUSE2Show
         {
@@ -323,26 +342,26 @@ namespace com.mirle.ibg3k0.sc.ObjectRelay
             }
         }
 
-        [DisplayName("Cycling")]
-        public bool IS_CYCLING
-        {
-            get { return vehicle.IS_CYCLING; }
-            set
-            {
-                vehicle.IS_CYCLING = value;
-                NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.IS_CYCLING));
-            }
-        }
-        [DisplayName("Cycling time")]
-        public DateTime? CYCLERUN_TIME
-        {
-            get { return vehicle.CYCLERUN_TIME ?? DateTime.MinValue; }
-            set
-            {
-                vehicle.CYCLERUN_TIME = value;
-                NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.CYCLERUN_TIME));
-            }
-        }
+        //[DisplayName("Cycling")]
+        //public bool IS_CYCLING
+        //{
+        //    get { return vehicle.IS_CYCLING; }
+        //    set
+        //    {
+        //        vehicle.IS_CYCLING = value;
+        //        NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.IS_CYCLING));
+        //    }
+        //}
+        //[DisplayName("Cycling time")]
+        //public DateTime? CYCLERUN_TIME
+        //{
+        //    get { return vehicle.CYCLERUN_TIME ?? DateTime.MinValue; }
+        //    set
+        //    {
+        //        vehicle.CYCLERUN_TIME = value;
+        //        NotifyPropertyChanged(BCFUtility.getPropertyName(() => this.CYCLERUN_TIME));
+        //    }
+        //}
 
         [DisplayName("Sec DIST(m)")]
         public double ACC_SEC_DIST2Show

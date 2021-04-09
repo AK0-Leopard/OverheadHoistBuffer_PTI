@@ -304,27 +304,61 @@ namespace com.mirle.ibg3k0.sc.BLL
                 #region 卡匣是否存在
                 CassetteData cstData = scApp.CassetteDataBLL.loadCassetteDataByBoxID(box_id);
 
-                if ((cstData == null) && scApp.TransferService.isCVPort(HostSource) != true)
+                if (cstData == null)
                 {
-                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
-                    return SECSConst.HCACK_Obj_Not_Exist;
+                    if (scApp.TransferService.isCVPort(HostSource) != true)
+                    {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
+                        return SECSConst.HCACK_Obj_Not_Exist;
+                    }
+                    // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
+                    else if (scApp.TransferService.isCVPort(HostSource))
+                    {
+                        CassetteData cstData_FromS2F49 = new CassetteData();
+                        cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
+                        cstData_FromS2F49.CSTID = ""; // 填入空白即可
+                        cstData_FromS2F49.Carrier_LOC = HostSource.Trim();  //填PortID
+                        cstData_FromS2F49.CSTState = E_CSTState.Installed;
+                        cstData_FromS2F49.StockerID = "1";
+                        cstData_FromS2F49.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+                        cstData_FromS2F49.ReadStatus = ((int)ACMD_MCS.IDreadStatus.successful).ToString();
+                        cstData_FromS2F49.Stage = 1;
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F49: BOXID: " + box_id + " 不存在, 但由於是CV Port 自動建帳 PTI用");
+                        cassette_dataBLL.insertCassetteData(cstData_FromS2F49);
+                        cstData = cstData_FromS2F49;
+                    }
                 }
-                // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
-                else if ((cstData == null) && scApp.TransferService.isCVPort(HostSource))
+                else
                 {
-                    CassetteData cstData_FromS2F49 = new CassetteData();
-                    cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
-                    cstData_FromS2F49.CSTID = ""; // 填入空白即可
-                    cstData_FromS2F49.Carrier_LOC = HostSource.Trim();  //填PortID
-                    cstData_FromS2F49.CSTState = E_CSTState.Installed;
-                    cstData_FromS2F49.StockerID = "1";
-                    cstData_FromS2F49.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
-                    cstData_FromS2F49.ReadStatus = ((int)ACMD_MCS.IDreadStatus.successful).ToString();
-                    cstData_FromS2F49.Stage = 1;
-                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F49: BOXID: " + box_id + " 不存在, 但由於是CV Port 自動建帳 PTI用");
-                    cassette_dataBLL.insertCassetteData(cstData_FromS2F49);
-                    cstData = cstData_FromS2F49;
+                    //若有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令
+                    if (SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                    {
+                        TransferServiceLogger.Info($"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id} 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令");
+                        return SECSConst.HCACK_Not_Able_Execute;
+                    }
                 }
+
+                //if ((cstData == null) && scApp.TransferService.isCVPort(HostSource) != true)
+                //{
+                //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
+                //    return SECSConst.HCACK_Obj_Not_Exist;
+                //}
+                //// PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
+                //else if ((cstData == null) && scApp.TransferService.isCVPort(HostSource))
+                //{
+                //    CassetteData cstData_FromS2F49 = new CassetteData();
+                //    cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
+                //    cstData_FromS2F49.CSTID = ""; // 填入空白即可
+                //    cstData_FromS2F49.Carrier_LOC = HostSource.Trim();  //填PortID
+                //    cstData_FromS2F49.CSTState = E_CSTState.Installed;
+                //    cstData_FromS2F49.StockerID = "1";
+                //    cstData_FromS2F49.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+                //    cstData_FromS2F49.ReadStatus = ((int)ACMD_MCS.IDreadStatus.successful).ToString();
+                //    cstData_FromS2F49.Stage = 1;
+                //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F49: BOXID: " + box_id + " 不存在, 但由於是CV Port 自動建帳 PTI用");
+                //    cassette_dataBLL.insertCassetteData(cstData_FromS2F49);
+                //    cstData = cstData_FromS2F49;
+                //}
                 //////////////////
                 #endregion
                 #region 確認命令ID是否重複 
@@ -3492,6 +3526,25 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
         }
+        public List<ACMD_OHTC> loadUnfinishOHTCCmd()
+        {
+            List<ACMD_OHTC> acmd_ohtcs = null;
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    acmd_ohtcs = cmd_ohtcDAO.loadUnfinishCmd(con);
+                }
+                return acmd_ohtcs;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return null;
+            }
+
+
+        }
         public bool HasCmdWillGoTo(string toAdr)
         {
             bool has_cmd_will_go = false;
@@ -3894,7 +3947,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                         != SCAppConstants.AppServiceMode.Active)
                         return;
                     //找出目前再Queue的ACMD_OHTC
-                    List<ACMD_OHTC> CMD_OHTC_Queues = scApp.CMDBLL.loadCMD_OHTCMDStatusIsQueue();
+                    List<ACMD_OHTC> CMD_OHTC_Unfinish = scApp.CMDBLL.loadUnfinishOHTCCmd();
+                    line.CurrentExcuteCMD_OHTC = CMD_OHTC_Unfinish;
+                    if (CMD_OHTC_Unfinish == null || CMD_OHTC_Unfinish.Count == 0)
+                        return;
+                    //List<ACMD_OHTC> CMD_OHTC_Queues = scApp.CMDBLL.loadCMD_OHTCMDStatusIsQueue();
+                    List<ACMD_OHTC> CMD_OHTC_Queues = CMD_OHTC_Unfinish.Where(cmd => cmd.CMD_STAUS == E_CMD_STATUS.Queue).ToList();
                     if (CMD_OHTC_Queues == null || CMD_OHTC_Queues.Count == 0)
                         return;
                     foreach (ACMD_OHTC cmd in CMD_OHTC_Queues)

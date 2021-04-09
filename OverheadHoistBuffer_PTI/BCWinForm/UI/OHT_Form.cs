@@ -63,7 +63,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
             foreach (var vh in scApp.getEQObjCacheManager().getAllVehicle())
             {
-                VehicleObjToShow vhShowObj = new VehicleObjToShow(vh, distance_scale);
+                VehicleObjToShow vhShowObj = new VehicleObjToShow(scApp, vh, distance_scale);
 
                 scApp.getEQObjCacheManager().CommonInfo.ObjectToShow_list.Add(vhShowObj);
             }
@@ -772,7 +772,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 //cmd_mcs_obj_to_show = mainform.BCApp.SCApplication.CMDBLL.loadACMD_MCSIsUnfinishedObjToShow();
                 cmsMCS_bindingSource.DataSource = cmd_mcs_obj_to_show;
                 dgv_TransferCommand.Refresh();
-        }
+            }
         }
 
 

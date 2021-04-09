@@ -1138,7 +1138,7 @@ namespace com.mirle.ibg3k0.sc
             StopWatch_mcsConnectionTime.Stop();
             StopWatch_mcsDisconnectionTime.Restart();
         }
-
+        public List<ACMD_OHTC> CurrentExcuteCMD_OHTC = null;
         private SCAppConstants.LineHostControlState.HostControlState host_control_state = SCAppConstants.LineHostControlState.HostControlState.EQ_Off_line;
         public virtual SCAppConstants.LineHostControlState.HostControlState Host_Control_State
         {

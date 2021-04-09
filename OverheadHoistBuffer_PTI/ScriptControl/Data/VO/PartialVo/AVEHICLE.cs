@@ -850,8 +850,6 @@ namespace com.mirle.ibg3k0.sc
                 showObj.IS_PARKING = IS_PARKING;
                 showObj.PARK_TIME = PARK_TIME;
                 //showObj.pACK_ADR_ID = PACK_ADR_ID;
-                showObj.IS_CYCLING = IS_CYCLING;
-                showObj.CYCLERUN_TIME = CYCLERUN_TIME;
                 //showObj.cYCLERUN_ID = CYCLERUN_ID;
             }
         }
