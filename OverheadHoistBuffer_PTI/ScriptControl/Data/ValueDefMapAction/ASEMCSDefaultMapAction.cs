@@ -3554,7 +3554,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
-        public override bool S6F11SendDeviceLogicalStateOnline( List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
             {
@@ -3898,7 +3898,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Wait_Out, Vids);
                 if (reportQueues == null)
                 {
-                    if(S6F11SendMessage(mcs_queue))
+                    if (S6F11SendMessage(mcs_queue))
                     {
                         scApp.CassetteDataBLL.UpdateCSTState(cst.BOXID, (int)E_CSTState.WaitOut);
                         scApp.TransferService.SetWaitInOutLog(cst, E_CSTState.WaitOut);
@@ -4239,7 +4239,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 string loc = cassette?.Carrier_LOC ?? "";
                 string zonename = scApp.CassetteDataBLL.GetZoneName(loc);
 
-                Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;                
+                Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd.CMD_ID;
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cmd.BOX_ID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = loc;
                 Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
@@ -4419,15 +4419,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
 
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Input, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
+                //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
+                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Input, Vids);
+                //if (reportQueues == null)
+                //{
+                //    S6F11SendMessage(mcs_queue);
+                //}
+                //else
+                //{
+                //    reportQueues.Add(mcs_queue);
+                //}
             }
             catch (Exception ex)
             {
@@ -4443,16 +4444,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Output, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
+                //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
+                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Output, Vids);
+                //if (reportQueues == null)
+                //{
+                //    S6F11SendMessage(mcs_queue);
+                //}
+                //else
+                //{
+                //    reportQueues.Add(mcs_queue);
+                //}
             }
             catch (Exception ex)
             {
@@ -4468,16 +4469,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Changing, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
+                //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
+                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Changing, Vids);
+                //if (reportQueues == null)
+                //{
+                //    S6F11SendMessage(mcs_queue);
+                //}
+                //else
+                //{
+                //    reportQueues.Add(mcs_queue);
+                //}
             }
             catch (Exception ex)
             {
@@ -4825,10 +4826,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         return true;
                     }
                 }
-                if(portID != null && portID!="")
+                if (portID != null && portID != "")
                 {
-                    List<PortDef> ports= scApp.PortDefBLL.GetPortData_WithReportMCSFlag_Enable(portID);
-                    if(ports.Count() == 0)
+                    List<PortDef> ports = scApp.PortDefBLL.GetPortData_WithReportMCSFlag_Enable(portID);
+                    if (ports.Count() == 0)
                     {
                         return false;
                     }
@@ -4843,7 +4844,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     isSuccess = isSuccess && SECSConst.CheckDicCEIDAndRPTID(ceid);
                     if (!eventBLL.isEnableReport(ceid))
                     {
-                        if (isSuccess) 
+                        if (isSuccess)
                             return false;
                         else
                             return true;
@@ -4934,7 +4935,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        
+
         #endregion Send
         #endregion
 

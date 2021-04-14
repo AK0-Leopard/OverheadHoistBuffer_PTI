@@ -728,7 +728,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     // 0317 Jason 此部分之loadBOXStatus 原為loadCSTStatus ，現在之狀況為暫時解法
                     if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh, cstID,
                                            modeStat, actionStat,
-                                           blockingStat, pauseStat, obstacleStat, hidStat, errorStat, loadBOXStatus))
+                                           blockingStat, pauseStat, obstacleStat, hidStat, errorStat,
+                                           loadCSTStatus, loadBOXStatus))
                     {
                         isSuccess = false;
                     }
@@ -2753,7 +2754,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     eqpt.PauseStatus != pauseStat ||
                     eqpt.HIDStatus != hidStat ||
                     eqpt.ERROR != errorStat ||
-                    eqpt.HAS_CST != (int)loadBOXStatus;
+                    eqpt.HAS_CST != (int)loadCSTStatus ||
+                    eqpt.HAS_BOX != (int)loadBOXStatus;
 
             if (eqpt.ERROR != errorStat)
             {
@@ -2775,7 +2777,8 @@ namespace com.mirle.ibg3k0.sc.Service
             // 0317 Jason 此部分之loadBOXStatus 原為loadCSTStatus ，現在之狀況為暫時解法
             if (hasdifferent && !scApp.VehicleBLL.doUpdateVehicleStatus(eqpt, cstID,
                                    modeStat, actionStat,
-                                   blockingStat, pauseStat, obstacleStat, hidStat, errorStat, loadBOXStatus))
+                                   blockingStat, pauseStat, obstacleStat, hidStat, errorStat,
+                                   loadCSTStatus, loadBOXStatus))
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                    Data: $"update vhicle status fail!",

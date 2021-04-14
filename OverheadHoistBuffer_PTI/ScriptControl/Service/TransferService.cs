@@ -131,6 +131,7 @@ namespace com.mirle.ibg3k0.sc.Service
         ZONE,
         AGVZONE,
         LINE,
+        EQ
     }
     public class OHT_BOXID_MismatchData
     {
@@ -1241,7 +1242,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(mcsCmd.HOSTSOURCE);
 
-                            if (sourceCstData == null )
+                            if (sourceCstData == null)
                             {
                                 sourcePortType = false;
                                 TransferServiceLogger.Info
@@ -2400,7 +2401,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             ScanCstData = new CassetteData();
                             ScanCstData.CSTID = "";
                             ScanCstData.BOXID = cmd.CARRIER_ID_ON_CRANE.Trim();
-                            ScanCstData.Carrier_LOC = cmd.HOSTDESTINATION.Trim(); 
+                            ScanCstData.Carrier_LOC = cmd.HOSTDESTINATION.Trim();
                             ScanCstData = IDRead(ScanCstData);
                         }
 
@@ -2420,7 +2421,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             HaveAccountNotReal(dbCstData);
                         }
-                        if(isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.SHELF))
+                        if (isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.SHELF))
                         {
                             if (!ScanCstData.BOXID.Contains("UNK"))
                             {
@@ -2678,6 +2679,11 @@ namespace com.mirle.ibg3k0.sc.Service
                         cassette_dataBLL.UpdateCSTLoc(unLoadCstData.BOXID, dest, 1);
                         cassette_dataBLL.UpdateCSTState(unLoadCstData.BOXID, (int)E_CSTState.Completed);
                     }
+                    //else if (isUnitType(dest, UnitType.EQ))
+                    //{
+                    //    DeleteCst(unLoadCstData.CSTID, unLoadCstData.BOXID, "OHT_UnLoadCompleted", true);
+                    //}
+                    //2021/04/13 EQ Port結束後不需要將帳移除
 
                     ACMD_MCS cmd = cmdBLL.GetCmdIDFromCmd(ohtCmd.CMD_ID_MCS.Trim());
 
@@ -5938,7 +5944,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 datainfo.StockerID = "1";
                 //datainfo.CSTID = Redis_GetCstID(cstid, boxid);
-                datainfo.CSTID ="";
+                datainfo.CSTID = "";
                 datainfo.BOXID = boxid;
                 datainfo.Carrier_LOC = loc;
                 datainfo.LotID = "";
@@ -6400,6 +6406,26 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
 
                 TransferServiceLogger.Error(ex, "isUnitType    portName:" + portName + "  unitType:" + unitType + "\n" + " 推疊：" + st_details);
+                return false;
+            }
+        }
+        public bool isEQPort(string portName)
+        {
+            try
+            {
+                portName = portName.Trim();
+                if (portINIData[portName].UnitType == UnitType.EQ.ToString())
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                TransferServiceLogger.Error(ex, "isCVPort    portName:" + portName);
                 return false;
             }
         }

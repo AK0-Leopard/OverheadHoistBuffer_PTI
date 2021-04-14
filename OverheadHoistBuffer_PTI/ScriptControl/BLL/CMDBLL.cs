@@ -311,8 +311,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                         TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
                         return SECSConst.HCACK_Obj_Not_Exist;
                     }
-                    // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
-                    else if (scApp.TransferService.isCVPort(HostSource))
+                    // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時或是EQPort自動建帳
+                    else if (scApp.TransferService.isCVPort(HostSource) ||
+                             scApp.TransferService.isEQPort(HostSource))
                     {
                         CassetteData cstData_FromS2F49 = new CassetteData();
                         cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
@@ -330,12 +331,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
-                    //若有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令
-                    if (SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                    if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
                     {
-                        TransferServiceLogger.Info($"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id} 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令");
-                        return SECSConst.HCACK_Not_Able_Execute;
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49: BOXID:{ box_id } db loction:{cstData.Carrier_LOC}與Host Source:{HostSource}不一樣，強制更新至Host指定位置。");
+                        cassette_dataBLL.UpdateCSTLoc(box_id, SCUtility.Trim(HostSource, true), 1);
                     }
+                    //若有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令
+                    //if (SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                    //{
+                    //    TransferServiceLogger.Info($"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id} 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令");
+                    //    return SECSConst.HCACK_Not_Able_Execute;
+                    //}
                 }
 
                 //if ((cstData == null) && scApp.TransferService.isCVPort(HostSource) != true)
@@ -429,10 +435,11 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (scApp.TransferService.isCVPort(HostSource) && (cstData != null))
                 {
-                    if (HostSource.Trim() != cstData.Carrier_LOC.Trim())
-                    {
-                        return SECSConst.HCACK_Not_Able_Execute;
-                    }
+                    //if (HostSource.Trim() != cstData.Carrier_LOC.Trim())
+                    //{
+                    //    return SECSConst.HCACK_Not_Able_Execute;
+                    //}
+                    //2021/04/13 取消比較當OHBC與MCS對於BOX位置認知不同時，要拒絕命令的功能 Kevin For PTI 修改 
                 }
 
                 if (SourceDestExist(HostDestination) == false)
