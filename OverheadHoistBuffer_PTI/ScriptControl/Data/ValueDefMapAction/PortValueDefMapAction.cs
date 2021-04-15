@@ -1547,10 +1547,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //1.建立各個Function物件
                 function.AssignBoxID = SCUtility.Trim(cassetteData.BOXID, true);
 
-                if (function.AssignBoxID.Contains("UNK"))
-                {
-                    function.AssignBoxID = "ERROR1";
-                }
+                //if (function.AssignBoxID.Contains("UNK"))
+                //{
+                //    function.AssignBoxID = "ERROR1";
+                //}
                 // PTI-- 只有box 沒有cassette
                 //function.AssignCassetteID = SCUtility.Trim(cassetteData.CSTID, true);
 

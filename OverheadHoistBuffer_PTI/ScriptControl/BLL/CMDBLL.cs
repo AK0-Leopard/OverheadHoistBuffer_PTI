@@ -306,13 +306,13 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (cstData == null)
                 {
-                    if (scApp.TransferService.isCVPort(HostSource) != true)
-                    {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
-                        return SECSConst.HCACK_Obj_Not_Exist;
-                    }
+                    //if (scApp.TransferService.isCVPort(HostSource) != true)
+                    //{
+                    //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
+                    //    return SECSConst.HCACK_Obj_Not_Exist;
+                    //}
                     // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時或是EQPort自動建帳
-                    else if (scApp.TransferService.isCVPort(HostSource) ||
+                    if (scApp.TransferService.isCVPort(HostSource) ||
                              scApp.TransferService.isEQPort(HostSource))
                     {
                         CassetteData cstData_FromS2F49 = new CassetteData();
@@ -327,6 +327,11 @@ namespace com.mirle.ibg3k0.sc.BLL
                         TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F49: BOXID: " + box_id + " 不存在, 但由於是CV Port 自動建帳 PTI用");
                         cassette_dataBLL.insertCassetteData(cstData_FromS2F49);
                         cstData = cstData_FromS2F49;
+                    }
+                    else
+                    {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
+                        return SECSConst.HCACK_Obj_Not_Exist;
                     }
                 }
                 else

@@ -1694,7 +1694,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 viditem_350.EQ_PORT_INFO_OBJ[i].PORT_ID_OBJ.PORT_ID = port_station[i].PLCPortID;
                 viditem_350.EQ_PORT_INFO_OBJ[i].PORT_TRANSFTER_STATE_OBJ.PORT_TRANSFER_STATE = ((int)port_station[i].State).ToString();
                 viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = ((int)port_station[i].PortType).ToString();
-                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = "1"; // 這個要再確認
+                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = (port_station[i].Floor).ToString(); // 這個要再確認
             }
             return viditem_350;
         }

@@ -2037,6 +2037,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
+
                             replyTranEventReport(bcfApp, eventType, eqpt, seqNum, renameCarrierID: read_carrier_id, cancelType: CMDCancelType.CmdCancelIdMismatch);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                                Data: $"BCR miss match happend,start abort command id:{eqpt.OHTC_CMD?.Trim()} and rename cst id:{old_carrier_id} to {read_carrier_id}",
@@ -2062,7 +2063,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         //string new_carrier_id = string.Empty;
                         if (is_unknow_old_name_cst)
                         {
-                            new_carrier_id = "ERROR1";
+                            //new_carrier_id = "ERROR1";
+                            new_carrier_id = "UNKF" + eqpt.VEHICLE_ID.Trim() + scApp.TransferService.GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
+
                             scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
                         }
                         else
