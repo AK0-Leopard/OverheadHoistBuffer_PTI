@@ -5022,6 +5022,7 @@ AGV,9956,1,[RFID4]
 AGV,9957,1,[RFID4]
 AGV,9958,1,[RFID4]
 AGV,9959,1,[RFID4]
+CRANE,100010,2,Vehicle interlock error happend-port:{0}
 CRANE,111001,2,Fail to initial motor command position
 CRANE,111002,2,Fail to determine the direction of the vehicle
 CRANE,111003,2,Fail to determine the original Section of the vehicle

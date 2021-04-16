@@ -329,7 +329,23 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return null;
             }
         }
+        public List<CassetteData> LoadCassetteDataByBOXID_UNK()
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    return cassettedataDao.LoadCassetteDataByBOXID_UNK(con);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return null;
+            }
+        }
         /// <summary>
+        /// 
         /// 找出是UNK 但不是UNKU且在shelf 上的CST
         /// </summary>
         /// <param name="conn"></param>

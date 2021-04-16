@@ -102,13 +102,33 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         /// </summary>
         /// <param name="conn"></param>
         /// <returns></returns>
+        public List<CassetteData> LoadCassetteDataByBOXID_UNK(DBConnection_EF conn)
+        {
+            try
+            {
+                var port = from a in conn.CassetteData
+                           where a.BOXID.Contains("UNK")
+                           select a;
+                return port.ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
+        /// <summary>
+        /// 找出是UNK 但不是UNKU且在shelf 上的CST
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <returns></returns>
         public List<CassetteData> LoadCassetteDataByCSTID_UNKandOnShelf(DBConnection_EF conn)
         {
             try
             {
                 var port = from a in conn.CassetteData
-                           where a.CSTID.Contains("UNK") && !a.CSTID.Contains("UNKU") 
-                           &&  (a.Carrier_LOC.StartsWith("10") ||
+                           where a.CSTID.Contains("UNK") && !a.CSTID.Contains("UNKU")
+                           && (a.Carrier_LOC.StartsWith("10") ||
                                a.Carrier_LOC.StartsWith("11") ||
                                a.Carrier_LOC.StartsWith("21") ||
                                a.Carrier_LOC.StartsWith("20") ||
@@ -145,7 +165,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             try
             {
                 var port = from a in conn.CassetteData
-                           where a.CSTState !=  E_CSTState.Completed
+                           where a.CSTState != E_CSTState.Completed
                            select a;
                 return port.ToList();
             }
@@ -185,7 +205,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
-        public CassetteData LoadCassetteDataByShelfID(DBConnection_EF conn ,string shelfid)
+        public CassetteData LoadCassetteDataByShelfID(DBConnection_EF conn, string shelfid)
         {
             try
             {
@@ -204,7 +224,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(cstid))
+                if (string.IsNullOrWhiteSpace(cstid))
                 {
                     return null;
                 }
@@ -247,7 +267,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                 else
                 {
                     var result = conn.CassetteData.Where
-                        (x => x.CSTID.Trim() == cstData.CSTID.Trim() 
+                        (x => x.CSTID.Trim() == cstData.CSTID.Trim()
                         && x.Carrier_LOC.Trim() != cstData.Carrier_LOC.Trim()
                         ).FirstOrDefault();
                     return result;
@@ -317,7 +337,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             try
             {
                 var loc = from a in conn.CassetteData
-                           select a.Carrier_LOC;
+                          select a.Carrier_LOC;
                 return loc.ToList();
             }
             catch (Exception ex)

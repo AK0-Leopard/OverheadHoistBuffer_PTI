@@ -2979,9 +2979,13 @@ namespace com.mirle.ibg3k0.sc.Service
             if (recive_str.CmpStatus == CompleteStatus.CmpStatusInterlockError)
             {
                 scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
-                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_InterlockError);
+                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_InterlockError,
+                    out ACMD_OHTC cmdOhtc);
                 //B0.03
-                scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString());
+                var action_port_id = getActionPortID(eqpt, cmdOhtc);
+                string msg = $"vh:{vh_id} interlock error happend-port:{action_port_id}";
+                BCFApplication.onWarningMsg(msg);
+                scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString(), action_port_id);
                 scApp.TransferService.OHBC_AlarmCleared(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString());
                 //
             }
@@ -3101,6 +3105,31 @@ namespace com.mirle.ibg3k0.sc.Service
                 //tryAskVhToIdlePosition(vh_id);//B0.11
             });
             eqpt.onCommandComplete(completeStatus);
+        }
+
+        private object getActionPortID(AVEHICLE eqpt, ACMD_OHTC cmdOhtc)
+        {
+            try
+            {
+                string cur_adr = eqpt.CUR_ADR_ID;
+                if (SCUtility.isMatche(cur_adr, cmdOhtc.SOURCE_ADR))
+                {
+                    return SCUtility.Trim(cmdOhtc.SOURCE, true);
+                }
+                else if (SCUtility.isMatche(cur_adr, cmdOhtc.DESTINATION_ADR))
+                {
+                    return SCUtility.Trim(cmdOhtc.DESTINATION_ADR, true);
+                }
+                else
+                {
+                    return $"{SCUtility.Trim(cmdOhtc.SOURCE, true)} or {SCUtility.Trim(cmdOhtc.DESTINATION_ADR, true)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return "";
+            }
         }
 
         private bool replyCommandComplete(AVEHICLE eqpt, int seq_num, string finish_ohxc_cmd, string finish_mcs_cmd)

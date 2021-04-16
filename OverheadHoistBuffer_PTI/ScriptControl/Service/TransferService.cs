@@ -964,21 +964,28 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            //若沒有命令時，產生救回Unknown CST 的命令
-                            if (autoRemarkBOXCSTData == true)
+                            bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelfByScan();
+                            if (checkForGenerate == false)
                             {
-                                bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelf();
-                                if (checkForGenerate == false)
-                                {
-                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown CST 的命令失敗");
-                                }
+                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown Box 的命令失敗");
                             }
-                            #region 檢查救資料用AGV Port 狀態是否正確
-                            if (autoRemarkBOXCSTData == true)
-                            {
-                                AutoReMarkCSTBOXDataFromAGVPort();
-                            }
-                            #endregion
+
+                            ////若沒有命令時，產生救回Unknown CST 的命令
+                            //if (autoRemarkBOXCSTData == true)
+                            //{
+                            //    //bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelf();
+                            //    bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelfByScan();
+                            //    if (checkForGenerate == false)
+                            //    {
+                            //        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown CST 的命令失敗");
+                            //    }
+                            //}
+                            //#region 檢查救資料用AGV Port 狀態是否正確
+                            //if (autoRemarkBOXCSTData == true)
+                            //{
+                            //    AutoReMarkCSTBOXDataFromAGVPort();
+                            //}
+                            //#endregion
 
                             OHBC_OHT_IDLE_HasCMD_TimeOutCleared();
                         }
@@ -1978,12 +1985,16 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public bool OHT_TransferStatus(string oht_cmdid, string ohtName, int status)   //OHT目前狀態
         {
+            return OHT_TransferStatus(oht_cmdid, ohtName, status, out ACMD_OHTC cmd_ohtc);
+        }
+        public bool OHT_TransferStatus(string oht_cmdid, string ohtName, int status, out ACMD_OHTC cmdOhtc)   //OHT目前狀態
+        {
             try
             {
                 ohtName = ohtName.Trim();
                 bool isCreatScuess = true;
                 ACMD_OHTC ohtCmdData = cmdBLL.getCMD_OHTCByID(oht_cmdid);
-
+                cmdOhtc = ohtCmdData;
                 if (ohtCmdData == null)
                 {
                     #region Log
@@ -1995,7 +2006,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         + " OHT_Status:" + statusToName(status)
                     );
                     #endregion
-
                     return true;
                 }
 
@@ -2122,6 +2132,7 @@ namespace com.mirle.ibg3k0.sc.Service
             catch (Exception ex)
             {
                 TransferServiceLogger.Error(ex, "OHT_TransferStatus");
+                cmdOhtc = null;
                 return false;
             }
         }
@@ -2391,7 +2402,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         break;
                     case COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE: //出料完成
                         CassetteData dbCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
-                        if(dbCstData == null)
+                        if (dbCstData == null)
                         {
                             dbCstData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());
                         }
@@ -2443,7 +2454,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 reportBLL.ReportCarrierIdentified(ScanCstData.CSTID, ScanCstData.BOXID, ScanReportType.failed);
                             }
                         }
-                        else if(isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.EQ))
+                        else if (isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.EQ))
                         {
                             if (!ScanCstData.BOXID.Contains("UNK"))
                             {
@@ -6649,7 +6660,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 + "    ing: " + ing
             );
         }
-        public void OHBC_AlarmSet(string _eqName, string errCode)
+        public void OHBC_AlarmSet(string _eqName, string errCode, params object[] args)
         {
             try
             {
@@ -6706,6 +6717,10 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (alarm != null)
                 {
+                    if (args != null && args.Count() > 0)
+                    {
+                        alarm.ALAM_DESC = string.Format(alarm.ALAM_DESC, args);
+                    }
                     //if (isUnitType(alarm.EQPT_ID, UnitType.CRANE) || isUnitType(alarm.EQPT_ID, UnitType.LINE) || alarm.EQPT_ID.Contains("LINE"))
                     //{
                     if (alarm.ALAM_LVL == E_ALARM_LVL.Error)
@@ -9755,6 +9770,65 @@ namespace com.mirle.ibg3k0.sc.Service
                         targetPortPLCStatus.OpAutoMode + " targetPort.IsReadyToLoad = " + targetPortPLCStatus.OpAutoMode);
                 }
                 return true;
+            }
+            catch (Exception ex)
+            {
+                TransferServiceLogger.Error(ex, "CheckAndTryRemarkUnknownCSTInShelf");
+                return false;
+            }
+
+        }
+        /// <summary>
+        /// 當儲位中有UNK-的帳時，將會產生Scan命令，嘗試將他讀回來
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckAndTryRemarkUnknownCSTInShelfByScan()
+        {
+            try
+            {
+                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| Enter CheckAndTryRemarkUnknownCSTInShelfByScan");
+
+                // 1. 取得目前CST DATA中有BOX異常者
+                /**掃描目前BOX CST Data List 確認其中是否有"為UNK 且非UNKU者"若有則選中該CST**/
+                List<CassetteData> cassetteData = null;
+                cassetteData = cassette_dataBLL.LoadCassetteDataByBOXID_UNK();
+                if (cassetteData != null)
+                {
+                    string unknow_box_id = string.Join(",", cassetteData.Select(cst => cst.BOXID));
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| Current unknow box:{unknow_box_id}");
+                    foreach (var cst in cassetteData)
+                    {
+                        if (isShelfPort(cst.Carrier_LOC))
+                        {
+                            var mcs_cmd = cmdBLL.getCMD_ByBoxID(cst.BOXID);
+                            if (mcs_cmd != null)
+                            {
+                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID} has cmd excute,pass generate scan cmd");
+                                continue;
+                            }
+                            else
+                            {
+                                string result = SetScanCmd("", cst.BOXID, cst.Carrier_LOC);
+                                bool is_success = SCUtility.isMatche(result, "OK");
+                                if (is_success == true)
+                                {
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID},success generate scan cmd");
+                                    return true;
+                                }
+                                else
+                                {
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID},fail generate scan cmd,result:{result}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID} is in {cst.Carrier_LOC},not in shelf pass generate scan command");
+                        }
+                    }
+                }
+
+                return false;
             }
             catch (Exception ex)
             {
