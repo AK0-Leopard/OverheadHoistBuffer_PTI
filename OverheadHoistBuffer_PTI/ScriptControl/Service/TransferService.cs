@@ -2397,8 +2397,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.Transferring);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE: //入料完成
-                        CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
-                        cassette_dataBLL.UpdateCSTLoc(sourceCstData.BOXID, ohtName, 1);
+                        //CassetteData sourceCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
+                        //cassette_dataBLL.UpdateCSTLoc(sourceCstData.BOXID, ohtName, 1);
                         break;
                     case COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE: //出料完成
                         CassetteData dbCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
