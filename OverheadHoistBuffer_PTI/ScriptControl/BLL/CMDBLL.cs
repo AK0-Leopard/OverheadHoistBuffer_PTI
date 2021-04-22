@@ -270,6 +270,23 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return null;
             }
         }
+        public bool IsScanCmdExistByLoc(string loction)
+        {
+            try
+            {
+                ACMD_MCS mcs_cmd = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    mcs_cmd = cmd_mcsDao.GetScanCmdDataByLoc(con, loction);
+                }
+                return mcs_cmd != null;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
         public string doCheckMCSCommand(string command_id, string Priority, string cstID, string box_id, string lotID,
                                         ref string HostSource, ref string HostDestination,
                                         out string check_result, out bool isFromVh)
@@ -377,11 +394,11 @@ namespace com.mirle.ibg3k0.sc.BLL
                 if (cmd_obj != null)//20210326 markchou 檢查到重覆ID，如果命令已經結束，直接移往History Table
                 {
                     scApp.CMDBLL.moveCMD_MCSToHistory(command_id);//移往history
-                    var ohtc_cmd = scApp.CMDBLL.getCMD_OHTCByMCScmdID(command_id);
-                    if (ohtc_cmd != null)
-                    {
-                        scApp.CMDBLL.moveCMD_OHTCToHistory(ohtc_cmd.CMD_ID);
-                    }
+                    //var ohtc_cmd = scApp.CMDBLL.getCMD_OHTCByMCScmdID(command_id);
+                    //if (ohtc_cmd != null)
+                    //{
+                    //    scApp.CMDBLL.moveCMD_OHTCToHistory(ohtc_cmd.CMD_ID);
+                    //}
 
                     //check_result = $"MCS command id:{command_id} 命令已存在.";
 

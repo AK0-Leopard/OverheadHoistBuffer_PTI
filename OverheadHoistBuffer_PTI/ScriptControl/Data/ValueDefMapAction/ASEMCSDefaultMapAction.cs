@@ -845,7 +845,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 if (canScanCmd)
                 {
-                    scApp.TransferService.SetScanCmd(carrier_id, box_id, carrier_loc);
+                    bool is_scan_cmd_exist = scApp.CMDBLL.IsScanCmdExistByLoc(carrier_loc);
+                    if (!is_scan_cmd_exist)
+                        scApp.TransferService.SetScanCmd(carrier_id, box_id, carrier_loc);
+                    else
+                    {
+                        TransferServiceLogger.Warn($"OHB >> MCS|S2F41 ,Location:{carrier_loc} scan command is exist, by pass mcs scan command");
+                    }
                 }
             }
             catch (Exception ex)

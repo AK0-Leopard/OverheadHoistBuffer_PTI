@@ -108,7 +108,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
         {
             var query = from cmd in con.ACMD_MCS
                         where cmd.CARRIER_ID.Trim() == cst_id.Trim()
-                           && cmd.BOX_ID.Trim() == box_id.Trim() 
+                           && cmd.BOX_ID.Trim() == box_id.Trim()
                            && cmd.TRANSFERSTATE != E_TRAN_STATUS.TransferCompleted
                         select cmd;
             return query.SingleOrDefault();
@@ -138,6 +138,15 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
                         select cmd;
             return query.SingleOrDefault();
         }
+        public ACMD_MCS GetScanCmdDataByLoc(DBConnection_EF con, String loction)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where cmd.CMD_ID.Contains(Service.TransferService.SYMBOL_SCAN)
+                           && (cmd.HOSTDESTINATION == loction || cmd.HOSTSOURCE == loction)
+                           && cmd.TRANSFERSTATE < E_TRAN_STATUS.TransferCompleted
+                        select cmd;
+            return query.SingleOrDefault();
+        }
         public List<ACMD_MCS> loadACMD_MCSIsQueue(DBConnection_EF con)
         {
             var query = from cmd in con.ACMD_MCS.AsNoTracking()
@@ -163,7 +172,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
                         where cmd.TRANSFERSTATE >= E_TRAN_STATUS.Queue && cmd.TRANSFERSTATE < E_TRAN_STATUS.Canceling
                         //&& cmd.CHECKCODE.Trim() == SECSConst.HCACK_Confirm
                         select cmd;
-          
+
             return query.ToList();
         }
 
@@ -356,10 +365,10 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
             try
             {
                 var port = from a in conn.ACMD_MCS
-                           //orderby a.CMD_INSER_TIME descending
+                               //orderby a.CMD_INSER_TIME descending
                            where a.CMD_INSER_TIME > startTime && a.CMD_INSER_TIME < endTime
                            && a.TRANSFERSTATE == E_TRAN_STATUS.TransferCompleted
-                           orderby a.CMD_INSER_TIME 
+                           orderby a.CMD_INSER_TIME
                            select a;
                 return port.ToList();
             }

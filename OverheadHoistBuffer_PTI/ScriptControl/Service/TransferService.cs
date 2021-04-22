@@ -964,11 +964,11 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelfByScan();
-                            if (checkForGenerate == false)
-                            {
-                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown Box 的命令失敗");
-                            }
+                            //bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelfByScan();
+                            //if (checkForGenerate == false)
+                            //{
+                            //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown Box 的命令失敗");
+                            //}
 
                             ////若沒有命令時，產生救回Unknown CST 的命令
                             //if (autoRemarkBOXCSTData == true)
@@ -1006,6 +1006,11 @@ namespace com.mirle.ibg3k0.sc.Service
 
                             ohtIdleTimeOut++;
                         }
+                    }
+                    bool checkForGenerate = CheckAndTryRemarkUnknownCSTInShelfByScan();
+                    if (checkForGenerate == false)
+                    {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| 產生救回Unknown Box 的命令失敗");
                     }
 
                     #endregion
@@ -5498,7 +5503,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #region 命令處理
 
         #region Scan 命令
-
+        public const string SYMBOL_SCAN = "SCAN-";
         public string SetScanCmd(string cstid, string boxid, string loc)
         {
             try
@@ -5513,7 +5518,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 int cmdNo = 1;
                 string cmdID = "";
 
-                cmdID = "SCAN-" + GetStDate();
+                //cmdID = "SCAN-" + GetStDate();
+                cmdID = SYMBOL_SCAN + GetStDate();
                 datainfo.CARRIER_ID = cstid;
                 datainfo.BOX_ID = boxid;
                 datainfo.HOSTSOURCE = loc;
@@ -9826,9 +9832,13 @@ namespace com.mirle.ibg3k0.sc.Service
                             TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID} is in {cst.Carrier_LOC},not in shelf pass generate scan command");
                         }
                     }
+                    return false;
+                }
+                else
+                {
+                    return true;
                 }
 
-                return false;
             }
             catch (Exception ex)
             {
