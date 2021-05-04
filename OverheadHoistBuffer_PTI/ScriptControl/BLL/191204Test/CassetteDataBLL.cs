@@ -428,7 +428,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
 
         }
-        
+
         public CassetteData loadCassetteDataByLoc(string portName)
         {
             try
@@ -558,6 +558,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             //using (DBConnection_EF con = new DBConnection_EF())
 
         }
+        public (bool isExist, CassetteData onLocCst) IsBoxOnLocation(string loc)
+        {
+            try
+            {
+                CassetteData cassetteData = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cassetteData = cassettedataDao.LoadCassetteDataByLoc(con, loc);
+                }
+                return (cassetteData != null, cassetteData);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return (false, null);
+            }
+        }
 
         public string GetZoneName(string shiefid)
         {
@@ -631,7 +648,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
                     csidData = con.CassetteData.Where(data => data.CSTID.Trim() == cstid.Trim() && data.BOXID.Trim() == boxid.Trim()).First();
-                    
+
                     cassettedataDao.DeleteCassetteData(con, csidData);
                 }
 

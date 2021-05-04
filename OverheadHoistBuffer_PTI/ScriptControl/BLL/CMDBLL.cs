@@ -287,6 +287,40 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return false;
             }
         }
+        public (bool hasCmdToGo, ACMD_MCS cmdMCS) IsCommandWillToGoDest(string destPort)
+        {
+            try
+            {
+                ACMD_MCS mcs_cmd = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    mcs_cmd = cmd_mcsDao.GetTransferCmdDataByDest(con, destPort);
+                }
+                return (mcs_cmd != null, mcs_cmd);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return (false, null);
+            }
+        }
+        public bool IsMCSCmdExcuteBySourceOrDestPortID(string portID)
+        {
+            try
+            {
+                ACMD_MCS mcs_cmd = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    mcs_cmd = cmd_mcsDao.GetALLMCSCmdDataSourceOrDest(con, portID);
+                }
+                return (mcs_cmd != null);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return (false);
+            }
+        }
         public string doCheckMCSCommand(string command_id, string Priority, string cstID, string box_id, string lotID,
                                         ref string HostSource, ref string HostDestination,
                                         out string check_result, out bool isFromVh)
@@ -330,7 +364,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     //}
                     // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時或是EQPort自動建帳
                     if (scApp.TransferService.isCVPort(HostSource) ||
-                             scApp.TransferService.isEQPort(HostSource))
+                        scApp.TransferService.isEQPort(HostSource))
                     {
                         CassetteData cstData_FromS2F49 = new CassetteData();
                         cstData_FromS2F49.BOXID = box_id.Trim(); //填BOXID
@@ -347,17 +381,34 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                     else
                     {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在");
+                        check_result = DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: BOXID: " + box_id + " 不存在";
+                        TransferServiceLogger.Info(check_result);
                         return SECSConst.HCACK_Obj_Not_Exist;
                     }
                 }
                 else
                 {
-                    if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                    if (scApp.TransferService.isCVPort(HostSource) ||
+                        scApp.TransferService.isEQPort(HostSource))
                     {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49: BOXID:{ box_id } db loction:{cstData.Carrier_LOC}與Host Source:{HostSource}不一樣，強制更新至Host指定位置。");
-                        cassette_dataBLL.UpdateCSTLoc(box_id, SCUtility.Trim(HostSource, true), 1);
+
+                        if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                        {
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49: BOXID:{ box_id } db loction:{cstData.Carrier_LOC}與Host Source:{HostSource}不一樣，強制更新至Host指定位置。");
+                            cassette_dataBLL.UpdateCSTLoc(box_id, SCUtility.Trim(HostSource, true), 1);
+                        }
                     }
+                    else
+                    {
+                        //若在Buffer Port上有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令 
+                        if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
+                        {
+                            check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id}， 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令";
+                            TransferServiceLogger.Info(check_result);
+                            return SECSConst.HCACK_Not_Able_Execute;
+                        }
+                    }
+
                     //若有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令
                     //if (SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
                     //{
@@ -389,6 +440,28 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //}
                 //////////////////
                 #endregion
+                #region 若命令是Buffer Port，目的地是否已經有貨或者已經有命令準備過去
+                if (scApp.TransferService.isShelfPort(HostDestination))
+                {
+                    var check_cmd_dest = IsCommandWillToGoDest(HostDestination);
+                    if (check_cmd_dest.hasCmdToGo)
+                    {
+                        check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
+                                       $"，已有命令 cmd:{check_cmd_dest.cmdMCS.CMD_ID} box:{check_cmd_dest.cmdMCS.BOX_ID} 即將前往，故拒絕該命令";
+                        TransferServiceLogger.Info(check_result);
+                        return SECSConst.HCACK_Not_Able_Execute;
+                    }
+                    var check_has_box_on_dest = scApp.CassetteDataBLL.IsBoxOnLocation(HostDestination);
+                    if (check_has_box_on_dest.isExist)
+                    {
+                        check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
+                                      $"，目的已有Box:{check_has_box_on_dest.onLocCst.BOXID}，故拒絕該命令";
+                        TransferServiceLogger.Info(check_result);
+                        return SECSConst.HCACK_Not_Able_Execute;
+                    }
+                }
+                #endregion
+
                 #region 確認命令ID是否重複 
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
                 if (cmd_obj != null)//20210326 markchou 檢查到重覆ID，如果命令已經結束，直接移往History Table
@@ -451,7 +524,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (SourceDestExist(HostSource) == false)
                 {
-                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: 來源Port: " + HostSource + " 不存在");
+                    check_result = DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: 來源Port: " + HostSource + " 不存在";
+                    TransferServiceLogger.Info(check_result);
                     return SECSConst.HCACK_Obj_Not_Exist;
                 }
 
@@ -466,9 +540,12 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (SourceDestExist(HostDestination) == false)
                 {
-                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: 目的Port: " + HostDestination + " 不存在");
+                    check_result = DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: 目的Port: " + HostDestination + " 不存在";
+                    TransferServiceLogger.Info(check_result);
                     return SECSConst.HCACK_Obj_Not_Exist;
                 }
+                //若目的地有東西+即將有命令過去
+
                 #endregion
                 #region 判斷來源目的是不是Zone
                 if (isZone(HostSource)) //來源

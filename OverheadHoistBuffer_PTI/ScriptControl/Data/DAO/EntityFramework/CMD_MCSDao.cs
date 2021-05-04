@@ -141,9 +141,27 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
         public ACMD_MCS GetScanCmdDataByLoc(DBConnection_EF con, String loction)
         {
             var query = from cmd in con.ACMD_MCS
-                        where cmd.CMD_ID.Contains(Service.TransferService.SYMBOL_SCAN)
+                        where cmd.CMDTYPE == ACMD_MCS.CmdType.SCAN.ToString()
                            && (cmd.HOSTDESTINATION == loction || cmd.HOSTSOURCE == loction)
                            && cmd.TRANSFERSTATE < E_TRAN_STATUS.TransferCompleted
+                        select cmd;
+            return query.SingleOrDefault();
+        }
+        public ACMD_MCS GetALLMCSCmdDataSourceOrDest(DBConnection_EF con, String loction)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where (cmd.HOSTDESTINATION == loction || cmd.HOSTSOURCE == loction)
+                            && cmd.TRANSFERSTATE < E_TRAN_STATUS.TransferCompleted
+                        select cmd;
+            return query.SingleOrDefault();
+        }
+        public ACMD_MCS GetTransferCmdDataByDest(DBConnection_EF con, String DestPortName)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where (cmd.CMDTYPE == ACMD_MCS.CmdType.MCS.ToString() ||
+                               cmd.CMDTYPE == ACMD_MCS.CmdType.Manual.ToString())
+                            && cmd.HOSTDESTINATION == DestPortName
+                            && cmd.TRANSFERSTATE < E_TRAN_STATUS.TransferCompleted
                         select cmd;
             return query.SingleOrDefault();
         }
