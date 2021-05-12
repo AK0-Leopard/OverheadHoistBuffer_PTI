@@ -4167,12 +4167,42 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 string cmd_id = acmd_ohtc.CMD_ID;
                 string vh_current_adr = vehicle.CUR_ADR_ID;
+                string vh_current_sec = vehicle.CUR_SEC_ID;
                 string source_adr = acmd_ohtc.SOURCE_ADR;
                 string dest_adr = acmd_ohtc.DESTINATION_ADR;
+                double dis = vehicle.ACC_SEC_DIST;
                 ActiveType activeType = ActiveType.Move;
                 activeType = convert_E_CMD_TYPE2ActiveType(acmd_ohtc);
 
-                var guide_info = FindGuideInfo(vh_current_adr, source_adr, dest_adr, activeType);
+                string start_adr = vh_current_adr;
+
+                //if (SCUtility.isEmpty(vh_current_sec))
+                //{
+                //    start_adr = vh_current_adr;
+                //}
+                //else
+                //{
+                //    if (dis == 0)
+                //    {
+                //        start_adr = vh_current_adr;
+                //    }
+                //    else
+                //    {
+                //        ASECTION section = scApp.SectionBLL.cache.GetSection(vh_current_sec);
+                //        if (section == null)
+                //        {
+                //            start_adr = vh_current_adr;
+                //            logger.Warn($"current section:{vh_current_sec} not exist");
+                //        }
+                //        else
+                //        {
+                //            start_adr = SCUtility.Trim(section.TO_ADR_ID, true);
+                //        }
+                //    }
+                //}
+
+                //var guide_info = FindGuideInfo(vh_current_adr, source_adr, dest_adr, activeType);
+                var guide_info = FindGuideInfo(start_adr, source_adr, dest_adr, activeType);
                 if (guide_info.isSuccess)
                 {
                     if (guide_info.guide_start_to_from_section_ids != null)

@@ -421,19 +421,19 @@
     <value>Maintenance</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="englishToolStripMenuItem.Text" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="zh_twToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="zh_twToolStripMenuItem.Text" xml:space="preserve">
     <value>繁體中文</value>
   </data>
   <data name="zh_chToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="zh_chToolStripMenuItem.Text" xml:space="preserve">
     <value>简体中文</value>
@@ -481,7 +481,7 @@
     <value>Engineer</value>
   </data>
   <data name="搬送模擬ToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft JhengHei, 14.25pt</value>
+    <value>Microsoft JhengHei UI, 14.25pt</value>
   </data>
   <data name="搬送模擬ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>213, 28</value>
@@ -490,7 +490,7 @@
     <value>搬送模擬</value>
   </data>
   <data name="port內容值ToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft JhengHei, 14.25pt</value>
+    <value>Microsoft JhengHei UI, 14.25pt</value>
   </data>
   <data name="port內容值ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>213, 28</value>
@@ -499,7 +499,7 @@
     <value>Port 內容值</value>
   </data>
   <data name="命令卡匣資料ToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft JhengHei, 14.25pt</value>
+    <value>Microsoft JhengHei UI, 14.25pt</value>
   </data>
   <data name="命令卡匣資料ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>213, 28</value>
@@ -508,7 +508,7 @@
     <value>命令、卡匣資料</value>
   </data>
   <data name="testToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 26</value>
+    <value>82, 26</value>
   </data>
   <data name="testToolStripMenuItem.Text" xml:space="preserve">
     <value>測試用</value>

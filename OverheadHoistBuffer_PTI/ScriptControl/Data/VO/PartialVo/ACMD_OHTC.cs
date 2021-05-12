@@ -9,6 +9,10 @@ namespace com.mirle.ibg3k0.sc
     public partial class ACMD_OHTC
     {
 
+        public bool IsTransferCmdByMCS
+        {
+            get { return !Common.SCUtility.isEmpty(CMD_ID_MCS); }
+        }
 
         public HCMD_OHTC ToHCMD_OHTC()
         {

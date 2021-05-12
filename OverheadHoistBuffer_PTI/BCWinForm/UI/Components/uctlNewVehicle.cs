@@ -612,7 +612,12 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                         //        Uctl_Map.p_DicSectionGroupRails[CurrentSecID.Trim()].VehicleLeave(this);
                         //}
                         groupRails.VehicleEnterSection(this, vh.CUR_ADR_ID, vh.ACC_SEC_DIST);
-
+                    }
+                    else
+                    {
+                        uctlAddress uctlAdr = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
+                        if (uctlAdr != null)
+                            PrcSetLocation(uctlAdr.p_LocX, uctlAdr.p_LocY);
                     }
                 }
                 catch (Exception ex)

@@ -128,7 +128,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis)
         {
             vh.CUR_ADR_ID = adr_id;
-            if (vh.CUR_SEC_ID != sec_id)
+            //if (vh.CUR_SEC_ID != sec_id)
+            if (!SCUtility.isMatche(vh.CUR_SEC_ID, sec_id))
             {
                 vh.PRE_SEC_ID = vh.CUR_SEC_ID;
             }
@@ -142,19 +143,41 @@ namespace com.mirle.ibg3k0.sc.BLL
             return true;
         }
 
+        //public HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, string adrID, double dis, double dirctionAngle, double vehicleAngle, double speed,
+        //                                                              HltDirection sensorDir, HltDirection forkDir)
+        //{
+        //    string vh_id = vh.VEHICLE_ID;
+        //    string section_id = currentSectionID;
+        //    ASECTION sec = scApp.SectionBLL.cache.GetSection(section_id);
+        //    var from_adr_axis = reserveBLL.GetHltMapAddress(sec.FROM_ADR_ID);
+        //    var to_adr_axis = reserveBLL.GetHltMapAddress(sec.TO_ADR_ID);
+
+        //    var vh_axis = tryGetVhAxis(sec.SEC_DIS, dis, from_adr_axis.x, from_adr_axis.y, to_adr_axis.x, to_adr_axis.y);
+        //    vh.X_Axis = vh_axis.x;
+        //    vh.Y_Axis = vh_axis.y;
+
+        //    return reserveBLL.TryAddVehicleOrUpdate(vh_id, section_id, vh_axis.x, vh_axis.y, vh_axis.angle, speed, sensorDir, forkDir);
+        //}
         public HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, string adrID, double dis, double dirctionAngle, double vehicleAngle, double speed,
                                                                       HltDirection sensorDir, HltDirection forkDir)
         {
             string vh_id = vh.VEHICLE_ID;
             string section_id = currentSectionID;
-            ASECTION sec = scApp.SectionBLL.cache.GetSection(section_id);
-            var from_adr_axis = reserveBLL.GetHltMapAddress(sec.FROM_ADR_ID);
-            var to_adr_axis = reserveBLL.GetHltMapAddress(sec.TO_ADR_ID);
-
-            var vh_axis = tryGetVhAxis(sec.SEC_DIS, dis, from_adr_axis.x, from_adr_axis.y, to_adr_axis.x, to_adr_axis.y);
+            (double x, double y, float angle) vh_axis = default;
+            if (SCUtility.isEmpty(section_id))
+            {
+                var current_adr_axis = reserveBLL.GetHltMapAddress(adrID);
+                vh_axis = (current_adr_axis.x, current_adr_axis.y, 0);
+            }
+            else
+            {
+                ASECTION sec = scApp.SectionBLL.cache.GetSection(section_id);
+                var from_adr_axis = reserveBLL.GetHltMapAddress(sec.FROM_ADR_ID);
+                var to_adr_axis = reserveBLL.GetHltMapAddress(sec.TO_ADR_ID);
+                vh_axis = tryGetVhAxis(sec.SEC_DIS, dis, from_adr_axis.x, from_adr_axis.y, to_adr_axis.x, to_adr_axis.y);
+            }
             vh.X_Axis = vh_axis.x;
             vh.Y_Axis = vh_axis.y;
-
             return reserveBLL.TryAddVehicleOrUpdate(vh_id, section_id, vh_axis.x, vh_axis.y, vh_axis.angle, speed, sensorDir, forkDir);
         }
         private (double x, double y, float angle) tryGetVhAxis(double sectionTotalDis, double currentDis, double from_x, double from_y, double to_x, double to_y)
@@ -343,7 +366,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             if (updateVehicleStatus(vh.VEHICLE_ID, cstID, vh.BOX_ID,    //A0.02
                                      mode_status, act_status,
-                                     block_pause, cmd_pause, obs_pause, hid_pause, error_status, 
+                                     block_pause, cmd_pause, obs_pause, hid_pause, error_status,
                                      load_cst_status, load_box_status))
             {
                 //updateVehicleStatus_CacheMangerExceptAct(vh,
@@ -1017,15 +1040,35 @@ namespace com.mirle.ibg3k0.sc.BLL
             double distance = double.MaxValue;
             foreach (AVEHICLE vh in vhs)
             {
-                if (SCUtility.isMatche(vh.CUR_ADR_ID, source))
+                //if (SCUtility.isMatche(vh.CUR_ADR_ID, source))
+                string start_adr = vh.CUR_ADR_ID;
+                string vh_current_sec = vh.CUR_SEC_ID;
+                if (SCUtility.isMatche(vh.CUR_ADR_ID, source)) //Current Section為空的才代表是在這個點上
                 {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                       Data: $"From source adr:{source}, find vh:{vh.VEHICLE_ID} current adr:{vh.CUR_ADR_ID} of distance:{0}");
-                    firstVh = vh;
-                    distance = 0;
-                    break;
+                    if (SCUtility.isEmpty(vh.CUR_SEC_ID))
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                           Data: $"From source adr:{source}, find vh:{vh.VEHICLE_ID} current adr:{vh.CUR_ADR_ID} of distance:{0}");
+                        firstVh = vh;
+                        distance = 0;
+                        break;
+                    }
+                    else
+                    {
+                        ASECTION section = scApp.SectionBLL.cache.GetSection(vh_current_sec);
+                        if (section == null)
+                        {
+                            start_adr = vh.CUR_ADR_ID;
+                            logger.Warn($"current section:{vh_current_sec} not exist");
+                        }
+                        else
+                        {
+                            start_adr = SCUtility.Trim(section.TO_ADR_ID, true);
+                        }
+                    }
                 }
-                var check_result = scApp.GuideBLL.IsRoadWalkable(vh.CUR_ADR_ID, source);
+                //var check_result = scApp.GuideBLL.IsRoadWalkable(vh.CUR_ADR_ID, source);
+                var check_result = scApp.GuideBLL.IsRoadWalkable(start_adr, source);
                 if (check_result.isSuccess)
                 {
                     if (check_result.distance < distance)
@@ -1066,6 +1109,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
 
+            foreach (AVEHICLE vh in vhs.ToList())
+            {
+                if (vh.IS_INSTALLED == false)
+                {
+                    vhs.Remove(vh);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                       Data: $"vh id:{vh.VEHICLE_ID} is installed :{vh.IS_INSTALLED}," +
+                             $"so filter it out",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+            }
             foreach (AVEHICLE vh in vhs.ToList())
             {
                 if (vh.MODE_STATUS != VHModeStatus.AutoRemote)
@@ -2462,7 +2517,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             public List<AVEHICLE> loadNoOHTCmdVh()
             {
                 var vhs = eqObjCacheManager.getAllVehicle();
-                return vhs.Where(vh => SCUtility.isEmpty(vh.OHTC_CMD)&& !SCUtility.isEmpty(vh.CUR_ADR_ID)).
+                return vhs.Where(vh => SCUtility.isEmpty(vh.OHTC_CMD) && !SCUtility.isEmpty(vh.CUR_ADR_ID)).
                            ToList();
             }
 

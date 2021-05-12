@@ -1050,6 +1050,9 @@ namespace com.mirle.ibg3k0.bc.winform
             return null;
         }
 
+        private void mataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }

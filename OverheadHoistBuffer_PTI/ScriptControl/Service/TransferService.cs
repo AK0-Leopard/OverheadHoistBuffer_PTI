@@ -2688,6 +2688,23 @@ namespace com.mirle.ibg3k0.sc.Service
                 );
             }
         }
+        public bool forceUpdateCarrierLocToVh(string ohtID, string carrierID)
+        {
+            CassetteData dbCstData = cassette_dataBLL.loadCassetteDataByBoxID(carrierID);
+            if (dbCstData == null)
+            {
+                OHBC_InsertCassette("", carrierID, ohtID, nameof(forceUpdateCarrierLocToVh));
+            }
+            else
+            {
+                if (cassette_dataBLL.UpdateCSTLoc(carrierID, ohtID, 1))
+                {
+                    cassette_dataBLL.UpdateCSTState(carrierID, (int)E_CSTState.Transferring);
+                    return true;
+                }
+            }
+            return false;
+        }
         public void OHT_UnLoadCompleted(ACMD_OHTC ohtCmd, CassetteData unLoadCstData, string sourceCmd)
         {
             string ohtName = ohtCmd.VH_ID.Trim();
@@ -5738,7 +5755,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 carrierIDFail = true;
             }
 
-            if (readData.BOXID.Contains("ERROR1") || readData.BOXID.Contains("NORD01") || string.IsNullOrWhiteSpace(readData.BOXID))
+            if (readData.BOXID.ToUpper().Contains("ERROR") || readData.BOXID.Contains("ERROR1") || readData.BOXID.Contains("NORD01") || string.IsNullOrWhiteSpace(readData.BOXID))
             {
                 //B0.03
                 scApp.TransferService.OHBC_AlarmSet(readData.Carrier_LOC, ((int)AlarmLst.PORT_BOXID_READ_FAIL).ToString());
@@ -6187,6 +6204,86 @@ namespace com.mirle.ibg3k0.sc.Service
                 return "失敗";
             }
         }
+        public string ForceDeleteCst(string boxID, string cmdSource)
+        {
+            TransferServiceLogger.Info
+            (
+                DateTime.Now.ToString("HH:mm:ss.fff ") +
+                "OHB >> DB|ForceDeleteCst： boxID:" + boxID + "  誰呼叫:" + cmdSource
+            );
+
+
+            if (reportBLL.ReportCarrierRemovedCompleted("", boxID))
+            {
+                TransferServiceLogger.Info
+                (
+                    DateTime.Now.ToString("HH:mm:ss.fff ") +
+                    "OHB >> DB|ForceDeleteCst:刪帳成功"
+                );
+                return "OK";
+            }
+            else
+            {
+                TransferServiceLogger.Info
+                (
+                    DateTime.Now.ToString("HH:mm:ss.fff ") +
+                    "Manual >> OHB|ForceDeleteCst:刪帳失敗"
+                );
+                return "失敗";
+            }
+        }
+        public string ForceDeleteCstAndCmd(ACMD_MCS cmdMCS, CassetteData cassetteData, string cmdSource, string result = ResultCode.OtherErrors)
+        {
+            TransferServiceLogger.Info
+            (
+                DateTime.Now.ToString("HH:mm:ss.fff ") +
+                "OHB >> DB|ForceDeleteCst：cmd ID:" + cmdMCS.CMD_ID + "    boxID:" + cassetteData.BOXID + "  誰呼叫:" + cmdSource
+            );
+
+
+            if (cmdMCS != null)
+            {
+                reportBLL.ReportTransferCompleted(cmdMCS, cassetteData, result);
+                cmdBLL.updateCMD_MCS_TranStatus(cmdMCS.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+            }
+
+            if (reportBLL.ReportCarrierRemovedCompleted("", cassetteData.BOXID))
+            {
+                TransferServiceLogger.Info
+                (
+                    DateTime.Now.ToString("HH:mm:ss.fff ") +
+                    "OHB >> DB|ForceDeleteCst:刪帳成功"
+                );
+                return "OK";
+            }
+            else
+            {
+                TransferServiceLogger.Info
+                (
+                    DateTime.Now.ToString("HH:mm:ss.fff ") +
+                    "Manual >> OHB|ForceDeleteCst:刪帳失敗"
+                );
+                return "失敗";
+            }
+        }
+        public string ForceFinishMCSCmd(ACMD_MCS cmdMCS, CassetteData cassetteData, string cmdSource, string result = ResultCode.OtherErrors)
+        {
+            TransferServiceLogger.Info
+            (
+                DateTime.Now.ToString("HH:mm:ss.fff ") +
+                "OHB >> DB|ForceFinishMCSCmd：cmd ID:" + cmdMCS.CMD_ID + "    boxID:" + cassetteData.BOXID + "  誰呼叫:" + cmdSource
+            );
+
+
+            if (cmdMCS != null)
+            {
+                reportBLL.ReportTransferCompleted(cmdMCS, cassetteData, result);
+                cmdBLL.updateCMD_MCS_TranStatus(cmdMCS.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                return "OK";
+            }
+            return "失敗";
+        }
+
 
         #endregion
 

@@ -51,6 +51,24 @@ namespace com.mirle.ibg3k0.sc
             set { _distanceFromVehicleToHostSource = value; }
         }
 
+        public bool isLoading
+        {
+            get
+            {
+                COMMANDSTATE = COMMANDSTATE & 252;
+                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_LOADING;
+            }
+        }
+        public bool isUnloading
+        {
+
+            get
+            {
+                COMMANDSTATE = COMMANDSTATE & 224;
+                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_UNLOADING;
+            }
+        }
+
         public enum CmdType
         {
             MCS,
@@ -267,8 +285,8 @@ namespace com.mirle.ibg3k0.sc
         public bool IsCmdSourceTypeShelf(string cmdSource)
         {
             bool isCmdSourceTypeShelf = false;
-            if (cmdSource.StartsWith("10") || cmdSource.StartsWith("11") || cmdSource.StartsWith("20") || cmdSource.StartsWith("21")||
-                cmdSource.StartsWith("2P")|| cmdSource.StartsWith("FO")|| cmdSource.StartsWith("2POHT100OHB"))
+            if (cmdSource.StartsWith("10") || cmdSource.StartsWith("11") || cmdSource.StartsWith("20") || cmdSource.StartsWith("21") ||
+                cmdSource.StartsWith("2P") || cmdSource.StartsWith("FO") || cmdSource.StartsWith("2POHT100OHB"))
             {
                 isCmdSourceTypeShelf = true;
             }

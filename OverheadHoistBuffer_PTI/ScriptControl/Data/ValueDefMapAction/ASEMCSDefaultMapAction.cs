@@ -3251,7 +3251,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     cassette = scApp.CassetteDataBLL.loadCassetteDataByBoxID(cmd.BOX_ID.Trim());
                 }
 
-                string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
+                string zonename = "";
+                if (cassette != null)
+                    zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
 
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd?.CMD_ID ?? "";
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette?.BOXID ?? "";

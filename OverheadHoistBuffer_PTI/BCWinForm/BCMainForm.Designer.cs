@@ -368,6 +368,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.reserveInfoToolStripMenuItem});
             this.mataToolStripMenuItem.Name = "mataToolStripMenuItem";
             resources.ApplyResources(this.mataToolStripMenuItem, "mataToolStripMenuItem");
+            this.mataToolStripMenuItem.Click += new System.EventHandler(this.mataToolStripMenuItem_Click);
             // 
             // changePasswordToolStripMenuItem
             // 

@@ -66,7 +66,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string[] ohcv_devices_id = ohcvDevices.Select(eq => eq.EQPT_ID).ToArray();
             BCUtility.setComboboxDataSource(cb_cv_ids, ohcv_devices_id.ToArray());
 
-
+            cb_isUsingFindStartAdr.Checked = DebugParameter.isUsingFindStartAdr;
 
             cb_OperMode.DataSource = Enum.GetValues(typeof(sc.ProtocolFormat.OHTMessage.OperatingVHMode));
             cb_PwrMode.DataSource = Enum.GetValues(typeof(sc.ProtocolFormat.OHTMessage.OperatingPowerMode));
@@ -508,6 +508,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void button8_Click_1(object sender, EventArgs e)
         {
+
             //Task.Run(() =>
             //{
             //    var mapAction = bcApp.SCApplication.getEQObjCacheManager().getLine().getMapActionByIdentityKey(nameof(sc.Data.ValueDefMapAction.MCSDefaultMapAction)) as sc.Data.ValueDefMapAction.MCSDefaultMapAction;
@@ -1288,7 +1289,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             uint distance = (uint)num_section_dis.Value;
             double x_axis = (int)num_vh_x.Value;
             double y_axis = (int)num_vh_y.Value;
-            bcApp.SCApplication.VehicleBLL.setAndPublishPositionReportInfo2Redis(vh_id, current_sec_id, "", distance, x_axis,y_axis);
+            bcApp.SCApplication.VehicleBLL.setAndPublishPositionReportInfo2Redis(vh_id, current_sec_id, "", distance, x_axis, y_axis);
         }
 
         private void num_vh_x_ValueChanged(object sender, EventArgs e)
@@ -1298,6 +1299,22 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             double x_axis = (int)num_vh_x.Value;
             double y_axis = (int)num_vh_y.Value;
             bcApp.SCApplication.VehicleBLL.setAndPublishPositionReportInfo2Redis(vh_id, current_sec_id, "", distance, x_axis, y_axis);
+        }
+
+        private void cb_isUsingFindStartAdr_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.isUsingFindStartAdr = cb_isUsingFindStartAdr.Checked;
+        }
+
+        private void btn_initialTest_Click(object sender, EventArgs e)
+        {
+            sc.ProtocolFormat.OHTMessage.ID_136_TRANS_EVENT_REP send_obj = new sc.ProtocolFormat.OHTMessage.ID_136_TRANS_EVENT_REP()
+            {
+                BOXID = txt_rename_cst_id.Text,
+                EventType = sc.ProtocolFormat.OHTMessage.EventType.Initial
+            };
+            Task.Run(() => bcApp.SCApplication.VehicleService.TranEventTest(noticeCar, send_obj));
+
         }
     }
 }
