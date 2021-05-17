@@ -221,26 +221,7 @@ namespace com.mirle.ibg3k0.sc.WebAPI
 
 				return response;
 			};
-			//Get["AVEHICLES/(?<all>)"] = (p) =>
-			Get["AVEHICLES/_search"] = (p) =>
-			{
-				List<AVEHICLE> vhs = null;
-
-				foreach (string name in Request.Query)
-				{
-					switch (name)
-					{
-						case "SectionID":
-							string sec_id = Request.Query[name] ?? string.Empty;
-							vhs = SCApplication.getInstance().VehicleBLL.loadVehicleBySEC_ID(sec_id);
-							break;
-					}
-				}
-				var response = (Response)JsonConvert.SerializeObject(vhs);
-				response.ContentType = restfulContentType;
-
-				return response;
-			};
+			
 
 			Get["metrics"] = (p) =>
 			{

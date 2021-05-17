@@ -575,42 +575,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                     GroupRails groupRails = Uctl_Map.getGroupRailBySecID(vh.CUR_SEC_ID);
                     if (groupRails != null)
                     {
-                        //switch (vh.VhRecentTranEvent)
-                        //{
-                        //    case EventType.AdrPass:
-                        //        if (vh.ACC_SEC_DIST == groupRails.Distance)
-                        //        {
-                        //            uctlAddress uctlAdr1 = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
-                        //            PrcSetLocation(uctlAdr1.p_LocX, uctlAdr1.p_LocY);
-                        //        }
-                        //        else if (CurrentSecID != groupRails.Section_ID)
-                        //        {
-                        //            if (!string.IsNullOrWhiteSpace(CurrentSecID))
-                        //                Uctl_Map.p_DicSectionGroupRails[CurrentSecID.Trim()].VehicleLeave(this);
-                        //        }
-                        //        groupRails.VehicleEnterSection(this, vh.CUR_ADR_ID, vh.ACC_SEC_DIST);
-                        //        break;
-                        //    case EventType.LoadArrivals:
-                        //    case EventType.UnloadArrivals:
-                        //    case EventType.UnloadComplete:
-                        //    case EventType.AdrOrMoveArrivals:
-                        //    case EventType.VhmoveArrivals:
-                        //        uctlAddress uctlAdr = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
-                        //        PrcSetLocation(uctlAdr.p_LocX, uctlAdr.p_LocY);
-                        //        //uctlAddress uctlAdr = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
-                        //        //Uctl_Map.stopFlashingSpecifyRail(vh.PredictPath);
-                        //        break;
-                        //}
-                        //if (vh.ACC_SEC_DIST == groupRails.Distance)
-                        //{
-                        //    uctlAddress uctlAdr1 = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
-                        //    PrcSetLocation(uctlAdr1.p_LocX, uctlAdr1.p_LocY);
-                        //}
-                        //else if (CurrentSecID != groupRails.Section_ID)
-                        //{
-                        //    if (!string.IsNullOrWhiteSpace(CurrentSecID))
-                        //        Uctl_Map.p_DicSectionGroupRails[CurrentSecID.Trim()].VehicleLeave(this);
-                        //}
                         groupRails.VehicleEnterSection(this, vh.CUR_ADR_ID, vh.ACC_SEC_DIST);
                     }
                     else

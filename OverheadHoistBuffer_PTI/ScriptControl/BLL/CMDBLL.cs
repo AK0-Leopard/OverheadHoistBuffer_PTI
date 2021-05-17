@@ -3117,7 +3117,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 lock (vh.DoCreatTransferCommand_Sync)
                 {
                     string vh_current_adr = vh.CUR_ADR_ID;
-                    string vh_current_section = vh.CUR_SEC_ID;
                     if (cmd_type == E_CMD_TYPE.MTLHome ||
                        cmd_type == E_CMD_TYPE.MoveToMTL ||
                        cmd_type == E_CMD_TYPE.SystemOut ||
@@ -4167,7 +4166,6 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 string cmd_id = acmd_ohtc.CMD_ID;
                 string vh_current_adr = vehicle.CUR_ADR_ID;
-                string vh_current_sec = vehicle.CUR_SEC_ID;
                 string source_adr = acmd_ohtc.SOURCE_ADR;
                 string dest_adr = acmd_ohtc.DESTINATION_ADR;
                 double dis = vehicle.ACC_SEC_DIST;

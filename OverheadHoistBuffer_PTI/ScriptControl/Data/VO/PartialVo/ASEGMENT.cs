@@ -186,7 +186,15 @@ namespace com.mirle.ibg3k0.sc
                 {
                     if (is_contains)
                         Vehicles.Remove(vh);
-                    ASECTION current_section = sectionBLL.cache.GetSection(vh.CUR_SEC_ID);
+                    ASECTION current_section = null;
+                    if (vh.IsOnAdr)
+                    {
+                        current_section = sectionBLL.cache.GetSectionsByFromAddress(vh.CUR_ADR_ID).FirstOrDefault();
+                    }
+                    else
+                    {
+                        current_section = sectionBLL.cache.GetSection(vh.CUR_SEC_ID);
+                    }
                     int current_sec_index = Sections.IndexOf(current_section);
                     if (current_sec_index == -1) return;
                     if (Vehicles.Count > 0)
@@ -195,7 +203,9 @@ namespace com.mirle.ibg3k0.sc
                         for (int i = current_sec_index; i < Sections.Count; i++)
                         {
                             string next_sec_id = Sections[i].SEC_ID;
-                            AVEHICLE vh_temp = Vehicles.Where(v => Common.SCUtility.isMatche(v.CUR_SEC_ID, next_sec_id)).
+                            //AVEHICLE vh_temp = Vehicles.Where(v => Common.SCUtility.isMatche(v.CUR_SEC_ID, next_sec_id)).
+                            //                            FirstOrDefault();
+                            AVEHICLE vh_temp = Vehicles.Where(v => IsInSection(sectionBLL, v, next_sec_id)).
                                                         FirstOrDefault();
                             if (vh_temp != null)
                             {
@@ -260,65 +270,22 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
-        private void RefreshVehicleLocalByRelativePosition(AVEHICLE vh, BLL.SectionBLL sectionBLL)
+        bool IsInSection(BLL.SectionBLL sectionBLL, AVEHICLE vh, string secID)
         {
-            ASECTION current_section = sectionBLL.cache.GetSection(vh.CUR_SEC_ID);
-            int current_sec_index = Sections.IndexOf(current_section);
-            if (current_sec_index == -1) return;
-            if (Vehicles.Count > 0)
+            if (vh.IsOnAdr)
             {
-                AVEHICLE next_vh = null;
-                for (int i = current_sec_index; i < Sections.Count; i++)
-                {
-                    string next_sec_id = Sections[i].SEC_ID;
-                    AVEHICLE vh_temp = Vehicles.Where(v => Common.SCUtility.isMatche(v.CUR_SEC_ID, next_sec_id)).
-                                                FirstOrDefault();
-                    if (vh_temp != null)
-                    {
-                        if (i == current_sec_index)
-                        {
-                            if (vh_temp.ACC_SEC_DIST > vh.ACC_SEC_DIST)
-                            {
-                                next_vh = vh_temp;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            next_vh = vh_temp;
-                            break;
-                        }
-                    }
-                }
-                if (next_vh == null)
-                {
-                    Vehicles.AddFirst(vh);
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                       Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,is first",
-                       VehicleID: vh.VEHICLE_ID,
-                       CarrierID: vh.CST_ID);
-
-                }
+                var sec = sectionBLL.cache.GetSectionsByFromAddress(vh.CUR_ADR_ID).FirstOrDefault();
+                if (sec == null)
+                    return false;
                 else
-                {
-                    var next_vh_node = Vehicles.Find(next_vh);
-                    Vehicles.AddAfter(next_vh_node, vh);
-
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                       Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,after {next_vh.VEHICLE_ID}",
-                       VehicleID: vh.VEHICLE_ID,
-                       CarrierID: vh.CST_ID);
-                }
+                    return Common.SCUtility.isMatche(sec.SEC_ID, secID);
             }
             else
             {
-                Vehicles.AddLast(vh);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                   Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,is first",
-                   VehicleID: vh.VEHICLE_ID,
-                   CarrierID: vh.CST_ID);
+                return Common.SCUtility.isMatche(vh.CUR_SEC_ID, secID);
             }
         }
+
 
         /// <summary>
         /// 將回傳是否為該Segment的第一台車
@@ -356,76 +323,6 @@ namespace com.mirle.ibg3k0.sc
             controlComplete?.Invoke(this, null);
         }
 
-        public void RefreshVhOrder(sc.BLL.VehicleBLL vehicleBLL, sc.BLL.SectionBLL sectionBLL)
-        {
-            lock (Vehicles)
-            {
-                Vehicles.Clear();
-                List<AVEHICLE> vhs = vehicleBLL.cache.loadVhsBySegmentID(this.SEG_NUM);
-                foreach (AVEHICLE vh in vhs)
-                {
-                    if (!Vehicles.Contains(vh))
-                    {
-                        ASECTION current_section = sectionBLL.cache.GetSection(vh.CUR_SEC_ID);
-                        int current_sec_index = Sections.IndexOf(current_section);
-                        if (current_sec_index == -1) return;
-                        if (Vehicles.Count > 0)
-                        {
-                            AVEHICLE next_vh = null;
-                            for (int i = current_sec_index; i < Sections.Count; i++)
-                            {
-                                string next_sec_id = Sections[i].SEC_ID;
-                                AVEHICLE vh_temp = Vehicles.Where(v => Common.SCUtility.isMatche(v.CUR_SEC_ID, next_sec_id)).
-                                                            FirstOrDefault();
-                                if (vh_temp != null)
-                                {
-                                    if (i == current_sec_index)
-                                    {
-                                        if (vh_temp.ACC_SEC_DIST > vh.ACC_SEC_DIST)
-                                        {
-                                            next_vh = vh_temp;
-                                            break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        next_vh = vh_temp;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (next_vh == null)
-                            {
-                                Vehicles.AddFirst(vh);
-                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                                   Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,is first",
-                                   VehicleID: vh.VEHICLE_ID,
-                                   CarrierID: vh.CST_ID);
-
-                            }
-                            else
-                            {
-                                var next_vh_node = Vehicles.Find(next_vh);
-                                Vehicles.AddAfter(next_vh_node, vh);
-
-                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                                   Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,after {next_vh.VEHICLE_ID}",
-                                   VehicleID: vh.VEHICLE_ID,
-                                   CarrierID: vh.CST_ID);
-                            }
-                        }
-                        else
-                        {
-                            Vehicles.AddLast(vh);
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ASEGMENT), Device: "AGVC",
-                               Data: $"vh:{vh.VEHICLE_ID} entry segment:{SEG_NUM} ,is last",
-                               VehicleID: vh.VEHICLE_ID,
-                               CarrierID: vh.CST_ID);
-                        }
-                    }
-                }
-            }
-        }
         public string[] GetVehicleOrderInSegment()
         {
             return Vehicles.Select(vh => vh.VEHICLE_ID).ToArray();

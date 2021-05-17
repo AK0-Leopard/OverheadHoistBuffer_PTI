@@ -2804,7 +2804,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else if (isUnitType(dest, UnitType.EQ))
                         {
-
                             cassette_dataBLL.DeleteCSTbyBoxId(unLoadCstData.BOXID);
                             //QueryLotID(unLoadCstData);
                         }

@@ -358,23 +358,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                         select vh;
             return query.Count();
         }
-        public List<AVEHICLE> loadBySEC_ID(String sec_id)
-        {
-            var query = from vh in lstVh
-                        where vh.CUR_SEC_ID.Trim() == sec_id.Trim()
-                        orderby vh.ACC_SEC_DIST descending
-                        select vh;
-            return query.ToList();
-        }
-        public List<AVEHICLE> loadOnAutoRemoteBySEC_ID(String sec_id)
-        {
-            var query = from vh in lstVh
-                        where vh.CUR_SEC_ID.Trim() == sec_id.Trim() &&
-                              vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote
-                        orderby vh.ACC_SEC_DIST descending
-                        select vh;
-            return query.ToList();
-        }
+       
 
 
 

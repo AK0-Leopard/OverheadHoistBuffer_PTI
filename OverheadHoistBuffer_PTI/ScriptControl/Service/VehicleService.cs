@@ -929,13 +929,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (assignVH.CUR_SEC_ID != null && assignVH.CUR_ADR_ID != null)
                         {
                             string start_sec_id = assignVH.CUR_SEC_ID;
-                            if (SCUtility.isEmpty(assignVH.CUR_SEC_ID))
+                            if (assignVH.IsOnAdr)
                             {
-                                ASECTION sec = scApp.SectionBLL.cache.GetSectionsByToAddress(SCUtility.Trim(assignVH.CUR_ADR_ID, true)).FirstOrDefault();
-                                if (sec != null)
-                                {
-                                    start_sec_id = SCUtility.Trim(sec.SEC_ID, true);
-                                }
+                                start_sec_id = assignVH.getVIEW_SEC_ID(scApp.SectionBLL);
                             }
                             //minRouteSec_Vh2From = new string[] { assignVH.CUR_SEC_ID };
                             minRouteSec_Vh2From = new string[] { start_sec_id };
@@ -985,15 +981,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (assignVH.CUR_SEC_ID != null && assignVH.CUR_ADR_ID != null)
                         {
                             string start_sec_id = assignVH.CUR_SEC_ID;
-                            if (SCUtility.isEmpty(assignVH.CUR_SEC_ID))
+                            if (assignVH.IsOnAdr)
                             {
-                                ASECTION sec = scApp.SectionBLL.cache.GetSectionsByToAddress(SCUtility.Trim(assignVH.CUR_ADR_ID, true)).FirstOrDefault();
-                                if (sec != null)
-                                {
-                                    start_sec_id = SCUtility.Trim(sec.SEC_ID, true);
-                                }
+                                start_sec_id = assignVH.getVIEW_SEC_ID(scApp.SectionBLL);
                             }
-
                             //minRouteSec_From2To = new string[] { assignVH.CUR_SEC_ID };
                             minRouteSec_From2To = new string[] { start_sec_id };
                             minRouteAdr_From2To = new string[] { assignVH.CUR_ADR_ID };
@@ -1789,7 +1780,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         vh.onSegmentChange(current_seg_id, last_seg_id);
                     }
 
-                    if (!SCUtility.isMatche(last_sec_id, current_sec_id))
+                    if (!SCUtility.isMatche(current_sec_id, last_sec_id))
                     {
                         vh.onLocationChange(current_sec_id, last_sec_id);
                         //TODO 要改成查一次CMD出來然後直接帶入CMD ID
@@ -1797,14 +1788,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
 
                         }
-                        //vh.onLocationChange(current_sec_id, last_sec_id);
                     }
-                    //if (!SCUtility.isMatche(current_seg_id, last_seg_id))
-                    //{
-                    //    vh.onSegmentChange(current_seg_id, last_seg_id);
-                    //}
-                    //if (!SCUtility.isMatche(current_adr_id, last_adr_id) || !SCUtility.isMatche(current_sec_id, last_sec_id))
-                    //    scApp.VehicleBLL.updateVheiclePosition(vh.VEHICLE_ID, current_adr_id, current_sec_id, sec_dis, vhPassEvent);
                 }
                 //}
             }
@@ -1902,7 +1886,6 @@ namespace com.mirle.ibg3k0.sc.Service
             string current_sec_id = recive_str.CurrentSecID;
             string carrier_id = recive_str.BOXID;
             string last_adr_id = eqpt.CUR_ADR_ID;
-            string last_sec_id = eqpt.CUR_SEC_ID;
             string req_block_id = recive_str.RequestBlockID;
             string cmd_id = eqpt.MCS_CMD;
             BCRReadResult bCRReadResult = recive_str.BCRReadResult;
@@ -2296,43 +2279,59 @@ namespace com.mirle.ibg3k0.sc.Service
             string block_entry_section_id = SCUtility.Trim(blockSecID, true);
             if (block_entry_section_id.Length > 5)
                 block_entry_section_id = block_entry_section_id.Substring(0, 5);
-            ASECTION vh_current_section = scApp.SectionBLL.cache.GetSection(vh_current_section_id);
             ASECTION block_entry_section = scApp.SectionBLL.cache.GetSection(block_entry_section_id);
 
-            //a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
-            var on_same_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(vh_current_section_id);
-            foreach (AVEHICLE same_section_vh in on_same_section_of_vhs)
+            if (!vh.IsOnAdr)
             {
-                if (same_section_vh == vh) continue;
-                if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
+
+                //a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
+                var on_same_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(vh_current_section_id);
+                foreach (AVEHICLE same_section_vh in on_same_section_of_vhs)
+                {
+                    if (same_section_vh == vh) continue;
+                    if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
+                                 $"request vh distance:{vh.ACC_SEC_DIST} orther vh distance:{same_section_vh.ACC_SEC_DIST},so request vh:{vh.VEHICLE_ID} it not closest block vh",
+                           VehicleID: vh.VEHICLE_ID,
+                           CarrierID: vh.CST_ID);
+                        return false;
+                    }
+                }
+
+                //b-0.經過"a"的判斷後，如果自己已經是在該Block裡面，則代表該vh已經是最接近這個Block的車子了 //A0.06
+                bool is_already_in_req_block = SCUtility.isMatche(vh_current_section_id, block_entry_section_id);
+                if (is_already_in_req_block)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                       Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
-                             $"request vh distance:{vh.ACC_SEC_DIST} orther vh distance:{same_section_vh.ACC_SEC_DIST},so request vh:{vh.VEHICLE_ID} it not closest block vh",
+                       Data: $"vh:{vh.VEHICLE_ID} is already in req block,it is closest block:{block_entry_section_id}",
                        VehicleID: vh.VEHICLE_ID,
                        CarrierID: vh.CST_ID);
-                    return false;
+                    return true;
+                }
+                //b-1.經過"a"的判斷後，如果自己已經是在該Block的前一段Section上，則即為該Block的下一台將要通過的Vh
+                List<string> entry_section_of_previous_section_id =
+                scApp.SectionBLL.cache.GetSectionsByToAddress(block_entry_section.FROM_ADR_ID).
+                Select(section => SCUtility.Trim(section.SEC_ID)).
+                ToList();
+                if (entry_section_of_previous_section_id.Contains(vh_current_section_id))
+                {
+                    return true;
                 }
             }
-
-            //b-0.經過"a"的判斷後，如果自己已經是在該Block裡面，則代表該vh已經是最接近這個Block的車子了 //A0.06
-            bool is_already_in_req_block = SCUtility.isMatche(vh_current_section_id, block_entry_section_id);
-            if (is_already_in_req_block)
+            else
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                   Data: $"vh:{vh.VEHICLE_ID} is already in req block,it is closest block:{block_entry_section_id}",
-                   VehicleID: vh.VEHICLE_ID,
-                   CarrierID: vh.CST_ID);
-                return true;
-            }
-            //b-1.經過"a"的判斷後，如果自己已經是在該Block的前一段Section上，則即為該Block的下一台將要通過的Vh
-            List<string> entry_section_of_previous_section_id =
-            scApp.SectionBLL.cache.GetSectionsByToAddress(block_entry_section.FROM_ADR_ID).
-            Select(section => SCUtility.Trim(section.SEC_ID)).
-            ToList();
-            if (entry_section_of_previous_section_id.Contains(vh_current_section_id))
-            {
-                return true;
+                if (SCUtility.isMatche(block_entry_section.FROM_ADR_ID, vh.CUR_ADR_ID))
+                {
+                    //如果已經在block 的from address
+                    //代表已經在第一台車
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vh.VEHICLE_ID} is already in req block of from adr:{vh.CUR_ADR_ID},it is closest block:{block_entry_section_id}",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return true;
+                }
             }
 
             //  c.如果不是在前一段Section，則需要去找出從vh目前所在位置到該Block的Entry section中，
@@ -2353,10 +2352,22 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             string vh_id = vh.VEHICLE_ID;
             string current_sec_id = SCUtility.Trim(vh.CUR_SEC_ID);
-            ASECTION vh_current_sec = scApp.SectionBLL.cache.GetSection(current_sec_id);
+            string start_find_adr = "";
+            if (vh.IsOnAdr)
+            {
+                start_find_adr = vh.CUR_ADR_ID;
+            }
+            else
+            {
+                ASECTION vh_current_sec = scApp.SectionBLL.cache.GetSection(current_sec_id);
+                start_find_adr = vh_current_sec.TO_ADR_ID;
+            }
             ASECTION req_block_sec = scApp.SectionBLL.cache.GetSection(reqBlockId);
+            //string[] will_pass_section_ids = scApp.CMDBLL.
+            //         getShortestRouteSection(vh_current_sec.TO_ADR_ID, req_block_sec.FROM_ADR_ID).
+            //         routeSection;
             string[] will_pass_section_ids = scApp.CMDBLL.
-                     getShortestRouteSection(vh_current_sec.TO_ADR_ID, req_block_sec.FROM_ADR_ID).
+                     getShortestRouteSection(start_find_adr, req_block_sec.FROM_ADR_ID).
                      routeSection;
             foreach (string sec in will_pass_section_ids)
             {
@@ -2504,7 +2515,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.CMDBLL.setWillPassSectionInfo(eqpt.VEHICLE_ID, eqpt.PredictSectionsToDesination);
                     scApp.VIDBLL.upDateVIDPortID(eqpt.VEHICLE_ID, eqpt.CUR_ADR_ID);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
-                    scApp.ReserveBLL.TryAddReservedSection(eqpt.VEHICLE_ID, eqpt.CUR_SEC_ID);
                     break;
                 case EventType.UnloadArrivals:
                     if (!SCUtility.isEmpty(eqpt.MCS_CMD))
@@ -2513,7 +2523,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     scApp.VIDBLL.upDateVIDPortID(eqpt.VEHICLE_ID, eqpt.CUR_ADR_ID);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
-                    scApp.ReserveBLL.TryAddReservedSection(eqpt.VEHICLE_ID, eqpt.CUR_SEC_ID);
                     break;
                 case EventType.LoadComplete:
                     scApp.CMDBLL.setWillPassSectionInfo(eqpt.VEHICLE_ID, eqpt.PredictSectionsToDesination);
@@ -3251,7 +3260,6 @@ namespace com.mirle.ibg3k0.sc.Service
             replyCommandComplete(eqpt, seq_num, finish_ohxc_cmd, finish_mcs_cmd);
             scApp.CMDBLL.removeAllWillPassSection(eqpt.VEHICLE_ID);
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
-            scApp.ReserveBLL.TryAddReservedSection(eqpt.VEHICLE_ID, eqpt.CUR_SEC_ID);
 
             //回復結束後，若該筆命令是Mismatch、IDReadFail結束的話則要把原本車上的那顆CST Installed回來。
             if (vhLoadCSTStatus == VhLoadCarrierStatus.Exist)
@@ -4405,6 +4413,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         vh.IsObstacle
                         )
                     {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                               Data: $"start try find blocked vh...",
+                                               VehicleID: vh.VEHICLE_ID);
                         ASEGMENT seg = scApp.SegmentBLL.cache.GetSegment(vh.CUR_SEG_ID);
                         AVEHICLE next_vh_on_seg = seg.GetNextVehicle(vh);
                         if (next_vh_on_seg != null)
@@ -4412,6 +4423,12 @@ namespace com.mirle.ibg3k0.sc.Service
                             //scApp.VehicleBLL.whenVhObstacle(next_vh_on_seg.VEHICLE_ID);
                             //scApp.VehicleBLL.whenVhObstacle(next_vh_on_seg.VEHICLE_ID, vh.VEHICLE_ID);
                             tryDriveOutTheVh(vh.VEHICLE_ID, next_vh_on_seg.VEHICLE_ID);
+                        }
+                        else
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                                   Data: $"current segment id:{vh.CUR_SEG_ID},no find the next vh",
+                                                   VehicleID: vh.VEHICLE_ID);
                         }
                     }
                 }

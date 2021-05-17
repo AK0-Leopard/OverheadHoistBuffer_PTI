@@ -1128,6 +1128,7 @@
     <Content Include="DLL\MPLC.dll" />
     <Content Include="DLL\MPLC.NetMQ.dll" />
     <Content Include="DLL\opencv_world412.dll" />
+    <Content Include="DLL\TCPIPTrxControl.pdb" />
     <Content Include="DLL\Xceed.Wpf.Toolkit.dll" />
     <Content Include="hasp_windows_24266.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

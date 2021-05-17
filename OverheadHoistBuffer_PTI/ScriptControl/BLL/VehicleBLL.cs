@@ -164,7 +164,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             string vh_id = vh.VEHICLE_ID;
             string section_id = currentSectionID;
             (double x, double y, float angle) vh_axis = default;
-            if (SCUtility.isEmpty(section_id))
+            if (vh.IsOnAdr)
             {
                 var current_adr_axis = reserveBLL.GetHltMapAddress(adrID);
                 vh_axis = (current_adr_axis.x, current_adr_axis.y, 0);
@@ -966,45 +966,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return vh;
         }
 
-        public AVEHICLE findBestSuitableVhStepByStepFromAdr(string source, E_VH_TYPE vh_type, bool is_check_has_vh_carry = false)
-        {
-            AVEHICLE firstVh = null;
-            List<AVEHICLE> vhs = null;
-            List<String> to_adrs = new List<string>() { source };
-            HashSet<string> searchedSection = new HashSet<string>();
 
-            int totalVhCount = scApp.getEQObjCacheManager().getAllVehicle().Count();
-            int searchedForVh = 0;
-            int eachSearchCount = 3;
-
-            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-               Data: $"start find best suitable vh step by step from address:{source},vh type:{vh_type},is check has vh to carry:{is_check_has_vh_carry}");
-            do
-            {
-                //1.往上找出適合的車子
-                vhs = ListVhByBeginAdr(ref to_adrs, ref searchedSection, eachSearchCount);
-                searchedForVh = searchedForVh + vhs.Count;
-                //2.過濾掉狀態不符的
-                if (!is_check_has_vh_carry)
-                    filterVh(ref vhs, vh_type);
-                if (searchedForVh >= totalVhCount ||
-                    to_adrs.Count == 0)
-                    break;
-            }
-            while (vhs.Count == 0);
-            if (vhs != null && vhs.Count > 0)
-            {
-                firstVh = vhs.FirstOrDefault();
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                   Data: $"find find best suitable first vh:{firstVh?.VEHICLE_ID} from adr id:{source}");
-            }
-            else
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                   Data: $"not find any vehicle, from adr id:{source}");
-            }
-            return firstVh;
-        }
 
 
         public AVEHICLE findBestSuitableVhStepByNearest(string source, E_VH_TYPE vh_type, bool is_check_has_vh_carry = false)
@@ -1045,7 +1007,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 string vh_current_sec = vh.CUR_SEC_ID;
                 if (SCUtility.isMatche(vh.CUR_ADR_ID, source)) //Current Section為空的才代表是在這個點上
                 {
-                    if (SCUtility.isEmpty(vh.CUR_SEC_ID))
+                    if (SCUtility.isEmpty(vh_current_sec))
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
                            Data: $"From source adr:{source}, find vh:{vh.VEHICLE_ID} current adr:{vh.CUR_ADR_ID} of distance:{0}");
@@ -1239,58 +1201,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             //}
         }
 
-        private List<AVEHICLE> ListVhByBeginAdr(ref List<string> to_adrs, ref HashSet<string> searchedSection, int eachSearchCount)
-        {
-            List<AVEHICLE> vhs = new List<AVEHICLE>();
-
-            do
-            {
-                List<ASECTION> secs = scApp.MapBLL.loadSectionByToAdrs(to_adrs);
-                bool hasNotSearchedSec = false;
-                to_adrs.Clear();
-                foreach (ASECTION sec in secs)
-                {
-                    if (!scApp.MapBLL.IsSegmentActive(sec.SEG_NUM))
-                    {
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                           Data: $"By pass segment id:{sec.SEG_NUM}, is inactive");
-                        continue;
-                    }
-
-                    string section_id = sec.SEC_ID.Trim();
-                    if (!searchedSection.Contains(section_id))
-                    {
-                        hasNotSearchedSec = true;
-                        searchedSection.Add(section_id);
-                        //List<AVEHICLE> vhs_onSec = loadVehicleOnAutoRemoteBySEC_ID(sec.SEC_ID);
-                        List<AVEHICLE> vhs_onSec = loadVehicleBySEC_ID(sec.SEC_ID);
-                        if (vhs_onSec != null && vhs_onSec.Count > 0)
-                        {
-                            string on_sec_vh_id = string.Join(",", vhs_onSec.Select(v => v.VEHICLE_ID));
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                               Data: $"find vehicles:{on_sec_vh_id} on {section_id}");
-                        }
-                        //if (hasErrorVh(vhs_onSec))
-                        //{
-                        //    if (secs.Last() == sec)
-                        //    {
-                        //        throw new BlockedByTheErrorVehicleException("Can't find the way to transfer.");
-                        //    }
-                        //    continue;
-                        //}
-
-                        //vhs.AddRange(loadVehicleOnAutoRemoteBySEC_ID(sec.SEC_ID));
-                        vhs.AddRange(vhs_onSec);
-                        to_adrs.Add(sec.FROM_ADR_ID);
-                    }
-                }
-                if (!hasNotSearchedSec)
-                    break;
-                //if (adrs.Contains(source))
-                //    break;
-            } while (vhs.Count < eachSearchCount);
-            return vhs;
-        }
 
         public class BlockedByTheErrorVehicleException : Exception
         {
@@ -1418,18 +1328,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return vhs;
         }
-        public List<AVEHICLE> loadVehicleBySEC_ID(string sec_id)
-        {
-            List<AVEHICLE> vhs = null;
-            vhs = vehicleDAO.loadBySEC_ID(sec_id);
-            return vhs;
-        }
-        public List<AVEHICLE> loadVehicleOnAutoRemoteBySEC_ID(string sec_id)
-        {
-            List<AVEHICLE> vhs = null;
-            vhs = vehicleDAO.loadOnAutoRemoteBySEC_ID(sec_id);
-            return vhs;
-        }
+
+
 
         public List<AVEHICLE> loadParkingVehicle()
         {
@@ -2053,48 +1953,6 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public void whenVhObstacle(string obstacleVhID, string blockedVhID)
-        {
-            AVEHICLE obstacleVh = scApp.VehicleBLL.getVehicleByID(obstacleVhID);
-            if (obstacleVh != null &&
-                SCUtility.isEmpty(obstacleVh.OHTC_CMD))
-            {
-                AVEHICLE bloccked_vh = scApp.VehicleBLL.getVehicleByID(blockedVhID);
-                if (bloccked_vh != null &&
-                    bloccked_vh.WillPassSectionID != null && bloccked_vh.WillPassSectionID.Count > 0)
-                {
-                    //如果被擋住的VH會通過擋路車子的所在位置，而且他還有大於3段Section要行走
-                    //則代表需要將目前的車子都先移到別的停車位(PARK ZONE)才好。
-                    //if (bloccked_vh.WillPassSectionID.Count > 5 &&
-                    //    bloccked_vh.WillPassSectionID.Contains(SCUtility.Trim(obstacleVh.CUR_SEC_ID, true)))
-                    int index = bloccked_vh.WillPassSectionID.IndexOf(SCUtility.Trim(obstacleVh.CUR_SEC_ID, true));
-                    int finial_index = bloccked_vh.WillPassSectionID.Count + 1;
-                    if (index > 0 && (finial_index - index) > 3)
-                    {
-                        FindParkZoneOrCycleRunZoneNew(obstacleVh);
-                        return;
-                    }
-                }
-                if (obstacleVh.IS_PARKING &&
-                    !SCUtility.isEmpty(obstacleVh.PARK_ADR_ID))
-                {
-                    List<ACMD_OHTC> aCMD_OHTCs = new List<ACMD_OHTC>();
-                    //scApp.VehicleBLL.FindParkZoneOrCycleRunZoneForDriveAway(obstacleVh, ref aCMD_OHTCs);
-                    FindParkZoneOrCycleRunZoneForDriveAway(obstacleVh, ref aCMD_OHTCs);
-                    aCMD_OHTCs.Reverse();
-                    foreach (var cmd in aCMD_OHTCs)
-                    {
-                        scApp.CMDBLL.doCreatTransferCommand
-                            (cmd.VH_ID, cmd.CMD_ID_MCS, cmd.CARRIER_ID, cmd.CMD_TPYE, cmd.SOURCE, cmd.DESTINATION, cmd.PRIORITY, cmd.ESTIMATED_TIME);
-                    }
-                }
-                else
-                {
-                    FindParkZoneOrCycleRunZoneNew(obstacleVh);
-
-                }
-            }
-        }
 
         #endregion
 

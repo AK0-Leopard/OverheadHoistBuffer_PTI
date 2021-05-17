@@ -137,7 +137,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
     //                line.LINE_ID, "S1F1_Receive_AreYouThere", ex.ToString());
     //        }
     //    }
-        
+
     //    protected void S2F15ReceiveNewEquipmentConstantSend(object sender, SECSEventArgs e)
     //    {
     //        try

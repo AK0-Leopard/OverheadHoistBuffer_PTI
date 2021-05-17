@@ -472,11 +472,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 isSuccess = false;
                 result = $"vh id:{vh_id}, not connection.";
             }
-            //if (isSuccess && car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.Manual)
-            //{
-            //    isSuccess = false;
-            //    result = $"Vehicle:{vh_id}, current mode is:{car_in_vh.MODE_STATUS}, can't excute auto car out";
-            //}
+
             if (isSuccess && SCUtility.isEmpty(car_in_vh.CUR_SEC_ID))
             {
                 isSuccess = false;

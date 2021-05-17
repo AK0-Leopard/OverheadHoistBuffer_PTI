@@ -504,6 +504,24 @@ namespace com.mirle.ibg3k0.sc
         }
         public virtual string NODE_ID { get; set; }
 
+        public bool IsOnAdr
+        {
+            get
+            {
+                return SCUtility.isEmpty(CUR_SEC_ID);
+            }
+        }
+        public string getVIEW_SEC_ID(BLL.SectionBLL sectionBLL)
+        {
+            string start_sec_id = SCUtility.Trim(CUR_SEC_ID, true);
+            ASECTION sec_by_cur_adr = sectionBLL.cache.GetSectionsByToAddress(CUR_ADR_ID).FirstOrDefault();
+            if (sec_by_cur_adr != null)
+            {
+                start_sec_id = SCUtility.Trim(sec_by_cur_adr.SEC_ID);
+            }
+            return start_sec_id;
+        }
+
         //public ACMD_OHTC currentExcuteCmd = null;
         [JsonIgnore]
         public string VhExcuteCMDStatusChangeEvent = "VhExcuteCMDStatusChangeEvent";

@@ -5022,125 +5022,16 @@ AGV,9956,1,[RFID4]
 AGV,9957,1,[RFID4]
 AGV,9958,1,[RFID4]
 AGV,9959,1,[RFID4]
-CRANE,100010,2,Vehicle interlock error happend-port:{0}
-CRANE,111001,2,Fail to initial motor command position
-CRANE,111002,2,Fail to determine the direction of the vehicle
-CRANE,111003,2,Fail to determine the original Section of the vehicle
-CRANE,111004,2,Fail to calculate the positon correction
-CRANE,111005,2,Fail to reserve the moving section
-CRANE,111006,2,Fail to calculate the distance of moving
-CRANE,111007,2,Fail to calculate the parameter of moving
-CRANE,111008,2,Fail to control the moving (vehicle)
-CRANE,111009,2,Fail to check the area sensor state
-CRANE,111010,2,Fail to pause the moving (motor)
-CRANE,111011,2,Fail to resume the moving (motor)
-CRANE,111012,2,Fail to correct the positon
-CRANE,111013,2,timeout for communication about the moving section data of the reservation
-CRANE,111014,2,error in moving section data of the reservation
-CRANE,111015,2,fail to set the parameter of section type
-CRANE,111016,2,Vehicle data for moving dose not exist
-CRANE,111017,2,error in moving section data
-CRANE,111018,2,Fail to control the moving motion (motor)
-CRANE,111019,2,There is no address for moving
-CRANE,111020,2,The start section do not match the section now
-CRANE,111021,2,Fail to calculate the positon correction
-CRANE,111022,2,The positon correction is too long
-CRANE,111023,2,Jaws does not ready to be used
-CRANE,111024,2,OHBC reply nothing for event report
-CRANE,111025,2,Fail to get the Sick barcode
-CRANE,111026,2,Fail to get the OHT position
-CRANE,111099,2,Exception in the moving process
-CRANE,121001,2,Area sensor parameter does not exist
-CRANE,121002,2,Fail to set the area sensor parameter
-CRANE,121003,2,Fail in the back area sensor process
-CRANE,121004,2,Fail to check the front area sensor state
-CRANE,121005,2,Fail in the front area sensor process
-CRANE,121006,2,Fail to check the back area sensor state
-CRANE,121007,2,Area sensor actived
-CRANE,121008,2,Area sensor actived
-CRANE,121009,2,Area sensor actived
-CRANE,121010,2,Area sensor actived
-CRANE,121011,2,Area sensor actived
-CRANE,121012,2,Area sensor actived
-CRANE,121013,2,Area sensor actived
-CRANE,121014,2,Fail to set the area sensor IO parameter
-CRANE,121015,2,High Temputre alarm for moving motor
-CRANE,121016,2,High Temputre alarm for moving driver
-CRANE,121017,2,High Temputre alarm for hoisting motor
-CRANE,122001,1,ByPass BOX_BCR Sensor
-CRANE,122015,1,High Temputre memo for moving motor
-CRANE,122016,1,High Temputre memo for moving driver
-CRANE,122017,1,High Temputre memo for hoisting motor
-CRANE,121099,2,Exception in the area sensor process
-CRANE,131001,2,System emergency stop
-CRANE,131002,2,The motor used for moving was abnormal
-CRANE,131003,2,The motor used for jaws lateral moving were abnormal
-CRANE,131004,2,The motor used for jaws hoist moving were abnormal
-CRANE,131005,2,The motor used for jaws grabbing were abnormal
-CRANE,131006,2,OHT Emergency Stop
-CRANE,131099,2,Exception in the command handling process
-CRANE,211001,2,High CPU useage for OHT IPC
-CRANE,211002,2,High memory useage for OHT IPC
-CRANE,211003,2,Low HDD capacity for OHT IPC
-CRANE,211004,2,Timeout for moving in position
-CRANE,212001,1,Timeout for Receiving OHBC Message
-CRANE,311001,2,Error in the vehicle mounted station
-CRANE,311002,2,A foreign object in the anti-dropping detecting process
-CRANE,311003,2,Jaws isn't in the home position
-CRANE,311004,2,Error in the carrier position before hoist moving
-CRANE,311005,2,Timeout for lateraling excursion
-CRANE,311006,2,Timeout for hoisting
-CRANE,311007,2,Error in check box sensors before the jaws going
-CRANE,311008,2,Timeout for jaws closing
-CRANE,311009,2,Timeout for jaws opening
-CRANE,311010,2,Fail to getting hoist in position
-CRANE,311011,2,Error Position while Loading
-CRANE,311012,2,Error Position while Unloading
-CRANE,311013,2,Error in the carrier position before lateral moving
-CRANE,321001,2,There is a belt rewind
-CRANE,321002,2,vehicle mounted station's runout sensors turn ON
-CRANE,321003,2,Error in belt tension
-CRANE,321007,2,Error in checking box sensor turns ON
-CRANE,331001,2,Fail to threw out the back anti-dropping device
-CRANE,331002,2,Fail to threw out the front anti-dropping device
-CRANE,331003,2,Fail to take back the back anti-dropping device
-CRANE,331004,2,Fail to take back the front anti-dropping device
-CRANE,331005,2,Fail to getting lateraling excursion in position
-CRANE,331007,2,Fail to control the Z-axis
-CRANE,331008,2,Fail to going jaws
-CRANE,331012,2,Fail to run the lateral excursion
-CRANE,332001,1,OHT Have Box but anti-dropping device
-CRANE,332007,1,Warning in checking box sensor turns ON
-CRANE,332010,1,Error in OHB box detecter
-CRANE,332011,1,Error in OHB box detecter
-CRANE,411001,2,HPIO setting error for ID/CH
-CRANE,411003,2,Emergency Stop with Passive equipment ES signal
-CRANE,411004,2,CS0/CS1 signal did not turn ON
-CRANE,411012,2,Carrier was not detected/removed within specified time.[TP3 Timeout]
-CRANE,411013,2,BUSY signal did not turn OFF within specified time.[TP4 Timeout]
-CRANE,412001,1,VALID signal did not turn ON within specified time.[TD0 Timeout]
-CRANE,412002,1,L_REQ/U_REQ signal did not turn ON within specified time.[TA1 timeout]
-CRANE,412003,1,TR_REQ signal did not turn ON within specified time.[TP1 Timeout]
-CRANE,412004,1,READY signal did not turn ON within specified time.[TA2 Timeout]
-CRANE,412005,1,BUSY signal did not turn ON within specified time.[TP2 Timeout]
-CRANE,412006,1,READY signal did not turn OFF within specified time.[TA3 Timeout]
-CRANE,412007,1,VALID signal did not turn OFF within specified time.[TP5 Timeout]
-CRANE,412008,1,VALID signal did not turn ON within specified time.[TD1 Timeout]
-CRANE,412009,1,GO signal did not turn ON within specified time.
-CRANE,412010,1,InterLockNG Before BUSY turn ON
-CRANE,412011,1,Port error with Passive equipment HO_AVBL signal
-CRANE,412012,1,L_REQ/U_REQ turn ON before VALID turn ON
-CRANE,412014,1,Fail to change the PIO signals
-AGV,0284,1,[Port1]continuous 3 box ERROR
-AGV,0384,1,[Port2]continuous 3 box ERROR
-AGV,0484,1,[Port3]continuous 3 box ERROR
-AGV,0584,1,[Port4]continuous 3 box ERROR
-NTB,0382,1,[CV1-1]SEND TO NO CST ID
-NTB,0383,1,[CV1-1]SEND TO NO Box ID
-NTB,0782,1,[CV4-3]SEND TO NO CST ID
-NTB,0783,1,[CV4-3]SEND TO NO Box ID
-NTB,0784,1,[CV4-3]3 BOX ERROR
-NTB,0982,1,[CV2]SEND TO NO CST ID
+AGV,284,1,[Port1]continuous 3 box ERROR
+AGV,384,1,[Port2]continuous 3 box ERROR
+AGV,484,1,[Port3]continuous 3 box ERROR
+AGV,584,1,[Port4]continuous 3 box ERROR
+NTB,382,1,[CV1-1]SEND TO NO CST ID
+NTB,383,1,[CV1-1]SEND TO NO Box ID
+NTB,782,1,[CV4-3]SEND TO NO CST ID
+NTB,783,1,[CV4-3]SEND TO NO Box ID
+NTB,784,1,[CV4-3]3 BOX ERROR
+NTB,982,1,[CV2]SEND TO NO CST ID
 NTB,1083,1,[CV3]SEND TO NO Box ID
 NTB,1084,1,[CV3]continuous 3 box ERROR
 NTB,1282,1,[CV5]SEND TO NO CST ID
@@ -5209,3 +5100,217 @@ OHCV_7,100027,2,PORT_BP3_WaitOutTimeOut
 OHCV_7,100028,2,PORT_BP4_WaitOutTimeOut
 OHCV_7,100029,2,PORT_BP5_WaitOutTimeOut
 OHCV_7,100030,2,PORT_LP_WaitOutTimeOut 
+CRANE,100010,1,Vehicle Interlock happend
+CRANE,100011,2,Vehicle Abort happend
+CRANE,100012,1,Vehicle BCR read fail happend
+CRANE,100015,1,Vehicle Idel has cmd time out
+CRANE,14,2,Turning speed exceeded
+CRANE,15,2,Turn right speed exceeded
+CRANE,16,2,Turn left speed exceeded
+CRANE,20,2,Overspeed protection stop at the end of high speed
+CRANE,88,2,Wrong way protection stopped
+CRANE,89,2,Too big protection stops
+CRANE,98,1,Out-of-ctrl  monitor
+CRANE,99,2,OoC  HANG
+CRANE,101,2,Disk C will don't has enough space
+CRANE,102,2,Disk D will don't has enough space
+CRANE,103,2,Disk C hasn't enough space
+CRANE,104,2,Disk D hasn't enough space
+CRANE,150,1,Connecting station - block corrections
+CRANE,220,2,HID exception is not hoisted
+CRANE,221,2,HID Stops Winning Abnormally
+CRANE,222,2,HID Exception_Shutdown
+CRANE,223,2,HID magnetic field is not hoisted
+CRANE,224,2,HID temperature is abnormal
+CRANE,225,2,HID magnetic field stopped winding and loading
+CRANE,226,2,HID temperature abnormally stopped winding and loading
+CRANE,227,2,HID magnetic field abnormal_shutdown
+CRANE,228,2,HID temperature abnormal_shutdown
+CRANE,230,2,Super Capacitor Abnormal_Shutdown
+CRANE,233,2,HID magnetic field is abnormal
+CRANE,234,2,HID temperature is abnormal
+CRANE,235,2,HID magnetic field abnormally stopped and hoisted
+CRANE,236,2,HID temperature abnormally stopped loading and unloading
+CRANE,300,2,Failure of lower optical radar device
+CRANE,301,2,Optical radar device failure
+CRANE,302,2,Laser ranging device failed
+CRANE,303,2,Failure of track BCR device
+CRANE,304,2,Failure of cargo BCR device
+CRANE,305,2,Multimeter device failure
+CRANE,306,2,Temperature measuring device failure
+CRANE,307,2,The wireless data transceiver device fails
+CRANE,308,2,RemoteIO device fails
+CRANE,309,2,S_Little L lost contact
+CRANE,310,2,P_ Xiao C loses connection and disconnection
+CRANE,432,2,P_Small C occlusion anti-collision protection
+CRANE,444,2,Running anti-collision protection trigger
+CRANE,445,2,Before loading _ Doesn't exist bar code at load port
+CRANE,446,2,Before unloading _ Doesn't exist bar code at unload port
+CRANE,447,2,No barcode at terminal
+CRANE,448,2,No barcode at the stop
+CRANE,480,2,ADLink Axis card communication is abnormal
+CRANE,481,2,Moons Drive communication abnormal
+CRANE,482,2,Abnormal gripper communication device
+CRANE,501,2,There is no abnormal excitation of the traveling motor
+CRANE,502,2,No abnormal excitation of the winch motor
+CRANE,503,2,No abnormal excitation of side-shift motor
+CRANE,504,2,No abnormal excitation of the rotating motor
+CRANE,505,2,No abnormal excitation of the front steering motor
+CRANE,506,2,No abnormal excitation of the rear steering motor
+CRANE,507,2,The front anti-fall motor has no abnormal excitation
+CRANE,508,2,The rear anti-falling motor has no excitation abnormality
+CRANE,509,2,No abnormal excitation of gripper motor
+CRANE,511,2,There is no abnormal excitation of the center and front anti-falling motor
+CRANE,512,2,No abnormal excitation of the anti-dropping motor in the middle and rear
+CRANE,521,2,Axis report abnormal
+CRANE,522,2,Winch shaft returns abnormally
+CRANE,523,2,Sideshift report abnormal
+CRANE,524,2,Rotating axis report abnormal
+CRANE,525,2,The front steering shaft reports abnormally
+CRANE,526,2,Rear steering axle reports abnormal
+CRANE,527,2,The front anti-falling axle reports an exception
+CRANE,528,2,Rear anti-falling axle reports abnormality
+CRANE,529,2,Gripper shaft reports abnormality
+CRANE,531,2,Abnormal report of center and front anti-falling axle
+CRANE,532,2,In the rear anti-falling axle report abnormal
+CRANE,601,2,Multimeter_current overrun abnormal
+CRANE,602,2,Multimeter_Voltage overrun abnormal
+CRANE,603,2,Multi-meter_power overrun abnormal
+CRANE,621,2,Super Capacitor_Temperature Abnormal
+CRANE,622,2,Traveling drive_ abnormal temperature
+CRANE,623,2,Traveling motor_ abnormal temperature
+CRANE,624,2,Traveling pick-up resistance_abnormal temperature
+CRANE,625,2,Hoisting resistance_abnormal temperature
+CRANE,626,2,Traveling reducer_abnormal temperature
+CRANE,627,2,Rotating motor_abnormal temperature
+CRANE,628,2,Side shift motor_abnormal temperature
+CRANE,629,2,Winding motor_abnormal temperature
+CRANE,705,2,Mid-front fall prevention_extension abnormal
+CRANE,706,2,Mid-front fall prevention_abnormal folding
+CRANE,707,2,Mid and rear fall prevention_extension abnormal
+CRANE,708,2,Mid and rear fall prevention_abnormal folding
+CRANE,751,2,Down AreaSnr frontal low obstacle detection
+CRANE,752,2,Down AreaSnr frontal high obstacle detection
+CRANE,794,2,The fall prevention is not closed_hoisting wants to move abnormal
+CRANE,795,2,The middle anti-falling is not closed_side shift wants to move abnormally
+CRANE,796,2,The middle anti-falling is not closed_rotation wants to move abnormally
+CRANE,797,2,The middle anti-falling is not closed_rotation side shift to move abnormally
+CRANE,800,2,The times of secondary positioning of walking reaches the upper limit
+CRANE,801,2,Sideshift axis - abnormal operation position of moving to fixed point
+CRANE,802,2,Sideshift axis - abnormal move to walkable position
+CRANE,803,2,Rotation axis - abnormal operation position of moving to fixed point
+CRANE,804,2,Rotation axis - abnormal move to walkable position
+CRANE,805,2,Front tailgate - abnormal extension
+CRANE,806,2,Front tailgate - abnormal closing
+CRANE,807,2,Back tailgate - abnormal extension
+CRANE,808,2,Back tailgate - abnormal closing
+CRANE,811,2,Hoist axis - abnormal position before catching the objects 
+CRANE,812,2,Hoist axis - abnormal position after catching the objects 
+CRANE,813,2,Gripper - abnormal opening in unloading
+CRANE,814,2,Gripper - abnormal closing in unloading
+CRANE,815,2,Gripper - abnormal opening in loading
+CRANE,816,2,Gripper - abnormal closing in loading
+CRANE,817,2,Gripper - abnormal opening in loading
+CRANE,818,2,Gripper - abnormal closing in loading
+CRANE,819,2,Before loading - gripper without tray
+CRANE,820,2,After unloading - gripper still has tray
+CRANE,821,2,Before loading - gripper has tray in abnormal
+CRANE,822,2,After unloading - gripper without tray in abnormal
+CRANE,823,2,Abnormal detection of falling objects
+CRANE,824,2,Anti-falling object detection abnormal
+CRANE,826,2,Before opening the claw_cargo inspection abnormal
+CRANE,827,2,Before fetching and closing the claw_cargo inspection abnormal
+CRANE,839,1,Before placing the goods_OHB there is an abnormality of the goods
+CRANE,840,1,After placing the items_OHB no cargo abnormality
+CRANE,841,1,Before fetching_OHB no cargo abnormality
+CRANE,842,1,After picking up the goods _OHB has goods abnormal
+CRANE,845,2,Turn forward and raise hand and detach_not in place abnormal
+CRANE,846,2,After turning and raising the hand to detach_not in place abnormal
+CRANE,851,2,Left occlusion card control_L point non-INP abnormal
+CRANE,852,2,Right occlusion card control_R point non-INP abnormal
+CRANE,872,2,Trigger an offline Local exception artificially
+CRANE,873,2,Manually trigger offline offline exception
+CRANE,874,2,Artificially trigger Stop exception
+CRANE,875,2,Artificially trigger EMS abnormalities
+CRANE,888,2,OHTC request ForceFinish
+CRANE,900,1,BCR Read Fail
+CRANE,901,1,BCR Read Fail after loading
+CRANE,902,1,BCR Read Fail before shipment
+CRANE,910,1,PIO (before Busy-ON) handshake failure
+CRANE,911,1,PIO (after Busy-OFF) handshake failure
+CRANE,912,2,PIO Set CH ID Fail before delivery
+CRANE,913,2,PIO Se CH ID Fail before ordering
+CRANE,918,2,Abnormal tension of rear belt 1
+CRANE,919,2,Abnormal tension of rear belt 2
+CRANE,920,2,Side-shift rotation anti-fall exception
+CRANE,921,2,Loading process is abnormal
+CRANE,922,2,Unloading process is abnormal
+CRANE,923,2,Before loading - Abnormal operation position of running fixed point
+CRANE,924,2,Before unloading - Abnormal operation position of running fixed point
+CRANE,926,2,Out-Of-Adr Space
+CRANE,927,1,Illegal AdrType
+CRANE,928,1,Unmatched Adr
+CRANE,929,1,Illegal AdrID
+CRANE,930,2,Gripper motor communication abnormal
+CRANE,931,2,Belt tension abnormal
+CRANE,932,2,Back belt tension abnormal
+CRANE,933,2,Skew detection abnormal
+CRANE,934,2,Belt rewinding abnormal
+CRANE,935,2,EQ side PIO handshake abnormal
+CRANE,936,2,HO_AVBL exception on PIO received EQ
+CRANE,937,2,PIO loading EQ sends ES exception
+CRANE,938,2,HO_AVBL Exception When PIO Receives Delivery
+CRANE,939,2,PIO receives EQ and receives ES exception
+CRANE,940,1,PIO drop off and other EQ issued L_REQ timeout Hi
+CRANE,941,1,PIO drop off and other EQs issued READY timeout Hi
+CRANE,942,1,EIO sends READY timeout when PIO orders off
+CRANE,943,1,EIO sends U_REQ timeout when PIO is shipped
+CRANE,944,1,EIO sends READY timeout when PIO is shipped
+CRANE,945,1,EIO sends READY timeout when PIO is released
+CRANE,946,1,PIO receives BUSY Hi before receiving EQ and sends HO_AVBL abnormal Lo
+CRANE,947,1,PIO receives BUSY Hi before receiving EQ and sends ES abnormal Lo
+CRANE,948,1,PIO releases BUSY Hi before receiving EQ and sending HO_AVBL abnormal Lo
+CRANE,949,1,PIO releases BUSY Hi before receiving EQ and sending ES abnormal Lo
+CRANE,950,2,In remote maintenance mode
+CRANE,951,2,Abnormal right orbit of starting station
+CRANE,952,2,Abnormal left sky orbit
+CRANE,953,2,Turn right and do n¡¦t change hands
+CRANE,954,2,Turn left and never change hands
+CRANE,955,2,Turn right forward start exclusive trigger exception
+CRANE,956,2,Turn left forward start exclusive trigger exception
+CRANE,957,2,Turn right backward start exclusive trigger exception
+CRANE,958,2,Turn left backward start exclusive trigger exception
+CRANE,960,2,Turn right before starting abnormally
+CRANE,961,2,Turn left before starting abnormally
+CRANE,962,2,Turn right after start abnormal
+CRANE,963,2,Turn left after starting abnormally
+CRANE,964,2,Turn right before
+CRANE,965,2,Turn left forward
+CRANE,966,2,Turn right after being in place
+CRANE,967,2,Turn left back into place abnormal
+CRANE,968,2,Forward rotation abnormal
+CRANE,969,2,After turning in place abnormal
+CRANE,971,2,Abnormal Sky Track
+CRANE,972,2,Not turning hands
+CRANE,973,2,Forward start abnormal
+CRANE,974,2,Turn back abnormally
+CRANE,976,2,Non local delivery delay
+CRANE,977,2,Off site delivery delay
+CRANE,978,2,"Slow stop, EMS"
+CRANE,979,2,"Deceleration V1 is not enough, EMS"
+CRANE,980,2,"Deceleration V2 is not enough, EMS"
+CRANE,981,2,The winch position is not safe
+CRANE,983,2,AreaSnr switching operation is abnormal
+CRANE,984,2,AreaSnr switch operation abnormally
+CRANE,985,2,Steering status is abnormal
+CRANE,987,2,Running steering status is abnormal
+CRANE,990,2,The clamp is not in a safe position
+CRANE,991,2,The open clip is not in a safe position
+CRANE,992,2,Unsafe side shift position
+CRANE,993,2,Unsafe rotation position
+CRANE,994,2,Anti-falling not closed_winch wants to move abnormally
+CRANE,995,2,Fall prevention not closed _ side shift wants to move abnormally
+CRANE,996,2,Anti-falling not folded_rotation to move abnormally
+CRANE,997,2,Fall prevention not closed _ rotation side shift wants to move abnormally
+CRANE,998,1,Vehicle stop at place too long
+CRANE,999,2,System internal exception

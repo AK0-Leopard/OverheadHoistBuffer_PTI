@@ -74,15 +74,36 @@ namespace com.mirle.ibg3k0.sc.Data
                 EventType eventType = recive_str.EventType;
                 string current_adr_id = SCUtility.isEmpty(recive_str.CurrentAdrID) ? string.Empty : recive_str.CurrentAdrID;
                 string current_sec_id = SCUtility.isEmpty(recive_str.CurrentSecID) ? string.Empty : recive_str.CurrentSecID;
+                uint sec_dis = recive_str.SecDistance;
+                if (sec_dis == 0 || SCUtility.isEmpty(current_sec_id))
+                {
+                    current_sec_id = "";
+
+                }
                 ASECTION current_sec = scapp.SectionBLL.cache.GetSection(current_sec_id);
-                string current_seg_id = current_sec == null ? string.Empty : current_sec.SEG_NUM;
+                string current_seg_id = "";
+                if (current_sec != null)
+                {
+                    current_seg_id = current_sec.SEG_NUM;
+                }
+                else
+                {
+                    current_sec = scapp.SectionBLL.cache.GetSectionsByToAddress(current_adr_id).FirstOrDefault();
+                    current_seg_id = current_sec.SEG_NUM;
+                }
 
                 string last_adr_id = vh.CUR_ADR_ID;
                 string last_sec_id = vh.CUR_SEC_ID;
-                ASECTION lase_sec = scapp.SectionBLL.cache.GetSection(last_sec_id);
-                string last_seg_id = lase_sec == null ? string.Empty : lase_sec.SEG_NUM;
-                uint sec_dis = recive_str.SecDistance;
-
+                string last_seg_id = "";
+                if (!vh.IsOnAdr)
+                {
+                    ASECTION lase_sec = scapp.SectionBLL.cache.GetSection(last_sec_id);
+                    last_seg_id = lase_sec == null ? string.Empty : lase_sec.SEG_NUM;
+                }
+                else
+                {
+                    last_seg_id = vh.CUR_SEG_ID;
+                }
                 scapp.VehicleService.doUpdateVheiclePositionAndCmdSchedule(vh, current_adr_id, current_sec_id, current_seg_id, last_adr_id, last_sec_id, last_seg_id, sec_dis, eventType);
             }
             catch (Exception ex)
