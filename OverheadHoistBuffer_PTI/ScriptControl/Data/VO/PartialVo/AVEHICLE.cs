@@ -74,6 +74,9 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler LongTimeNoCommuncation;
         public event EventHandler<string> LongTimeInaction;
 
+        public bool IsEmptyRetrievalHappnding = false;
+        public bool IsDoubleStorageHappnding = false;
+
 
         VehicleTimerAction vehicleTimer = null;
         private Stopwatch CurrentCommandExcuteTime;

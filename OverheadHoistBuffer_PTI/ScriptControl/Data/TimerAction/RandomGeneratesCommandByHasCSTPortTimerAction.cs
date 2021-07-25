@@ -157,10 +157,10 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         private void Taichung()
         {
             tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_None);
-            tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_Clear);
-            tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_Dirty);
-            tryCreatMCSCommand(E_VH_TYPE.Clean, SourcePorts_Clear);
-            tryCreatMCSCommand(E_VH_TYPE.Dirty, SourcePorts_Dirty);
+            //tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_Clear);
+            //tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_Dirty);
+            //tryCreatMCSCommand(E_VH_TYPE.Clean, SourcePorts_Clear);
+            //tryCreatMCSCommand(E_VH_TYPE.Dirty, SourcePorts_Dirty);
         }
 
         private void tryCreatMCSCommand(E_VH_TYPE vh_type, List<string> load_port_lst)

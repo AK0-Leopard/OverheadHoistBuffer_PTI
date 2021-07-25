@@ -334,19 +334,19 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public const string CEID_Transferring = "111";
         //Carrier Status Transition Events (CEID 151 ~ 152)
         public const string CEID_Carrier_Installed = "151";
-        public const string CEID_Carrier_Removed = "164";
+        public const string CEID_Carrier_Removed_From_Shelf = "152";  //
+        public const string CEID_Carrier_Installed_From_Shelf = "153";//
         public const string CEID_Carrier_ID_Read = "154";
-        //OHBC
-        public const string CEID_Carrier_Removed_Port = "153";
-        //public const string CEID_Carrier_Resumed = "154";
-        public const string CEID_Carrier_Stored = "155";
-        public const string CEID_Carrier_Stored_Alt = "99999";
+        public const string CEID_Carrier_Removed_From_MGV_Port = "155";
         public const string CEID_Carrier_Identified = "156";
-        public const string CEID_Shelf_Status_Change = "157";
         public const string CEID_Carrier_Wait_In = "158";
         public const string CEID_Carrier_Wait_Out = "161";
-        public const string CEID_Unit_Alarm_Set = "162";
-        public const string CEID_Unit_Alarm_Cleared = "163";
+        public const string CEID_Carrier_Removed = "164";
+        public const string CEID_Carrier_InputPermission = "165";
+        //Manual Action
+        public const string CEID_Operator_Initiated_Action = "254";
+
+
         //Vehicle Status Transition Events 
         public const string CEID_Vehicle_Arrived = "206";
         public const string CEID_Vehicle_Acquire_Started = "203";
@@ -360,31 +360,39 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public const string CEID_Vehicle_Unassigned = "202";
         //
 
-        public const string CEID_Zone_Capacity_Change = "252";
-        public const string CEID_Carrier_Box_ID_Rename = "253";
-        public const string CEID_Operator_Initiated_Action = "254";
-        public const string CEID_Empty_Box_Supply = "255";
-        public const string CEID_Empty_Box_Recycling = "256";
+        //public const string CEID_Zone_Capacity_Change = "252";
+        //public const string CEID_Carrier_Box_ID_Rename = "253";
+        //public const string CEID_Empty_Box_Supply = "255";
+        //public const string CEID_Empty_Box_Recycling = "256";
         //
+        //Unit Status Events
+        //public const string CEID_Carrier_Removed_Port = "153";
+        //public const string CEID_Carrier_Stored_Alt = "99999";
+        //public const string CEID_Shelf_Status_Change = "157";
+        public const string CEID_Unit_Alarm_Set = "162";
+        public const string CEID_Unit_Alarm_Cleared = "163";
+
+        //Port Status Transition Events
         public const string CEID_Port_Out_Of_Service = "260";
         public const string CEID_Port_In_Service = "261";
-        public const string CEID_QueryLotID = "264";
+        public const string CEID_Port_Type_Input = "701";
+        public const string CEID_Port_Type_Output = "702";
+        public const string CEID_Port_Type_Changing = "703";
+
+        public const string CEID_Device_Logical_Maint = "801";
+        public const string CEID_Device_Logical_Online = "802";
+
         //
         public const string CEID_Load_Req = "602";
         public const string CEID_Unload_Req = "603";
         public const string CEID_No_Req = "604";
         //Port Type
-        public const string CEID_Port_Type_Input = "701";
-        public const string CEID_Port_Type_Output = "702";
-        public const string CEID_Port_Type_Changing = "703";
         //public const string CEID_Establish_Interval_Time_Change = "011";
         //public const string CEID_Unit_Alarm_Cleared = "503";
         //public const string CEID_Unit_Alarm_Set = "504";
 
         //public const string CEID_LaneInService = "570";
         //public const string CEID_LaneOutOfService = "571";
-        public const string CEID_Device_Logical_Maint = "801";
-        public const string CEID_Device_Logical_Online = "802";
 
         //CEID Remark End
         #region CEID Array
@@ -509,17 +517,29 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
              CEID_Transferring ,
 
              CEID_Carrier_Installed,
-             CEID_Carrier_Removed,
-
-             CEID_Carrier_Removed_Port,
-             //CEID_Carrier_Resumed,
-             CEID_Carrier_Stored,
-             CEID_Carrier_Stored_Alt,
-             CEID_Shelf_Status_Change,
-             CEID_Carrier_Wait_In ,
+             CEID_Carrier_Removed_From_Shelf,
+             CEID_Carrier_Installed_From_Shelf,
+             CEID_Carrier_ID_Read,
+             CEID_Carrier_Removed_From_MGV_Port,
+             CEID_Carrier_Identified,
+             CEID_Carrier_Wait_In,
              CEID_Carrier_Wait_Out,
-             CEID_Unit_Alarm_Set,
-             CEID_Unit_Alarm_Cleared,
+             CEID_Carrier_Removed,
+             CEID_Carrier_InputPermission,
+
+             CEID_Operator_Initiated_Action,
+
+             //CEID_Carrier_Resumed,
+             CEID_Vehicle_Arrived,
+             CEID_Vehicle_Acquire_Started,
+             CEID_Vehicle_Acquire_Completed,
+             CEID_Vehicle_Assigned ,
+             CEID_Vehicle_Departed,
+             CEID_Vehicle_Deposit_Started,
+             CEID_Vehicle_Deposit_Completed,
+             CEID_Vehicle_Installed,
+             CEID_Vehicle_Removed,
+             CEID_Vehicle_Unassigned,
 
              //CEID_Crane_Active,
              //CEID_Crane_Idle,
@@ -527,45 +547,29 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
              //CEID_Crane_Out_Escape ,
              //CEID_Crane_Out_Servce,
              //CEID_Crane_In_Servce,
-             CEID_Vehicle_Arrived,
-             CEID_Vehicle_Acquire_Started,
-             CEID_Vehicle_Acquire_Completed,
-             CEID_Vehicle_Assigned,
-             CEID_Vehicle_Departed,
-             CEID_Vehicle_Deposit_Started ,
-             CEID_Vehicle_Deposit_Completed ,
-             CEID_Vehicle_Installed ,
-             CEID_Vehicle_Removed ,
-             CEID_Vehicle_Unassigned,
-
-             CEID_Carrier_ID_Read,
-             CEID_Zone_Capacity_Change,
-             CEID_Carrier_Box_ID_Rename,
-             CEID_Operator_Initiated_Action,
-             CEID_Empty_Box_Supply,
-             CEID_Empty_Box_Recycling,
-
+             CEID_Unit_Alarm_Set,
+             CEID_Unit_Alarm_Cleared,
 
              CEID_Port_Out_Of_Service,
              CEID_Port_In_Service,
+             CEID_Port_Type_Input,
+             CEID_Port_Type_Output ,
+             CEID_Port_Type_Changing ,
+
+             CEID_Device_Logical_Maint ,
+             CEID_Device_Logical_Online ,
 
              CEID_Load_Req,
              CEID_Unload_Req,
              CEID_No_Req,
 
-             CEID_Port_Type_Input,
-             CEID_Port_Type_Output,
-             CEID_Port_Type_Changing,
-
-             CEID_Device_Logical_Maint,
-             CEID_Device_Logical_Online,
-             CEID_Carrier_Identified
         };
         public static Dictionary<string, string> CEID_Dictionary = new Dictionary<string, string>()
         {
             {CEID_Equipment_OFF_LINE,"Equipment_OFF_LINE" },
             {CEID_Control_Status_Local,"Equipment_OFF_LINE" },
             {CEID_Control_Status_Remote,"Control_Status_Remote" },
+
             {CEID_Alarm_Cleared,"Alarm_Cleared" },
             {CEID_Alarm_Set,"Alarm_Set" },
             {CEID_TSC_Auto_Completed,"TSC_Auto_Completed" },
@@ -573,6 +577,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             {CEID_TSC_Pause_Completed,"TSC_Pause_Completed" },
             {CEID_TSC_Paused,"TSC_Paused" },
             {CEID_TSC_Pause_Initiated,"TSC_Pause_Initiated" },
+
             {CEID_Transfer_Abort_Completed,"Transfer_Abort_Completed" },
             {CEID_Transfer_Abort_Failed,"Transfer_Abort_Failed" },
             {CEID_Transfer_Abort_Initiated,"Transfer_Abort_Initiated" },
@@ -586,24 +591,18 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             {CEID_Transferring,"Carrier_Transferring" },
 
             {CEID_Carrier_Installed,"Carrier_Installed_Completed"},
-            {CEID_Carrier_Removed,"Carrier_Removed_Completed"},
+            {CEID_Carrier_Removed_From_Shelf,"CEID_Carrier_Removed_From_Shelf"},
+            {CEID_Carrier_Installed_From_Shelf,"CEID_Carrier_Installed_From_Shelf"},
+            {CEID_Carrier_ID_Read,"CEID_Carrier_ID_Read"},
+            {CEID_Carrier_Removed_From_MGV_Port,"CEID_Carrier_Removed_From_MGV_Port"},
+            {CEID_Carrier_Identified,"CEID_Carrier_Identified"},
+            {CEID_Carrier_Wait_In,"CEID_Carrier_Wait_In"},
+            {CEID_Carrier_Wait_Out,"CEID_Carrier_Wait_Out"},
+            {CEID_Carrier_Removed,"CEID_Carrier_Removed"},
+            {CEID_Carrier_InputPermission,"CEID_Carrier_InputPermission"},
 
-            {CEID_Carrier_Removed_Port,"Carrier_Removed_Port"},
-            //{CEID_Carrier_Resumed,"_Carrier_Resumed"},
-            {CEID_Carrier_Stored,"Carrier_Stored"},
-            {CEID_Carrier_Stored_Alt,"Carrier_Stored_Alt"},
-            {CEID_Shelf_Status_Change,"Shelf_Status_Change"},
-            {CEID_Carrier_Wait_In,"Carrier_Wait_In"},
-            {CEID_Carrier_Wait_Out,"Carrier_Wait_Out"},
-            {CEID_Unit_Alarm_Set,"Unit_Alarm_Set"},
-            {CEID_Unit_Alarm_Cleared,"Unit_Alarm_Cleared"},
+            {CEID_Operator_Initiated_Action,"CEID_Operator_Initiated_Action"},
 
-            //{CEID_Crane_Active,"Crane_Active"},
-            //{CEID_Crane_Idle,"Crane_Idle"},
-            //{CEID_Crane_In_Escape,"Crane_In_Escape"},
-            //{CEID_Crane_Out_Escape,"Crane_Out_Escape"},
-            //{CEID_Crane_Out_Servce,"Crane_Out_Servce"},
-            //{CEID_Crane_In_Servce,"Crane_In_Servce"},
             { CEID_Vehicle_Arrived,"Vehicle_Arrived" },
             { CEID_Vehicle_Acquire_Started,"Vehicle_Acquire_Started"},
             { CEID_Vehicle_Acquire_Completed,"Vehicle_Acquire_Completed"},
@@ -615,27 +614,21 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
             { CEID_Vehicle_Removed,"Vehicle_Removed" },
             { CEID_Vehicle_Unassigned,"Vehicle_Unassigned"},
 
-            { CEID_Carrier_ID_Read,"Carrier_ID_Read"},
-            {CEID_Zone_Capacity_Change,"Zone_Capacity_Change"},
-            {CEID_Carrier_Box_ID_Rename,"Carrier_Box_ID_Rename"},
-            {CEID_Operator_Initiated_Action,"Operator_Initiated_Action"},
-            {CEID_Empty_Box_Supply,"Empty_Box_Supply"},
-            {CEID_Empty_Box_Recycling,"Empty_Box_Recycling"},
+            { CEID_Unit_Alarm_Set,"CEID_Unit_Alarm_Set"},
+            {CEID_Unit_Alarm_Cleared,"CEID_Unit_Alarm_Cleared"},
 
-            {CEID_Port_Out_Of_Service,"Port_Out_Of_Service"},
-            {CEID_Port_In_Service,"Port_In_Service"},
+            {CEID_Port_Out_Of_Service,"CEID_Port_Out_Of_Service"},
+            {CEID_Port_In_Service,"CEID_Port_In_Service"},
+            {CEID_Port_Type_Input,"CEID_Port_Type_Input"},
+            {CEID_Port_Type_Output,"CEID_Port_Type_Output"},
+            {CEID_Port_Type_Changing,"CEID_Port_Type_Changing"},
+
+            {CEID_Device_Logical_Maint,"CEID_Device_Logical_Maint"},
+            {CEID_Device_Logical_Online,"CEID_Device_Logical_Online"},
 
             {CEID_Load_Req,"Load_Req"},
             {CEID_Unload_Req,"Unload_Req"},
             {CEID_No_Req,"No_Req"},
-
-            {CEID_Port_Type_Input,"Port_Type_Input"},
-            {CEID_Port_Type_Output,"Port_Type_Output"},
-            {CEID_Port_Type_Changing,"Port_Type_Changing"},
-
-            {CEID_Device_Logical_Maint,"Device_Logical_Maint"},
-            {CEID_Device_Logical_Online,"Device_Logical_Online"},
-            {CEID_Carrier_Identified,"Carrier_Identified"}
         };
         #endregion CEID Array
         #endregion CEID

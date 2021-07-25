@@ -382,6 +382,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelCompleted(cmd_id, reportQueues);
             return isSuccsess;
         }
+        public bool ReportTransferCancelCompleted(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelCompleted(cmd, reportQueues);
+            return isSuccsess;
+        }
         public bool ReportTransferCancelFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
@@ -393,6 +399,12 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelInitial(cmd_id, reportQueues);
+            return isSuccsess;
+        }
+        public bool ReportTransferCancelInitial(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelInitial(cmd, reportQueues);
             return isSuccsess;
         }
 
@@ -462,6 +474,12 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(cmd_id, reportqueues);
+            return isSuccsess;
+        }
+        public bool ReportCarrierRemoved(string cmd_id, CassetteData cassette, List<AMCSREPORTQUEUE> reportqueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(cmd_id, cassette, reportqueues);
             return isSuccsess;
         }
         public bool ReportVehicleDepositCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
@@ -865,18 +883,6 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             //isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelCompleted(cmd, reportqueues);
-            return isSuccsess;
-        }
-        public bool newReportTransferCancelInitial(string cmdID, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelInitial(cmdID, reportqueues);
-            return isSuccsess;
-        }
-        public bool newReportTransferCancelInitial(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            //isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCancelInitial(cmd, reportqueues);
             return isSuccsess;
         }
         public bool newReportTransferCancelFailed(string cmdID, List<AMCSREPORTQUEUE> reportqueues)

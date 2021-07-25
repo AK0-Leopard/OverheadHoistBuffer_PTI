@@ -283,7 +283,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-
+            if (MTL == null) return;
             lbl_mtl_alive.Text = MTL.Is_Eq_Alive.ToString();
             lbl_mtl_current_car_id.Text = MTL.CurrentCarID;
             lbl_mtl_has_vh.Text = MTL.HasVehicle.ToString();
@@ -343,6 +343,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             mainForm.removeForm(this.Name);
             timer1.Enabled = false;
+            timer1.Stop();
         }
 
         private void MaintainDeviceForm_Load(object sender, EventArgs e)

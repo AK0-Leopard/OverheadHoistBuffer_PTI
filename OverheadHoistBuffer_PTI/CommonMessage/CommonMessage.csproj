@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>com.mirle.a00.aka.message</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ProtocolFormat\VehicleControlFun.proto" />
+    <None Remove="ProtocolFormat\VehicleControlPublishMessage.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.17.2" />
+    <PackageReference Include="Grpc.Core" Version="2.38.1" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.38.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.38.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="ProtocolFormat\VehicleControlFun.proto" />
+    <Protobuf Include="ProtocolFormat\VehicleControlPublishMessage.proto" />
+  </ItemGroup>
+
+</Project>

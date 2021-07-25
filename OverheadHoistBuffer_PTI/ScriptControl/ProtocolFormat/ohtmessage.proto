@@ -74,6 +74,7 @@ message Timestamp {
 	DoubleStorage = 15;
 	EmptyRetrieval = 16;
 	Scan = 17;
+	CSTTypeMismatch = 18;
 	BlockRelease = 21;
 	HIDRelease = 22;
 	BlockHIDRelease = 23;
@@ -99,6 +100,9 @@ message Timestamp {
 	CmpStatusIDMisMatch = 23;
 	CmpStatusIDReadFailed = 24;
 	CmpStatusIDReadDuplicate = 25;
+	CmpStatusIDDoubleStorage = 26;
+	CmpStatusIDEmptyRetrival = 27;
+	CmpStatusIDCSTTypeMismatch = 28;
 	CmpStatusInterlockError = 64;
 
 	CmpStatusLongTimeInaction = 98;

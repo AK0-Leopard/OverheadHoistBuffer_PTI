@@ -40,6 +40,8 @@ namespace com.mirle.ibg3k0.sc
         public const int COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL = 512;    //空取、異常流程
         public const int COMMAND_STATUS_BIT_INDEX_InterlockError = 1024;    //交握異常
         public const int COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT = 2048;     //車子異常結束
+        public const int COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE_ING = 4096;     //二重格發生中
+        public const int COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL_ING = 8192;    //空取發生中
 
         public const string Successful = "1";
 

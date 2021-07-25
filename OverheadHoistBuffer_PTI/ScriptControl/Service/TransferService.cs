@@ -8,18 +8,10 @@
 //
 // Date          Author         Request No.    Tag          Description
 // ------------- -------------  -------------  ------       -----------------------------
-// 2020/02/23    Kevin Wei      N/A            B0.01        功能Function，更新Carrier location與儲位狀態
-// 2020/04/23    Kevin Wei      N/A            B0.02        拿掉料交易的保護
-// 2020/04/17    Jason Wu       N/A            B0.03        加入insert Box ID 為 ERROR1 時，做一次Alarm Set 與 Alarm Clear 以記錄在 MCS
-// 2020/05/21    Jason Wu       N/A            A20.05.21    嘗試優化派送命令之優先邏輯
-// 2020/05/27    Jason Wu       N/A            A20.05.27    嘗試優化退補空box 之shelf 位置尋找
-// 2020/05/28    Jason Wu       N/A            A20.05.28.0  用於計算並調整整條線的空box數量
-// 2020/05/29    Jason Wu       N/A            A20.05.29.0  用於計算並調整整條線的空box數量(以規劃圖進行修改)
-// 2020/06/09    Jason Wu       N/A            A20.06.09.0  修改getAddressID也能從vehicle取得
-// 2020/06/12    Jason Wu       N/A            A20.06.12.0  新增CanExcuteUnloadTransferAGVStationFromAGVC()處理判定切換Mode Type流程及觸發命令派送。
-// 2020/06/15    Jason Wu       N/A            A20.06.15.0  新增新增CanExcuteUnloadTransferAGVStationFromAGVC()後續處理流程。
-// 2020/06/16    Jason Wu       N/A            A20.06.16.0  新增確認該AGVport是否可用的優先流程FilterOfAGVPort()。
-// 2020/07/07    Hsinyu Chang   N/A            2020.07.07   Master PLC斷線時發alarm
+// 2021/05/17    Kevin Wei      N/A            A20210517-01 修正在Unload Complete的時候，
+//                                                          上報給MCS的順序要移到Remove Carrier (包含資料庫清完)
+//                                                          後才上報，避免S2F49命令下來的時候把Carreir建立起來後，
+//                                                          最後又被Remove掉的問題。
 //**********************************************************************************
 
 using com.mirle.ibg3k0.bcf.Common;
@@ -1986,11 +1978,25 @@ namespace com.mirle.ibg3k0.sc.Service
                 case COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT: //命令完成                                    
                     s = status + "_COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT";
                     break;
+                case COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE_ING: //二重格 發生中                                    
+                    s = status + "_COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE_ING";
+                    break;
+                case COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL_ING: //空取 發生中
+                    s = status + "COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL_ING";
+                    break;
                 default:
                     s = status.ToString();
                     break;
             }
             return s;
+        }
+        public bool OHT_TransferUpdateState(string mcsID, int status)
+        {
+            TransferServiceLogger.Info
+            (
+                $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| mcs cmd id:{mcsID} 更新狀態為:{statusToName(status)}"
+            );
+            return cmdBLL.updateCMD_MCS_CmdStatus(mcsID, status);
         }
         public bool OHT_TransferStatus(string oht_cmdid, string ohtName, int status)   //OHT目前狀態
         {
@@ -2345,7 +2351,6 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         //reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
                         //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
-                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.DoubleStorage); // PTI需要上報
 
                         //string cstID = CarrierDouble(ohtCmd.DESTINATION.Trim());
                         string cstID = "";
@@ -2355,6 +2360,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         OHBC_InsertCassette(cstID, boxID, loc, "二重格異常");
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.DoubleStorage); // PTI需要上報
                         break;
                     case COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL: //空取異常
                         OHBC_AlarmSet(ohtName, SCAppConstants.SystemAlarmCode.OHT_Issue.EmptyRetrieval);
@@ -2362,13 +2368,14 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         //reportBLL.ReportTransferAbortInitiated(cmd.CMD_ID); //  20/07/15 美微 說不要報 InterlockError 要報AbortInitiated、AbortCompleted
                         //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
-                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.EmptyRetrieval); // PTI需要上報
 
                         CassetteData emptyData = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.SOURCE.Trim());
 
                         //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.EmptyRetrieval); // PTI需要上報
+
                         break;
                     case COMMAND_STATUS_BIT_INDEX_InterlockError:
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
@@ -2711,6 +2718,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
             try
             {
+                CassetteData source_cst_data = unLoadCstData.Clone();
                 if (portINIData[ohtName].craneUnLoading)
                 {
                     return;
@@ -2754,11 +2762,12 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (cmd != null)
                     {
-                        reportBLL.ReportCarrierRemoved(cmd.CMD_ID);//PTI需要
+                        //reportBLL.ReportCarrierRemoved(cmd.CMD_ID);//PTI需要
+                        reportBLL.ReportCarrierRemoved(cmd.CMD_ID, source_cst_data);//PTI需要
                         reportBLL.ReportVehicleDepositCompleted(cmd.CMD_ID);//PTI需要
                         reportBLL.ReportVehicleUnassigned(cmd.CMD_ID);//PTI需要上報
-                        CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
-                        reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
+                        //CassetteData command_finishCSTData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());//PTI需要上報
+                        //A20210517-01 reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//PTI需要上報
 
                         if (isCVPort(dest))
                         {
@@ -2804,7 +2813,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else if (isUnitType(dest, UnitType.EQ))
                         {
-                            cassette_dataBLL.DeleteCSTbyBoxId(unLoadCstData.BOXID);
+                            //若是在cycle run 的功能中，就不用自動除帳
+                            //避免帳料無法再進行cycle run
+                            if (!DebugParameter.CanAutoRandomGeneratesCommand)
+                                cassette_dataBLL.DeleteCSTbyBoxId(unLoadCstData.BOXID);
                             //QueryLotID(unLoadCstData);
                         }
                         else
@@ -2817,6 +2829,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                        //reportBLL.ReportTransferCompleted(cmd, command_finishCSTData, "0");//A20210517-01 add
+                        reportBLL.ReportTransferCompleted(cmd, unLoadCstData, "0");//A20210517-01 add
                     }
                     else
                     {
@@ -6276,8 +6290,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
             if (cmdMCS != null)
             {
-                reportBLL.ReportTransferCompleted(cmdMCS, cassetteData, result);
                 cmdBLL.updateCMD_MCS_TranStatus(cmdMCS.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                reportBLL.ReportTransferCompleted(cmdMCS, cassetteData, result);
                 return "OK";
             }
             return "失敗";

@@ -18,16 +18,18 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendTransferAbortCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferAbortFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferAbortInitiated(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendTransferCancelCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);       
+        public abstract bool S6F11SendTransferCancelCompleted(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferCancelCompleted(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferCancelFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferCancelInitial(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferCancelInitial(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferCompleted(ACMD_MCS cmd, CassetteData cassette, string result_code, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendTransferInitiated(string cmd_id,  List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendTransferPaused(string cmd_id,  List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferInitiated(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferPaused(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferResume(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierTransferring(ACMD_MCS cmd, CassetteData cassette, string ohtName, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedCompleted(string cst_id, string box_id, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendDeviceLogicalStateMaint( List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendDeviceLogicalStateMaint(List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierIdentified(string cst_id, string box_id, App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierInstallCompleted(CassetteData cst_id, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -82,7 +84,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendClearBoxMoveReq(string boxID, string portID, List<AMCSREPORTQUEUE> reportQueues = null);
 
         public abstract bool S6F11SendTransferring(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendVehicleArrived(string vhID, int status,List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendVehicleArrived(string vhID, int status, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleAcquireStarted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleAcquireCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -92,6 +94,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         //public abstract bool S6F11SendCarrierInstalled(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierRemoved(string vhID, CassetteData unLoadCstData, List<AMCSREPORTQUEUE> reportQueues = null);
         //public abstract bool S6F11SendCarrierRemoved(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleUnassigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
 
@@ -186,7 +189,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         {
             return true;
         }
-        
+
         public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object Vids)
         {
             return null;
@@ -399,11 +402,19 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         {
             return true;
         }
+        public override bool S6F11SendTransferCancelCompleted(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
         public override bool S6F11SendTransferCancelFailed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }
         public override bool S6F11SendTransferCancelInitial(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+        public override bool S6F11SendTransferCancelInitial(ACMD_MCS cmd, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }
@@ -504,12 +515,17 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
             return true;
         }
 
-        public override bool S6F11SendCarrierIdentified(string cst_id, string box_id,App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendCarrierIdentified(string cst_id, string box_id, App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }
 
         public override bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+
+        public override bool S6F11SendCarrierRemoved(string vhID, CassetteData unLoadCstData, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }

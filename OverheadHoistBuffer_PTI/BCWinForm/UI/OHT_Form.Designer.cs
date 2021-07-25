@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pnl_Map = new System.Windows.Forms.Panel();
+            this.uctl_Map = new com.mirle.ibg3k0.bc.winform.UI.Components.uctl_Map();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbl_HoseMode = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -125,7 +126,6 @@
             this.tab_SECS = new System.Windows.Forms.TabPage();
             this.timer_TimedUpdates = new System.Windows.Forms.Timer(this.components);
             this.vehicleObjToShowBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.uctl_Map = new com.mirle.ibg3k0.bc.winform.UI.Components.uctl_Map();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -197,6 +197,17 @@
             this.pnl_Map.Name = "pnl_Map";
             this.pnl_Map.Size = new System.Drawing.Size(1559, 912);
             this.pnl_Map.TabIndex = 0;
+            // 
+            // uctl_Map
+            // 
+            this.uctl_Map.AutoScroll = true;
+            this.uctl_Map.BackColor = System.Drawing.Color.Black;
+            this.uctl_Map.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uctl_Map.Location = new System.Drawing.Point(0, 0);
+            this.uctl_Map.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uctl_Map.Name = "uctl_Map";
+            this.uctl_Map.Size = new System.Drawing.Size(1558, 912);
+            this.uctl_Map.TabIndex = 0;
             // 
             // panel1
             // 
@@ -532,9 +543,9 @@
             this.btn_pause.ForeColor = System.Drawing.Color.Black;
             this.btn_pause.Location = new System.Drawing.Point(21, 457);
             this.btn_pause.Name = "btn_pause";
-            this.btn_pause.Size = new System.Drawing.Size(133, 29);
+            this.btn_pause.Size = new System.Drawing.Size(170, 29);
             this.btn_pause.TabIndex = 3;
-            this.btn_pause.Text = "Pause";
+            this.btn_pause.Text = "Pause(Normal)";
             this.btn_pause.UseVisualStyleBackColor = true;
             this.btn_pause.Click += new System.EventHandler(this.btn_pause_Click);
             // 
@@ -543,9 +554,9 @@
             this.btn_continuous.ForeColor = System.Drawing.Color.Black;
             this.btn_continuous.Location = new System.Drawing.Point(21, 492);
             this.btn_continuous.Name = "btn_continuous";
-            this.btn_continuous.Size = new System.Drawing.Size(133, 30);
+            this.btn_continuous.Size = new System.Drawing.Size(170, 30);
             this.btn_continuous.TabIndex = 3;
-            this.btn_continuous.Text = "Continuous";
+            this.btn_continuous.Text = "Continuous(Block)";
             this.btn_continuous.UseVisualStyleBackColor = true;
             this.btn_continuous.Click += new System.EventHandler(this.btn_continuous_Click);
             // 
@@ -554,7 +565,7 @@
             this.btn_AutoMove.ForeColor = System.Drawing.Color.Black;
             this.btn_AutoMove.Location = new System.Drawing.Point(21, 528);
             this.btn_AutoMove.Name = "btn_AutoMove";
-            this.btn_AutoMove.Size = new System.Drawing.Size(133, 31);
+            this.btn_AutoMove.Size = new System.Drawing.Size(170, 31);
             this.btn_AutoMove.TabIndex = 2;
             this.btn_AutoMove.Text = "Auto Move";
             this.btn_AutoMove.UseVisualStyleBackColor = true;
@@ -566,7 +577,7 @@
             this.btn_start.ForeColor = System.Drawing.Color.Black;
             this.btn_start.Location = new System.Drawing.Point(22, 424);
             this.btn_start.Name = "btn_start";
-            this.btn_start.Size = new System.Drawing.Size(133, 27);
+            this.btn_start.Size = new System.Drawing.Size(169, 27);
             this.btn_start.TabIndex = 2;
             this.btn_start.Text = "Start";
             this.btn_start.UseVisualStyleBackColor = true;
@@ -696,14 +707,14 @@
             this.dgv_vhStatus.AllowUserToDeleteRows = false;
             this.dgv_vhStatus.AutoGenerateColumns = false;
             this.dgv_vhStatus.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_vhStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_vhStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgv_vhStatus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_vhStatus.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.vEHICLEIDDataGridViewTextBoxColumn,
@@ -1163,17 +1174,6 @@
             // vehicleObjToShowBindingSource
             // 
             this.vehicleObjToShowBindingSource.DataSource = typeof(com.mirle.ibg3k0.sc.ObjectRelay.VehicleObjToShow);
-            // 
-            // uctl_Map1
-            // 
-            this.uctl_Map.AutoScroll = true;
-            this.uctl_Map.BackColor = System.Drawing.Color.Black;
-            this.uctl_Map.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uctl_Map.Location = new System.Drawing.Point(0, 0);
-            this.uctl_Map.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uctl_Map.Name = "uctl_Map1";
-            this.uctl_Map.Size = new System.Drawing.Size(1558, 912);
-            this.uctl_Map.TabIndex = 0;
             // 
             // OHT_Form
             // 
