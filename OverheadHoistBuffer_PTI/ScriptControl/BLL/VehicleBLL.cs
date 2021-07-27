@@ -2211,7 +2211,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 VhRecentTranEvent = vh.VhRecentTranEvent,
                 ProcProgressPercen = vh.procProgress_Percen,
                 State = vh.State,
-                UPDTIME = update_time
+                UPDTIME = update_time,
+                XAxis = vh.X_Axis,
+                YAxis = vh.Y_Axis
 
             };
             if (vh.PredictPath != null)

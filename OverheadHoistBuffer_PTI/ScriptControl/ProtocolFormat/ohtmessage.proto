@@ -821,6 +821,10 @@ message Timestamp {
 	VhStopSingle PauseStatus = 49;
 	VhStopSingle SAFETY_DOOR_PAUSE = 50;
 	VhStopSingle EARTHQUAKE_PAUSE = 51;
+	bool IS_INSTALLED = 52;
+	double X_Axis = 53;
+	double Y_Axis = 54;
+
   }
 
   message PORT_INFO{

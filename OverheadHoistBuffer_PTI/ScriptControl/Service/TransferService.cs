@@ -785,10 +785,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     var vehicleData = scApp.VehicleBLL.cache.loadVhs();
 
                     int ohtIdle = vehicleData.Where(data => string.IsNullOrWhiteSpace(data.OHTC_CMD)).Count();
+                    var cmdData = cmdBLL.LoadCmdData();
+                    refreshACMD_MCSInfoList(cmdData);
+
 
                     if (ohtIdle != 0)    //有閒置的車輛在開始派命令
                     {
-                        var cmdData = cmdBLL.LoadCmdData();
+                        //var cmdData = cmdBLL.LoadCmdData();
 
                         if (cmdData.Count != 0)
                         {
@@ -1015,6 +1018,113 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     Interlocked.Exchange(ref syncTranCmdPoint, 0);
                 }
+            }
+        }
+        private void refreshACMD_MCSInfoList(List<ACMD_MCS> currentExcuteMCSCmd)
+        {
+            bool has_change = false;
+            List<string> new_current_excute_mcs_cmd = currentExcuteMCSCmd.Select(cmd => SCUtility.Trim(cmd.CMD_ID, true)).ToList();
+            List<string> old_current_excute_mcs_cmd = ACMD_MCS.MCS_CMD_InfoList.Keys.ToList();
+
+            List<string> new_add_mcs_cmds = new_current_excute_mcs_cmd.Except(old_current_excute_mcs_cmd).ToList();
+            //1.新增多出來的命令
+            foreach (string new_cmd in new_add_mcs_cmds)
+            {
+                ACMD_MCS new_cmd_obj = new ACMD_MCS();
+                var current_cmd = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, new_cmd)).FirstOrDefault();
+                if (current_cmd == null) continue;
+                new_cmd_obj.put(current_cmd);
+                ACMD_MCS.MCS_CMD_InfoList.TryAdd(new_cmd, new_cmd_obj);
+                has_change = true;
+            }
+            //2.刪除以結束的命令
+            List<string> will_del_mcs_cmds = old_current_excute_mcs_cmd.Except(new_current_excute_mcs_cmd).ToList();
+            foreach (string old_cmd in will_del_mcs_cmds)
+            {
+                ACMD_MCS.MCS_CMD_InfoList.TryRemove(old_cmd, out ACMD_MCS cmd_mcs);
+                has_change = true;
+            }
+            //3.更新現有命令
+            foreach (var mcs_cmd_item in ACMD_MCS.MCS_CMD_InfoList)
+            {
+                string cmd_mcs_id = mcs_cmd_item.Key;
+                ACMD_MCS cmd_mcs = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, cmd_mcs_id)).FirstOrDefault();
+                if (cmd_mcs == null)
+                {
+                    continue;
+                }
+                if (mcs_cmd_item.Value.put(cmd_mcs))
+                {
+                    has_change = true;
+                }
+            }
+            if (has_change)
+            {
+                AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo info =
+                    new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo();
+                info.LASTUPDATETIME = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+                foreach (var tran_item in ACMD_MCS.MCS_CMD_InfoList)
+                {
+                    var cmd_mcs = tran_item.Value;
+                    var publish_cmd_mcs = new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommand();
+                    publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID;
+                    publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID;
+                    publish_cmd_mcs.TRANSFERSTATE = convertTo(cmd_mcs.TRANSFERSTATE);
+                    publish_cmd_mcs.COMMANDSTATE = cmd_mcs.COMMANDSTATE;
+                    publish_cmd_mcs.HOSTSOURCE = cmd_mcs.HOSTSOURCE;
+                    publish_cmd_mcs.HOSTDESTINATION = cmd_mcs.HOSTDESTINATION;
+                    publish_cmd_mcs.PRIORITY = cmd_mcs.PRIORITY;
+                    publish_cmd_mcs.CHECKCODE = cmd_mcs.CHECKCODE;
+                    publish_cmd_mcs.PAUSEFLAG = cmd_mcs.PAUSEFLAG;
+                    publish_cmd_mcs.CMDINSERTIME = ((DateTimeOffset)cmd_mcs.CMD_INSER_TIME).ToUnixTimeSeconds();
+                    publish_cmd_mcs.CMDSTARTTIME =
+                        cmd_mcs.CMD_START_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_START_TIME).ToUnixTimeSeconds() : 0;
+                    publish_cmd_mcs.CMDFINISHTIME =
+                        cmd_mcs.CMD_FINISH_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_FINISH_TIME).ToUnixTimeSeconds() : 0;
+                    publish_cmd_mcs.TIMEPRIORITY = cmd_mcs.TIME_PRIORITY;
+                    publish_cmd_mcs.PORTPRIORITY = cmd_mcs.PORT_PRIORITY;
+                    publish_cmd_mcs.PRIORITYSUM = cmd_mcs.PRIORITY_SUM;
+                    publish_cmd_mcs.REPLACE = cmd_mcs.REPLACE;
+                    publish_cmd_mcs.DESCRIPTION = cmd_mcs.CanNotServiceReason;
+                    info.Infos.Add(publish_cmd_mcs);
+                }
+                byte[] tran_info_serialize = new byte[info.CalculateSize()];
+                info.WriteTo(new Google.Protobuf.CodedOutputStream(tran_info_serialize));
+
+                scApp.getNatsManager().PublishAsync
+                    (SCAppConstants.NATS_SUBJECT_TRANSFER_COMMAND_CHANGE, tran_info_serialize);
+            }
+        }
+        private AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus convertTo(E_TRAN_STATUS tran)
+        {
+            switch (tran)
+            {
+                case E_TRAN_STATUS.Queue:
+                    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Queue;
+                //case E_TRAN_STATUS.PreInitial:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.PreInitial;
+                //case E_TRAN_STATUS.Initial:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Initial;
+                case E_TRAN_STATUS.Transferring:
+                    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Transferring;
+
+                case E_TRAN_STATUS.Canceling:
+                    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Canceling;
+
+                case E_TRAN_STATUS.Aborting:
+                    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Aborting;
+                //case E_TRAN_STATUS.Canceled:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Canceled;
+                //case E_TRAN_STATUS.Aborted:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Aborted;
+                //case E_TRAN_STATUS.Complete:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Complete;
+                //case E_TRAN_STATUS.RouteChanging:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.RouteChanging;
+                //case E_TRAN_STATUS.Reject:
+                //    return AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus.Reject;
+                default:
+                    throw new Exception();
             }
         }
         /// <summary>

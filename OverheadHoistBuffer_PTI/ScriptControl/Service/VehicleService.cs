@@ -1011,7 +1011,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
                                             minRouteSec_Vh2From, minRouteSec_From2To);
                     scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, routeSections,
-                                                      minRouteSec_Vh2From.ToList(), minRouteSec_From2To.ToList(),
+                                                      minRouteSec_Vh2From?.ToList(), minRouteSec_From2To?.ToList(),
                                                       cycleRunSections);
                     assignVH.sw_speed.Restart();
 

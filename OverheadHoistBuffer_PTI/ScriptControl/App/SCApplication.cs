@@ -635,6 +635,7 @@ namespace com.mirle.ibg3k0.sc.App
         public Guide RouteGuide { get { return routeGuide; } }
         private IRouteGuide newrouteGuide = null;
         public IRouteGuide NewRouteGuide { get { return newrouteGuide; } }
+        private Grpc.Core.Server gRPC_With_VehicleControlFun;
 
         //config
         /// <summary>
@@ -1520,6 +1521,13 @@ namespace com.mirle.ibg3k0.sc.App
             blockControlService = new BlockControlService();
             shelfService = new ShelfService();
             emptyBoxHandlerService = new EmptyBoxHandlerService();
+
+            gRPC_With_VehicleControlFun = new Grpc.Core.Server()
+            {
+                Services = { com.mirle.AK0.ProtocolFormat.VehicleControlFun.BindService(new WebAPI.VehicleControlFun()) },
+                Ports = { new Grpc.Core.ServerPort("0.0.0.0", 7001, Grpc.Core.ServerCredentials.Insecure) },
+            };
+
         }
 
         /// <summary>
@@ -1582,6 +1590,7 @@ namespace com.mirle.ibg3k0.sc.App
             blockControlService.start(this);
             shelfService.start(this);
             emptyBoxHandlerService.start(this);
+            gRPC_With_VehicleControlFun.Start();
         }
 
         /// <summary>
