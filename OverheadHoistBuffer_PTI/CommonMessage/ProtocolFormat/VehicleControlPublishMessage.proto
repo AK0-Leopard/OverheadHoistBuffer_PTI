@@ -76,12 +76,12 @@ enum CmdStatus {
 }
 
 
-message TaskInfo {
+message TaskCommandInfo {
 	int64 LAST_UPDATE_TIME = 1;
-	repeated Task infos = 2;
+	repeated TaskCommand infos = 2;
 }
 
-message Task {
+message TaskCommand {
 	string CMD_ID = 1;
 	string VH_ID = 2;
 	string CMD_ID_MCS = 3;

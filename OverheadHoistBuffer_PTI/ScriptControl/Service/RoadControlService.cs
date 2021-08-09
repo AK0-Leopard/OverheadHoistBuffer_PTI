@@ -183,6 +183,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         ReportBLL.newSendMCSMessage(reportqueues);
                     }
+                    app.getNatsManager().PublishAsync
+                    (SCAppConstants.NATS_SUBJECT_RAIL_STATUS_CHANGE, new byte[0]);
+
                 }
             }
             catch (Exception ex)

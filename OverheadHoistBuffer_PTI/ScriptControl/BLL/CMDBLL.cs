@@ -4143,14 +4143,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             if (has_change)
             {
-                AK0.ProtocolFormat.VehicleControlPublishMessage.TaskInfo info =
-                    new AK0.ProtocolFormat.VehicleControlPublishMessage.TaskInfo();
+                AK0.ProtocolFormat.VehicleControlPublishMessage.TaskCommandInfo info =
+                    new AK0.ProtocolFormat.VehicleControlPublishMessage.TaskCommandInfo();
                 info.LASTUPDATETIME = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
                 foreach (var tran_item in ACMD_OHTC.CMD_OHTC_InfoList)
                 {
                     var cmd_ohtc = tran_item.Value;
                     SCUtility.TrimAllParameter(cmd_ohtc);
-                    var task = new AK0.ProtocolFormat.VehicleControlPublishMessage.Task();
+                    var task = new AK0.ProtocolFormat.VehicleControlPublishMessage.TaskCommand();
                     task.CMDID = cmd_ohtc.CMD_ID ?? "";
                     task.VHID = cmd_ohtc.VH_ID ?? "";
                     task.CMDIDMCS = cmd_ohtc.CMD_ID_MCS ?? "";
@@ -4181,6 +4181,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     (SCAppConstants.NATS_SUBJECT_TASK_COMMAND_CHANGE, tran_info_serialize);
             }
         }
+
 
         private AK0.ProtocolFormat.VehicleControlPublishMessage.CmdType convertTo(E_CMD_TYPE cmdType)
         {

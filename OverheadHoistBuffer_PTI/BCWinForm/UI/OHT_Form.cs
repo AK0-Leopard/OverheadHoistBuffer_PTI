@@ -988,8 +988,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         public void entrySegmentSetMode(EventHandler eventHandler)
         {
-            setMonitorVehicle(string.Empty);
-            uctl_Map.RegistRailSelectedEvent(eventHandler);
+            //setMonitorVehicle(string.Empty);
+            //uctl_Map.RegistRailSelectedEvent(eventHandler);
         }
         public void LeaveSegmentSetMode(EventHandler eventHandler)
         {

@@ -132,7 +132,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                 defaultMaxScale = 10;
                 trackBar_scale.SmallChange = 2;
             }
-            else if(BCFUtility.isMatche(mainForm.BCApp.SCApplication.BC_ID, SCAppConstants.WorkVersion.VERSION_NAME_ASE_TEST))
+            else if (BCFUtility.isMatche(mainForm.BCApp.SCApplication.BC_ID, SCAppConstants.WorkVersion.VERSION_NAME_ASE_TEST))
             {
                 space_Height_m = 14000;
                 space_Width_m = 40000;
@@ -954,6 +954,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
         #region Segment Disable Control
         public void RegistRailSelectedEvent(EventHandler eventHandler)
         {
+            if (m_objItemRail == null) return;
             foreach (uctlRail rail in m_objItemRail)
             {
                 rail.RailSelected += eventHandler;

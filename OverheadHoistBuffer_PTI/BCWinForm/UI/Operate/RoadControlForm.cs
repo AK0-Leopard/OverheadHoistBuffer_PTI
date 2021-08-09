@@ -31,7 +31,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             this.TopMost = true;
 
             mainForm = _mainForm;
-            oht_form = mainForm.OpenForms[nameof(OHT_Form)] as OHT_Form;
             bcApp = mainForm.BCApp;
             line = bcApp.SCApplication.getEQObjCacheManager().getLine();
 
@@ -42,8 +41,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
             bcApp.SCApplication.RoadControlService.SegmentListChanged += RoadControlService_SegmentListChanged;
 
-            oht_form.entrySegmentSetMode(SegmentSelectOnMap);
-            RefreshMapColor();
+            if (mainForm.OpenForms.ContainsKey(nameof(OHT_Form)))
+            {
+                oht_form = mainForm.OpenForms[nameof(OHT_Form)] as OHT_Form;
+                oht_form.entrySegmentSetMode(SegmentSelectOnMap);
+                RefreshMapColor();
+
+            }
         }
 
         private void RoadControlService_SegmentListChanged(object sender, ASEGMENT e)
@@ -457,34 +461,34 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             mainForm.removeForm(this.Name);
             bcApp.SCApplication.RoadControlService.SegmentListChanged -= RoadControlService_SegmentListChanged;
-            oht_form.LeaveSegmentSetMode(SegmentSelectOnMap);
-            oht_form.ResetAllSegment();
+            //oht_form?.LeaveSegmentSetMode(SegmentSelectOnMap);
+            //oht_form?.ResetAllSegment();
         }
 
 
 
         private void RefreshMapColor()
         {
-            foreach (ASEGMENT seg in segment_List)
-            {
-                int index = segment_List.IndexOf(seg);
-                if (dgv_segment.Rows[index].Selected)
-                {
-                    oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.LightGreen);
-                }
-                else if (seg.PRE_DISABLE_FLAG)
-                {
-                    oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.Pink);
-                }
-                else if (seg.STATUS == E_SEG_STATUS.Closed)
-                {
-                    oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.Red);
-                }
-                else
-                {
-                    oht_form.ResetSpecifySegmentSelected(seg.SEG_NUM);
-                }
-            }
+            //foreach (ASEGMENT seg in segment_List)
+            //{
+            //    int index = segment_List.IndexOf(seg);
+            //    if (dgv_segment.Rows[index].Selected)
+            //    {
+            //        oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.LightGreen);
+            //    }
+            //    else if (seg.PRE_DISABLE_FLAG)
+            //    {
+            //        oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.Pink);
+            //    }
+            //    else if (seg.STATUS == E_SEG_STATUS.Closed)
+            //    {
+            //        oht_form.SetSpecifySegmentSelected(seg.SEG_NUM, Color.Red);
+            //    }
+            //    else
+            //    {
+            //        oht_form.ResetSpecifySegmentSelected(seg.SEG_NUM);
+            //    }
+            //}
         }
 
         private void dgv_segment_CellClick(object sender, DataGridViewCellEventArgs e)
