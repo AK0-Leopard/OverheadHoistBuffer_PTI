@@ -43,7 +43,9 @@ namespace com.mirle.ibg3k0.sc
         List<string> BlockZoneDetailSectionIDs;
         public void SetBlockDetailList(BLL.MapBLL mapBLL)
         {
-            BlockZoneDetailSectionIDs = mapBLL.loadBlockZoneDetailSecIDsByEntrySecID(ENTRY_SEC_ID);
+            var sections = mapBLL.loadBlockZoneDetailSecIDsByEntrySecID(ENTRY_SEC_ID);
+            sections = sections.Select(sec => sc.Common.SCUtility.Trim(sec)).ToList();
+            BlockZoneDetailSectionIDs = sections;
         }
         public List<string> GetBlockZoneDetailSectionIDs()
         {
