@@ -1022,77 +1022,84 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         private void refreshACMD_MCSInfoList(List<ACMD_MCS> currentExcuteMCSCmd)
         {
-            bool has_change = false;
-            List<string> new_current_excute_mcs_cmd = currentExcuteMCSCmd.Select(cmd => SCUtility.Trim(cmd.CMD_ID, true)).ToList();
-            List<string> old_current_excute_mcs_cmd = ACMD_MCS.MCS_CMD_InfoList.Keys.ToList();
+            try
+            {
+                bool has_change = false;
+                List<string> new_current_excute_mcs_cmd = currentExcuteMCSCmd.Select(cmd => SCUtility.Trim(cmd.CMD_ID, true)).ToList();
+                List<string> old_current_excute_mcs_cmd = ACMD_MCS.MCS_CMD_InfoList.Keys.ToList();
 
-            List<string> new_add_mcs_cmds = new_current_excute_mcs_cmd.Except(old_current_excute_mcs_cmd).ToList();
-            //1.新增多出來的命令
-            foreach (string new_cmd in new_add_mcs_cmds)
-            {
-                ACMD_MCS new_cmd_obj = new ACMD_MCS();
-                var current_cmd = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, new_cmd)).FirstOrDefault();
-                if (current_cmd == null) continue;
-                new_cmd_obj.put(current_cmd);
-                ACMD_MCS.MCS_CMD_InfoList.TryAdd(new_cmd, new_cmd_obj);
-                has_change = true;
-            }
-            //2.刪除以結束的命令
-            List<string> will_del_mcs_cmds = old_current_excute_mcs_cmd.Except(new_current_excute_mcs_cmd).ToList();
-            foreach (string old_cmd in will_del_mcs_cmds)
-            {
-                ACMD_MCS.MCS_CMD_InfoList.TryRemove(old_cmd, out ACMD_MCS cmd_mcs);
-                has_change = true;
-            }
-            //3.更新現有命令
-            foreach (var mcs_cmd_item in ACMD_MCS.MCS_CMD_InfoList)
-            {
-                string cmd_mcs_id = mcs_cmd_item.Key;
-                ACMD_MCS cmd_mcs = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, cmd_mcs_id)).FirstOrDefault();
-                if (cmd_mcs == null)
+                List<string> new_add_mcs_cmds = new_current_excute_mcs_cmd.Except(old_current_excute_mcs_cmd).ToList();
+                //1.新增多出來的命令
+                foreach (string new_cmd in new_add_mcs_cmds)
                 {
-                    continue;
-                }
-                if (mcs_cmd_item.Value.put(cmd_mcs))
-                {
+                    ACMD_MCS new_cmd_obj = new ACMD_MCS();
+                    var current_cmd = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, new_cmd)).FirstOrDefault();
+                    if (current_cmd == null) continue;
+                    new_cmd_obj.put(current_cmd);
+                    ACMD_MCS.MCS_CMD_InfoList.TryAdd(new_cmd, new_cmd_obj);
                     has_change = true;
                 }
-            }
-            if (has_change)
-            {
-                AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo info =
-                    new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo();
-                info.LASTUPDATETIME = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-                foreach (var tran_item in ACMD_MCS.MCS_CMD_InfoList)
+                //2.刪除以結束的命令
+                List<string> will_del_mcs_cmds = old_current_excute_mcs_cmd.Except(new_current_excute_mcs_cmd).ToList();
+                foreach (string old_cmd in will_del_mcs_cmds)
                 {
-                    var cmd_mcs = tran_item.Value;
-                    var publish_cmd_mcs = new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommand();
-                    publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID;
-                    publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID;
-                    publish_cmd_mcs.TRANSFERSTATE = convertTo(cmd_mcs.TRANSFERSTATE);
-                    publish_cmd_mcs.COMMANDSTATE = cmd_mcs.COMMANDSTATE;
-                    publish_cmd_mcs.HOSTSOURCE = cmd_mcs.HOSTSOURCE;
-                    publish_cmd_mcs.HOSTDESTINATION = cmd_mcs.HOSTDESTINATION;
-                    publish_cmd_mcs.PRIORITY = cmd_mcs.PRIORITY;
-                    publish_cmd_mcs.CHECKCODE = cmd_mcs.CHECKCODE;
-                    publish_cmd_mcs.PAUSEFLAG = cmd_mcs.PAUSEFLAG;
-                    publish_cmd_mcs.CMDINSERTIME = ((DateTimeOffset)cmd_mcs.CMD_INSER_TIME).ToUnixTimeSeconds();
-                    publish_cmd_mcs.CMDSTARTTIME =
-                        cmd_mcs.CMD_START_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_START_TIME).ToUnixTimeSeconds() : 0;
-                    publish_cmd_mcs.CMDFINISHTIME =
-                        cmd_mcs.CMD_FINISH_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_FINISH_TIME).ToUnixTimeSeconds() : 0;
-                    publish_cmd_mcs.TIMEPRIORITY = cmd_mcs.TIME_PRIORITY;
-                    publish_cmd_mcs.PORTPRIORITY = cmd_mcs.PORT_PRIORITY;
-                    publish_cmd_mcs.PRIORITYSUM = cmd_mcs.PRIORITY_SUM;
-                    publish_cmd_mcs.REPLACE = cmd_mcs.REPLACE;
-                    publish_cmd_mcs.DESCRIPTION = cmd_mcs.CanNotServiceReason;
-                    info.Infos.Add(publish_cmd_mcs);
+                    ACMD_MCS.MCS_CMD_InfoList.TryRemove(old_cmd, out ACMD_MCS cmd_mcs);
+                    has_change = true;
                 }
-                byte[] tran_info_serialize = new byte[info.CalculateSize()];
-                info.WriteTo(new Google.Protobuf.CodedOutputStream(tran_info_serialize));
+                //3.更新現有命令
+                foreach (var mcs_cmd_item in ACMD_MCS.MCS_CMD_InfoList)
+                {
+                    string cmd_mcs_id = mcs_cmd_item.Key;
+                    ACMD_MCS cmd_mcs = currentExcuteMCSCmd.Where(cmd => SCUtility.isMatche(cmd.CMD_ID, cmd_mcs_id)).FirstOrDefault();
+                    if (cmd_mcs == null)
+                    {
+                        continue;
+                    }
+                    if (mcs_cmd_item.Value.put(cmd_mcs))
+                    {
+                        has_change = true;
+                    }
+                }
+                if (has_change)
+                {
+                    AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo info =
+                        new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommandInfo();
+                    info.LASTUPDATETIME = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+                    foreach (var tran_item in ACMD_MCS.MCS_CMD_InfoList)
+                    {
+                        var cmd_mcs = tran_item.Value;
+                        var publish_cmd_mcs = new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommand();
+                        publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID;
+                        publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID;
+                        publish_cmd_mcs.TRANSFERSTATE = convertTo(cmd_mcs.TRANSFERSTATE);
+                        publish_cmd_mcs.COMMANDSTATE = cmd_mcs.COMMANDSTATE;
+                        publish_cmd_mcs.HOSTSOURCE = cmd_mcs.HOSTSOURCE;
+                        publish_cmd_mcs.HOSTDESTINATION = cmd_mcs.HOSTDESTINATION;
+                        publish_cmd_mcs.PRIORITY = cmd_mcs.PRIORITY;
+                        publish_cmd_mcs.CHECKCODE = cmd_mcs.CHECKCODE;
+                        publish_cmd_mcs.PAUSEFLAG = cmd_mcs.PAUSEFLAG;
+                        publish_cmd_mcs.CMDINSERTIME = ((DateTimeOffset)cmd_mcs.CMD_INSER_TIME).ToUnixTimeSeconds();
+                        publish_cmd_mcs.CMDSTARTTIME =
+                            cmd_mcs.CMD_START_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_START_TIME).ToUnixTimeSeconds() : 0;
+                        publish_cmd_mcs.CMDFINISHTIME =
+                            cmd_mcs.CMD_FINISH_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_FINISH_TIME).ToUnixTimeSeconds() : 0;
+                        publish_cmd_mcs.TIMEPRIORITY = cmd_mcs.TIME_PRIORITY;
+                        publish_cmd_mcs.PORTPRIORITY = cmd_mcs.PORT_PRIORITY;
+                        publish_cmd_mcs.PRIORITYSUM = cmd_mcs.PRIORITY_SUM;
+                        publish_cmd_mcs.REPLACE = cmd_mcs.REPLACE;
+                        publish_cmd_mcs.DESCRIPTION = cmd_mcs.CanNotServiceReason;
+                        info.Infos.Add(publish_cmd_mcs);
+                    }
+                    byte[] tran_info_serialize = new byte[info.CalculateSize()];
+                    info.WriteTo(new Google.Protobuf.CodedOutputStream(tran_info_serialize));
 
-                scApp.getNatsManager().PublishAsync
-                    (SCAppConstants.NATS_SUBJECT_TRANSFER_COMMAND_CHANGE, tran_info_serialize);
+                    scApp.getNatsManager().PublishAsync
+                        (SCAppConstants.NATS_SUBJECT_TRANSFER_COMMAND_CHANGE, tran_info_serialize);
+                }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error(ex, "Exception");
             }
         }
         private AK0.ProtocolFormat.VehicleControlPublishMessage.TranStatus convertTo(E_TRAN_STATUS tran)
@@ -2482,7 +2489,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         CassetteData emptyData = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.SOURCE.Trim());
 
                         //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
-
+                       
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
                         reportBLL.ReportTransferCompleted(cmd, null, ResultCode.EmptyRetrieval); // PTI需要上報
 
@@ -2731,6 +2738,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (ohtCmd != null && loadCstData != null)
                 {
+                    string source_loc = SCUtility.Trim(loadCstData.Carrier_LOC, true);
                     TransferServiceLogger.Info
                     (
                         DateTime.Now.ToString("HH:mm:ss.fff ")
@@ -2754,9 +2762,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                 reportBLL.ReportVehicleDeparted(ohtCmd.CMD_ID_MCS.Trim()); // PTI修改
                             }
 
-                            if (shelfDefBLL.isExist(cmd.HOSTSOURCE))
+                            if (isShelfPort(cmd.HOSTSOURCE))
                             {
-                                //reportBLL.ReportZoneCapacityChange(cmd.HOSTSOURCE, null);// PTI修改--
+                                reportBLL.S6F11SendCarrierRemovedCompletedForShelf
+                                    (SCUtility.Trim(loadCstData.BOXID, true), source_loc); // PTI修改
                             }
                         }
                         else
@@ -2907,7 +2916,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else if (isUnitType(dest, UnitType.SHELF))
                         {
-                            reportBLL.ReportCarrierStored(unLoadCstData);
+                            //reportBLL.ReportCarrierStored(unLoadCstData);
+                            reportBLL.S6F11SendCarrierInstallCompletedForShelf
+                                (unLoadCstData.BOXID, unLoadCstData.Carrier_LOC);
                             reportBLL.ReportZoneCapacityChange(dest, null);
 
                             //if (unLoadCstData.CSTID.Contains("UNKF") && unLoadCstData.BOXID.Contains("UNKF"))   //20_0804 冠皚提出，放到儲位 CSTID、BOXID 讀不到時，將 CSTID 改成 UNKKU
@@ -3999,7 +4010,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 reportBLL.ReportCarrierRemovedFromPort(dbData, HandoffType);
 
-                cassette_dataBLL.DeleteCSTbyCstBoxID(dbData.CSTID, dbData.BOXID);
+                cassette_dataBLL.DeleteCSTbyBoxID(dbData.BOXID);
 
                 if (isUnitType(dbData.Carrier_LOC, UnitType.AGV))
                 {
@@ -6054,7 +6065,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    scApp.CassetteDataBLL.DeleteCSTbyCstBoxID(cstData.CSTID, cstData.BOXID);
+                    scApp.CassetteDataBLL.DeleteCSTbyBoxID(cstData.BOXID);
                 }
                 if (shelfDefBLL.isExist(cstData.Carrier_LOC))
                 {
@@ -6178,7 +6189,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (isLocExist(portName))
                 {
                     if (cassette_dataBLL.loadCassetteDataByBoxID(datainfo.BOXID) != null
-                     || (cassette_dataBLL.loadCassetteDataByCSTID(datainfo.CSTID) != null && string.IsNullOrWhiteSpace(datainfo.CSTID) == false)
+                     || (cassette_dataBLL.loadCassetteDataByCSTID(datainfo.CSTID) != null &&
+                         string.IsNullOrWhiteSpace(datainfo.CSTID) == false)
                       )
                     {
                         Duplicate(datainfo);
@@ -6191,9 +6203,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (cassette_dataBLL.insertCassetteData(datainfo))
                         {
                             //reportBLL.ReportCarrierInstallCompleted(datainfo); //PTI需要上報 這邊要確保不能在非vehicle 上建帳 PTI 
+                            reportBLL.S6F11SendCarrierInstallCompletedForShelf(datainfo.BOXID, datainfo.Carrier_LOC); //PTI需要上報 這邊要確保不能在非vehicle 上建帳 PTI 
                             reportBLL.ReportZoneCapacityChange(portName, null);
 
-                            QueryLotID(datainfo);
+                            //QueryLotID(datainfo);
                         }
                     }
                     else if (isUnitType(portName, UnitType.CRANE))
@@ -6307,24 +6320,38 @@ namespace com.mirle.ibg3k0.sc.Service
                     return "有命令正在使用此卡匣";
                 }
             }
+            CassetteData cassetteData = cassette_dataBLL.loadCassetteDataByBoxID(boxID);
 
-            if (reportBLL.ReportCarrierRemovedCompleted(cstID, boxID))
+            if (cassetteData == null)
             {
-                TransferServiceLogger.Info
-                (
-                    DateTime.Now.ToString("HH:mm:ss.fff ") +
-                    "OHB >> DB|Manual_DeleteCst:刪帳成功"
-                );
+                return $"CST ID:{boxID} 不存在";
+            }
+            if (isShelfPort(cassetteData.Carrier_LOC))
+            {
+                reportBLL.S6F11SendCarrierRemovedCompletedForShelf(boxID, cassetteData.Carrier_LOC);
+                scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassetteData.BOXID);
                 return "OK";
             }
             else
             {
-                TransferServiceLogger.Info
-                (
-                    DateTime.Now.ToString("HH:mm:ss.fff ") +
-                    "Manual >> OHB|Manual_DeleteCst:刪帳失敗"
-                );
-                return "失敗";
+                if (reportBLL.ReportCarrierRemovedCompleted(cstID, boxID))
+                {
+                    TransferServiceLogger.Info
+                    (
+                        DateTime.Now.ToString("HH:mm:ss.fff ") +
+                        "OHB >> DB|Manual_DeleteCst:刪帳成功"
+                    );
+                    return "OK";
+                }
+                else
+                {
+                    TransferServiceLogger.Info
+                    (
+                        DateTime.Now.ToString("HH:mm:ss.fff ") +
+                        "Manual >> OHB|Manual_DeleteCst:刪帳失敗"
+                    );
+                    return "失敗";
+                }
             }
         }
         public string ForceDeleteCst(string boxID, string cmdSource)
@@ -6961,11 +6988,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         //    reportBLL.ReportAlarmHappend(ErrorStatus.ErrSet, alarm.ALAM_CODE, alarm.ALAM_DESC);
                         //}
                         //reportBLL.ReportAlarmHappend(ErrorStatus.ErrSet, alarm.ALAM_CODE, alarm.ALAM_DESC);
-                        reportBLL.ReportAlarmSet(mcsCmdData, alarm, alarm.UnitID, alarm.UnitState, alarm.RecoveryOption);
+                        //reportBLL.ReportAlarmSet(mcsCmdData, alarm, alarm.UnitID, alarm.UnitState, alarm.RecoveryOption);
+                        reportBLL.ReportUnitAlarmSet(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
                     }
                     else if (alarm.ALAM_LVL == E_ALARM_LVL.Warn)
                     {
-                        reportBLL.ReportUnitAlarmSet(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
+                        //reportBLL.ReportUnitAlarmSet(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
                     }
                     //}
                     //else
@@ -7041,7 +7069,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (alarm.ALAM_LVL == E_ALARM_LVL.Error)
                     {
-                        reportBLL.ReportAlarmCleared(mcsCmdData, alarm, alarm.UnitID.Trim(), alarm.UnitState.Trim());
+                        //reportBLL.ReportAlarmCleared(mcsCmdData, alarm, alarm.UnitID.Trim(), alarm.UnitState.Trim());
+                        reportBLL.ReportUnitAlarmCleared(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
                         //scApp.ReportBLL.ReportAlarmHappend(ErrorStatus.ErrReset, alarm.ALAM_CODE.Trim(), alarm.ALAM_DESC.Trim());
                         //if (alarmBLL.loadSetAlarmListByEqName(eqID).Count == 1)
                         //{
@@ -7050,7 +7079,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     else if (alarm.ALAM_LVL == E_ALARM_LVL.Warn)
                     {
-                        reportBLL.ReportUnitAlarmCleared(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
+                        //reportBLL.ReportUnitAlarmCleared(alarm.EQPT_ID, alarm.ALAM_CODE, alarm.ALAM_DESC);
                     }
                     //}
                     //else
@@ -7602,20 +7631,20 @@ namespace com.mirle.ibg3k0.sc.Service
                 TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| OHBC_InsertCassette checkCstCmd = true");
                 OHBC_InsertCassette(cstid, boxid, loc, "Manual_InsertCassette");
             }
-            if (string.IsNullOrWhiteSpace(cstid) == false)
-            {
-                if (boxid.Length != 8)
-                {
-                    return "CST_ID 不為 8 碼";
-                }
-                else
-                {
-                    if (ase_ID_Check(cstid) == false)
-                    {
-                        return "CST_ID 或 BOX_ID，不符合 1、2碼為數字，3、4碼為英文，5~8碼為數字+英文混合";
-                    }
-                }
-            }
+            //if (string.IsNullOrWhiteSpace(cstid) == false)
+            //{
+            //    if (boxid.Length != 8)
+            //    {
+            //        return "CST_ID 不為 8 碼";
+            //    }
+            //    else
+            //    {
+            //        if (ase_ID_Check(cstid) == false)
+            //        {
+            //            return "CST_ID 或 BOX_ID，不符合 1、2碼為數字，3、4碼為英文，5~8碼為數字+英文混合";
+            //        }
+            //    }
+            //}
             // PTI 不確定未來需求ID
             //if (boxid.Length != 8)
             //{

@@ -370,19 +370,21 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 public class VIDITEM_55_SV : SXFY
                 {
                     [SecsElement(Index = 1, ListSpreadOut = true)]
-                    public VIDITEM_54_SV CARRIER_ID_OBJ;
-                    [SecsElement(Index = 2, ListSpreadOut = true)]
-                    public VIDITEM_56_SV CARRIER_LOC_OBJ;
-                    [SecsElement(Index = 3, ListSpreadOut = true)]
-                    public VIDITEM_9999_SV CARRIER_ZONE_NAME_OBJ;
-
-                    public VIDITEM_55_SV()
-                    {
-                        CARRIER_ID_OBJ = new VIDITEM_54_SV();
-                        CARRIER_LOC_OBJ = new VIDITEM_56_SV();
-                        CARRIER_ZONE_NAME_OBJ = new VIDITEM_9999_SV();
-                    }
+                    public ENHANCEDCARRIERINFOFORPORT[] ENHANCED_CARRIER_INFO_FOR_PORT_OHB;
                 }
+                [Serializable]
+                public class ENHANCEDCARRIERINFOFORPORT : SXFY
+                {
+                    [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    public string CarrierID;
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    public string PortID;
+                    [SecsElement(Index = 3, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    public string CarrierLoc;
+                    [SecsElement(Index = 4, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 16)]
+                    public string InstallTime;
+                }
+
 
 
 

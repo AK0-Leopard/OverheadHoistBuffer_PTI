@@ -639,7 +639,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public bool DeleteCSTbyCstBoxID(string cstid, string boxid)
+        public bool DeleteCSTbyBoxID( string boxid)
         {
             bool isSuccsess = true;
             try
@@ -647,7 +647,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 CassetteData csidData;
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
-                    csidData = con.CassetteData.Where(data => data.CSTID.Trim() == cstid.Trim() && data.BOXID.Trim() == boxid.Trim()).First();
+                    //csidData = con.CassetteData.Where(data => data.CSTID.Trim() == cstid.Trim() && data.BOXID.Trim() == boxid.Trim()).First();
+                    csidData = con.CassetteData.Where(data => data.BOXID.Trim() == boxid.Trim()).First();
 
                     cassettedataDao.DeleteCassetteData(con, csidData);
                 }

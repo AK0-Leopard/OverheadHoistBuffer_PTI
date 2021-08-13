@@ -473,6 +473,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
         public const string VID_Alarms_Set = "4";
         public const string VID_Control_State = "6";
         public const string VID_Enhanced_Carriers = "51";
+        public const string VID_Enhanced_Carriers_For_Port_And_OHB = "55";
         public const string VID_SC_State = "73";
         public const string VID_Enhanced_Transfers = "76";
         public const string VID_TransferCompleteInfo = "77";

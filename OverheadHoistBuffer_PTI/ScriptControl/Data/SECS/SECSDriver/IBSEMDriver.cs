@@ -34,6 +34,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendDeviceLogicalStateOnline(List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierInstallCompleted(CassetteData cst_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedFromPort(CassetteData cst, string Handoff_Type, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierInstallCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierResumed(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierStored(CassetteData cst, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierStoredAlt(ACMD_MCS cmd, CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -528,6 +530,16 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public override bool S6F11SendCarrierRemoved(string vhID, CassetteData unLoadCstData, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
+        }
+
+        public override bool S6F11SendCarrierInstallCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool S6F11SendCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

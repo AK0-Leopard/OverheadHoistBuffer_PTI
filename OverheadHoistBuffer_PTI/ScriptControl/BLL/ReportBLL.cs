@@ -470,12 +470,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDepositStarted(cmd_id, reportqueues);
             return isSuccsess;
         }
-        public bool ReportCarrierRemoved(string cmd_id, List<AMCSREPORTQUEUE> reportqueues = null)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(cmd_id, reportqueues);
-            return isSuccsess;
-        }
         public bool ReportCarrierRemoved(string cmd_id, CassetteData cassette, List<AMCSREPORTQUEUE> reportqueues = null)
         {
             bool isSuccsess = true;
@@ -753,6 +747,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
+        public bool S6F11SendCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompletedForShelf(carrierID, carrierLoc, reportQueues);
+            return isSuccsess;
+        }
+        public bool S6F11SendCarrierInstallCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompletedForShelf(carrierID, carrierLoc, reportQueues);
+            return isSuccsess;
+        }
 
 
         public void Send(string ceid, VIDCollection vids)
