@@ -1163,11 +1163,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             string check_result = SECSConst.HCACK_Confirm;
 
             var carrier_id_item = s2F41.REPITEMS.Where(item => SCUtility.isMatche(item.CPNAME, SECSConst.CPNAME_CarrierID)).FirstOrDefault();
-            var Box_item = s2F41.REPITEMS.Where(item => SCUtility.isMatche(item.CPNAME, SECSConst.CPNAME_BoxID)).FirstOrDefault();
             var Loc_item = s2F41.REPITEMS.Where(item => SCUtility.isMatche(item.CPNAME, SECSConst.CPNAME_CarrierLoc)).FirstOrDefault();
 
-            string CarrierID = carrier_id_item?.CPVAL ?? "";
-            string BoxID = Box_item?.CPVAL ?? "";
+            string CarrierID = "";
+            string BoxID = carrier_id_item?.CPVAL ?? "";
             string LocID = Loc_item?.CPVAL ?? "";
 
             if (string.IsNullOrWhiteSpace(BoxID) || string.IsNullOrWhiteSpace(LocID))
@@ -1197,14 +1196,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             bool has_carrier = true;
             string check_result = SECSConst.HCACK_Confirm;
             var carrier_id_item = s2F41.REPITEMS.Where(item => SCUtility.isMatche(item.CPNAME, SECSConst.CPNAME_CarrierID)).FirstOrDefault();
-            var Box_item = s2F41.REPITEMS.Where(item => SCUtility.isMatche(item.CPNAME, SECSConst.CPNAME_BoxID)).FirstOrDefault();
             string CarrierID = "";
             string BoxID = "";
 
-            if (carrier_id_item != null && Box_item != null)
+            if (carrier_id_item != null)
             {
-                CarrierID = carrier_id_item.CPVAL?.ToString() ?? "";
-                BoxID = Box_item.CPVAL;
+                CarrierID = "";
+                BoxID = carrier_id_item.CPVAL;
 
                 CassetteData cassette = scApp.CassetteDataBLL.loadCassetteDataByCstBoxID(CarrierID, BoxID);
 
@@ -3332,13 +3330,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
 
                 string zonename = "";
-                if (cassette != null)
-                    zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
 
                 Vids.VIDITEM_58_DVVAL_CommandID.COMMAND_ID = cmd?.CMD_ID ?? "";
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette?.BOXID ?? "";
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette?.Carrier_LOC ?? "";
-                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
                 Vids.VIDITEM_65_DVVAL_SourceID.SOURCE_ID = cmd.HOSTSOURCE;
                 Vids.VIDITEM_60_DVVAL_Dest.DESTINATION_ID = cmd.HOSTDESTINATION;
                 Vids.VIDITEM_62_DVVAL_Priority.PRIORITY = cmd.PRIORITY.ToString();
@@ -4066,7 +4061,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_83_DVVAL_UnitID.UNIT_ID = unitID;
                 Vids.VIDITEM_81_DVVAL_AlarmID.ALARM_ID = alarmID;
                 Vids.VIDITEM_82_DVVAL_AlarmText.ALARM_TEXT = alarmText;
-                Vids.VIDITEM_72_DVVAL_VehicleState.Vehicle_State= "1";
+                Vids.VIDITEM_72_DVVAL_VehicleState.Vehicle_State = "1";
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Alarm_Set, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);

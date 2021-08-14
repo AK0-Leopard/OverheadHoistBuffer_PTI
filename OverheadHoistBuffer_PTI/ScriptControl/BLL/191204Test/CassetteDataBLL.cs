@@ -530,7 +530,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
-                    return con.CassetteData.Where(data => data.CSTID.Trim() == cstid.Trim() && data.BOXID.Trim() == boxid.Trim()).FirstOrDefault();
+                    return con.CassetteData.Where(data => data.BOXID.Trim() == boxid.Trim()).FirstOrDefault();
                 }
             }
             catch (Exception ex)
@@ -639,7 +639,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public bool DeleteCSTbyBoxID( string boxid)
+        public bool DeleteCSTbyBoxID(string boxid)
         {
             bool isSuccsess = true;
             try

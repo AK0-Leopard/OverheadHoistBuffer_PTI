@@ -2489,9 +2489,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         CassetteData emptyData = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.SOURCE.Trim());
 
                         //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
-                       
+                        reportBLL.S6F11SendCarrierRemovedCompletedForShelf(emptyData.BOXID, emptyData.Carrier_LOC);
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
-                        reportBLL.ReportTransferCompleted(cmd, null, ResultCode.EmptyRetrieval); // PTI需要上報
+                        cassette_dataBLL.DeleteCSTbyBoxID(emptyData.BOXID);
+
+                        emptyData.Carrier_LOC = "";
+                        reportBLL.ReportTransferCompleted(cmd, emptyData, ResultCode.EmptyRetrieval); // PTI需要上報
 
                         break;
                     case COMMAND_STATUS_BIT_INDEX_InterlockError:
@@ -2576,6 +2579,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             HaveAccountNotReal(dbCstData);
                         }
+
                         if (isUnitType(cmd.HOSTSOURCE.Trim(), UnitType.SHELF))
                         {
                             if (!ScanCstData.BOXID.Contains("UNK"))

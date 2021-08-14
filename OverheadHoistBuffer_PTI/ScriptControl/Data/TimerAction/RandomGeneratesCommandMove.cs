@@ -86,7 +86,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     foreach (AVEHICLE vh in vhs)
                     {
                         if (vh.isTcpIpConnect &&
-                            vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote &&
+                            (vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote || vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoLocal) &&
+                            vh.IS_INSTALLED == false &&//由於客戶想要邊Cycle Move邊跑MCS load unload因此加入只會找非 installed的車子
                             vh.ACT_STATUS == ProtocolFormat.OHTMessage.VHActionStatus.NoCommand &&
                             !SCUtility.isEmpty(vh.CUR_ADR_ID) &&
                             !scApp.CMDBLL.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID))
@@ -118,8 +119,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                                               , string.Empty
                                                               , string.Empty
                                                               , E_CMD_TYPE.Move
-                                                              , string.Empty
-                                                              , adr_id, 0, 0);
+                                                              , string.Empty,
+                                                              destination_address: adr_id);
                             }
                         }
                     }

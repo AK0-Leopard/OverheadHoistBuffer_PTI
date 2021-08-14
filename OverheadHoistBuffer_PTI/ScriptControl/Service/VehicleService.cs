@@ -3250,6 +3250,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (recive_str.CmpStatus == CompleteStatus.CmpStatusInterlockError)
                 {
+                    SpinWait.SpinUntil(() => false, 1000);
                     if (eqpt.IsDoubleStorageHappnding)
                     {
                         TransferServiceLogger.Info
@@ -4445,7 +4446,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
         public void CheckObstacleStatusByVehicleView()
         {
-            
+
 
             try
             {
@@ -4458,7 +4459,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    vh.IsObstacle
                     //    )
                     if (vh.isTcpIpConnect &&
-                        (vh.MODE_STATUS != VHModeStatus.Manual) && 
+                        (vh.MODE_STATUS != VHModeStatus.Manual) &&
                         vh.IsObstacle
                         )
                     {
