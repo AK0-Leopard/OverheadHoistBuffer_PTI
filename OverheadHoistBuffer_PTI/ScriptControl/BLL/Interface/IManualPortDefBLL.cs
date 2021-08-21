@@ -15,5 +15,6 @@
         /// <param name="portName"></param>
         /// <returns></returns>
         bool ChangeDirectionToOutMode(string portName);
+        bool GetPortDef(string portName, out PortDef portDef);
     }
 }

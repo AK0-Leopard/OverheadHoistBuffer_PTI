@@ -5347,9 +5347,8 @@ namespace com.mirle.ibg3k0.sc.Service
             try
             {
                 portID = portID.Trim();
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                return portValueDefMapAction.GetPortValue();
+                APORTSTATION port = scApp.getEQObjCacheManager().getPortStation(portID);
+                return port.getPortPLCInfo();
             }
             catch (Exception ex)
             {

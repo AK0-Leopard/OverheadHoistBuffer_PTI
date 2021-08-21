@@ -177,9 +177,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return CacheManager.getALLPortStation();
             }
 
-
-
-
             public List<APORTSTATION> loadAllPortBySegmentID(string segment_id, BLL.SectionBLL sectionBLL)
             {
                 List<APORTSTATION> port_stations = null;
@@ -293,8 +290,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return SegmentInActive;
             }
 
-
-
+            public IEnumerable<Data.ValueDefMapAction.Interface.IManualPortValueDefMapAction> loadAllMgvPortStationMapAction()
+            {
+                var ports = CacheManager.getALLPortStation().Where(port => port is MGV_PORTSTATION).ToList();
+                var map_actions = ports.Select(port => (port as MGV_PORTSTATION).getExcuteMapAction());
+                return map_actions;
+            }
         }
     }
 }

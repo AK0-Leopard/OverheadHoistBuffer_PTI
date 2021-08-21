@@ -10,6 +10,7 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.BLL.Interface;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -21,7 +22,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         TrnDT,
     }
 
-    public class CassetteDataBLL
+    public partial class CassetteDataBLL
     {
         SCApplication scApp = null;
         CassetteDataDao cassettedataDao = null;
@@ -742,6 +743,82 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     logger.Error(ex, "Exception");
                 }
+            }
+        }
+    }
+
+    public partial class CassetteDataBLL : IManualPortCassetteDataBLL
+    {
+        public void Delete(string carrierId)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    var cassette = cassettedataDao.LoadCassetteDataByBoxID(con, carrierId);
+                    cassettedataDao.DeleteCassetteData(con, cassette);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
+
+        public bool GetCarrierByBoxId(string carrierId, out CassetteData cassetteData)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cassetteData = cassettedataDao.LoadCassetteDataByBoxID(con, carrierId);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                cassetteData = null;
+                return false;
+            }
+        }
+
+        public bool GetCarrierByPortName(string portName, int stage, out CassetteData cassetteData)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cassetteData = cassettedataDao.LoadCassetteDataByLoc(con, portName, stage);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                cassetteData = null;
+                return false;
+            }
+        }
+
+        public void Install(string carrierLocation, string carrierId)
+        {
+            CassetteData datainfo = new CassetteData();
+
+            datainfo.StockerID = "1";
+            datainfo.CSTID = "";
+            datainfo.BOXID = SCUtility.Trim(carrierId, true);
+            datainfo.Carrier_LOC = SCUtility.Trim(carrierLocation, true);
+            datainfo.LotID = "";
+            datainfo.CSTState = E_CSTState.Installed;
+            datainfo.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+            datainfo.TrnDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+            datainfo.Stage = 1;
+
+
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cassettedataDao.insertCassetteData(con, datainfo);
             }
         }
     }

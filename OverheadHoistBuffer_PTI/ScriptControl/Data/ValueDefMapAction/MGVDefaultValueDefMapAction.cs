@@ -38,10 +38,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public event ManualPortEvents.ManualPortEventHandler OnAlarmHappen;
         public event ManualPortEvents.ManualPortEventHandler OnAlarmClear;
 
-        public string PortName { get => eqpt.EQPT_ID; }
+        public string PortName { get => port.PORT_ID; }
         #endregion Implement
 
-        protected AEQPT eqpt = null;
+        protected MGV_PORTSTATION port = null;
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private SCApplication scApp = null;
         private BCFApplication bcfApp = null;
@@ -62,7 +62,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public void setContext(BaseEQObject baseEQ)
         {
-            this.eqpt = baseEQ as AEQPT;
+            this.port = baseEQ as MGV_PORTSTATION;
         }
 
         public void unRegisterEvent()
@@ -99,57 +99,57 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_RUN", out ValueRead vr1))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_RUN", out ValueRead vr1))
                 {
                     vr1.afterValueChange += (_sender, e) => MGV_Status_Change_RUN(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_DOWN", out ValueRead vr2))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_DOWN", out ValueRead vr2))
                 {
                     vr2.afterValueChange += (_sender, e) => MGV_Status_Change_DOWN(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_FAULT", out ValueRead vr3))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_FAULT", out ValueRead vr3))
                 {
                     vr3.afterValueChange += (_sender, e) => MGV_Status_Change_FAULT(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_OUTMODE", out ValueRead vr4))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_OUTMODE", out ValueRead vr4))
                 {
                     vr4.afterValueChange += (_sender, e) => MGV_Status_Change_to_OutMode(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_INMODE", out ValueRead vr5))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INMODE", out ValueRead vr5))
                 {
                     vr5.afterValueChange += (_sender, e) => MGV_Status_Change_to_InMode(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_WAITIN", out ValueRead vr6))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_WAITIN", out ValueRead vr6))
                 {
                     vr6.afterValueChange += (_sender, e) => MGV_Status_WaitIn(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_WAITOUT", out ValueRead vr7))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_WAITOUT", out ValueRead vr7))
                 {
                     vr7.afterValueChange += (_sender, e) => MGV_Status_WaitOut(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_LOADPRESENCE1", out ValueRead vr8))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_LOADPRESENCE1", out ValueRead vr8))
                 {
                     vr8.afterValueChange += (_sender, e) => MGV_Status_Stage1_PresenceChanged(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_BCRREADDONE", out ValueRead vr9))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_BCRREADDONE", out ValueRead vr9))
                 {
                     vr9.afterValueChange += (_sender, e) => MGV_Status_BcrReadDone(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_REMOVECHECK", out ValueRead vr10))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_REMOVECHECK", out ValueRead vr10))
                 {
                     vr10.afterValueChange += (_sender, e) => MGV_Status_RemoveCheck(_sender, e);
                 }
 
-                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MGV_TO_OHxC_ERRORINDEX", out ValueRead vr11))
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_ERRORINDEX", out ValueRead vr11))
                 {
                     vr11.afterValueChange += (_sender, e) => MGV_Status_ErrorIndexChanged(_sender, e);
                 }
@@ -163,11 +163,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         #region State
         private void MGV_Status_Change_RUN(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
 
@@ -186,11 +186,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_Change_DOWN(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
 
@@ -209,12 +209,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_Change_FAULT(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -237,12 +237,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_Change_to_OutMode(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -261,12 +261,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_Change_to_InMode(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -289,12 +289,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_BcrReadDone(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -314,12 +314,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_WaitIn(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -343,12 +343,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_WaitOut(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -368,12 +368,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_RemoveCheck(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -395,12 +395,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_Stage1_PresenceChanged(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -419,12 +419,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private void MGV_Status_ErrorIndexChanged(object sender, ValueChangedEventArgs e)
         {
-            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
             try
             {
                 //1.建立各個Function物件
-                function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
@@ -456,7 +456,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.MoveBackReason = (ushort)reason;
                 CommitChange(function);
             });
@@ -466,7 +466,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsChangeToInMode = true;
                 CommitChange(function);
             });
@@ -476,7 +476,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsChangeToOutMode = true;
                 CommitChange(function);
             });
@@ -486,7 +486,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsMoveBack = true;
                 CommitChange(function);
             });
@@ -496,7 +496,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsResetOn = true;
                 CommitChange(function);
             });
@@ -506,7 +506,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsBuzzerStop = true;
                 CommitChange(function);
             });
@@ -516,7 +516,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsSetRun = true;
                 CommitChange(function);
             });
@@ -526,7 +526,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsSetStop = true;
                 CommitChange(function);
             });
@@ -536,7 +536,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(eqpt.EQPT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsCommanding = setOn;
                 CommitChange(function);
             });
@@ -554,7 +554,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 LogManager.GetCurrentClassLogger().Info(function.ToString());
             }
@@ -570,9 +570,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         #endregion Control
 
-        public ManualPortPLCInfo GetPortState()
+        public object GetPortState()
         {
-            return scApp.getFunBaseObj<ManualPortPLCInfo>(eqpt.EQPT_ID) as ManualPortPLCInfo;
+            return scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
         }
     }
 }

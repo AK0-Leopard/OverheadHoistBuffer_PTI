@@ -31,13 +31,14 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using static com.mirle.ibg3k0.sc.App.DebugParameter;
+using com.mirle.ibg3k0.sc.BLL.Interface;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
     /// <summary>
     /// Class ReportBLL.
     /// </summary>
-    public class ReportBLL
+    public partial class ReportBLL
     {
         /// <summary>
         /// The sc application
@@ -1909,5 +1910,114 @@ namespace com.mirle.ibg3k0.sc.BLL
         #endregion Mark
 
 
+    }
+
+    public partial class ReportBLL : IManualPortReportBLL
+    {
+        public bool ReportAlarmClear(ALARM alarm)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmCleared(null, alarm, "", "");
+            return isSuccsess;
+        }
+
+        public bool ReportAlarmSet(ALARM alarm)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmSet(null, alarm, "", "", "");
+            return isSuccsess;
+        }
+
+        public bool ReportCarrierRemoveFromManualPort(string carrierId)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompleted("", carrierId, null);
+            return isSuccsess;
+        }
+
+        public bool ReportCarrierWaitIn(CassetteData cassetteData, bool isDuplicate)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierWaitIn(cassetteData, null);
+            return isSuccsess;
+        }
+
+        public bool ReportForcedRemoveCarrier(CassetteData cassetteData)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompleted(cassetteData, null);
+            return isSuccsess;
+        }
+
+        public bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode)
+        {
+            bool isSuccsess = true;
+            if (newDirectionIsInMode)
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeInput(portName, null);
+            else
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeOutput(portName, null);
+            return isSuccsess;
+        }
+
+        public bool ReportPortInServiceChanged(string portName, bool newStateIsInService)
+        {
+            bool isSuccsess = true;
+            if (newStateIsInService)
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortInService(portName, null);
+            else
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortOutOfService(portName, null);
+            return isSuccsess;
+        }
+
+        public bool ReportUnitAlarmClear(ALARM alarm)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmCleared(alarm.UnitID, alarm.ALAM_CODE, alarm.ALAM_DESC, null);
+            return isSuccsess;
+        }
+
+        public bool ReportUnitAlarmSet(ALARM alarm)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmSet(alarm.UnitID, alarm.ALAM_CODE, alarm.ALAM_DESC, null);
+            return isSuccsess;
+        }
+
+        private const string IDReadStatus_success = "0";
+        private const string IDReadStatus_duplicate = "2";
+
+        public bool ReportCarrierIDRead(CassetteData cassetteData, bool isDuplicate)
+        {
+            bool isSuccsess = true;
+
+            if (isDuplicate)
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierIDRead(cassetteData, IDReadStatus_duplicate);
+            else
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierIDRead(cassetteData, IDReadStatus_success);
+
+            return isSuccsess;
+        }
+
+        public bool ReportCarrierWaitIn(CassetteData cassetteData)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierWaitIn(cassetteData, null);
+            return isSuccsess;
+        }
+
+        public bool ReportCarrierWaitOut(CassetteData cassetteData)
+        {
+            bool isSuccsess = true;
+            var outMode = "1";
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierWaitOut(cassetteData, outMode);
+            return isSuccsess;
+        }
+
+        public bool ReportTransferCompleted(ACMD_MCS cmd, CassetteData cassette, string resultCode)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCompleted(cmd, cassette, resultCode);
+            return isSuccsess;
+        }
     }
 }

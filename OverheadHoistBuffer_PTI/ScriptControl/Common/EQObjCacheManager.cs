@@ -531,16 +531,30 @@ namespace com.mirle.ibg3k0.sc.Common
                             _lockPorStationtDic.Add(port_id, new Object());
                             E_VH_TYPE load_vh_type = (E_VH_TYPE)portStationConfig.Load_Vh_Type;
                             E_VH_TYPE unload_vh_type = (E_VH_TYPE)portStationConfig.Unload_Vh_Type;
-                            portStationList.Add(new APORTSTATION()
+                            if (eqptType == SCAppConstants.EqptType.MGV)
                             {
-                                EQPT_ID = eqpt_id,
-                                PORT_ID = port_id,
-                                ADR_ID = adr_id,
-                                LD_VH_TYPE = load_vh_type,
-                                ULD_VH_TYPE = unload_vh_type,
-                                PORT_STATUS = E_PORT_STATUS.InService
-
-                            });
+                                portStationList.Add(new MGV_PORTSTATION()
+                                {
+                                    EQPT_ID = eqpt_id,
+                                    PORT_ID = port_id,
+                                    ADR_ID = adr_id,
+                                    LD_VH_TYPE = load_vh_type,
+                                    ULD_VH_TYPE = unload_vh_type,
+                                    PORT_STATUS = E_PORT_STATUS.InService
+                                });
+                            }
+                            else
+                            {
+                                portStationList.Add(new APORTSTATION()
+                                {
+                                    EQPT_ID = eqpt_id,
+                                    PORT_ID = port_id,
+                                    ADR_ID = adr_id,
+                                    LD_VH_TYPE = load_vh_type,
+                                    ULD_VH_TYPE = unload_vh_type,
+                                    PORT_STATUS = E_PORT_STATUS.InService
+                                });
+                            }
                         }
                     }
                     int vh_nmu = 1;

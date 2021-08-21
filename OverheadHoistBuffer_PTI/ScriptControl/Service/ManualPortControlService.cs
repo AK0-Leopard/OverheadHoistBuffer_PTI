@@ -16,10 +16,14 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private ConcurrentDictionary<string, IManualPortValueDefMapAction> manualPorts { get; set; }
 
-        public ManualPortControlService(IEnumerable<IManualPortValueDefMapAction> ports)
+        public ManualPortControlService()
         {
             WriteLog($"ManualPortControlService Initial");
-
+            //RegisterEvent(ports);
+        }
+        public void Start(IEnumerable<IManualPortValueDefMapAction> ports)
+        {
+            WriteLog($"ManualPortControlService Start");
             RegisterEvent(ports);
         }
 
@@ -54,7 +58,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
 
-            info = manualPorts[portName].GetPortState();
+            info = manualPorts[portName].GetPortState() as ManualPortPLCInfo;
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
         }

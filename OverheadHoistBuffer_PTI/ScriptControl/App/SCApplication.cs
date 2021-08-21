@@ -33,6 +33,7 @@ using com.mirle.ibg3k0.sc.MQTT;
 using com.mirle.ibg3k0.sc.RouteKit;
 using com.mirle.ibg3k0.sc.Scheduler;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.Service.Interface;
 using com.mirle.ibg3k0.sc.WIF;
 using com.mirle.ibg3k0.stc.Common.SECS;
 using ExcelDataReader;
@@ -591,6 +592,11 @@ namespace com.mirle.ibg3k0.sc.App
 
         private PTI_TransferService pTI_TransferService = null;
         public PTI_TransferService PTI_TransferService { get { return pTI_TransferService; } }
+
+        private IManualPortControlService manualPortControlService = null;
+        public IManualPortControlService ManualPortControlService { get { return manualPortControlService; } }
+        private IManualPortEventService manualPortEventService = null;
+        public IManualPortEventService ManualPortEventService { get { return manualPortEventService; } }
 
         private DataSyncBLL datasynBLL = null;
         public DataSyncBLL DataSyncBLL { get { return datasynBLL; } }
@@ -1522,6 +1528,9 @@ namespace com.mirle.ibg3k0.sc.App
             shelfService = new ShelfService();
             emptyBoxHandlerService = new EmptyBoxHandlerService();
 
+            manualPortControlService = new ManualPortControlService();
+            manualPortEventService = new ManualPortEventService();
+
             gRPC_With_VehicleControlFun = new Grpc.Core.Server()
             {
                 Services = { com.mirle.AK0.ProtocolFormat.VehicleControlFun.BindService(new WebAPI.VehicleControlFun()) },
@@ -1591,6 +1600,10 @@ namespace com.mirle.ibg3k0.sc.App
             shelfService.start(this);
             emptyBoxHandlerService.start(this);
             gRPC_With_VehicleControlFun.Start();
+
+            var manual_port_map_action = PortStationBLL.OperateCatch.loadAllMgvPortStationMapAction();
+            manualPortControlService.Start(manual_port_map_action);
+            manualPortEventService.Start(manual_port_map_action, reportBLL, PortDefBLL, ShelfDefBLL, CassetteDataBLL, cmdBLL, alarmBLL);
         }
 
         /// <summary>
