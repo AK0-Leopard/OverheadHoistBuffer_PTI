@@ -1100,7 +1100,8 @@ namespace com.mirle.ibg3k0.sc.App
             MTL = 4,
             MTS = 5,
             OHCV = 6,
-            HID = 7
+            HID = 7,
+            MGV = 8
         }
         #endregion Eqpt Type
 
