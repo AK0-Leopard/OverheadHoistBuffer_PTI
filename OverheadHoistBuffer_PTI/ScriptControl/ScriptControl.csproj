@@ -497,7 +497,12 @@
     <Compile Include="BLL\GuideBLL.cs" />
     <Compile Include="BLL\HIDBLL.cs" />
     <Compile Include="BLL\EventBLL.cs" />
-    <Compile Include="BLL\Interface\IMGVBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortAlarmBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortCassetteDataBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortCMDBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortDefBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortReportBLL.cs" />
+    <Compile Include="BLL\Interface\IManualPortShelfDefBLL.cs" />
     <Compile Include="BLL\LineBLL.cs" />
     <Compile Include="BLL\MapBLL.cs" />
     <Compile Include="BLL\ParkBLL.cs" />
@@ -620,6 +625,11 @@
     <Compile Include="Data\DAO\MCSReportQueueDao.cs" />
     <Compile Include="Data\DAO\HIDZoneMasterDao.cs" />
     <Compile Include="Data\DBConnection_EF.cs" />
+    <Compile Include="Data\PLC_Functions\MGV\Enums\CstType.cs" />
+    <Compile Include="Data\PLC_Functions\MGV\Enums\DirectionType.cs" />
+    <Compile Include="Data\PLC_Functions\MGV\Enums\MoveBackReasons.cs" />
+    <Compile Include="Data\PLC_Functions\MGV\ManualPortPLCControl.cs" />
+    <Compile Include="Data\PLC_Functions\MGV\ManualPortPLCInfo.cs" />
     <Compile Include="Data\PLC_Functions\MGV\MGVToOHxC_Alive.cs" />
     <Compile Include="Data\PLC_Functions\MGV\OHxCToMGV_Status.cs" />
     <Compile Include="Data\PLC_Functions\OHxCToPLC_SetSystemInfo.cs" />
@@ -875,6 +885,9 @@
     <Compile Include="Data\TimerAction\TaskCommandTimerAction.cs" />
     <Compile Include="Data\TimerAction\DBTableWatcherTimerAction.cs" />
     <Compile Include="Data\ValueDefMapAction\ASEMCSDefaultMapAction.cs" />
+    <Compile Include="Data\ValueDefMapAction\Events\ManualPortEventArgs.cs" />
+    <Compile Include="Data\ValueDefMapAction\Events\ManualPortEvents.cs" />
+    <Compile Include="Data\ValueDefMapAction\Interface\IManualPortValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\MGVDefaultValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\PTI_MCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SimpleMTLValueDefMapAction.cs" />
@@ -1060,7 +1073,11 @@
     <Compile Include="Service\BlockControlService.cs" />
     <Compile Include="Service\EmptyBoxHandlerService.cs" />
     <Compile Include="Service\FailOverService.cs" />
+    <Compile Include="Service\Interface\IManualPortControlService.cs" />
+    <Compile Include="Service\Interface\IManualPortEventService.cs" />
     <Compile Include="Service\LineService.cs" />
+    <Compile Include="Service\ManualPortControlService.cs" />
+    <Compile Include="Service\ManualPortEventService.cs" />
     <Compile Include="Service\OHCVService.cs" />
     <Compile Include="Service\MTLService.cs" />
     <Compile Include="Service\PTI_TransferService.cs" />
