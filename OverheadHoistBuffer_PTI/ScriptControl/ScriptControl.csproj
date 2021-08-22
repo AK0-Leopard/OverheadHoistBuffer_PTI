@@ -868,6 +868,7 @@
     <Compile Include="Data\TimerAction\OHxCAliveTimer.cs" />
     <Compile Include="Data\TimerAction\PLCAliveTimer.cs" />
     <Compile Include="Data\TimerAction\PLCTimeCalibrationTimer.cs" />
+    <Compile Include="Data\TimerAction\PortTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandByHasCSTPortTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandMove.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerAction_OHTC.cs" />

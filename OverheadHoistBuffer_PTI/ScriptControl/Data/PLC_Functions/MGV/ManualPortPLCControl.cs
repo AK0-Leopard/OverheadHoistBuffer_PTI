@@ -35,6 +35,15 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV
         [PLCElement(ValueName = "OHxC_TO_MGV_MOVEBACKREASON")]
         public UInt16 MoveBackReason;
 
+        [PLCElement(ValueName = "OHxC_TO_MGV_READY_TO_WAITOUT_CARRIERID_1")]
+        public string ReadyToWaitOutCarrierId1;
+
+        [PLCElement(ValueName = "OHxC_TO_MGV_READY_TO_WAITOUT_CARRIERID_2")]
+        public string ReadyToWaitOutCarrierId2;
+
+        [PLCElement(ValueName = "OHxC_TO_MGV_COMING_OUT_CARRIERID")]
+        public string ComingOutCarrierId;
+
         [PLCElement(ValueName = "TIME_CALIBRATION_BCD_YEAR_MONTH")]
         public UInt16 TimeCalibrationBcdYearMonth;
 

@@ -436,6 +436,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         {
                             s2f50.HCACK = SECSConst.HCACK_Not_Able_Execute;
                         }
+
+                        var moveBackCommand = (source == dest) && (string.IsNullOrWhiteSpace(source) == false) && (string.IsNullOrWhiteSpace(dest) == false);
+                        if (moveBackCommand)
+                        {
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49   Source{source} == Dest{dest} is moveBack Command");
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50   HCACK:" + s2f50.HCACK);
+
+                            scApp.TransferService.SetMoveBackManualPortCommand(source);
+                            return;
+                        }
+
                         //準備將命令存入資料庫中
                         using (TransactionScope tx = SCUtility.getTransactionScope())
                         {

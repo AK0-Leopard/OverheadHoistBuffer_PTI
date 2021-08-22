@@ -18,8 +18,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
         event ManualPortEventHandler OnLoadPresenceChanged;
         event ManualPortEventHandler OnAlarmHappen;
         event ManualPortEventHandler OnAlarmClear;
+        event ManualPortEventHandler OnDoorOpen;
         Task MoveBackAsync();
         Task SetMoveBackReasonAsync(MoveBackReasons reason);
+        Task ShowReadyToWaitOutCarrierOnMonitorAsync(string carrierId_1, string carrierId_2);
+        Task ShowComingOutCarrierOnMonitorAsync(string carrierId);
         Task TimeCalibrationAsync();
     }
 }

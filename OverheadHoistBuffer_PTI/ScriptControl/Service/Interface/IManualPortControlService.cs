@@ -7,6 +7,7 @@ namespace com.mirle.ibg3k0.sc.Service.Interface
 {
     public interface IManualPortControlService
     {
+        void RefreshState();
         bool GetPortPlcState(string portName, out ManualPortPLCInfo info);
         bool ChangeToInMode(string portName);
         bool ChangeToOutMode(string portName);

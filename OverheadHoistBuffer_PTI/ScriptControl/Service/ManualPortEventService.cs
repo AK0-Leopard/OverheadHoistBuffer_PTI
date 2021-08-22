@@ -64,6 +64,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 port.OnInServiceChanged += Port_OnInServiceChanged;
                 port.OnAlarmHappen += Port_OnAlarmHappen;
                 port.OnAlarmClear += Port_OnAlarmClear;
+                port.OnDoorOpen += Port_OnDoorOpen;
 
                 manualPorts.TryAdd(port.PortName, port);
                 WriteLog($"Add Manual Port Event Success ({port.PortName})");
@@ -655,5 +656,23 @@ namespace com.mirle.ibg3k0.sc.Service
             return commandOfPort;
         }
         #endregion Alarm
+
+        private void Port_OnDoorOpen(object sender, ManualPortEventArgs args)
+        {
+            try
+            {
+                var info = args.ManualPortPLCInfo;
+                var logTitle = $"PortName[{args.PortName}] DoorOpenChanged => ";
+
+                if (info.IsDoorOpen)
+                    WriteEventLog($"{logTitle} Door Open");
+                else
+                    WriteEventLog($"{logTitle} Door Close");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "");
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public event ManualPortEvents.ManualPortEventHandler OnLoadPresenceChanged;
         public event ManualPortEvents.ManualPortEventHandler OnAlarmHappen;
         public event ManualPortEvents.ManualPortEventHandler OnAlarmClear;
+        public event ManualPortEvents.ManualPortEventHandler OnDoorOpen;
 
         public string PortName { get => port.PORT_ID; }
         #endregion Implement
@@ -153,6 +154,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_ERRORINDEX", out ValueRead vr11))
                 {
                     vr11.afterValueChange += (_sender, e) => MGV_Status_ErrorIndexChanged(_sender, e);
+                }
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_DOOROPEN", out ValueRead vr12))
+                {
+                    vr12.afterValueChange += (_sender, e) => MGV_Status_DoorOpenChanged(_sender, e);
                 }
             }
             catch (Exception ex)
@@ -430,15 +435,19 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //2.read log
                 logger.Info(function.ToString());
 
-                if (function.IsRun)
+                var alarmCode = function.AlarmCode;
+                if (alarmCode == 0)
                 {
-                    if (function.AlarmCode == 0)
-                        OnAlarmClear?.Invoke(this, new ManualPortEventArgs(function));
-                    else
-                        WarningHappen(function);
+                    OnAlarmClear?.Invoke(this, new ManualPortEventArgs(function));
+                }
+                else if (function.IsRun)
+                {
+                    WarningHappen(function);
                 }
                 else
+                {
                     AlarmHappen(function);
+                }
             }
             catch (Exception ex)
             {
@@ -460,6 +469,29 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             OnAlarmHappen?.Invoke(this, new ManualPortEventArgs(function));
         }
 
+        private void MGV_Status_DoorOpenChanged(object sender, ValueChangedEventArgs e)
+        {
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+                //2.read log
+                logger.Info(function.ToString());
+
+                OnDoorOpen?.Invoke(this, new ManualPortEventArgs(function));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+            }
+        }
         #region Control
 
         public Task SetMoveBackReasonAsync(MoveBackReasons reason)
@@ -602,6 +634,45 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     CommitChange(function);
                 });
             }
+        }
+
+        public Task ShowReadyToWaitOutCarrierOnMonitorAsync(string carrierId_1, string carrierId_2)
+        {
+            return Task.Run(() =>
+            {
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+
+                carrierId_1 = carrierId_1.Trim();
+                carrierId_2 = carrierId_2.Trim();
+
+                if (carrierId_1.Length > 14)
+                    carrierId_1 = carrierId_1.Substring(0, 14);
+
+                if (carrierId_2.Length > 14)
+                    carrierId_2 = carrierId_2.Substring(0, 14);
+
+                function.ReadyToWaitOutCarrierId1 = carrierId_1;
+                function.ReadyToWaitOutCarrierId2 = carrierId_2;
+
+                CommitChange(function);
+            });
+        }
+
+        public Task ShowComingOutCarrierOnMonitorAsync(string carrierId)
+        {
+            return Task.Run(() =>
+            {
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+
+                carrierId = carrierId.Trim();
+
+                if (carrierId.Length > 14)
+                    carrierId = carrierId.Substring(0, 14);
+
+                function.ComingOutCarrierId = carrierId;
+
+                CommitChange(function);
+            });
         }
 
         public Task TimeCalibrationAsync()

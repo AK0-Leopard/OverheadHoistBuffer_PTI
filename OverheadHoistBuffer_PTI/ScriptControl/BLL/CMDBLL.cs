@@ -134,6 +134,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
+        public List<ACMD_MCS> LoadCmdData_PortTypeChange()
+        {
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.LoadCmdData_PortTypeChange(con);
+            }
+        }
+
+        public List<ACMD_MCS> LoadCmdData_ManualPortMoveBack()
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.LoadCmdData_ManualPortMoveBack(con);
+            }
+        }
+
         public List<ACMD_MCS> LoadAllCmdData()  //歷史紀錄
         {
             //using (DBConnection_EF con = new DBConnection_EF())
