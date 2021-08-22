@@ -292,8 +292,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             public IEnumerable<Data.ValueDefMapAction.Interface.IManualPortValueDefMapAction> loadAllMgvPortStationMapAction()
             {
-                var ports = CacheManager.getALLPortStation().Where(port => port is MGV_PORTSTATION).ToList();
-                var map_actions = ports.Select(port => (port as MGV_PORTSTATION).getExcuteMapAction());
+                var ports = CacheManager.getALLPortStation().Where(port => port is MANUAL_PORTSTATION).ToList();
+                var map_actions = ports.Select(port => (port as MANUAL_PORTSTATION).getExcuteMapAction());
                 return map_actions;
             }
         }

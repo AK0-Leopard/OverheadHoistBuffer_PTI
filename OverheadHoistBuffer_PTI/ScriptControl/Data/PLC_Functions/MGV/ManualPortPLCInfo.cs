@@ -69,7 +69,7 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV
         public UInt16 ErrorIndex;
 
         [PLCElement(ValueName = "MGV_TO_OHxC_ERRORCODE")]
-        public string AlarmCode;
+        public UInt16 AlarmCode;
 
         [PLCElement(ValueName = "MGV_TO_OHxC_STAGE1CARRIERID")]
         public string CarrierIdOfStage1;

@@ -1,16 +1,14 @@
-﻿using com.mirle.ibg3k0.bcf.App;
-using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
-using com.mirle.ibg3k0.bcf.Data.VO;
-using com.mirle.ibg3k0.sc.App;
-using com.mirle.ibg3k0.sc.Data.PLC_Functions;
+﻿using com.mirle.ibg3k0.sc.Data.PLC_Functions;
+using com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV;
+using com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV.Enums;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface;
 
 namespace com.mirle.ibg3k0.sc
 {
-    public partial class MGV_PORTSTATION : APORTSTATION
+    public partial class MANUAL_PORTSTATION : APORTSTATION
     {
-        public MGV_PORTSTATION() : base()
+        public MANUAL_PORTSTATION() : base()
         {
 
         }
@@ -20,22 +18,39 @@ namespace com.mirle.ibg3k0.sc
             return mapAction;
         }
 
+        public ManualPortPLCInfo getManualPortPLCInfo()
+        {
+            ICommonPortInfoValueDefMapAction portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return null;
+
+            var manual_port_info = portValueDefMapAction.GetPortState() as ManualPortPLCInfo;
+            return manual_port_info;
+        }
+
         public override PortPLCInfo getPortPLCInfo()
         {
             ICommonPortInfoValueDefMapAction portValueDefMapAction = getICommonPortInfoValueDefMapAction();
             if (portValueDefMapAction == null) return null;
 
-            var mgv_port_info = portValueDefMapAction.GetPortState() as Data.PLC_Functions.MGV.ManualPortPLCInfo;
+            var mgv_port_info = portValueDefMapAction.GetPortState() as ManualPortPLCInfo;
 
             return MgvPortInfoToPortInfo(mgv_port_info);
         }
         protected override ICommonPortInfoValueDefMapAction getICommonPortInfoValueDefMapAction()
         {
             ICommonPortInfoValueDefMapAction portValueDefMapAction =
-                getMapActionByIdentityKey(typeof(Data.ValueDefMapAction.MGVDefaultValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
+                getMapActionByIdentityKey(typeof(MGVDefaultValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
             return portValueDefMapAction;
         }
-        private PortPLCInfo MgvPortInfoToPortInfo(Data.PLC_Functions.MGV.ManualPortPLCInfo mgvPortInfo)
+
+        private IManualPortValueDefMapAction getIManualPortValueDefMapAction()
+        {
+            IManualPortValueDefMapAction portValueDefMapAction =
+                getMapActionByIdentityKey(typeof(MGVDefaultValueDefMapAction).Name) as IManualPortValueDefMapAction;
+            return portValueDefMapAction;
+        }
+
+        private PortPLCInfo MgvPortInfoToPortInfo(ManualPortPLCInfo mgvPortInfo)
         {
             return new PortPLCInfo()
             {
@@ -69,7 +84,7 @@ namespace com.mirle.ibg3k0.sc
                 CstRemoveCheck = mgvPortInfo.IsRemoveCheck,
                 //ErrorCode = mgvPortInfo.IsBcrReadDone,
                 BoxID = mgvPortInfo.CarrierIdOfStage1,
-                LoadPositionBOX1 = mgvPortInfo.CarrierIdReadResult,
+                LoadPositionBOX1 = "",
                 LoadPositionBOX2 = "",
                 LoadPositionBOX3 = "",
                 LoadPositionBOX4 = "",
@@ -80,6 +95,27 @@ namespace com.mirle.ibg3k0.sc
                 preLoadOK = false,
             };
         }
-    }
 
+        #region Control Port
+        public void MoveBackAsync()
+        {
+            var manualPortValueDefMapAction = getIManualPortValueDefMapAction();
+            if (manualPortValueDefMapAction == null) return;
+            manualPortValueDefMapAction.MoveBackAsync();
+        }
+        public void SetMoveBackReasonAsync(MoveBackReasons moveBackReasons)
+        {
+            var manualPortValueDefMapAction = getIManualPortValueDefMapAction();
+            if (manualPortValueDefMapAction == null) return;
+            manualPortValueDefMapAction.SetMoveBackReasonAsync(moveBackReasons);
+        }
+
+        public void TimeCalibrationAsync()
+        {
+            var manualPortValueDefMapAction = getIManualPortValueDefMapAction();
+            if (manualPortValueDefMapAction == null) return;
+            manualPortValueDefMapAction.TimeCalibrationAsync();
+        }
+        #endregion Control Port
+    }
 }

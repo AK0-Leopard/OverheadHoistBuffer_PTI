@@ -520,7 +520,20 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public bool GetPortDef(string portName, out PortDef portDef)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var con = DBConnection_EF.GetUContext())
+                {
+                    portDef = portdefDao.GetPortData(con, portName);
+                    return portDef != null;
+                }
+            }
+            catch (Exception ex)
+            {
+                portDef = null;
+                logger.Error(ex, "Exception");
+                return false;
+            }
         }
     }
 }

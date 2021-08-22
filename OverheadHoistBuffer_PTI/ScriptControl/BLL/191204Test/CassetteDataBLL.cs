@@ -774,7 +774,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     cassetteData = cassettedataDao.LoadCassetteDataByBoxID(con, carrierId);
                 }
-                return true;
+                return cassetteData != null;
             }
             catch (Exception ex)
             {
@@ -792,7 +792,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     cassetteData = cassettedataDao.LoadCassetteDataByLoc(con, portName, stage);
                 }
-                return true;
+                return cassetteData != null;
             }
             catch (Exception ex)
             {

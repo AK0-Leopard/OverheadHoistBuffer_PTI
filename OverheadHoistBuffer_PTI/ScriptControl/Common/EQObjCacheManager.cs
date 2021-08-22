@@ -533,7 +533,7 @@ namespace com.mirle.ibg3k0.sc.Common
                             E_VH_TYPE unload_vh_type = (E_VH_TYPE)portStationConfig.Unload_Vh_Type;
                             if (eqptType == SCAppConstants.EqptType.MGV)
                             {
-                                portStationList.Add(new MGV_PORTSTATION()
+                                portStationList.Add(new MANUAL_PORTSTATION()
                                 {
                                     EQPT_ID = eqpt_id,
                                     PORT_ID = port_id,

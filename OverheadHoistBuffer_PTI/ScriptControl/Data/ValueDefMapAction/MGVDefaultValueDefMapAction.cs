@@ -22,6 +22,7 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using NLog;
 using System.Threading.Tasks;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV.Enums;
+using com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Extension;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
@@ -41,7 +42,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public string PortName { get => port.PORT_ID; }
         #endregion Implement
 
-        protected MGV_PORTSTATION port = null;
+        protected MANUAL_PORTSTATION port = null;
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private SCApplication scApp = null;
         private BCFApplication bcfApp = null;
@@ -62,7 +63,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public void setContext(BaseEQObject baseEQ)
         {
-            this.port = baseEQ as MGV_PORTSTATION;
+            this.port = baseEQ as MANUAL_PORTSTATION;
         }
 
         public void unRegisterEvent()
@@ -169,7 +170,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //1.建立各個Function物件
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsRun)
                     OnInServiceChanged?.Invoke(this, new ManualPortEventArgs(function));
@@ -192,7 +193,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //1.建立各個Function物件
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsDown)
                     OnInServiceChanged?.Invoke(this, new ManualPortEventArgs(function));
@@ -217,7 +218,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsAlarm)
                     OnInServiceChanged?.Invoke(this, new ManualPortEventArgs(function));
@@ -245,7 +246,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
             }
@@ -269,7 +270,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
             }
@@ -297,7 +298,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsBcrReadDone)
                     OnBcrReadDone?.Invoke(this, new ManualPortEventArgs(function));
@@ -322,7 +323,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsWaitIn)
                     OnWaitIn?.Invoke(this, new ManualPortEventArgs(function));
@@ -351,7 +352,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsWaitOut)
                     OnWaitOut?.Invoke(this, new ManualPortEventArgs(function));
@@ -376,7 +377,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 if (function.IsRemoveCheck)
                     OnCstRemoved?.Invoke(this, new ManualPortEventArgs(function));
@@ -403,7 +404,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
                 OnLoadPresenceChanged?.Invoke(this, new ManualPortEventArgs(function));
             }
@@ -427,11 +428,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
                 //2.read log
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
 
-                if (function.IsRun && Int32.TryParse(function.AlarmCode, out var alarmCode))
+                if (function.IsRun)
                 {
-                    if (alarmCode == 0)
+                    if (function.AlarmCode == 0)
                         OnAlarmClear?.Invoke(this, new ManualPortEventArgs(function));
                     else
                         WarningHappen(function);
@@ -498,6 +499,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsMoveBack = true;
                 CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsMoveBack = false;
+                CommitChange(function);
             });
         }
 
@@ -507,6 +515,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsResetOn = true;
+                CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsResetOn = false;
                 CommitChange(function);
             });
         }
@@ -518,6 +533,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsBuzzerStop = true;
                 CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsBuzzerStop = false;
+                CommitChange(function);
             });
         }
 
@@ -528,6 +550,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsSetRun = true;
                 CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsSetRun = false;
+                CommitChange(function);
             });
         }
 
@@ -537,6 +566,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsSetStop = true;
+                CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsSetStop = false;
                 CommitChange(function);
             });
         }
@@ -553,9 +589,37 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public Task SetControllerErrorIndexAsync(int newIndex)
         {
+            {
+                return Task.Run(() =>
+                {
+                    var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+
+                    if (newIndex <= 65535)
+                        function.OhbcErrorIndex = (UInt16)(newIndex);
+                    else
+                        function.OhbcErrorIndex = 1;
+
+                    CommitChange(function);
+                });
+            }
+        }
+
+        public Task TimeCalibrationAsync()
+        {
             return Task.Run(() =>
             {
-                throw new NotImplementedException();
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+
+                function.TimeCalibrationBcdYearMonth = (UInt16)((DateTime.Now.Year.ToBCD() - 2000) * 256 + DateTime.Now.Month.ToBCD());
+                function.TimeCalibrationBcdDayHour = (UInt16)(DateTime.Now.Day.ToBCD() * 256 + DateTime.Now.Hour.ToBCD());
+                function.TimeCalibrationBcdMinuteSecond = (UInt16)(DateTime.Now.Minute.ToBCD() * 256 + DateTime.Now.Second.ToBCD());
+
+                if (function.TimeCalibrationIndex < 65535)
+                    function.TimeCalibrationIndex = (UInt16)(function.OhbcErrorIndex + 1);
+                else
+                    function.TimeCalibrationIndex = 1;
+
+                CommitChange(function);
             });
         }
 
@@ -565,7 +629,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
-                LogManager.GetCurrentClassLogger().Info(function.ToString());
+                logger.Info(function.ToString());
             }
             catch (Exception ex)
             {
@@ -581,7 +645,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public object GetPortState()
         {
-            return scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+            var port_data = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+            port_data.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+            return port_data;
         }
     }
 }

@@ -5706,7 +5706,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     command = cmd_mcsDao.getByBoxID(con, carrierId);
                 }
-                return true;
+                return command != null;
             }
             catch (Exception ex)
             {

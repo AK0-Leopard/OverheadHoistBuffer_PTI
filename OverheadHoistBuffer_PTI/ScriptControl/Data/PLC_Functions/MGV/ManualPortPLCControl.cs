@@ -35,6 +35,18 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV
         [PLCElement(ValueName = "OHxC_TO_MGV_MOVEBACKREASON")]
         public UInt16 MoveBackReason;
 
+        [PLCElement(ValueName = "TIME_CALIBRATION_BCD_YEAR_MONTH")]
+        public UInt16 TimeCalibrationBcdYearMonth;
+
+        [PLCElement(ValueName = "TIME_CALIBRATION_BCD_DAY_HOUR")]
+        public UInt16 TimeCalibrationBcdDayHour;
+
+        [PLCElement(ValueName = "TIME_CALIBRATION_BCD_MINUTE_SECOND")]
+        public UInt16 TimeCalibrationBcdMinuteSecond;
+
+        [PLCElement(ValueName = "TIME_CALIBRATION_INDEX")]
+        public UInt16 TimeCalibrationIndex;
+
         public MoveBackReasons MoveBackReasons { get => GetMoveBackReason(); }
 
         private MoveBackReasons GetMoveBackReason()

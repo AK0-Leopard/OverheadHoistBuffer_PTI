@@ -889,6 +889,7 @@
     <Compile Include="Data\ValueDefMapAction\ASEMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\Events\ManualPortEventArgs.cs" />
     <Compile Include="Data\ValueDefMapAction\Events\ManualPortEvents.cs" />
+    <Compile Include="Data\ValueDefMapAction\Extensions\ValueDefMapActionExtensions.cs" />
     <Compile Include="Data\ValueDefMapAction\Interface\ICommonPortInfoValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\Interface\IManualPortValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\MGVDefaultValueDefMapAction.cs" />
@@ -921,7 +922,7 @@
     <Compile Include="Data\VO\PartialVo\BLOCKZONEQUEUE.cs" />
     <Compile Include="Data\VO\PartialVo\ACMD_MCS.cs" />
     <Compile Include="Data\VO\EqptLocationInfo.cs" />
-    <Compile Include="Data\VO\PartialVo\MGV_PORTSTATION.cs" />
+    <Compile Include="Data\VO\PartialVo\MANUAL_PORTSTATION.cs" />
     <Compile Include="Data\VO\PartialVo\PortDef.cs" />
     <Compile Include="Data\VO\PartialVo\ShelfDef.cs" />
     <Compile Include="Data\VO\PartialVo\CassetteData.cs" />
