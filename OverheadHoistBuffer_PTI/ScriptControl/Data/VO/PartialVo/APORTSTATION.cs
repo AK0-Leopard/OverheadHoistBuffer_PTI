@@ -24,10 +24,64 @@ namespace com.mirle.ibg3k0.sc
 
         public virtual PortPLCInfo getPortPLCInfo()
         {
-            ICommonPortInfoValueDefMapAction portValueDefMapAction =
-                getMapActionByIdentityKey(typeof(Data.ValueDefMapAction.PortValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
             if (portValueDefMapAction == null) return null;
             return portValueDefMapAction.GetPortState() as PortPLCInfo;
+        }
+
+        protected virtual ICommonPortInfoValueDefMapAction getICommonPortInfoValueDefMapAction()
+        {
+            ICommonPortInfoValueDefMapAction portValueDefMapAction =
+                getMapActionByIdentityKey(typeof(Data.ValueDefMapAction.PortValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
+            return portValueDefMapAction;
+        }
+        public void ChangeToInMode(bool isOn)
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.ChangeToInModeAsync(isOn);
+        }
+        public void ChangeToOutMode(bool isOn)
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.ChangeToOutModeAsync(isOn);
+        }
+        public void ResetAlarm()
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.ResetAlarmAsync();
+        }
+        public void StopBuzzer()
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.StopBuzzerAsync();
+        }
+        public void SetRun()
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.SetRunAsync();
+        }
+        public void SetStop()
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.SetStopAsync();
+        }
+        public void SetCommanding(bool isCommanding)
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.SetCommandingAsync(isCommanding);
+        }
+        public void SetControllerErrorIndex(int index)
+        {
+            var portValueDefMapAction = getICommonPortInfoValueDefMapAction();
+            if (portValueDefMapAction == null) return;
+            portValueDefMapAction.SetControllerErrorIndexAsync(index);
         }
     }
 

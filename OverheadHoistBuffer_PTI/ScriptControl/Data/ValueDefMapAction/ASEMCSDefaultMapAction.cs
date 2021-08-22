@@ -34,6 +34,7 @@ using System.Transactions;
 using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using System.Reflection;
 using System.Threading.Tasks;
+using com.mirle.ibg3k0.sc.Data.Enum;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
@@ -810,7 +811,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 if (canChangCmd)
                 {
-                    if (scApp.TransferService.isUnitType(change_port_id, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(change_port_id, UnitType.AGV))
                     {
                         scApp.TransferService.ReportNowPortType(change_port_id);
                     }
@@ -2065,7 +2066,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         //    }
         //    return viditem_360;
         //}
-        VehicleOperationState Convert2VehicleOperationState(AVEHICLE vh)
+        private VehicleOperationState Convert2VehicleOperationState(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect)
             {
@@ -2089,7 +2090,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        VehicleCommunictionState Convert2VehicleCommunication(AVEHICLE vh)
+        private VehicleCommunictionState Convert2VehicleCommunication(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect)
             {
@@ -2107,7 +2108,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
             }
         }
-        VehicleControlMode Convert2VehicleControlMode(AVEHICLE vh)
+        private VehicleControlMode Convert2VehicleControlMode(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect) return VehicleControlMode.Manual;
             if (vh.MODE_STATUS >= ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote)
@@ -2119,11 +2120,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return VehicleControlMode.Manual;
             }
         }
-        VehicleJamState Convert2VehicleJamState(AVEHICLE vh)
+        private VehicleJamState Convert2VehicleJamState(AVEHICLE vh)
         {
             return vh.IsBlocking ? VehicleJamState.JamExists : VehicleJamState.NoJan;
         }
-        enum VehicleOperationState
+        private enum VehicleOperationState
         {
             Disconnected,
             Operating,
@@ -2131,18 +2132,18 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             Error,
             Detached
         }
-        enum VehicleCommunictionState
+        private enum VehicleCommunictionState
         {
             Disconnected,
             Communicating,
             NoCommunicating
         }
-        enum VehicleControlMode
+        private enum VehicleControlMode
         {
             Manual,
             Auto
         }
-        enum VehicleJamState
+        private enum VehicleJamState
         {
             NoJan,
             JamExists,

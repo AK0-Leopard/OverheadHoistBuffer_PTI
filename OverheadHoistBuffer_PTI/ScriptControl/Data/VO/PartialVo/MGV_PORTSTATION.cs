@@ -22,13 +22,18 @@ namespace com.mirle.ibg3k0.sc
 
         public override PortPLCInfo getPortPLCInfo()
         {
-            ICommonPortInfoValueDefMapAction portValueDefMapAction =
-                getMapActionByIdentityKey(typeof(MGVDefaultValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
+            ICommonPortInfoValueDefMapAction portValueDefMapAction = getICommonPortInfoValueDefMapAction();
             if (portValueDefMapAction == null) return null;
 
             var mgv_port_info = portValueDefMapAction.GetPortState() as Data.PLC_Functions.MGV.ManualPortPLCInfo;
 
             return MgvPortInfoToPortInfo(mgv_port_info);
+        }
+        protected override ICommonPortInfoValueDefMapAction getICommonPortInfoValueDefMapAction()
+        {
+            ICommonPortInfoValueDefMapAction portValueDefMapAction =
+                getMapActionByIdentityKey(typeof(Data.ValueDefMapAction.MGVDefaultValueDefMapAction).Name) as ICommonPortInfoValueDefMapAction;
+            return portValueDefMapAction;
         }
         private PortPLCInfo MgvPortInfoToPortInfo(Data.PLC_Functions.MGV.ManualPortPLCInfo mgvPortInfo)
         {

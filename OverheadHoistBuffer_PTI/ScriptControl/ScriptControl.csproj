@@ -494,6 +494,7 @@
     <Compile Include="BLL\AlarmBLL.cs" />
     <Compile Include="BLL\BCSystemBLL.cs" />
     <Compile Include="BLL\BlockControlBLL.cs" />
+    <Compile Include="BLL\Extensions\PortDefExtensions.cs" />
     <Compile Include="BLL\GuideBLL.cs" />
     <Compile Include="BLL\HIDBLL.cs" />
     <Compile Include="BLL\EventBLL.cs" />
@@ -625,6 +626,7 @@
     <Compile Include="Data\DAO\MCSReportQueueDao.cs" />
     <Compile Include="Data\DAO\HIDZoneMasterDao.cs" />
     <Compile Include="Data\DBConnection_EF.cs" />
+    <Compile Include="Data\Enum\UnitType.cs" />
     <Compile Include="Data\PLC_Functions\MGV\Enums\CstType.cs" />
     <Compile Include="Data\PLC_Functions\MGV\Enums\DirectionType.cs" />
     <Compile Include="Data\PLC_Functions\MGV\Enums\MoveBackReasons.cs" />

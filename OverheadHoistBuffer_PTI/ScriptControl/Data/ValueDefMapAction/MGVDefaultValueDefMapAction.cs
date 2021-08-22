@@ -434,10 +434,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     if (alarmCode == 0)
                         OnAlarmClear?.Invoke(this, new ManualPortEventArgs(function));
                     else
-                        OnAlarmHappen?.Invoke(this, new ManualPortEventArgs(function));
+                        WarningHappen(function);
                 }
                 else
-                    OnAlarmHappen?.Invoke(this, new ManualPortEventArgs(function));
+                    AlarmHappen(function);
             }
             catch (Exception ex)
             {
@@ -449,6 +449,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        private void WarningHappen(ManualPortPLCInfo function)
+        {
+            OnAlarmHappen?.Invoke(this, new ManualPortEventArgs(function));
+        }
+
+        private void AlarmHappen(ManualPortPLCInfo function)
+        {
+            OnAlarmHappen?.Invoke(this, new ManualPortEventArgs(function));
+        }
 
         #region Control
 
@@ -462,22 +471,22 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             });
         }
 
-        public Task ChangeToInModeAsync()
+        public Task ChangeToInModeAsync(bool isOn)
         {
             return Task.Run(() =>
             {
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
-                function.IsChangeToInMode = true;
+                function.IsChangeToInMode = isOn;
                 CommitChange(function);
             });
         }
 
-        public Task ChangeToOutModeAsync()
+        public Task ChangeToOutModeAsync(bool isOn)
         {
             return Task.Run(() =>
             {
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
-                function.IsChangeToOutMode = true;
+                function.IsChangeToOutMode = isOn;
                 CommitChange(function);
             });
         }

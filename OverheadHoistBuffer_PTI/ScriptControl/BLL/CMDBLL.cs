@@ -16,6 +16,7 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.SECS;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
@@ -114,7 +115,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool isZone(string zoneid)   //是不是zone
         {
             //return scApp.ZoneDefBLL.IsExist(zoneid);
-            return scApp.TransferService.isUnitType(zoneid, Service.UnitType.ZONE);
+            return scApp.TransferService.isUnitType(zoneid, UnitType.ZONE);
         }
 
         #region CMD_MCS
@@ -1344,7 +1345,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (status == E_TRAN_STATUS.TransferCompleted)
                 {
-                    if (scApp.TransferService.isUnitType(cmd.HOSTSOURCE, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(cmd.HOSTSOURCE, UnitType.SHELF))
                     {
                         if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE) != null)
                         {
@@ -1363,7 +1364,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                     if (string.IsNullOrWhiteSpace(cmd.RelayStation) == false)
                     {
-                        if (scApp.TransferService.isUnitType(cmd.RelayStation, Service.UnitType.SHELF))
+                        if (scApp.TransferService.isUnitType(cmd.RelayStation, UnitType.SHELF))
                         {
                             if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.RelayStation) != null)
                             {
@@ -1381,7 +1382,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                     }
 
-                    if (scApp.TransferService.isUnitType(cmd.HOSTDESTINATION, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(cmd.HOSTDESTINATION, UnitType.SHELF))
                     {
                         if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.HOSTDESTINATION) != null)
                         {

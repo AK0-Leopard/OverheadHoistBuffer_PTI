@@ -1,9 +1,10 @@
-﻿namespace com.mirle.ibg3k0.sc.BLL.Interface
+﻿using System.Collections.Generic;
+
+namespace com.mirle.ibg3k0.sc.BLL.Interface
 {
     public interface IManualPortAlarmBLL
     {
-        bool GetAlarmReport(string eqId, string alarmCode, out ALARM alarmReport);
-
-        bool GetAlarmReport(string eqId, string alarmCode, string commandId, out ALARM alarmReport);
+        bool SetAlarm(string portName, string alarmCode, ACMD_MCS commandOfPort, out ALARM alarmReport, out string reasonOfAlarmSetFalied);
+        bool ClearAllAlarm(string portName, ACMD_MCS commandOfPort, out List<ALARM> alarmReports, out string reasonOfAlarmClearFalied);
     }
 }

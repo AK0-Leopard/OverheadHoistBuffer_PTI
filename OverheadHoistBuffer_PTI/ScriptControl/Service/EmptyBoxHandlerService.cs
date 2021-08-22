@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NLog;
 using System.Security.Policy;
+using com.mirle.ibg3k0.sc.Data.Enum;
 
 namespace com.mirle.ibg3k0.sc.Service
 {

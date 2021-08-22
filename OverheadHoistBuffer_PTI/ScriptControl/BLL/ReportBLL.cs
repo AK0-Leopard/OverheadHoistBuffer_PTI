@@ -2019,5 +2019,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferCompleted(cmd, cassette, resultCode);
             return isSuccsess;
         }
+
+        public bool ReportCarrierInstall(CassetteData cassetteData)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompleted(cassetteData);
+            return isSuccsess;
+        }
     }
 }

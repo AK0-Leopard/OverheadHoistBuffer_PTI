@@ -2,5 +2,7 @@
 {
     public interface IManualPortShelfDefBLL
     {
+        void SetStored(string shelfId);
+        void SetEmpty(string shelfId);
     }
 }

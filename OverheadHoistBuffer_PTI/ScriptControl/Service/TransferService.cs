@@ -19,6 +19,7 @@ using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.SECS.ASE;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
@@ -112,19 +113,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public string LOC { get; set; }
         public E_CSTState type { get; set; }
     }
-    public enum UnitType
-    {
-        OHCV,
-        AGV,
-        NTB,
-        SHELF,
-        STK,
-        CRANE,
-        ZONE,
-        AGVZONE,
-        LINE,
-        EQ
-    }
+
     public class OHT_BOXID_MismatchData
     {
         public string BOXID { get; set; }
@@ -158,6 +147,7 @@ namespace com.mirle.ibg3k0.sc.Service
         private ZoneDefBLL zoneBLL = null;
         private AlarmBLL alarmBLL = null;
         private VehicleBLL vehicleBLL = null;
+        private PortStationBLL PortStationBLL = null;
         #endregion
 
         #region 時間儲存
@@ -237,6 +227,7 @@ namespace com.mirle.ibg3k0.sc.Service
             zoneBLL = _app.ZoneDefBLL;
             alarmBLL = _app.AlarmBLL;
             vehicleBLL = _app.VehicleBLL;
+            PortStationBLL = _app.PortStationBLL;
 
             line.addEventHandler(nameof(ConnectionInfoService), nameof(line.MCSCommandAutoAssign), PublishTransferInfo);
 
@@ -5250,12 +5241,12 @@ namespace com.mirle.ibg3k0.sc.Service
                     return true;
                 }
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
 
                 if (mode == E_PortType.In)
                 {
-                    portValueDefMapAction.Port_ChangeToOutput(false);
-                    portValueDefMapAction.Port_ChangeToInput(true);
+                    port_station.ChangeToOutMode(false);
+                    port_station.ChangeToInMode(true);
                     TransferServiceLogger.Info
                     (
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
@@ -5273,8 +5264,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else if (mode == E_PortType.Out)
                 {
-                    portValueDefMapAction.Port_ChangeToInput(false);
-                    portValueDefMapAction.Port_ChangeToOutput(true);
+                    port_station.ChangeToInMode(false);
+                    port_station.ChangeToOutMode(true);
                     TransferServiceLogger.Info
                     (
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
@@ -5320,16 +5311,14 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         foreach (var v in GetAGVPort(portID))
                         {
-                            PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(v.PortName).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                            portValueDefMapAction.Port_OHCV_Commanding(Commanding);
+                            var port_station = PortStationBLL.OperateCatch.getPortStation(v.PortName);
+                            port_station.SetCommanding(Commanding);
                         }
                     }
                     else
                     {
-                        PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                        portValueDefMapAction.Port_OHCV_Commanding(Commanding);
+                        var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                        port_station.SetCommanding(Commanding);
                     }
 
                 }
@@ -5439,9 +5428,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_RUN();
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.SetRun();
                 return true;
             }
             catch (Exception ex)
@@ -5461,9 +5449,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_STOP();
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.SetStop();
                 return true;
             }
             catch (Exception ex)
@@ -5483,11 +5470,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_PortAlarrmReset(true);
-                Thread.Sleep(500);
-                portValueDefMapAction.Port_PortAlarrmReset(false);
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.ResetAlarm();
                 return true;
             }
             catch (Exception ex)
@@ -6750,6 +6734,7 @@ namespace com.mirle.ibg3k0.sc.Service
                  || portINIData[portName].UnitType == UnitType.NTB.ToString()
                  || portINIData[portName].UnitType == UnitType.AGV.ToString()
                  || portINIData[portName].UnitType == UnitType.STK.ToString()
+                 || portINIData[portName].UnitType == UnitType.MGV.ToString()
                  || isAGVZone(portName)
                    )
                 {
@@ -8024,6 +8009,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                                     || data.UnitType == UnitType.STK.ToString()
                                                     || data.UnitType == UnitType.NTB.ToString()
                                                     || data.UnitType == UnitType.AGV.ToString()
+                                                    || data.UnitType == UnitType.MGV.ToString()
                                                     )
                                            ).ToList();
         }

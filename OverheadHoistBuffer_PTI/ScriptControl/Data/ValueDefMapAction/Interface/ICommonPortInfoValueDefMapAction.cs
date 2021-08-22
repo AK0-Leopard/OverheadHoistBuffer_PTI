@@ -11,8 +11,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
     public interface ICommonPortInfoValueDefMapAction : IValueDefMapAction
     {
         object GetPortState();
-        Task ChangeToInModeAsync();
-        Task ChangeToOutModeAsync();
+        Task ChangeToInModeAsync(bool isOn);
+        Task ChangeToOutModeAsync(bool isOn);
         Task ResetAlarmAsync();
         Task StopBuzzerAsync();
         Task SetRunAsync();

@@ -1,4 +1,5 @@
 ﻿using com.mirle.ibg3k0.sc;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Service;
 using System;
@@ -15,13 +16,13 @@ namespace com.mirle.ibg3k0.bc.winform
 {
     public partial class TestGetPortData : Form
     {
-        App.BCApplication BCApp;
-        ALINE line = null;
-        List<PortDef> portList = null;
-        PortPLCInfo portData = new PortPLCInfo();
+        private App.BCApplication BCApp;
+        private ALINE line = null;
+        private List<PortDef> portList = null;
+        private PortPLCInfo portData = new PortPLCInfo();
 
-        TransferService transferService = null;
-        DateTime openTime = new DateTime();
+        private TransferService transferService = null;
+        private DateTime openTime = new DateTime();
 
         public TestGetPortData()
         {
@@ -398,7 +399,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             foreach (var v in portList)
             {
-                if(transferService.isUnitType(v.PLCPortID, sc.Service.UnitType.AGV))
+                if (transferService.isUnitType(v.PLCPortID, UnitType.AGV))
                 {
                     transferService.OpenAGV_Station(v.PLCPortID, true, "UI_TestGetPortData");
                 }
@@ -409,7 +410,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             foreach (var v in portList)
             {
-                if (transferService.isUnitType(v.PLCPortID, sc.Service.UnitType.AGV))
+                if (transferService.isUnitType(v.PLCPortID, UnitType.AGV))
                 {
                     transferService.OpenAGV_Station(v.PLCPortID, false, "UI_TestGetPortData");
                 }
@@ -440,7 +441,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             foreach (var v in portList)
             {
-                if (transferService.isUnitType(v.PLCPortID, sc.Service.UnitType.AGV))
+                if (transferService.isUnitType(v.PLCPortID, UnitType.AGV))
                 {
                     transferService.OpenAGV_AutoPortType(v.PLCPortID, true);
                 }
@@ -451,7 +452,7 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             foreach (var v in portList)
             {
-                if (transferService.isUnitType(v.PLCPortID, sc.Service.UnitType.AGV))
+                if (transferService.isUnitType(v.PLCPortID, UnitType.AGV))
                 {
                     transferService.OpenAGV_AutoPortType(v.PLCPortID, false);
                 }

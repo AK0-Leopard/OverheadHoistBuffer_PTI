@@ -71,7 +71,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
 
-            manualPorts[portName].ChangeToInModeAsync();
+            manualPorts[portName].ChangeToInModeAsync(true);
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
         }
@@ -84,7 +84,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
 
-            manualPorts[portName].ChangeToOutModeAsync();
+            manualPorts[portName].ChangeToOutModeAsync(true);
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
         }
