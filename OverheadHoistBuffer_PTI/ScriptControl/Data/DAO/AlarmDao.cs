@@ -112,6 +112,25 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                         select b;
             return alarm.FirstOrDefault();
         }
+
+        public ALARM getAlarm(DBConnection_EF conn, string eq_id, string code)
+        {
+            var alarm = from b in conn.ALARM
+                        where b.ALAM_CODE.Trim() == code.Trim() &&
+                              b.EQPT_ID.Trim() == eq_id.Trim()
+                        select b;
+            return alarm.FirstOrDefault();
+        }
+        public ALARM getAlarm(DBConnection_EF conn, string eq_id, string cmd_id, string code)
+        {
+            var alarm = from b in conn.ALARM
+                        where b.ALAM_CODE.Trim() == code.Trim() &&
+                              b.EQPT_ID.Trim() == eq_id.Trim() &&
+                              b.CMD_ID.Trim() == cmd_id.Trim()
+                        select b;
+            return alarm.FirstOrDefault();
+        }
+
         public List<ALARM> loadAllAlarm(DBConnection_EF conn)
         {
             try

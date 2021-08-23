@@ -10,10 +10,11 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.App;
 using System.Transactions;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.BLL.Interface;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class ShelfDefBLL
+    public partial class ShelfDefBLL
     {
         SCApplication scApp = null;
         ShelfDefDao shelfdefDao = null;
@@ -338,6 +339,19 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             ShelfDef targetShelf = loadShelfDataByID(shelfID);
             return scApp.GuideBLL.GetDistance(targetShelf.ADR_ID, targetAddress);
+        }
+    }
+
+    public partial class ShelfDefBLL : IManualPortShelfDefBLL
+    {
+        public void SetEmpty(string shelfId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetStored(string shelfId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

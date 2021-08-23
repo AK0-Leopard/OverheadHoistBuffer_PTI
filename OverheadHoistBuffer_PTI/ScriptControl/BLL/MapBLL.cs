@@ -11,6 +11,7 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -27,19 +28,19 @@ namespace com.mirle.ibg3k0.sc.BLL
         private SCApplication scApp = null;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        RAILDao railDAO = null;
-        ADDRESSDao adrDAO = null;
-        PortDao portDAO = null;
-        POINTDao pointDAO = null;
-        PortIconDao portIconDAO = null;
-        GROUPRAILSDao groupRailDAO = null;
-        SectionDao sectionDAO = null;
-        SegmentDao segmentDAO = null;
-        VehicleDao vehicleDAO = null;
-        BlockZoneMasterDao blockZoneMasterDao = null;
-        BlockZoneDetailDao blockZoneDetaiDao = null;
-        BlockZoneQueueDao blockZoneQueueDao = null;
-        PortDefDao portDefDAO = null;
+        private RAILDao railDAO = null;
+        private ADDRESSDao adrDAO = null;
+        private PortDao portDAO = null;
+        private POINTDao pointDAO = null;
+        private PortIconDao portIconDAO = null;
+        private GROUPRAILSDao groupRailDAO = null;
+        private SectionDao sectionDAO = null;
+        private SegmentDao segmentDAO = null;
+        private VehicleDao vehicleDAO = null;
+        private BlockZoneMasterDao blockZoneMasterDao = null;
+        private BlockZoneDetailDao blockZoneDetaiDao = null;
+        private BlockZoneQueueDao blockZoneQueueDao = null;
+        private PortDefDao portDefDAO = null;
         ALINE line
         {
             get => scApp.getEQObjCacheManager().getLine();
@@ -176,7 +177,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion Address
         #region Section
-        Dictionary<string, List<ASECTION>> dicNextSection = new Dictionary<string, List<ASECTION>>();
+        private Dictionary<string, List<ASECTION>> dicNextSection = new Dictionary<string, List<ASECTION>>();
 
         public ASEGMENT getSegmentBySectionID(string id)
         {
@@ -762,7 +763,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 else
                 {
                     //A20.06.09.0
-                    if (scApp.TransferService.isUnitType(adr_port_id, Service.UnitType.CRANE))
+                    if (scApp.TransferService.isUnitType(adr_port_id, UnitType.CRANE))
                     {
                         adr = scApp.VehicleService.GetVehicleDataByVehicleID(adr_port_id).CUR_ADR_ID;
                         return true;

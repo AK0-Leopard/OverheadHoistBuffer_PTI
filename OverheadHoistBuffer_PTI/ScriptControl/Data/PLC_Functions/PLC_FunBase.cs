@@ -117,7 +117,7 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
                 string value = string.Empty;
                 UInt16[] ivalueArray = null;
                 object valueObj = info.GetValue(this);
-                if (valueObj is Enum)
+                if (valueObj is System.Enum)
                 {
                     value = ((int)valueObj).ToString();
                 }

@@ -54,6 +54,10 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 //scApp.CMDBLL.checkMCS_TransferCommand();
                 scApp.TransferService.TransferRun();
 
+                scApp.TransferService.ManualPortMoveBackProcess();
+
+                scApp.TransferService.PortTypeCommandProcess();
+
                 //A20.05.28.0 用於定時觸發退補整條線的空box
                 //Task.Run(() => scApp.TransferService.CheckTheEmptyBoxStockLevel());
                 //2020/06/01 Hsinyu Chang 這裡是獨立service，判斷以DB中的LowWaterMark/HighWaterMark為準

@@ -6,18 +6,21 @@ using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
+using com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface;
 using com.mirle.ibg3k0.sc.Service;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
-    public class PortValueDefMapAction : IValueDefMapAction
+    public class PortValueDefMapAction : ICommonPortInfoValueDefMapAction
     {
         public const string DEVICE_NAME_PORT = "PORT";
         public bool IsInService { get; private set; } = false;
@@ -884,7 +887,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 else
                 {
-                    //if (scApp.TransferService.isUnitType(function.EQ_ID, Service.UnitType.AGV))
+                    //if (scApp.TransferService.isUnitType(function.EQ_ID, UnitType.AGV))
                     //{
                     //    CassetteData datainfo = new CassetteData();
                     //    datainfo.CSTID = function.CassetteID.Trim();        //填CSTID
@@ -938,7 +941,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         scApp.TransferService.DeleteOHCVPortCst(function.EQ_ID, log);
                     }
 
-                    if (scApp.TransferService.isUnitType(function.EQ_ID, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(function.EQ_ID, UnitType.AGV))
                     {
                         scApp.TransferService.PLC_AGV_Station(function, log);
                     }
@@ -988,7 +991,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         scApp.TransferService.DeleteOHCVPortCst(function.EQ_ID, log);
                     }
 
-                    if (scApp.TransferService.isUnitType(function.EQ_ID, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(function.EQ_ID, UnitType.AGV))
                     {
                         scApp.TransferService.PLC_AGV_Station(function, log);
                     }
@@ -1036,7 +1039,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     //get box ID here
                     //box ID is stored in function.BoxID
-                    if (scApp.TransferService.isUnitType(function.EQ_ID, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(function.EQ_ID, UnitType.AGV))
                     {
                         scApp.TransferService.TransferServiceLogger.Info
                         (
@@ -1085,7 +1088,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 if (function.CstRemoveCheck)
                 {
-                    if (scApp.TransferService.isUnitType(function.EQ_ID, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(function.EQ_ID, UnitType.AGV))
                     {
                         CassetteData datainfo = new CassetteData();
                         datainfo.CSTID = function.CassetteID.Trim();        //填CSTID
@@ -1171,7 +1174,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     return;
                 }
 
-                if (function.OpAutoMode && function.IsInputMode && scApp.TransferService.isUnitType(port.PORT_ID, Service.UnitType.AGV))
+                if (function.OpAutoMode && function.IsInputMode && scApp.TransferService.isUnitType(port.PORT_ID, UnitType.AGV))
                 {
                     if (function.LoadPosition1)
                     {
@@ -1539,6 +1542,40 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         }
         #endregion
 
+        const int OHCV_ALARM_CODE_BCR_READ_FAIL_OVER_TIMES_ON_CV5 = 1570;
+        const int OHCV_ALARM_CODE_BCR_READ_FAIL_OVER_TIMES_ON_CV1 = 370;
+        public void Port_ErrorCodeChange(object sender, ValueChangedEventArgs e)
+        {
+            var function = scApp.getFunBaseObj<PortPLCInfo>(port.PORT_ID) as PortPLCInfo;
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+                if (function.ErrorCode == OHCV_ALARM_CODE_BCR_READ_FAIL_OVER_TIMES_ON_CV1 ||
+                   function.ErrorCode == OHCV_ALARM_CODE_BCR_READ_FAIL_OVER_TIMES_ON_CV5)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: VehicleService.DEVICE_NAME_OHx,
+                       Data: $"Box BCR read fail over times.");
+
+                    //2021/08/21 Hsinyu Chang TODO NEED FIX
+                    //scApp.PortStationBLL.web.BOXBCRReadFailOverTimes();
+                }
+
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<PortPLCInfo>(function);
+            }
+        }
+
         public void Port_WriteBoxCstID(CassetteData cassetteData)
         {
             var function = scApp.getFunBaseObj<PortPLCControl_CSTID_BOXID>(port.PORT_ID) as PortPLCControl_CSTID_BOXID;
@@ -1889,5 +1926,205 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
         #endregion
+
+        public object GetPortState()
+        {
+            PortPLCInfo portData = scApp.getFunBaseObj<PortPLCInfo>(port.PORT_ID) as PortPLCInfo;
+            portData.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+            return portData;
+        }
+
+        public Task ChangeToInModeAsync(bool isInput)
+        {
+            //var function = scApp.getFunBaseObj<PortPLCControl>(port.PORT_ID) as PortPLCControl;
+            var function = scApp.getFunBaseObj<PortPLCControl_PortInOutModeChange>(port.PORT_ID) as PortPLCControl_PortInOutModeChange;
+            try
+            {
+                //1.建立各個Function物件
+                function.PortToInputMode = isInput;
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                //scApp.putFunBaseObj<PortPLCControl>(function);
+                scApp.putFunBaseObj<PortPLCControl_PortInOutModeChange>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task ChangeToOutModeAsync(bool isOutput)
+        {
+            //var function = scApp.getFunBaseObj<PortPLCControl>(port.PORT_ID) as PortPLCControl;
+            var function = scApp.getFunBaseObj<PortPLCControl_PortInOutModeChange>(port.PORT_ID) as PortPLCControl_PortInOutModeChange;
+            try
+            {
+                //1.建立各個Function物件
+                function.PortToOutputMode = isOutput;
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                //scApp.putFunBaseObj<PortPLCControl>(function);
+                scApp.putFunBaseObj<PortPLCControl_PortInOutModeChange>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task ResetAlarmAsync()
+        {
+            var function = scApp.getFunBaseObj<PortPLCControl_AlarmReset>(port.PORT_ID) as PortPLCControl_AlarmReset;
+            try
+            {
+                //1.建立各個Function物件
+                function.PortReset = true;
+
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+                SpinWait.SpinUntil(() => false, 500);
+                //1.建立各個Function物件
+                function.PortReset = false;
+
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<PortPLCControl_AlarmReset>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task StopBuzzerAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetRunAsync()
+        {
+            var function = scApp.getFunBaseObj<PortPLCControl_PortRunStop>(port.PORT_ID) as PortPLCControl_PortRunStop;
+            try
+            {
+                //1.建立各個Function物件
+                function.PortManual = false;
+                function.PortAuto = true;
+
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<PortPLCControl_PortRunStop>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task SetStopAsync()
+        {
+            var function = scApp.getFunBaseObj<PortPLCControl_PortRunStop>(port.PORT_ID) as PortPLCControl_PortRunStop;
+            try
+            {
+                //1.建立各個Function物件
+                function.PortAuto = false;
+                function.PortManual = true;
+
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<PortPLCControl_PortRunStop>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task SetCommandingAsync(bool setOn)
+        {
+            //var function = scApp.getFunBaseObj<PortPLCControl>(port.PORT_ID) as PortPLCControl;
+            var function = scApp.getFunBaseObj<PortPLCControl_VehicleCommanding1>(port.PORT_ID) as PortPLCControl_VehicleCommanding1;
+            try
+            {
+                //1.建立各個Function物件
+                function.VehicleCommanding1 = setOn;
+                function.Write(bcfApp, port.EqptObjectCate, port.PORT_ID);
+                function.Timestamp = DateTime.Now;
+
+                //2.write log
+                //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+
+                //3.logical (include db save)
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                //scApp.putFunBaseObj<PortPLCControl>(function);
+                scApp.putFunBaseObj<PortPLCControl_VehicleCommanding1>(function);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task SetControllerErrorIndexAsync(int newIndex)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

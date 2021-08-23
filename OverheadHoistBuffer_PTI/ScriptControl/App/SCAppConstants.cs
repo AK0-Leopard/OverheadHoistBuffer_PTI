@@ -1100,7 +1100,15 @@ namespace com.mirle.ibg3k0.sc.App
             MTL = 4,
             MTS = 5,
             OHCV = 6,
-            HID = 7
+            HID = 7,
+            MGV = 8,
+            AGV = 9,
+            NTB = 10,
+            CRANE = 11,
+            ZONE = 12,
+            AGVZONE = 13,
+            LINE = 14,
+            MANUALPORT = 15
         }
         #endregion Eqpt Type
 

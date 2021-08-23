@@ -34,6 +34,7 @@ using System.Transactions;
 using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using System.Reflection;
 using System.Threading.Tasks;
+using com.mirle.ibg3k0.sc.Data.Enum;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
@@ -435,6 +436,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         {
                             s2f50.HCACK = SECSConst.HCACK_Not_Able_Execute;
                         }
+
+                        var moveBackCommand = (source == dest) && (string.IsNullOrWhiteSpace(source) == false) && (string.IsNullOrWhiteSpace(dest) == false);
+                        if (moveBackCommand)
+                        {
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49   Source{source} == Dest{dest} is moveBack Command");
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50   HCACK:" + s2f50.HCACK);
+
+                            scApp.TransferService.SetMoveBackManualPortCommand(source);
+                            return;
+                        }
+
                         //準備將命令存入資料庫中
                         using (TransactionScope tx = SCUtility.getTransactionScope())
                         {
@@ -810,7 +822,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 if (canChangCmd)
                 {
-                    if (scApp.TransferService.isUnitType(change_port_id, Service.UnitType.AGV))
+                    if (scApp.TransferService.isUnitType(change_port_id, UnitType.AGV))
                     {
                         scApp.TransferService.ReportNowPortType(change_port_id);
                     }
@@ -2065,7 +2077,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         //    }
         //    return viditem_360;
         //}
-        VehicleOperationState Convert2VehicleOperationState(AVEHICLE vh)
+        private VehicleOperationState Convert2VehicleOperationState(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect)
             {
@@ -2089,7 +2101,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        VehicleCommunictionState Convert2VehicleCommunication(AVEHICLE vh)
+        private VehicleCommunictionState Convert2VehicleCommunication(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect)
             {
@@ -2107,7 +2119,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
             }
         }
-        VehicleControlMode Convert2VehicleControlMode(AVEHICLE vh)
+        private VehicleControlMode Convert2VehicleControlMode(AVEHICLE vh)
         {
             if (!vh.isTcpIpConnect) return VehicleControlMode.Manual;
             if (vh.MODE_STATUS >= ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote)
@@ -2119,11 +2131,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return VehicleControlMode.Manual;
             }
         }
-        VehicleJamState Convert2VehicleJamState(AVEHICLE vh)
+        private VehicleJamState Convert2VehicleJamState(AVEHICLE vh)
         {
             return vh.IsBlocking ? VehicleJamState.JamExists : VehicleJamState.NoJan;
         }
-        enum VehicleOperationState
+        private enum VehicleOperationState
         {
             Disconnected,
             Operating,
@@ -2131,18 +2143,18 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             Error,
             Detached
         }
-        enum VehicleCommunictionState
+        private enum VehicleCommunictionState
         {
             Disconnected,
             Communicating,
             NoCommunicating
         }
-        enum VehicleControlMode
+        private enum VehicleControlMode
         {
             Manual,
             Auto
         }
-        enum VehicleJamState
+        private enum VehicleJamState
         {
             NoJan,
             JamExists,
@@ -5296,6 +5308,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     .getMapActionByIdentityKey(typeof(PLCSystemInfoMapAction).Name) as PLCSystemInfoMapAction;
                 systemTimeMapAction.PLC_SetSystemTime();
                 systemTimeMapAction.PLC_FinishTimeCalibration();
+
+                //與 Manual Port 同步時間
+                //MGVDefaultValueDefMapAction systemTimeMapAction = scApp.getEQObjCacheManager().getPortStationByPortID("MASTER_PLC")
+                //   .getMapActionByIdentityKey(typeof(MGVDefaultValueDefMapAction).Name) as MGVDefaultValueDefMapAction;
             }
             catch (Exception ex)
             {
@@ -5304,7 +5320,49 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        public override bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            try
+            {
+                //if (!isSend()) return true;
+                VIDCollection Vids = new VIDCollection();
+                //var aa = scApp.CassetteDataBLL.loadCassetteData();
+                string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
+                if (cassette.Carrier_LOC.Contains("CR"))
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = cassette.Carrier_LOC;
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = cassette.Carrier_LOC;
+                }
+                else
+                {
+                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = "";
+                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = "";
+                }
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
+                Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
+                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+                Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
 
+                scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassette.BOXID);
+
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Removed, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ASEMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+                return false;
+            }
+        }
 
         //public override bool S6F11SendCarrierInstalled(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null)
         //{

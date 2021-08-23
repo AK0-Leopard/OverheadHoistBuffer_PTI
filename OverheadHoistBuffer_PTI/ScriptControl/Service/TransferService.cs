@@ -19,6 +19,7 @@ using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.SECS.ASE;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
@@ -29,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,19 +114,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public string LOC { get; set; }
         public E_CSTState type { get; set; }
     }
-    public enum UnitType
-    {
-        OHCV,
-        AGV,
-        NTB,
-        SHELF,
-        STK,
-        CRANE,
-        ZONE,
-        AGVZONE,
-        LINE,
-        EQ
-    }
+
     public class OHT_BOXID_MismatchData
     {
         public string BOXID { get; set; }
@@ -158,6 +148,7 @@ namespace com.mirle.ibg3k0.sc.Service
         private ZoneDefBLL zoneBLL = null;
         private AlarmBLL alarmBLL = null;
         private VehicleBLL vehicleBLL = null;
+        private PortStationBLL PortStationBLL = null;
         #endregion
 
         #region 時間儲存
@@ -237,6 +228,7 @@ namespace com.mirle.ibg3k0.sc.Service
             zoneBLL = _app.ZoneDefBLL;
             alarmBLL = _app.AlarmBLL;
             vehicleBLL = _app.VehicleBLL;
+            PortStationBLL = _app.PortStationBLL;
 
             line.addEventHandler(nameof(ConnectionInfoService), nameof(line.MCSCommandAutoAssign), PublishTransferInfo);
 
@@ -531,6 +523,38 @@ namespace com.mirle.ibg3k0.sc.Service
                 TransferServiceLogger.Error(ex, "UpDBPortTypeData");
             }
         }
+
+        public async void MoveBackManualPortFoup(string apiSource, string portName)
+        {
+            try
+            {
+                TransferServiceLogger.Info
+                (
+                    DateTime.Now.ToString("HH:mm:ss.fff ")
+                    + "OHB >> PLC|MoveBackManualPortFoup"
+                    + "    誰呼叫:" + apiSource
+                    + "    portID:" + portName
+                );
+
+                var port = PortStationBLL.OperateCatch.getPortStation(portName);
+                var isManualPort = port is MANUAL_PORTSTATION;
+                if (isManualPort == false)
+                {
+                    TransferServiceLogger.Info($"{dateTimeNow} OHB >> PLC|MoveBackManualPortFoup  Failed !  Port[{portName}] Not Manual Port.");
+                    return;
+                }
+
+                var manual_port = port as MANUAL_PORTSTATION;
+                await manual_port.MoveBackAsync();
+            }
+            catch (Exception ex)
+            {
+                TransferServiceLogger.Error(ex, MethodBase.GetCurrentMethod().Name);
+            }
+        }
+
+        private string dateTimeNow { get => DateTime.Now.ToString("HH:mm:ss.fff "); }
+
         public void iniDeletePortCstData(string _portName, int stage)
         {
             //TransferServiceLogger.Info
@@ -618,9 +642,89 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion
 
         #region 流程
+        private long syncPortTypeChangePoint = 0;
+        public void PortTypeCommandProcess()
+        {
+            if (Interlocked.Exchange(ref syncPortTypeChangePoint, 1) == 0)
+            {
+                try
+                {
+                    List<ACMD_MCS> port_type_change_cmds = cmdBLL.LoadCmdData_PortTypeChange();
+                    foreach (var v in port_type_change_cmds)
+                    {
+                        #region PLC控制命令
+
+                        PortPLCInfo portInfo = GetPLC_PortData(v.HOSTSOURCE);
+
+                        if (portInfo.OpAutoMode == false || portInfo.IsModeChangable == false)   // || (int)portData.AGVState == SECSConst.PortState_OutService
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            E_PortType portType = (E_PortType)Enum.Parse(typeof(E_PortType), v.HOSTDESTINATION);
+
+                            if ((portInfo.IsInputMode && portType == E_PortType.In)
+                             || (portInfo.IsOutputMode && portType == E_PortType.Out)
+                               )
+                            {
+                                ReportPortType(portInfo.EQ_ID, portType, "TransferRun");
+
+                                cmdBLL.DeleteCmd(v.CMD_ID);
+                            }
+                            else
+                            {
+                                PortTypeChange(v.HOSTSOURCE, portType, "TransferRun");
+                            }
+                        }
+
+                        #endregion PLC控制命令
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TransferServiceLogger.Error(ex, "PortTypeCommandProcess");
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref syncPortTypeChangePoint, 0);
+                }
+            }
+        }
+
+        private long syncManualPortMoveBackPoint = 0;
+        public async void ManualPortMoveBackProcess()
+        {
+            if (Interlocked.Exchange(ref syncManualPortMoveBackPoint, 1) == 0)
+            {
+                try
+                {
+                    List<ACMD_MCS> manual_port_move_back_cmds = cmdBLL.LoadCmdData_ManualPortMoveBack();
+                    foreach (var v in manual_port_move_back_cmds)
+                    {
+                        var portName = v.HOSTSOURCE;
+                        var port = scApp.PortStationBLL.OperateCatch.getPortStation(portName);
+                        if (port is MANUAL_PORTSTATION)
+                        {
+                            var manualPort = port as MANUAL_PORTSTATION;
+                            await manualPort.MoveBackAsync();
+                        }
+                        cmdBLL.DeleteCmd(v.CMD_ID);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TransferServiceLogger.Error(ex, "ManualPortMoveBackProcess");
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref syncManualPortMoveBackPoint, 0);
+                }
+            }
+        }
 
         private long syncTranCmdPoint = 0;
-        public void TransferRun()
+        public async void TransferRun()
         {
             if (Interlocked.Exchange(ref syncTranCmdPoint, 1) == 0)
             {
@@ -716,7 +820,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
 
-                            var portTypeChangeCmdData = cmdData.Where(data => data.CMDTYPE == CmdType.PortTypeChange.ToString()).ToList();
+                            //var portTypeChangeCmdData = cmdData.Where(data => data.CMDTYPE == CmdType.PortTypeChange.ToString()).ToList();
+                            //var movebackManualPortCmdDatas = cmdData.Where(data => data.CMDTYPE == CmdType.MoveBack.ToString()).ToList();
 
                             #region 檢查救資料用AGV Port 狀態是否正確
                             if (autoRemarkBOXCSTData == true)
@@ -785,34 +890,47 @@ namespace com.mirle.ibg3k0.sc.Service
                                 #endregion
                             }
 
-                            foreach (var v in portTypeChangeCmdData)
-                            {
-                                #region PLC控制命令
-                                PortPLCInfo portInfo = GetPLC_PortData(v.HOSTSOURCE);
+                            //foreach (var v in portTypeChangeCmdData)
+                            //{
+                            //    #region PLC控制命令
+                            //    PortPLCInfo portInfo = GetPLC_PortData(v.HOSTSOURCE);
 
-                                if (portInfo.OpAutoMode == false || portInfo.IsModeChangable == false)   // || (int)portData.AGVState == SECSConst.PortState_OutService
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    E_PortType portType = (E_PortType)Enum.Parse(typeof(E_PortType), v.HOSTDESTINATION);
+                            //    if (portInfo.OpAutoMode == false || portInfo.IsModeChangable == false)   // || (int)portData.AGVState == SECSConst.PortState_OutService
+                            //    {
+                            //        continue;
+                            //    }
+                            //    else
+                            //    {
+                            //        E_PortType portType = (E_PortType)Enum.Parse(typeof(E_PortType), v.HOSTDESTINATION);
 
-                                    if ((portInfo.IsInputMode && portType == E_PortType.In)
-                                     || (portInfo.IsOutputMode && portType == E_PortType.Out)
-                                       )
-                                    {
-                                        ReportPortType(portInfo.EQ_ID, portType, "TransferRun");
+                            //        if ((portInfo.IsInputMode && portType == E_PortType.In)
+                            //         || (portInfo.IsOutputMode && portType == E_PortType.Out)
+                            //           )
+                            //        {
+                            //            ReportPortType(portInfo.EQ_ID, portType, "TransferRun");
 
-                                        cmdBLL.DeleteCmd(v.CMD_ID);
-                                    }
-                                    else
-                                    {
-                                        PortTypeChange(v.HOSTSOURCE, portType, "TransferRun");
-                                    }
-                                }
-                                #endregion
-                            }
+                            //            cmdBLL.DeleteCmd(v.CMD_ID);
+                            //        }
+                            //        else
+                            //        {
+                            //            PortTypeChange(v.HOSTSOURCE, portType, "TransferRun");
+                            //        }
+                            //    }
+                            //    #endregion
+                            //}
+
+                            //foreach (var v in movebackManualPortCmdDatas)
+                            //{
+                            //    var portName = v.HOSTSOURCE;
+                            //    var port = scApp.PortStationBLL.OperateCatch.getPortStation(portName);
+                            //    if (port is MANUAL_PORTSTATION)
+                            //    {
+                            //        var manualPort = port as MANUAL_PORTSTATION;
+                            //        await manualPort.MoveBackAsync();
+                            //    }
+
+                            //    cmdBLL.DeleteCmd(v.CMD_ID);
+                            //}
 
                             foreach (var v in transferCmdData)
                             {
@@ -5058,12 +5176,12 @@ namespace com.mirle.ibg3k0.sc.Service
                     return true;
                 }
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
 
                 if (mode == E_PortType.In)
                 {
-                    portValueDefMapAction.Port_ChangeToOutput(false);
-                    portValueDefMapAction.Port_ChangeToInput(true);
+                    port_station.ChangeToOutMode(false);
+                    port_station.ChangeToInMode(true);
                     TransferServiceLogger.Info
                     (
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
@@ -5081,8 +5199,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else if (mode == E_PortType.Out)
                 {
-                    portValueDefMapAction.Port_ChangeToInput(false);
-                    portValueDefMapAction.Port_ChangeToOutput(true);
+                    port_station.ChangeToInMode(false);
+                    port_station.ChangeToOutMode(true);
                     TransferServiceLogger.Info
                     (
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
@@ -5128,16 +5246,14 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         foreach (var v in GetAGVPort(portID))
                         {
-                            PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(v.PortName).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                            portValueDefMapAction.Port_OHCV_Commanding(Commanding);
+                            var port_station = PortStationBLL.OperateCatch.getPortStation(v.PortName);
+                            port_station.SetCommanding(Commanding);
                         }
                     }
                     else
                     {
-                        PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                        portValueDefMapAction.Port_OHCV_Commanding(Commanding);
+                        var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                        port_station.SetCommanding(Commanding);
                     }
 
                 }
@@ -5155,9 +5271,8 @@ namespace com.mirle.ibg3k0.sc.Service
             try
             {
                 portID = portID.Trim();
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                return portValueDefMapAction.GetPortValue();
+                APORTSTATION port = scApp.getEQObjCacheManager().getPortStation(portID);
+                return port.getPortPLCInfo();
             }
             catch (Exception ex)
             {
@@ -5248,9 +5363,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_RUN();
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.SetRun();
                 return true;
             }
             catch (Exception ex)
@@ -5270,9 +5384,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_STOP();
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.SetStop();
                 return true;
             }
             catch (Exception ex)
@@ -5292,11 +5405,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     + "    portID:" + portID
                 );
 
-                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(portID).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-
-                portValueDefMapAction.Port_PortAlarrmReset(true);
-                Thread.Sleep(500);
-                portValueDefMapAction.Port_PortAlarrmReset(false);
+                var port_station = PortStationBLL.OperateCatch.getPortStation(portID);
+                port_station.ResetAlarm();
                 return true;
             }
             catch (Exception ex)
@@ -6309,6 +6419,53 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        public bool SetMoveBackManualPortCommand(string portName)
+        {
+            try
+            {
+                portName = portName.Trim();
+
+                TransferServiceLogger.Info($"{dateTimeNow} OHB >> OHB|{MethodBase.GetCurrentMethod().Name} 新增 MoveBack 命令 PortID:{portName}");
+
+                var datainfo = new ACMD_MCS();
+
+                datainfo.CMD_ID = $"MoveBack-{portName}";
+                datainfo.BOX_ID = "";
+
+                datainfo.HOSTSOURCE = portName;
+                datainfo.HOSTDESTINATION = "";
+
+                datainfo.CMDTYPE = CmdType.MoveBack.ToString();
+
+                if (cmdBLL.getNowCMD_MCSByID(datainfo.CMD_ID) != null)
+                    return false;
+
+                datainfo.LOT_ID = "";
+                datainfo.CMD_INSER_TIME = DateTime.Now;
+                datainfo.TRANSFERSTATE = E_TRAN_STATUS.Queue;
+                datainfo.COMMANDSTATE = ACMD_MCS.COMMAND_iIdle;
+                datainfo.PRIORITY = 50;
+                datainfo.CHECKCODE = "";
+                datainfo.PAUSEFLAG = "";
+                datainfo.TIME_PRIORITY = 0;
+                datainfo.PORT_PRIORITY = 0;
+                datainfo.REPLACE = 1;
+                datainfo.PRIORITY_SUM = datainfo.PRIORITY + datainfo.TIME_PRIORITY + datainfo.PORT_PRIORITY;
+                datainfo.CRANE = "";
+
+                if (cmdBLL.getCMD_MCSByID(datainfo.CMD_ID) != null)
+                    return false;
+
+                cmdBLL.creatCommand_MCS(datainfo);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TransferServiceLogger.Error(ex, MethodBase.GetCurrentMethod().Name);
+                return false;
+            }
+        }
+
         public string OpenAGV_Station(string portName, bool open, string sourceCmd)
         {
             if (portINIData[portName].openAGV_Station != open)
@@ -6446,6 +6603,7 @@ namespace com.mirle.ibg3k0.sc.Service
                  || portINIData[portName].UnitType == UnitType.NTB.ToString()
                  || portINIData[portName].UnitType == UnitType.AGV.ToString()
                  || portINIData[portName].UnitType == UnitType.STK.ToString()
+                 || portINIData[portName].UnitType == UnitType.MGV.ToString()
                  || isAGVZone(portName)
                    )
                 {
@@ -7720,6 +7878,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                                     || data.UnitType == UnitType.STK.ToString()
                                                     || data.UnitType == UnitType.NTB.ToString()
                                                     || data.UnitType == UnitType.AGV.ToString()
+                                                    || data.UnitType == UnitType.MGV.ToString()
                                                     )
                                            ).ToList();
         }

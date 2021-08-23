@@ -10,6 +10,8 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.BLL.Interface;
+using com.mirle.ibg3k0.sc.Data.Enum;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -21,7 +23,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         TrnDT,
     }
 
-    public class CassetteDataBLL
+    public partial class CassetteDataBLL
     {
         SCApplication scApp = null;
         CassetteDataDao cassettedataDao = null;
@@ -68,7 +70,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     + "OHB >> DB|卡匣新增成功：" + scApp.TransferService.GetCstLog(datainfo)
                 );
 
-                if (scApp.TransferService.isUnitType(datainfo.Carrier_LOC, Service.UnitType.AGV))
+                if (scApp.TransferService.isUnitType(datainfo.Carrier_LOC, UnitType.AGV))
                 {
                     scApp.TransferService.Redis_AddCstBox(datainfo);
                 }
@@ -187,12 +189,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                     CassetteData cstData = cassettedataDao.LoadCassetteDataByBoxID(con, boxid);
                     string time = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
 
-                    if (scApp.TransferService.isUnitType(cstData.Carrier_LOC, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(cstData.Carrier_LOC, UnitType.SHELF))
                     {
                         scApp.ShelfDefBLL.updateStatus(cstData.Carrier_LOC, ShelfDef.E_ShelfState.EmptyShelf);
                     }
 
-                    if (scApp.TransferService.isUnitType(loc, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(loc, UnitType.SHELF))
                     {
                         scApp.ShelfDefBLL.updateStatus(loc, ShelfDef.E_ShelfState.Stored);
                         cstData.StoreDT = time;
@@ -752,6 +754,82 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     logger.Error(ex, "Exception");
                 }
+            }
+        }
+    }
+
+    public partial class CassetteDataBLL : IManualPortCassetteDataBLL
+    {
+        public void Delete(string carrierId)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    var cassette = cassettedataDao.LoadCassetteDataByBoxID(con, carrierId);
+                    cassettedataDao.DeleteCassetteData(con, cassette);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
+
+        public bool GetCarrierByBoxId(string carrierId, out CassetteData cassetteData)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cassetteData = cassettedataDao.LoadCassetteDataByBoxID(con, carrierId);
+                }
+                return cassetteData != null;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                cassetteData = null;
+                return false;
+            }
+        }
+
+        public bool GetCarrierByPortName(string portName, int stage, out CassetteData cassetteData)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cassetteData = cassettedataDao.LoadCassetteDataByLoc(con, portName, stage);
+                }
+                return cassetteData != null;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                cassetteData = null;
+                return false;
+            }
+        }
+
+        public void Install(string carrierLocation, string carrierId)
+        {
+            CassetteData datainfo = new CassetteData();
+
+            datainfo.StockerID = "1";
+            datainfo.CSTID = "";
+            datainfo.BOXID = SCUtility.Trim(carrierId, true);
+            datainfo.Carrier_LOC = SCUtility.Trim(carrierLocation, true);
+            datainfo.LotID = "";
+            datainfo.CSTState = E_CSTState.Installed;
+            datainfo.CSTInDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+            datainfo.TrnDT = DateTime.Now.ToString("yy/MM/dd HH:mm:ss");
+            datainfo.Stage = 1;
+
+
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cassettedataDao.insertCassetteData(con, datainfo);
             }
         }
     }

@@ -11,10 +11,12 @@
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.BLL.Interface;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
+using com.mirle.ibg3k0.sc.Data.Enum;
 using com.mirle.ibg3k0.sc.Data.SECS;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
@@ -33,7 +35,7 @@ using static com.mirle.ibg3k0.sc.ShelfDef; //A20.05.15
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class CMDBLL
+    public partial class CMDBLL
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         CMD_OHTCDao cmd_ohtcDAO = null;
@@ -113,7 +115,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool isZone(string zoneid)   //是不是zone
         {
             //return scApp.ZoneDefBLL.IsExist(zoneid);
-            return scApp.TransferService.isUnitType(zoneid, Service.UnitType.ZONE);
+            return scApp.TransferService.isUnitType(zoneid, UnitType.ZONE);
         }
 
         #region CMD_MCS
@@ -129,6 +131,23 @@ namespace com.mirle.ibg3k0.sc.BLL
                     .OrderByDescending(data => data.PRIORITY_SUM)
                     .ThenBy(data => data.CMD_INSER_TIME)
                     .ToList();
+            }
+        }
+
+        public List<ACMD_MCS> LoadCmdData_PortTypeChange()
+        {
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.LoadCmdData_PortTypeChange(con);
+            }
+        }
+
+        public List<ACMD_MCS> LoadCmdData_ManualPortMoveBack()
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                return cmd_mcsDao.LoadCmdData_ManualPortMoveBack(con);
             }
         }
 
@@ -1343,7 +1362,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (status == E_TRAN_STATUS.TransferCompleted)
                 {
-                    if (scApp.TransferService.isUnitType(cmd.HOSTSOURCE, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(cmd.HOSTSOURCE, UnitType.SHELF))
                     {
                         if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE) != null)
                         {
@@ -1362,7 +1381,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                     if (string.IsNullOrWhiteSpace(cmd.RelayStation) == false)
                     {
-                        if (scApp.TransferService.isUnitType(cmd.RelayStation, Service.UnitType.SHELF))
+                        if (scApp.TransferService.isUnitType(cmd.RelayStation, UnitType.SHELF))
                         {
                             if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.RelayStation) != null)
                             {
@@ -1380,7 +1399,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                     }
 
-                    if (scApp.TransferService.isUnitType(cmd.HOSTDESTINATION, Service.UnitType.SHELF))
+                    if (scApp.TransferService.isUnitType(cmd.HOSTDESTINATION, UnitType.SHELF))
                     {
                         if (scApp.CassetteDataBLL.loadCassetteDataByLoc(cmd.HOSTDESTINATION) != null)
                         {
@@ -5676,5 +5695,42 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion Return Code Map
 
+    }
+
+    public partial class CMDBLL : IManualPortCMDBLL
+    {
+        public void Delete(string carrierId)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    ACMD_MCS cmd = cmd_mcsDao.getByBoxID(con, carrierId);
+                    cmd_mcsDao.DeleteCmdData(con, cmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
+
+        public bool GetCommandByBoxId(string carrierId, out ACMD_MCS command)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    command = cmd_mcsDao.getByBoxID(con, carrierId);
+                }
+                return command != null;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                command = null;
+                return false;
+            }
+        }
     }
 }

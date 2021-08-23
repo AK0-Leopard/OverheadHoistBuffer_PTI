@@ -317,6 +317,22 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
+        public CassetteData LoadCassetteDataByLoc(DBConnection_EF conn, string portName, int stage)
+        {
+            try
+            {
+                var result = conn.CassetteData.Where(x => x.Carrier_LOC.Trim() == portName.Trim() &&
+                                                          x.Stage == stage).FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
+
         public List<CassetteData> LoadCassetteDataByOHCV(DBConnection_EF conn, string portName)
         {
             try

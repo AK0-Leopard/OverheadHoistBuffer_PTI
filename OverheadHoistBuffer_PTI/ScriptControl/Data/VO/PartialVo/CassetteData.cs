@@ -24,5 +24,7 @@ namespace com.mirle.ibg3k0.sc
         {
             return (CassetteData)this.MemberwiseClone();
         }
+
+        public bool AtShelf { get => Int32.TryParse(Carrier_LOC, out var _) ? true : false; }
     }
 }
