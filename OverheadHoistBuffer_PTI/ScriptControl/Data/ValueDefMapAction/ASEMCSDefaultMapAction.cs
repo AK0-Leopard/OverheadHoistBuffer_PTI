@@ -3748,7 +3748,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 string crane_id = "";
-                if (scApp.TransferService.isUnitType(cassette.Carrier_LOC, Service.UnitType.CRANE))
+                if (scApp.TransferService.isUnitType(cassette.Carrier_LOC, UnitType.CRANE))
                 {
                     crane_id = SCUtility.Trim(cassette.Carrier_LOC, true);
                 }
@@ -5320,49 +5320,49 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        public override bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                //if (!isSend()) return true;
-                VIDCollection Vids = new VIDCollection();
-                //var aa = scApp.CassetteDataBLL.loadCassetteData();
-                string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
-                if (cassette.Carrier_LOC.Contains("CR"))
-                {
-                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = cassette.Carrier_LOC;
-                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = cassette.Carrier_LOC;
-                }
-                else
-                {
-                    Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = "";
-                    Vids.VIDITEM_70_SV_CraneID.Crane_ID = "";
-                }
-                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
-                Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
-                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
-                Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
+        //public override bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
+        //{
+        //    try
+        //    {
+        //        //if (!isSend()) return true;
+        //        VIDCollection Vids = new VIDCollection();
+        //        //var aa = scApp.CassetteDataBLL.loadCassetteData();
+        //        string zonename = scApp.CassetteDataBLL.GetZoneName(cassette.Carrier_LOC);
+        //        if (cassette.Carrier_LOC.Contains("CR"))
+        //        {
+        //            Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = cassette.Carrier_LOC;
+        //            Vids.VIDITEM_70_SV_CraneID.Crane_ID = cassette.Carrier_LOC;
+        //        }
+        //        else
+        //        {
+        //            Vids.VIDITEM_70_DVVAL_CraneID.Crane_ID = "";
+        //            Vids.VIDITEM_70_SV_CraneID.Crane_ID = "";
+        //        }
+        //        Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
+        //        Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
+        //        Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
+        //        Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cassette.BOXID;
 
-                scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassette.BOXID);
+        //        scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassette.BOXID);
 
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Removed, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ASEMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-                return false;
-            }
-        }
+        //        AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Removed, Vids);
+        //        if (reportQueues == null)
+        //        {
+        //            S6F11SendMessage(mcs_queue);
+        //        }
+        //        else
+        //        {
+        //            reportQueues.Add(mcs_queue);
+        //        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ASEMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+        //           Data: ex);
+        //        return false;
+        //    }
+        //}
 
         //public override bool S6F11SendCarrierInstalled(string vhID, string carrierID, string transferPort, List<AMCSREPORTQUEUE> reportQueues = null)
         //{

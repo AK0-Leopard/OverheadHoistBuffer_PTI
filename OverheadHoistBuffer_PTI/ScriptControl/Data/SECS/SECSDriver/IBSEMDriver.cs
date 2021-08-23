@@ -117,7 +117,6 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         #endregion TSC State Transition Event
         public abstract bool S6F11SendAlarmCleared(ACMD_MCS CMD_MCS, ALARM ALARM, string unitid, string unitstate);
         public abstract bool S6F11SendAlarmSet(ACMD_MCS CMD_MCS, ALARM ALARM, string unitid, string unitstate, string RecoveryOption);
-        public abstract bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null);
         #endregion Send
 
     }
@@ -538,11 +537,6 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         }
 
         public override bool S6F11SendCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            return true;
-        }
-
-        public override bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }
