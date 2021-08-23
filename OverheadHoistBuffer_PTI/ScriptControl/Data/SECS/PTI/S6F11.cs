@@ -1531,7 +1531,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.PTI
                 [Serializable]
                 public class VIDITEM_370_DVVAL : SXFY
                 {
-                    [SecsElement(Index = 1, ListSpreadOut = true)]
+                    [SecsElement(Index = 1)]
                     public VIDITEM_362_DVVAL MaintState;
                     public VIDITEM_370_DVVAL()
                     {

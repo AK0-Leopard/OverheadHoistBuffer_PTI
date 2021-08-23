@@ -1386,21 +1386,6 @@ namespace com.mirle.ibg3k0.sc.Service
             return is_success;
         }
 
-        public bool doRemoveCommandByMCSCmdID(bool has_carrier, string carrier_id, string box_id)
-        {
-            bool is_success = true;
-            if (has_carrier)
-            {
-                is_success &= scApp.CassetteDataBLL.DeleteCSTDataByID(carrier_id, box_id);
-            }
-            else
-            {
-                is_success = false;
-            }
-            scApp.ReportBLL.ReportCarrierRemovedCompleted(carrier_id, box_id);
-            return is_success;
-        }
-
         public bool doChgEnableShelfCommand(string shelf_id, bool enable)
         {
             bool is_success = true;
@@ -1909,6 +1894,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     PositionReport_LoadingUnloading(bcfApp, eqpt, recive_str, seq_num, eventType);
                     break;
                 case EventType.BlockRelease:
+                    PositionReport_BlockRelease(bcfApp, eqpt, recive_str, seq_num);
                     replyTranEventReport(bcfApp, recive_str.EventType, eqpt, seq_num);
                     break;
                 case EventType.Hidrelease:
@@ -1934,6 +1920,55 @@ namespace com.mirle.ibg3k0.sc.Service
                     TransferReportInitial(bcfApp, eqpt, seq_num, eventType, carrier_id);
                     break;
             }
+        }
+
+        private void PositionReport_BlockRelease(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
+        {
+            string release_adr = recive_str.ReleaseBlockAdrID;
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"Process block release,release address id:{release_adr}",
+               VehicleID: eqpt.VEHICLE_ID,
+               CarrierID: eqpt.CST_ID);
+            doBlockRelease(eqpt, release_adr);
+        }
+
+        private (bool hasRelease, ABLOCKZONEMASTER releaseBlockMaster) doBlockRelease(AVEHICLE eqpt, string release_adr)
+        {
+            ABLOCKZONEMASTER releaseBlockMaster = null;
+            bool hasRelease = false;
+            try
+            {
+                hasRelease = tryReleaseBlockZoneByReserveModule(eqpt.VEHICLE_ID, release_adr);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"Process block release, release address id:{release_adr}, release result:{hasRelease}",
+                   VehicleID: eqpt.VEHICLE_ID,
+                   CarrierID: eqpt.CST_ID);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: ex,
+                   VehicleID: eqpt.VEHICLE_ID,
+                   CarrierID: eqpt.CST_ID);
+                logger.Warn(ex, "Warn");
+            }
+            return (hasRelease, releaseBlockMaster);
+        }
+        private bool tryReleaseBlockZoneByReserveModule(string vh_id, string release_adr)
+        {
+            bool hasRelease = false;
+
+            var related_block_masters = scApp.BlockControlBLL.cache.loadBlockZoneMasterByReleaseAddress(release_adr);
+            foreach (var block_master in related_block_masters)
+            {
+                var block_detail_sections = block_master.GetBlockZoneDetailSectionIDs();
+                foreach (var detail_sec in block_detail_sections)
+                {
+                    scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh_id, detail_sec);
+                    hasRelease = true;
+                }
+            }
+            return hasRelease;
         }
 
         //object reserve_lock = new object();
@@ -2544,27 +2579,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     // CarrierInterfaceSim_UnloadComplete(eqpt, eqpt.CST_ID);
                     break;
             }
+            Boolean resp_cmp = replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
 
-            List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
-            using (TransactionScope tx = SCUtility.getTransactionScope())
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    Boolean resp_cmp = replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
-
-                    if (resp_cmp)
-                    {
-                        tx.Complete();
-                    }
-                    else
-                    {
-                        //con.Rollback();
-                        return;
-                    }
-                }
-            }
-            scApp.ReportBLL.newSendMCSMessage(reportqueues);
-            //SpinWait.SpinUntil(() => false, 2000);
             switch (eventType)
             {
                 case EventType.LoadArrivals:
@@ -2573,10 +2589,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE);
                     break;
                 case EventType.LoadComplete:
-                    //scApp.TransferService.BoxLocationChange_LoadComplete(carrier_id, eqpt.VEHICLE_ID); //B0.01 
-
-                    //A20210531.01 scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
-                    //A20210531.01                 eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE);
                     scApp.VehicleBLL.doLoadComplete(eqpt.VEHICLE_ID, current_adr_id, current_sec_id, carrier_id);
                     break;
                 case EventType.UnloadArrivals:
@@ -2585,51 +2597,9 @@ namespace com.mirle.ibg3k0.sc.Service
                                     eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE);
                     break;
                 case EventType.UnloadComplete:
-                    //scApp.TransferService.BoxLocationChange_UnloadComplete(carrier_id, unload_port_id); //B0.01 
-                    //*********************
-                    //B0.06 use for test the ignore the unload complete and command complete when the dest is not shelf
-                    if (DebugParameter.ignore136UnloadComplete == true)
-                    {
-                        string ohtcCmdID = eqpt.OHTC_CMD;
-                        ACMD_MCS cmd = new ACMD_MCS();
-                        cmd = scApp.CMDBLL.getCMD_ByOHTName(eqpt.VEHICLE_ID).FirstOrDefault();
-                        //if the dest is shelf
-                        if (cmd.HOSTDESTINATION.StartsWith("10") ||
-                            cmd.HOSTDESTINATION.StartsWith("11") ||
-                            cmd.HOSTDESTINATION.StartsWith("20") ||
-                            cmd.HOSTDESTINATION.StartsWith("21") ||
-                            cmd.HOSTDESTINATION.StartsWith("2P") ||
-                            cmd.HOSTDESTINATION.StartsWith("FO") ||
-                            cmd.HOSTDESTINATION.StartsWith("2POHT100OHB")
-                            )
-                        {
-                            scApp.TransferService.OHT_TransferStatus(ohtcCmdID,
-                                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE);
-                            scApp.VehicleBLL.doUnloadComplete(eqpt.VEHICLE_ID);
-
-                            //SpinWait.SpinUntil(() => false, 100);
-                            //Report this for the Wait out signal for MCS
-                            //scApp.TransferService.OHT_TransferStatus(ohtcCmdID,
-                            //                eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH);
-                        }
-                        else //if the dest isn't shelf
-                        {
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                            Data: $"Enter the port ignore place.");
-                            // Don't report the OHT_TransferStatus ;
-                        }
-                    }
-                    else
-                    {
-                        scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
-                                    eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE);
-                        scApp.VehicleBLL.doUnloadComplete(eqpt.VEHICLE_ID);
-
-                        //SpinWait.SpinUntil(() => false, 100);
-                        //Report this for the Wait out signal for MCS
-                        //scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
-                        //                eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH);
-                    }
+                    scApp.TransferService.OHT_TransferStatus(eqpt.OHTC_CMD,
+                                eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE);
+                    scApp.VehicleBLL.doUnloadComplete(eqpt.VEHICLE_ID);
                     break;
             }
         }

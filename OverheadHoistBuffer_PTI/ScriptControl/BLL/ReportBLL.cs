@@ -514,6 +514,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompleted(cst, reportQueues);
             return isSuccsess;
         }
+        public bool ReportCarrierRemovedCompleted(CassetteData cassetteData, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompleted(cassetteData, reportQueues);
+            return isSuccsess;
+        }
         public bool ReportCarrierRemovedCompleted(string cstid, string boxid, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             bool isSuccsess = true;
@@ -649,13 +655,6 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierIDRead(cst, IDreadStatus, reportQueues);
-            return isSuccsess;
-        }
-
-        public bool ReportZoneCapacityChange(string loc, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendZoneCapacityChange(loc, reportQueues);
             return isSuccsess;
         }
 

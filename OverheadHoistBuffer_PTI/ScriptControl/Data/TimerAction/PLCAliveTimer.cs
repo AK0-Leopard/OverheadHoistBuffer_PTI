@@ -56,19 +56,19 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             {
                 try
                 {
-                    systemInfoMapAction = scApp.getEQObjCacheManager().getPortByPortID("MASTER_PLC")
-                        .getMapActionByIdentityKey(typeof(PLCSystemInfoMapAction).Name) as PLCSystemInfoMapAction;
-                    if (systemInfoMapAction == null) return;
+                    //systemInfoMapAction = scApp.getEQObjCacheManager().getPortByPortID("MASTER_PLC")
+                    //    .getMapActionByIdentityKey(typeof(PLCSystemInfoMapAction).Name) as PLCSystemInfoMapAction;
+                    //if (systemInfoMapAction == null) return;
 
-                    if (IntervalMilliSec > 0)
-                    {
-                        aliveSignal = !aliveSignal;
-                        systemInfoMapAction.PLC_SetHeartbeat(aliveSignal);
+                    //if (IntervalMilliSec > 0)
+                    //{
+                    //    aliveSignal = !aliveSignal;
+                    //    systemInfoMapAction.PLC_SetHeartbeat(aliveSignal);
 
-                        //2020.6.23 MCS online
-                        bool MCSonline = (scApp.getEQObjCacheManager().getLine().Secs_Link_Stat == SCAppConstants.LinkStatus.LinkOK);
-                        systemInfoMapAction.PLC_SetMCSOnline(MCSonline);
-                    }
+                    //    //2020.6.23 MCS online
+                    //    bool MCSonline = (scApp.getEQObjCacheManager().getLine().Secs_Link_Stat == SCAppConstants.LinkStatus.LinkOK);
+                    //    systemInfoMapAction.PLC_SetMCSOnline(MCSonline);
+                    //}
 
                 }
                 finally

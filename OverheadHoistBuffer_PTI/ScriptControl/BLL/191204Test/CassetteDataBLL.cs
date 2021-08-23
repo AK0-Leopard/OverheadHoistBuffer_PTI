@@ -168,7 +168,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                             + "OHB >> DB|UpdateCSTLoc   發現更新位置有帳，刪除：" + scApp.TransferService.GetCstLog(portCSTData)
                         );
 
-                        scApp.ReportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID);
+                        //scApp.ReportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID);
+                        if (scApp.TransferService.isShelfPort(portCSTData.Carrier_LOC))
+                        {
+                            scApp.ReportBLL.S6F11SendCarrierRemovedCompletedForShelf(portCSTData.BOXID, portCSTData.Carrier_LOC);
+                            scApp.CassetteDataBLL.DeleteCSTbyBoxID(portCSTData.BOXID);
+                        }
+                        else
+                        {
+                            scApp.ReportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID);
+                        }
+
                     }
                 }
 
