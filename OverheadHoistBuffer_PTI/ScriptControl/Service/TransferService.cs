@@ -1394,6 +1394,14 @@ namespace com.mirle.ibg3k0.sc.Service
                         else
                         {
                             sourcePortType = AreSourceEnable(mcsCmd.HOSTSOURCE);
+                            if (sourcePortType && isCVPort(mcsCmd.HOSTSOURCE))
+                            {
+                                PortPLCInfo sourcePort = GetPLC_PortData(mcsCmd.HOSTSOURCE);
+                                if (sourcePort.BoxID != mcsCmd.BOX_ID)
+                                {
+                                    sourcePortType = false;
+                                }
+                            }
                         }
                     }
                     else
