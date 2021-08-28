@@ -1404,7 +1404,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (sourcePortType && isCVPort(mcsCmd.HOSTSOURCE))
                             {
                                 PortPLCInfo sourcePort = GetPLC_PortData(mcsCmd.HOSTSOURCE);
-                                if (sourcePort.BoxID != mcsCmd.BOX_ID)
+                                if (sourcePort.BoxID.Trim() != mcsCmd.BOX_ID.Trim())
                                 {
                                     sourcePortType = false;
                                 }
