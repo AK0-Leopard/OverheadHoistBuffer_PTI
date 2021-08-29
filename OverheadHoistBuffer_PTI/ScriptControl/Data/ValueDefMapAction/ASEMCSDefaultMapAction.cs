@@ -4520,15 +4520,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
 
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
-                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Input, Vids);
-                //if (reportQueues == null)
-                //{
-                //    S6F11SendMessage(mcs_queue);
-                //}
-                //else
-                //{
-                //    reportQueues.Add(mcs_queue);
-                //}
+                //2021.8.29 Hsinyu Chang: MGV使用
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Input, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
             }
             catch (Exception ex)
             {
@@ -4545,15 +4546,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
-                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Output, Vids);
-                //if (reportQueues == null)
-                //{
-                //    S6F11SendMessage(mcs_queue);
-                //}
-                //else
-                //{
-                //    reportQueues.Add(mcs_queue);
-                //}
+                //2021.8.29 Hsinyu Chang: MGV使用
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Output, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
             }
             catch (Exception ex)
             {
@@ -4570,15 +4572,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
-                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Changing, Vids);
-                //if (reportQueues == null)
-                //{
-                //    S6F11SendMessage(mcs_queue);
-                //}
-                //else
-                //{
-                //    reportQueues.Add(mcs_queue);
-                //}
+                //2021.8.29 Hsinyu Chang: MGV使用
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Changing, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
             }
             catch (Exception ex)
             {
