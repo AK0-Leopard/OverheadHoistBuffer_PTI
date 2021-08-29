@@ -354,6 +354,7 @@ namespace com.mirle.ibg3k0.sc.App
         /// The eqp t_ objec t_ cat e_ port
         /// </summary>
         public static readonly string EQPT_OBJECT_CATE_PORT = "Port";
+        public static readonly string EQPT_OBJECT_PORT_STATION = "PortStation";
         /// <summary>
         /// The eqp t_ objec t_ cat e_ buffer
         /// </summary>

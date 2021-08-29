@@ -27,7 +27,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public bool IsAGVMode { get; private set; } = true;
         private Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        protected APORT port = null;
+        //protected APORT port = null;
+        protected APORTSTATION port = null;
 
         protected SCApplication scApp = null;
         protected BCFApplication bcfApp = null;
@@ -726,7 +727,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public virtual void setContext(BaseEQObject baseEQ)
         {
-            this.port = baseEQ as APORT;
+            this.port = baseEQ as APORTSTATION;
         }
 
         public virtual void unRegisterEvent()

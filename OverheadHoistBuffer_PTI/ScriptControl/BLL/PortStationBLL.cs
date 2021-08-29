@@ -274,7 +274,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return port_station != null;
             }
 
-            public bool IsPortInSpecifiedSegment( BLL.SectionBLL sectionBLL, string portID, string segmentID)
+            public bool IsPortInSpecifiedSegment(BLL.SectionBLL sectionBLL, string portID, string segmentID)
             {
                 APORTSTATION aPORTSTATION = getPortStation(portID);
                 ASECTION aSECTION = sectionBLL.cache.GetSectionsByAddress(aPORTSTATION.ADR_ID.Trim()).First();
@@ -293,7 +293,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             public IEnumerable<Data.ValueDefMapAction.Interface.IManualPortValueDefMapAction> loadAllMgvPortStationMapAction()
             {
                 var ports = CacheManager.getALLPortStation().Where(port => port is MANUAL_PORTSTATION).ToList();
-                var map_actions = ports.Select(port => (port as MANUAL_PORTSTATION).getExcuteMapAction());
+                var map_actions = ports.Select(port =>
+                {
+                    var manual_port = (port as MANUAL_PORTSTATION);
+                    if (manual_port == null)
+                        return null;
+                    return manual_port.getExcuteMapAction();
+                }
+                );
                 return map_actions;
             }
         }
