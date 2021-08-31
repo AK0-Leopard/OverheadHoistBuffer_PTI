@@ -9912,7 +9912,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             try
             {
-                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| Enter CheckAndTryRemarkUnknownCSTInShelfByScan");
+                //TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> OHB| Enter CheckAndTryRemarkUnknownCSTInShelfByScan");
 
                 // 1. 取得目前CST DATA中有BOX異常者
                 /**掃描目前BOX CST Data List 確認其中是否有"為UNK 且非UNKU者"若有則選中該CST**/

@@ -1927,10 +1927,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public bool ReportCarrierRemoveFromManualPort(string carrierId)
+        public bool ReportCarrierRemoveFromManualPort(CassetteData cassetteData)
         {
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompleted("", carrierId, null);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedFromManualPort(cassetteData, null);
             return isSuccsess;
         }
 

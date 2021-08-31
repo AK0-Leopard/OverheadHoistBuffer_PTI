@@ -29,6 +29,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendTransferResume(string cmd_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierTransferring(ACMD_MCS cmd, CassetteData cassette, string ohtName, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedCompleted(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierRemovedFromManualPort(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemovedCompleted(string cst_id, string box_id, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendDeviceLogicalStateMaint(List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierIdentified(string cst_id, string box_id, App.DebugParameter.ScanReportType scanReportType, List<AMCSREPORTQUEUE> reportQueues = null);
@@ -537,6 +538,11 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         }
 
         public override bool S6F11SendCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+
+        public override bool S6F11SendCarrierRemovedFromManualPort(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }

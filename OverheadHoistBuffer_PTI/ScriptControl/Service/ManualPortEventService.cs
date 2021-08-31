@@ -146,13 +146,13 @@ namespace com.mirle.ibg3k0.sc.Service
 
             WriteEventLog($"{logTitle} The port direction is OutMode. Find a carrier data [{cassetteData.BOXID}] at this port.");
 
-            cassetteDataBLL.Delete(cassetteData.BOXID);
-            WriteEventLog($"{logTitle} Delete carrier data [{cassetteData.BOXID}].");
-
-            if (reportBll.ReportCarrierRemoveFromManualPort(cassetteData.BOXID))
+            
+            if (reportBll.ReportCarrierRemoveFromManualPort(cassetteData))
                 WriteEventLog($"{logTitle} Report MCS carrier remove From manual port success.");
             else
                 WriteEventLog($"{logTitle} Report MCS carrier remove From manual port Failed.");
+            cassetteDataBLL.Delete(cassetteData.BOXID);
+            WriteEventLog($"{logTitle} Delete carrier data [{cassetteData.BOXID}].");
         }
         #endregion LoadPresenceChanged
 

@@ -1916,6 +1916,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.ReserveReq:
                     //TranEventReportPathReserveReq(bcfApp, eqpt, seq_num, reserveInfos);
                     //TranEventReportPathReserveReqNew(bcfApp, eqpt, seq_num, reserveInfos);
+                    replyTranEventReport(bcfApp, recive_str.EventType, eqpt, seq_num,
+                                         canReservePass: true, canBlockPass: true);
+
                     break;
                 case EventType.Initial:
                     TransferReportInitial(bcfApp, eqpt, seq_num, eventType, carrier_id);
@@ -2653,7 +2656,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                         scApp.TransferService.ForceDeleteCstAndCmd(cmd_mcs, cmdOHT_CSTdata, "TransferReportInitial", ACMD_MCS.ResultCode.IDmismatch);
                                         scApp.TransferService.OHBC_InsertCassette(nowOHT_CSTdata.CSTID, nowOHT_CSTdata.BOXID, nowOHT_CSTdata.Carrier_LOC, "TransferReportInitial");
                                         TransferServiceLogger.Info($"vh id:{eqpt.VEHICLE_ID} initial 流程，發生mismatch initial cst id:{boxID},命令cst id:{cmdOHT_CSTdata.BOXID}");
-
                                     }
                                     else
                                     {

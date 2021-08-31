@@ -3779,6 +3779,35 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
+        public override bool S6F11SendCarrierRemovedFromManualPort(CassetteData cassette, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            try
+            {
+                VIDCollection Vids = new VIDCollection();
+                Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cassette.BOXID;
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = cassette.Carrier_LOC;
+                Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cassette.Carrier_LOC;
+
+                scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassette.BOXID);
+
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Removed_From_MGV_Port, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ASEMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+                return false;
+            }
+        }
 
         public override bool S6F11SendCarrierRemovedFromPort(CassetteData cst, string Handoff_Type, List<AMCSREPORTQUEUE> reportQueues = null)
         {

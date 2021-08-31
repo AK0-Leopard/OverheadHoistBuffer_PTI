@@ -38,7 +38,7 @@
         bool ReportCarrierWaitIn(CassetteData cassetteData, bool isDuplicate);
         bool ReportForcedRemoveCarrier(CassetteData cassetteData);
         bool ReportCarrierInstall(CassetteData cassetteData);
-        bool ReportCarrierRemoveFromManualPort(string carrierId);
+        bool ReportCarrierRemoveFromManualPort(CassetteData cassetteData);
         bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode);
         bool ReportPortInServiceChanged(string portName, bool newStateIsInService);
         bool ReportCarrierIDRead(CassetteData cassetteData, bool isDuplicate);
