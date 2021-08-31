@@ -2662,6 +2662,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                         cmdOHT_CSTdata.Carrier_LOC = eqpt.VEHICLE_ID;
                                         scApp.CassetteDataBLL.UpdateCSTLoc(cmdOHT_CSTdata.BOXID, cmdOHT_CSTdata.Carrier_LOC, 1);
                                         scApp.CassetteDataBLL.UpdateCSTState(cmdOHT_CSTdata.BOXID, (int)E_CSTState.Installed);
+                                        //2021.8.31 Hsinyu Chang for PTI: 要對MCS報過帳
+                                        scApp.ReportBLL.ReportVehicleAcquireCompleted(cmd_mcs.CMD_ID);
+                                        scApp.ReportBLL.ReportCarrierInstalled(cmd_mcs.CMD_ID);
+                                        //2021.8.31 Hsinyu Chang for PTI END
                                         scApp.TransferService.ForceFinishMCSCmd(cmd_mcs, cmdOHT_CSTdata, "TransferReportInitial");
                                         TransferServiceLogger.Info($"vh id:{eqpt.VEHICLE_ID} initial 流程，強制將 cst id:{cmdOHT_CSTdata.BOXID}過帳至車上");
                                     }
