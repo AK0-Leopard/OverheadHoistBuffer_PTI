@@ -1915,7 +1915,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
                 case EventType.ReserveReq:
                     //TranEventReportPathReserveReq(bcfApp, eqpt, seq_num, reserveInfos);
-                    TranEventReportPathReserveReqNew(bcfApp, eqpt, seq_num, reserveInfos);
+                    //TranEventReportPathReserveReqNew(bcfApp, eqpt, seq_num, reserveInfos);
                     break;
                 case EventType.Initial:
                     TransferReportInitial(bcfApp, eqpt, seq_num, eventType, carrier_id);

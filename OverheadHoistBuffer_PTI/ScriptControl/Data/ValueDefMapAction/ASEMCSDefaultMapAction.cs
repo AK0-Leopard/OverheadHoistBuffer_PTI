@@ -3995,12 +3995,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 //if (!isSend()) return true;
                 VIDCollection Vids = new VIDCollection();
-                string zonename = scApp.CassetteDataBLL.GetZoneName(cst.Carrier_LOC);
 
                 Vids.VIDITEM_54_DVVAL_CarrierID.CARRIER_ID = cst.BOXID;
                 Vids.VIDITEM_56_DVVAL_CarrierLoc.CARRIER_LOC = cst.Carrier_LOC;
-                Vids.VIDITEM_9999_DVVAL_CarrierZoneName.CARRIER_ZONE_NAME = zonename;
-                Vids.VIDITEM_179_DVVAL_BOXID.BOX_ID = cst.BOXID;
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = cst.Carrier_LOC;
+
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Wait_In, Vids);
                 if (reportQueues == null)
                 {
