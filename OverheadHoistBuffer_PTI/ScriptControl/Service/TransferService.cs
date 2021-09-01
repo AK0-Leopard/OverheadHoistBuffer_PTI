@@ -2351,14 +2351,21 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (isCVPort(ohtCmd.DESTINATION) || isAGVZone(ohtCmd.DESTINATION) == true)
                             {
                                 //2020/2/18 Hsinyu Chang: 搬出到port，要通知port準備搬出哪一筆帳
-                                PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(ohtCmd.DESTINATION).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
-                                portValueDefMapAction.Port_WriteBoxCstID(ohtToPort);
+                                //PortValueDefMapAction portValueDefMapAction = scApp.getEQObjCacheManager().getPortByPortID(ohtCmd.DESTINATION).getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
+                                var port_station = scApp.getEQObjCacheManager().
+                                                         getPortStationByPortID(ohtCmd.DESTINATION);
+                                if (port_station != null)
+                                {
+                                    PortValueDefMapAction portValueDefMapAction =
+                                        port_station.getMapActionByIdentityKey(typeof(PortValueDefMapAction).Name) as PortValueDefMapAction;
+                                    portValueDefMapAction.Port_WriteBoxCstID(ohtToPort);
 
-                                TransferServiceLogger.Info
-                                (
-                                    DateTime.Now.ToString("HH:mm:ss.fff ")
-                                    + "OHB >> PLC|Port_WriteBoxCstID 對 " + ohtCmd.DESTINATION + " 寫入 " + GetCstLog(ohtToPort)
-                                );
+                                    TransferServiceLogger.Info
+                                    (
+                                        DateTime.Now.ToString("HH:mm:ss.fff ")
+                                        + "OHB >> PLC|Port_WriteBoxCstID 對 " + ohtCmd.DESTINATION + " 寫入 " + GetCstLog(ohtToPort)
+                                    );
+                                }
                             }
                             reportBLL.ReportVehicleArrived(cmd.CMD_ID, status); // PTI需要上報
                         }

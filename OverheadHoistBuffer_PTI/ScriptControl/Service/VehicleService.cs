@@ -2400,9 +2400,20 @@ namespace com.mirle.ibg3k0.sc.Service
             //string[] will_pass_section_ids = scApp.CMDBLL.
             //         getShortestRouteSection(vh_current_sec.TO_ADR_ID, req_block_sec.FROM_ADR_ID).
             //         routeSection;
-            string[] will_pass_section_ids = scApp.CMDBLL.
-                     getShortestRouteSection(start_find_adr, req_block_sec.FROM_ADR_ID).
-                     routeSection;
+            //string[] will_pass_section_ids = scApp.CMDBLL.
+            //         getShortestRouteSection(start_find_adr, req_block_sec.FROM_ADR_ID).
+            //         routeSection;
+
+            var guide_result = scApp.GuideBLL.getGuideInfo(start_find_adr, req_block_sec.FROM_ADR_ID);
+            if (!guide_result.isSuccess)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"vh:{vh_id} Try get getGuideInfo start adr: {start_find_adr} end adr:{req_block_sec.FROM_ADR_ID}",
+                   VehicleID: vh_id);
+                return false;
+            }
+
+            var will_pass_section_ids = guide_result.guideSectionIds;
             foreach (string sec in will_pass_section_ids)
             {
                 var result = scApp.ReserveBLL.TryAddReservedSection(vh_id, sec,

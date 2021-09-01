@@ -1215,6 +1215,10 @@ namespace com.mirle.ibg3k0.sc.Common
         {
             return portList.Where(p => p.PORT_ID.Trim() == port_id.Trim()).SingleOrDefault();
         }
+        public APORTSTATION getPortStationByPortID(string port_id)
+        {
+            return portStationList.Where(p => p.PORT_ID.Trim() == port_id.Trim()).SingleOrDefault();
+        }
 
         /// <summary>
         /// Gets the port by unit number.
