@@ -69,8 +69,8 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         public DateTime Timestamp;
         [PLCElement(ValueName = "ASSIGN_BOX_ID")]
         public string AssignBoxID;
-        [PLCElement(ValueName = "ASSIGN_CST_ID")]
-        public string AssignCassetteID;
+        //[PLCElement(ValueName = "ASSIGN_CST_ID")]
+        //public string AssignCassetteID;
 
     }
 
