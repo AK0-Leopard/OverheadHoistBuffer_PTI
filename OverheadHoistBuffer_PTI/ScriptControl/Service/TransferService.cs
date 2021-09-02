@@ -2636,10 +2636,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         reportBLL.ReportCarrierIdentified(emptyCstData.CSTID, emptyCstData.BOXID, ScanReportType.no_carrier);
 
-                        if (emptyCstData != null)
-                        {
-                            HaveAccountNotReal(emptyCstData);
-                        }
+
+                        //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
+                        reportBLL.S6F11SendCarrierRemovedCompletedForShelf(emptyCstData.BOXID, emptyCstData.Carrier_LOC);
+                        cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                        cassette_dataBLL.DeleteCSTbyBoxID(emptyCstData.BOXID);
+
+                        //if (emptyCstData != null)
+                        //{
+                        //    HaveAccountNotReal(emptyCstData);
+                        //}
                         break;
                     case COMMAND_STATUS_BIT_INDEX_InterlockError:
                     case COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT:

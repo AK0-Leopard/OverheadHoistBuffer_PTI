@@ -208,6 +208,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             WriteEventLog($"{logTitle} Duplicate at shelf ({duplicateCarrierData.Carrier_LOC}).");
 
+
             CheckDuplicateCarrier(logTitle, duplicateCarrierData, out var needRemoveDuplicateShelf, out var unknownId);
 
             var stage1CarrierId = info.CarrierIdOfStage1.Trim();
@@ -224,16 +225,19 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
             cassetteDataBLL.GetCarrierByPortName(portName, 1, out var cassetteData);
-
             ReportIDRead(logTitle, cassetteData, isDuplicate: true);
+
+            //ReportIDRead(logTitle, cassetteData, isDuplicate: true);
 
             cassetteDataBLL.GetCarrierByPortName(duplicateCarrierData.Carrier_LOC, 1, out var duplicateData);
 
-            //if (needRemoveDuplicateShelf)
-            //{
-            //    ReportForcedCarrierRemove(logTitle, duplicateCarrierData);
-            //    ReportInstallCarrier(logTitle, duplicateData);
-            //}
+            if (needRemoveDuplicateShelf)
+            {
+                //ReportForcedCarrierRemove(logTitle, duplicateCarrierData);
+                ReportCarrierRemovedCompletedForShelf(logTitle, duplicateCarrierData.BOXID, duplicateCarrierData.Carrier_LOC);
+                //ReportInstallCarrier(logTitle, duplicateData);
+                ReportInstallForShelf(logTitle, unknownId, duplicateCarrierData.Carrier_LOC);
+            }
 
             ReportWaitIn(logTitle, cassetteData);
         }
@@ -272,7 +276,7 @@ namespace com.mirle.ibg3k0.sc.Service
         private void ChageDuplicateLocationCarrierIdToUnknownId(string logTitle, CassetteData duplicateCarrierData, string unknownId)
         {
             //cassetteDataBLL.Delete(duplicateCarrierData.BOXID);
-            DeleteForShelf(duplicateCarrierData.BOXID, duplicateCarrierData.LotID);
+            DeleteForShelf(duplicateCarrierData.BOXID, duplicateCarrierData.Carrier_LOC);
             WriteEventLog($"{logTitle} Delete duplicate carrier.");
 
             //shelfDefBLL.SetStored(duplicateCarrierData.Carrier_LOC);
@@ -285,12 +289,12 @@ namespace com.mirle.ibg3k0.sc.Service
         private void DeleteForShelf(string carrierID, string carrierLoc)
         {
             cassetteDataBLL.Delete(carrierID);
-            reportBll.ReportCarrierRemovedCompletedForShelf(carrierID, carrierLoc);
+            //reportBll.ReportCarrierRemovedCompletedForShelf(carrierID, carrierLoc);
         }
         private void InstallForShelf(string carrierID, string carrierLoc)
         {
             cassetteDataBLL.Install(carrierLoc, carrierID);
-            reportBll.ReportCarrierInstallCompletedForShelf(carrierID, carrierLoc);
+            //reportBll.ReportCarrierInstallCompletedForShelf(carrierID, carrierLoc);
         }
 
 
@@ -403,6 +407,13 @@ namespace com.mirle.ibg3k0.sc.Service
             else
                 WriteEventLog($"{logTitle} Report MCS CarrierRemoveComplete Failed.  CarrierId[{cassetteData.BOXID}]");
         }
+        private void ReportCarrierRemovedCompletedForShelf(string logTitle, string carrierID, string carrierLoc)
+        {
+            if (reportBll.ReportCarrierRemovedCompletedForShelf(carrierID, carrierLoc))
+                WriteEventLog($"{logTitle} Report MCS CarrierRemoveComplete For Shelf Success. CarrierId[{carrierID}] ,loc:{carrierLoc}");
+            else
+                WriteEventLog($"{logTitle} Report MCS CarrierRemoveComplete For Shelf Failed.  CarrierId[{carrierID}] ,loc:{carrierLoc}");
+        }
 
         private void ReportInstallCarrier(string logTitle, CassetteData cassetteData)
         {
@@ -410,6 +421,13 @@ namespace com.mirle.ibg3k0.sc.Service
                 WriteEventLog($"{logTitle} Report MCS CarrierInstall Success. CarrierId[{cassetteData.BOXID}]");
             else
                 WriteEventLog($"{logTitle} Report MCS CarrierInstall Failed.  CarrierId[{cassetteData.BOXID}]");
+        }
+        private void ReportInstallForShelf(string logTitle,string carrierID,string carrierLoc)
+        {
+            if (reportBll.ReportCarrierInstallCompletedForShelf(carrierID, carrierLoc))
+                WriteEventLog($"{logTitle} Report MCS CarrierInstall for shelf Success. CarrierId[{carrierID}],loc[{carrierLoc}]");
+            else
+                WriteEventLog($"{logTitle} Report MCS CarrierInstall for shelf Failed.  CarrierId[{carrierID}],loc[{carrierLoc}]");
         }
 
         private void ReportIDRead(string logTitle, CassetteData cassetteData, bool isDuplicate)
