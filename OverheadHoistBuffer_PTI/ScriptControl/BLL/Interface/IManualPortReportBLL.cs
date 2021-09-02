@@ -39,11 +39,14 @@
         bool ReportForcedRemoveCarrier(CassetteData cassetteData);
         bool ReportCarrierInstall(CassetteData cassetteData);
         bool ReportCarrierRemoveFromManualPort(CassetteData cassetteData);
+        bool ReportCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc);
+
         bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode);
         bool ReportPortInServiceChanged(string portName, bool newStateIsInService);
         bool ReportCarrierIDRead(CassetteData cassetteData, bool isDuplicate);
         bool ReportCarrierWaitIn(CassetteData cassetteData);
         bool ReportCarrierWaitOut(CassetteData cassetteData);
         bool ReportTransferCompleted(ACMD_MCS cmd, CassetteData cassette, string resultCode);
+        bool ReportCarrierInstallCompletedForShelf(string carrierID, string carrierLoc);
     }
 }

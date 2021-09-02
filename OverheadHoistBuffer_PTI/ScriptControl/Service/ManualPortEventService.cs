@@ -146,7 +146,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
             WriteEventLog($"{logTitle} The port direction is OutMode. Find a carrier data [{cassetteData.BOXID}] at this port.");
 
-            
+
             if (reportBll.ReportCarrierRemoveFromManualPort(cassetteData))
                 WriteEventLog($"{logTitle} Report MCS carrier remove From manual port success.");
             else
@@ -188,7 +188,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     WaitInDuplicateAtShelfProcess(logTitle, portName, info, duplicateCarrierData);
                 else
                     WaitInDuplicateAtPortProcess(logTitle, portName, info, duplicateCarrierData, duplicateLocation);
-                WaitInDuplicateAtPortProcess(logTitle, portName, info, duplicateCarrierData, duplicateLocation);
             }
             else
             {
@@ -230,11 +229,11 @@ namespace com.mirle.ibg3k0.sc.Service
 
             cassetteDataBLL.GetCarrierByPortName(duplicateCarrierData.Carrier_LOC, 1, out var duplicateData);
 
-            if (needRemoveDuplicateShelf)
-            {
-                ReportForcedCarrierRemove(logTitle, duplicateCarrierData);
-                ReportInstallCarrier(logTitle, duplicateData);
-            }
+            //if (needRemoveDuplicateShelf)
+            //{
+            //    ReportForcedCarrierRemove(logTitle, duplicateCarrierData);
+            //    ReportInstallCarrier(logTitle, duplicateData);
+            //}
 
             ReportWaitIn(logTitle, cassetteData);
         }
@@ -272,15 +271,28 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private void ChageDuplicateLocationCarrierIdToUnknownId(string logTitle, CassetteData duplicateCarrierData, string unknownId)
         {
-            cassetteDataBLL.Delete(duplicateCarrierData.BOXID);
+            //cassetteDataBLL.Delete(duplicateCarrierData.BOXID);
+            DeleteForShelf(duplicateCarrierData.BOXID, duplicateCarrierData.LotID);
             WriteEventLog($"{logTitle} Delete duplicate carrier.");
 
-            shelfDefBLL.SetStored(duplicateCarrierData.Carrier_LOC);
-            WriteEventLog($"{logTitle} Set shelf stage of duplicate shelf[{duplicateCarrierData.Carrier_LOC}] to stored.");
+            //shelfDefBLL.SetStored(duplicateCarrierData.Carrier_LOC);
+            //WriteEventLog($"{logTitle} Set shelf stage of duplicate shelf[{duplicateCarrierData.Carrier_LOC}] to stored.");
 
-            cassetteDataBLL.Install(duplicateCarrierData.Carrier_LOC, unknownId);
+            //cassetteDataBLL.Install(duplicateCarrierData.Carrier_LOC, unknownId);
+            InstallForShelf(unknownId, duplicateCarrierData.Carrier_LOC);
             WriteEventLog($"{logTitle} Install UnknownID[{unknownId}] on shelf[{duplicateCarrierData.Carrier_LOC}].");
         }
+        private void DeleteForShelf(string carrierID, string carrierLoc)
+        {
+            cassetteDataBLL.Delete(carrierID);
+            reportBll.ReportCarrierRemovedCompletedForShelf(carrierID, carrierLoc);
+        }
+        private void InstallForShelf(string carrierID, string carrierLoc)
+        {
+            cassetteDataBLL.Install(carrierLoc, carrierID);
+            reportBll.ReportCarrierInstallCompletedForShelf(carrierID, carrierLoc);
+        }
+
 
         private void WaitInDuplicateAtPortProcess(string logTitle, string portName, ManualPortPLCInfo info, CassetteData duplicateCarrierData, PortDef duplicatePort)
         {

@@ -1933,6 +1933,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedFromManualPort(cassetteData, null);
             return isSuccsess;
         }
+        public bool ReportCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemovedCompletedForShelf(carrierID, carrierLoc, null);
+            return isSuccsess;
+        }
+
 
         public bool ReportCarrierWaitIn(CassetteData cassetteData, bool isDuplicate)
         {
@@ -2025,5 +2032,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompleted(cassetteData);
             return isSuccsess;
         }
+        public bool ReportCarrierInstallCompletedForShelf(string carrierID, string carrierLoc)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompletedForShelf(carrierID, carrierLoc, null);
+            return isSuccsess;
+        }
+
     }
 }
