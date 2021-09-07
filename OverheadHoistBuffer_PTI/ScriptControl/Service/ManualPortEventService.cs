@@ -402,7 +402,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private void ReportForcedCarrierRemove(string logTitle, CassetteData cassetteData)
         {
-            if (reportBll.ReportForcedRemoveCarrier(cassetteData))
+            if (reportBll.ReportCarrierRemoveFromManualPort(cassetteData))
                 WriteEventLog($"{logTitle} Report MCS CarrierRemoveComplete Success. CarrierId[{cassetteData.BOXID}]");
             else
                 WriteEventLog($"{logTitle} Report MCS CarrierRemoveComplete Failed.  CarrierId[{cassetteData.BOXID}]");
