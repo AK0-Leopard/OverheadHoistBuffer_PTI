@@ -4,6 +4,7 @@
     {
         NotMoveBack = 0,
         TypeMismatch = 1,
-        Other = 2,
+        MoveInTimedOut = 2,
+        Other = 3,
     }
 }

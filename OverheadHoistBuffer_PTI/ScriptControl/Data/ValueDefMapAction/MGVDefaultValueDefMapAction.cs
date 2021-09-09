@@ -41,6 +41,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public event ManualPortEvents.ManualPortEventHandler OnDoorOpen;
 
         public string PortName { get => port.PORT_ID; }
+        public DirectionType PortDirection { get; private set; }
         #endregion Implement
 
         protected MANUAL_PORTSTATION port = null;
@@ -253,6 +254,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //2.read log
                 logger.Info(function.ToString());
 
+                PortDirection = DirectionType.OutMode;
                 OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
             }
             catch (Exception ex)
@@ -276,7 +278,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 //2.read log
                 logger.Info(function.ToString());
-
+                PortDirection = DirectionType.InMode;
                 OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
             }
             catch (Exception ex)

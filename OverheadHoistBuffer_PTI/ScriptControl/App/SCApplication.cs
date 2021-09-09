@@ -1602,7 +1602,7 @@ namespace com.mirle.ibg3k0.sc.App
             gRPC_With_VehicleControlFun.Start();
 
             var manual_port_map_action = PortStationBLL.OperateCatch.loadAllMgvPortStationMapAction();
-            manualPortControlService.Start(manual_port_map_action);
+            manualPortControlService.Start(manual_port_map_action, CassetteDataBLL);
             manualPortEventService.Start(manual_port_map_action, reportBLL, PortDefBLL, ShelfDefBLL, CassetteDataBLL, cmdBLL, alarmBLL);
         }
 

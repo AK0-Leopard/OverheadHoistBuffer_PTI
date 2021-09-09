@@ -1,4 +1,5 @@
-﻿using com.mirle.ibg3k0.sc.Common;
+﻿using com.mirle.ibg3k0.sc.BLL.Interface;
+using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV.Enums;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface;
@@ -15,14 +16,30 @@ namespace com.mirle.ibg3k0.sc.Service
 {
     public class ManualPortControlService : IManualPortControlService
     {
+        private Logger logger = LogManager.GetLogger("ManualPortLogger");
+        private string now { get => DateTime.Now.ToString("HH:mm:ss.fff"); }
+        private ConcurrentDictionary<string, IManualPortValueDefMapAction> manualPorts { get; set; }
+        private ConcurrentDictionary<string, string> comingOutCarrierOfManualPorts { get; set; }
+        private ConcurrentDictionary<string, List<string>> readyToWaitOutCarrierOfManualPorts { get; set; }
+        private ConcurrentDictionary<string, Stopwatch> stopWatchForCheckCommandingSignal { get; set; }
+
+        private const string NO_CST = " - ";
+
+        private const int timeoutElapsedMillisecondsForOffCommandingSignal = 12_000;
+
+        private IManualPortCassetteDataBLL cassetteDataBLL;
+
+        public int TimeOutForMoveBack { get; set; } = 30;
+
         public ManualPortControlService()
         {
             WriteLog($"ManualPortControlService Initial");
             //RegisterEvent(ports);
         }
-        public void Start(IEnumerable<IManualPortValueDefMapAction> ports)
+        public void Start(IEnumerable<IManualPortValueDefMapAction> ports, IManualPortCassetteDataBLL cassetteDataBLL)
         {
             WriteLog($"ManualPortControlService Start");
+            this.cassetteDataBLL = cassetteDataBLL;
             RegisterPort(ports);
         }
 
@@ -50,16 +67,6 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
-        private Logger logger = LogManager.GetLogger("ManualPortLogger");
-        private string now { get => DateTime.Now.ToString("HH:mm:ss.fff"); }
-        private ConcurrentDictionary<string, IManualPortValueDefMapAction> manualPorts { get; set; }
-        private ConcurrentDictionary<string, string> comingOutCarrierOfManualPorts { get; set; }
-        private ConcurrentDictionary<string, List<string>> readyToWaitOutCarrierOfManualPorts { get; set; }
-        private ConcurrentDictionary<string, Stopwatch> stopWatchForCheckCommandingSignal { get; set; }
-
-        private const string NO_CST = " - ";
-
-        private const int timeoutElapsedMillisecondsForOffCommandingSignal = 12_000;
 
         #region Log
 
@@ -79,6 +86,7 @@ namespace com.mirle.ibg3k0.sc.Service
             RefreshReadyToWaitOutCarrier();
             RefreshComingOutCarrier();
             CheckCommandingSignal(allCommands);
+            CheckMoveInCassetteTimedOut();
         }
 
         private void RefreshPlcMonitor(ConcurrentDictionary<string, ACMD_MCS> allCommands)
@@ -207,6 +215,35 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     else
                         stopWatchForCheckCommandingSignal[portName].Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
+
+        private void CheckMoveInCassetteTimedOut()
+        {
+            try
+            {
+                foreach (var portItem in manualPorts)
+                {
+                    //Move back cassette which is timed out
+                    var portName = portItem.Key;
+                    CassetteData cassetteOnPort;
+                    bool hasCassette = cassetteDataBLL.GetCarrierByPortName(portName, stage: 1, out cassetteOnPort);
+
+                    if (hasCassette && portItem.Value.PortDirection == DirectionType.InMode)
+                    {
+                        TimeSpan timeSpan = DateTime.Now - DateTime.Parse(cassetteOnPort.TrnDT);
+                        if (timeSpan.TotalSeconds > TimeOutForMoveBack)
+                        {
+                            WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} which is already timed out for move in. Move back.");
+                            SetMoveBackReason(portName, MoveBackReasons.MoveInTimedOut);
+                            MoveBack(portName);
+                        }
+                    }
                 }
             }
             catch (Exception ex)

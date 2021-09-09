@@ -9,6 +9,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
     public interface IManualPortValueDefMapAction : ICommonPortInfoValueDefMapAction
     {
         string PortName { get; }
+        DirectionType PortDirection { get; }
         event ManualPortEventHandler OnWaitIn;
         event ManualPortEventHandler OnWaitOut;
         event ManualPortEventHandler OnDirectionChanged;
