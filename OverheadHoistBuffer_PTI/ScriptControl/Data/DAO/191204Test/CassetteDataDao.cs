@@ -337,7 +337,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         {
             try
             {
-                var result = conn.CassetteData.Where(x => x.Carrier_LOC.Contains(portName.Trim())).ToList();
+                var result = conn.CassetteData.Where(x => x.Carrier_LOC.StartsWith(portName.Trim())).ToList();
 
                 return result;
             }
