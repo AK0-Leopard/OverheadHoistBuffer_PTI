@@ -10,6 +10,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
     {
         string PortName { get; }
         DirectionType PortDirection { get; }
+        bool IsWaitingForInputPermission { get; }
         event ManualPortEventHandler OnWaitIn;
         event ManualPortEventHandler OnWaitOut;
         event ManualPortEventHandler OnDirectionChanged;

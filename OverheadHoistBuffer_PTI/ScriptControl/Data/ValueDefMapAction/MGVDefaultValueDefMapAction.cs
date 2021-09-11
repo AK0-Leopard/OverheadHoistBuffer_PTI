@@ -42,6 +42,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public string PortName { get => port.PORT_ID; }
         public DirectionType PortDirection { get; private set; }
+        public bool IsWaitingForInputPermission { get; private set; }
         #endregion Implement
 
         protected MANUAL_PORTSTATION port = null;
@@ -160,6 +161,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     vr12.afterValueChange += (_sender, e) => MGV_Status_DoorOpenChanged(_sender, e);
                 }
+                //TODO 2021.9.11
+                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INPUT_PERMISSION", out ValueRead vr13))
+                //{
+                //    vr13.afterValueChange += (_sender, e) => MGV_Status_InputPermission(_sender, e);
+                //}
             }
             catch (Exception ex)
             {
@@ -494,6 +500,33 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 scApp.putFunBaseObj<ManualPortPLCInfo>(function);
             }
         }
+
+        //TODO 2021.9.11
+        //private void MGV_Status_InputPermission(object sender, ValueChangedEventArgs e)
+        //{
+        //    var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+
+        //    try
+        //    {
+        //        //1.建立各個Function物件
+        //        function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+        //        //2.read log
+        //        logger.Info(function.ToString());
+
+        //        IsWaitingForInputPermission = true;
+        //        //OnDoorOpen?.Invoke(this, new ManualPortEventArgs(function));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, "Exception");
+        //    }
+        //    finally
+        //    {
+        //        scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+        //    }
+        //}
+        
         #region Control
 
         public Task SetMoveBackReasonAsync(MoveBackReasons reason)
