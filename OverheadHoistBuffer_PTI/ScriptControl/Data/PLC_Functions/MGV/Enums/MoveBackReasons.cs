@@ -4,7 +4,8 @@
     {
         NotMoveBack = 0,
         TypeMismatch = 1,
-        MoveInTimedOut = 2,
-        Other = 3,
+        RejectedByMES = 2,
+        MoveInTimedOut = 3,
+        Other = 4,
     }
 }
