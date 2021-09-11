@@ -1711,8 +1711,19 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 viditem_350.EQ_PORT_INFO_OBJ[i] = new S6F11.RPTINFO.RPTITEM.VIDITEM_356_SV();
                 viditem_350.EQ_PORT_INFO_OBJ[i].PORT_ID_OBJ.PORT_ID = port_station[i].PLCPortID;
                 viditem_350.EQ_PORT_INFO_OBJ[i].PORT_TRANSFTER_STATE_OBJ.PORT_TRANSFER_STATE = ((int)port_station[i].State).ToString();
-                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = ((int)port_station[i].PortType).ToString();
-                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = (port_station[i].Floor).ToString(); // 這個要再確認
+                //viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = ((int)port_station[i].PortType).ToString();
+                string EQRequestStatus = "0";
+                if (port_station[i].IsReadyToLoad)
+                {
+                    EQRequestStatus = "1";
+                }
+                else if (port_station[i].IsReadyToUnload)
+                {
+                    EQRequestStatus = "2";
+                }
+                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_REQ_SATUS_OBJ.EQ_REQ_STATUS = EQRequestStatus;
+                //viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = (port_station[i].Floor).ToString(); // 這個要再確認
+                viditem_350.EQ_PORT_INFO_OBJ[i].EQ_PRESENCE_STATUS_OBJ.EQ_PRESENCE_STATUS = port_station[i].LoadPosition1 ? "1" : "0";
             }
             return viditem_350;
         }
