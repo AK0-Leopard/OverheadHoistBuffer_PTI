@@ -707,7 +707,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (port is MANUAL_PORTSTATION)
                         {
                             var manualPort = port as MANUAL_PORTSTATION;
-                            await manualPort.MoveBackAsync();
+                            await manualPort.MoveBackAsync(moveBackReasons: Data.PLC_Functions.MGV.Enums.MoveBackReasons.RejectedByMES);
                         }
                         cmdBLL.DeleteCmd(v.CMD_ID);
                     }

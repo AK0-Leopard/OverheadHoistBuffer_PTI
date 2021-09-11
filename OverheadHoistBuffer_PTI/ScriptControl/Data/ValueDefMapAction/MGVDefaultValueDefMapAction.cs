@@ -576,6 +576,25 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             });
         }
 
+        public Task MoveBackAsync(MoveBackReasons reason)
+        {
+            return Task.Run(() =>
+            {
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.MoveBackReason = (ushort)reason;
+                function.IsMoveBack = true;
+                CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.MoveBackReason = 0;
+                function.IsMoveBack = false;
+                CommitChange(function);
+            });
+        }
+
         public Task ResetAlarmAsync()
         {
             return Task.Run(() =>

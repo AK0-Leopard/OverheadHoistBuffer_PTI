@@ -111,7 +111,8 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                 var port = from a in conn.PortDef
                            where a.OHBName == ohbName
                                   && (a.UnitType == "OHCV"
-                                   || a.UnitType == "SHELF")
+                                   || a.UnitType == "SHELF"
+                                   || a.UnitType == "MGV")
                            select a;
                 return port.ToList();
             }

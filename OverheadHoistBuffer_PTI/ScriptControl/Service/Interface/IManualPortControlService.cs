@@ -13,6 +13,7 @@ namespace com.mirle.ibg3k0.sc.Service.Interface
         bool ChangeToInMode(string portName);
         bool ChangeToOutMode(string portName);
         bool MoveBack(string portName);
+        bool MoveBack(string portName, MoveBackReasons reason);
         bool SetMoveBackReason(string portName, MoveBackReasons reason);
         bool ResetAlarm(string portName);
         bool StopBuzzer(string portName);

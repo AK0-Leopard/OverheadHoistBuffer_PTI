@@ -240,8 +240,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (timeSpan.TotalSeconds > TimeOutForMoveBack)
                         {
                             WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} which is already timed out for move in. Move back.");
-                            SetMoveBackReason(portName, MoveBackReasons.MoveInTimedOut);
-                            MoveBack(portName);
+                            //SetMoveBackReason(portName, MoveBackReasons.MoveInTimedOut);
+                            MoveBack(portName, MoveBackReasons.MoveInTimedOut);
                         }
                     }
                 }
@@ -302,6 +302,19 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
             manualPorts[portName].MoveBackAsync();
+            WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
+            return true;
+        }
+
+        public bool MoveBack(string portName, MoveBackReasons reason)
+        {
+            if (manualPorts.ContainsKey(portName) == false)
+            {
+                WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName}) => Cannot Find this port");
+                return false;
+            }
+
+            manualPorts[portName].MoveBackAsync(reason);
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
         }

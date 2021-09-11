@@ -104,6 +104,12 @@ namespace com.mirle.ibg3k0.sc
             if (manualPortValueDefMapAction == null) return;
             await manualPortValueDefMapAction.MoveBackAsync();
         }
+        public async Task MoveBackAsync(MoveBackReasons moveBackReasons)
+        {
+            var manualPortValueDefMapAction = getIManualPortValueDefMapAction();
+            if (manualPortValueDefMapAction == null) return;
+            await manualPortValueDefMapAction.MoveBackAsync(moveBackReasons);
+        }
         public void SetMoveBackReasonAsync(MoveBackReasons moveBackReasons)
         {
             var manualPortValueDefMapAction = getIManualPortValueDefMapAction();
