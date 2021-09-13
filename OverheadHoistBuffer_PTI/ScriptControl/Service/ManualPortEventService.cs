@@ -712,11 +712,12 @@ namespace com.mirle.ibg3k0.sc.Service
             try
             {
                 var info = args.ManualPortPLCInfo;
-                var logTitle = $"PortName[{args.PortName}] DoorOpenChanged => ";
+                var logTitle = $"PortName[{args.PortName}] InputPermissionChanged => ";
 
                 if (info.InputPermission)
                 {
                     WriteEventLog($"{logTitle} Input Permission flag on");
+                    reportBll.ReportInputPermissionRequest(args.PortName);
                 }
                 else
                 {

@@ -506,7 +506,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        //TODO 2021.9.11
+        //2021.9.11
         private void MGV_Status_InputPermission(object sender, ValueChangedEventArgs e)
         {
             var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;

@@ -55,7 +55,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 manualPorts.TryAdd(port.PortName, port);
                 WriteLog($"Add Manual Port Control Success ({port.PortName})");
 
-
                 comingOutCarrierOfManualPorts.TryAdd(port.PortName, string.Empty);
                 WriteLog($"Add Manual Port Control Coming Out Carrier Of Manual Ports Success ({port.PortName})");
 

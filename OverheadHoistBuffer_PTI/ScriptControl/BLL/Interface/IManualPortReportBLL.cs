@@ -48,5 +48,6 @@
         bool ReportCarrierWaitOut(CassetteData cassetteData);
         bool ReportTransferCompleted(ACMD_MCS cmd, CassetteData cassette, string resultCode);
         bool ReportCarrierInstallCompletedForShelf(string carrierID, string carrierLoc);
+        bool ReportInputPermissionRequest(string portName);
     }
 }

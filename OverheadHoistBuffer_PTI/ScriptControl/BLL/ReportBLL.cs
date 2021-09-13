@@ -1960,10 +1960,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             bool isSuccsess = true;
             if (newDirectionIsInMode)
             {
-                if (isInputPermissionRequested)
-                {
-                    isSuccsess = isSuccsess && iBSEMDriver.S6F11SendInputPermission(portName, null);
-                }
+                //if (isInputPermissionRequested)
+                //{
+                //    isSuccsess = isSuccsess && iBSEMDriver.S6F11SendInputPermission(portName, null);
+                //}
                 isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeInput(portName, null);
             }
             else
@@ -2042,6 +2042,13 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstallCompletedForShelf(carrierID, carrierLoc, null);
+            return isSuccsess;
+        }
+
+        public bool ReportInputPermissionRequest(string portName)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendInputPermission(portName, null);
             return isSuccsess;
         }
 
