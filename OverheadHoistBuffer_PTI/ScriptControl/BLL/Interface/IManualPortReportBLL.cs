@@ -41,7 +41,7 @@
         bool ReportCarrierRemoveFromManualPort(CassetteData cassetteData);
         bool ReportCarrierRemovedCompletedForShelf(string carrierID, string carrierLoc);
 
-        bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode);
+        bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode, bool isInputPermissionRequested);
         bool ReportPortInServiceChanged(string portName, bool newStateIsInService);
         bool ReportCarrierIDRead(CassetteData cassetteData, bool isDuplicate);
         bool ReportCarrierWaitIn(CassetteData cassetteData);

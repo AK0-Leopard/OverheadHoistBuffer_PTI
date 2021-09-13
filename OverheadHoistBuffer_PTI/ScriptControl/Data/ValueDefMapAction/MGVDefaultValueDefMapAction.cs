@@ -39,6 +39,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public event ManualPortEvents.ManualPortEventHandler OnAlarmHappen;
         public event ManualPortEvents.ManualPortEventHandler OnAlarmClear;
         public event ManualPortEvents.ManualPortEventHandler OnDoorOpen;
+        public event ManualPortEvents.ManualPortEventHandler OnInputPermissionFlagChanged;
 
         public string PortName { get => port.PORT_ID; }
         public DirectionType PortDirection { get; private set; }
@@ -162,10 +163,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     vr12.afterValueChange += (_sender, e) => MGV_Status_DoorOpenChanged(_sender, e);
                 }
                 //TODO 2021.9.11
-                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INPUT_PERMISSION", out ValueRead vr13))
-                //{
-                //    vr13.afterValueChange += (_sender, e) => MGV_Status_InputPermission(_sender, e);
-                //}
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INPUT_PERMISSION", out ValueRead vr13))
+                {
+                    vr13.afterValueChange += (_sender, e) => MGV_Status_InputPermission(_sender, e);
+                }
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INPUT_PERMISSION_TIME_OUT", out ValueRead vr14))
+                {
+                    vr14.afterValueChange += (_sender, e) => MGV_Status_InputPermissionTimeOut(_sender, e);
+                }
             }
             catch (Exception ex)
             {
@@ -502,31 +507,62 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         }
 
         //TODO 2021.9.11
-        //private void MGV_Status_InputPermission(object sender, ValueChangedEventArgs e)
-        //{
-        //    var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+        private void MGV_Status_InputPermission(object sender, ValueChangedEventArgs e)
+        {
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
 
-        //    try
-        //    {
-        //        //1.建立各個Function物件
-        //        function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
 
-        //        //2.read log
-        //        logger.Info(function.ToString());
+                //2.read log
+                logger.Info(function.ToString());
 
-        //        IsWaitingForInputPermission = true;
-        //        //OnDoorOpen?.Invoke(this, new ManualPortEventArgs(function));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, "Exception");
-        //    }
-        //    finally
-        //    {
-        //        scApp.putFunBaseObj<ManualPortPLCInfo>(function);
-        //    }
-        //}
-        
+                if (function.InputPermission)
+                {
+                    IsWaitingForInputPermission = true;
+                }
+                OnInputPermissionFlagChanged?.Invoke(this, new ManualPortEventArgs(function));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+            }
+        }
+
+        private void MGV_Status_InputPermissionTimeOut(object sender, ValueChangedEventArgs e)
+        {
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+                //2.read log
+                logger.Info(function.ToString());
+
+                if (function.InputPermissionTimeOut)
+                {
+                    IsWaitingForInputPermission = false;
+                }
+                OnInputPermissionFlagChanged?.Invoke(this, new ManualPortEventArgs(function));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+            }
+        }
+
         #region Control
 
         public Task SetMoveBackReasonAsync(MoveBackReasons reason)
@@ -725,6 +761,18 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 function.ComingOutCarrierId = carrierId;
 
+                CommitChange(function);
+            });
+        }
+
+        public Task SetInputPermissionAsync(bool isSuccess)
+        {
+            return Task.Run(() =>
+            {
+                IsWaitingForInputPermission = false;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsInputPermission = isSuccess;
+                function.IsInputPermissionFailed = !isSuccess;
                 CommitChange(function);
             });
         }

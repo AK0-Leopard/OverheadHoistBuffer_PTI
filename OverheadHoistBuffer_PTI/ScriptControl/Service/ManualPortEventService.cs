@@ -65,6 +65,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 port.OnAlarmHappen += Port_OnAlarmHappen;
                 port.OnAlarmClear += Port_OnAlarmClear;
                 port.OnDoorOpen += Port_OnDoorOpen;
+                port.OnInputPermissionFlagChanged += Port_OnInputPermissionFlagChanged;
 
                 manualPorts.TryAdd(port.PortName, port);
                 WriteLog($"Add Manual Port Event Success ({port.PortName})");
@@ -514,14 +515,15 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (args.ManualPortPLCInfo.Direction == DirectionType.InMode)
                 {
-                    reportBll.ReportPortDirectionChanged(args.PortName, newDirectionIsInMode: true);
-                    WriteEventLog($"{logTitle} Report MCS PortTypeChange InMode");
-
-                    portDefBLL.ChangeDirectionToInMode(args.PortName);
-                    WriteEventLog($"{logTitle} PortDef change direction to InMode");
-
                     if (manualPorts.TryGetValue(args.PortName, out var plcPort))
                     {
+                        reportBll.ReportPortDirectionChanged(args.PortName, newDirectionIsInMode: true,
+                            isInputPermissionRequested: plcPort.IsWaitingForInputPermission);
+                        WriteEventLog($"{logTitle} Report MCS PortTypeChange InMode");
+
+                        portDefBLL.ChangeDirectionToInMode(args.PortName);
+                        WriteEventLog($"{logTitle} PortDef change direction to InMode");
+
                         plcPort.ChangeToInModeAsync(isOn: false);
                         WriteEventLog($"{logTitle} OFF ChangeToInMode Signal");
                     }
@@ -530,7 +532,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    reportBll.ReportPortDirectionChanged(args.PortName, newDirectionIsInMode: false);
+                    reportBll.ReportPortDirectionChanged(args.PortName, newDirectionIsInMode: false, false);
                     WriteEventLog($"{logTitle} Report MCS PortTypeChange OutMode");
 
                     portDefBLL.ChangeDirectionToOutMode(args.PortName);
@@ -704,5 +706,33 @@ namespace com.mirle.ibg3k0.sc.Service
                 logger.Error(ex, "");
             }
         }
+
+        private void Port_OnInputPermissionFlagChanged(object sender, ManualPortEventArgs args)
+        {
+            try
+            {
+                var info = args.ManualPortPLCInfo;
+                var logTitle = $"PortName[{args.PortName}] DoorOpenChanged => ";
+
+                if (info.InputPermission)
+                {
+                    WriteEventLog($"{logTitle} Input Permission flag on");
+                }
+                else
+                {
+                    WriteEventLog($"{logTitle} Input Permission flag off");
+                }
+
+                if (info.InputPermissionTimeOut)
+                {
+                    WriteEventLog($"{logTitle} Input Permission timed out");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "");
+            }
+        }
+        
     }
 }

@@ -74,6 +74,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendPortTypeChanging(string port_id, List<AMCSREPORTQUEUE> reportQueues = null);
 
 
+        public abstract bool S6F11SendInputPermission(string portID, List<AMCSREPORTQUEUE> reportQueues = null);
+
+
         public abstract bool S6F11SendCarrierBoxIDRename(string cstID, string boxID, string cstLOC, List<AMCSREPORTQUEUE> reportQueues = null);
 
 
@@ -153,6 +156,11 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         }
 
         public override bool S6F11SendPortTypeChanging(string port_id, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return true;
+        }
+
+        public override bool S6F11SendInputPermission(string portID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             return true;
         }

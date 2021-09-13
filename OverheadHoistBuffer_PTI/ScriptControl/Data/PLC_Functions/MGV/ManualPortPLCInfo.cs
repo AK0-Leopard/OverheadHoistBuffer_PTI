@@ -38,6 +38,12 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV
         [PLCElement(ValueName = "MGV_TO_OHxC_UNLOADOK")]
         public bool IsUnloadOK;
 
+        [PLCElement(ValueName = "MGV_TO_OHxC_INPUT_PERMISSION")]
+        public bool InputPermission;
+
+        [PLCElement(ValueName = "MGV_TO_OHxC_INPUT_PERMISSION_TIME_OUT")]
+        public bool InputPermissionTimeOut;
+
         [PLCElement(ValueName = "MGV_TO_OHxC_LOADPRESENCE1")]
         public bool LoadPosition1;
 

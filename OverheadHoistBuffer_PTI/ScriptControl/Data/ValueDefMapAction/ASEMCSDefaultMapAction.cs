@@ -4630,6 +4630,32 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
+        public override bool S6F11SendInputPermission(string portID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            try
+            {
+                VIDCollection Vids = new VIDCollection();
+                Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = portID;
+
+                //2021.9.13 Hsinyu Chang: MGV使用
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_InputPermission, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ASEMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+            }
+            return true;
+        }
+
         public override bool S6F11SendCarrierBoxIDRename(string cstID, string boxID, string cstLOC, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try

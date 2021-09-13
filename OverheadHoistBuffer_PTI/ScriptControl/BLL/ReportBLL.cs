@@ -1955,11 +1955,17 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode)
+        public bool ReportPortDirectionChanged(string portName, bool newDirectionIsInMode, bool isInputPermissionRequested)
         {
             bool isSuccsess = true;
             if (newDirectionIsInMode)
+            {
+                if (isInputPermissionRequested)
+                {
+                    isSuccsess = isSuccsess && iBSEMDriver.S6F11SendInputPermission(portName, null);
+                }
                 isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeInput(portName, null);
+            }
             else
                 isSuccsess = isSuccsess && iBSEMDriver.S6F11SendPortTypeOutput(portName, null);
             return isSuccsess;

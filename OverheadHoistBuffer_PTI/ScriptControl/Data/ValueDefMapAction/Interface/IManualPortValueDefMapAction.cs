@@ -21,11 +21,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
         event ManualPortEventHandler OnAlarmHappen;
         event ManualPortEventHandler OnAlarmClear;
         event ManualPortEventHandler OnDoorOpen;
+        event ManualPortEventHandler OnInputPermissionFlagChanged;
+
         Task MoveBackAsync();
         Task MoveBackAsync(MoveBackReasons reason);
         Task SetMoveBackReasonAsync(MoveBackReasons reason);
         Task ShowReadyToWaitOutCarrierOnMonitorAsync(string carrierId_1, string carrierId_2);
         Task ShowComingOutCarrierOnMonitorAsync(string carrierId);
+        Task SetInputPermissionAsync(bool isSuccess);
+
         Task TimeCalibrationAsync();
     }
 }

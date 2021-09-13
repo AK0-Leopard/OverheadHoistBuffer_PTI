@@ -5201,6 +5201,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (mode == E_PortType.In)
                 {
+                    //2021.9.13 for PTI MGV port
+                    if (port_station is MANUAL_PORTSTATION)
+                    {
+                        var mapAction = (port_station as MANUAL_PORTSTATION).getExcuteMapAction();
+                        if (mapAction.IsWaitingForInputPermission)
+                        {
+                            mapAction.SetInputPermissionAsync(true);
+                        }
+                    }
+
                     port_station.ChangeToOutMode(false);
                     port_station.ChangeToInMode(true);
                     TransferServiceLogger.Info
@@ -5220,6 +5230,16 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else if (mode == E_PortType.Out)
                 {
+                    //2021.9.13 for PTI MGV port
+                    if (port_station is MANUAL_PORTSTATION)
+                    {
+                        var mapAction = (port_station as MANUAL_PORTSTATION).getExcuteMapAction();
+                        if (mapAction.IsWaitingForInputPermission)
+                        {
+                            mapAction.SetInputPermissionAsync(false);
+                        }
+                    }
+
                     port_station.ChangeToInMode(false);
                     port_station.ChangeToOutMode(true);
                     TransferServiceLogger.Info

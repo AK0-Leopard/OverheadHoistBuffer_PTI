@@ -23,6 +23,12 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.MGV
         [PLCElement(ValueName = "OHxC_TO_MGV_MOVEBACK")]
         public bool IsMoveBack;
 
+        [PLCElement(ValueName = "OHxC_TO_MGV_INPUT_PERMISSION")]
+        public bool IsInputPermission;
+
+        [PLCElement(ValueName = "OHxC_TO_MGV_INPUT_PERMISSION_FAIL")]
+        public bool IsInputPermissionFailed;
+
         [PLCElement(ValueName = "OHxC_TO_MGV_INMODE")]
         public bool IsChangeToInMode;
 
