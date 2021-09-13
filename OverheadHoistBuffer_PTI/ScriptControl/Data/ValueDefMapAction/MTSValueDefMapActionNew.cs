@@ -41,8 +41,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public override void DateTimeSyncCommand(DateTime dateTime)
         {
 
-            OHxCToMtl_DateTimeSync send_function =
-               scApp.getFunBaseObj<OHxCToMtl_DateTimeSync>(MTS.EQPT_ID) as OHxCToMtl_DateTimeSync;
+            OHxCToMts_DateTimeSync send_function =
+               scApp.getFunBaseObj<OHxCToMts_DateTimeSync>(MTS.EQPT_ID) as OHxCToMts_DateTimeSync;
             try
             {
                 lock (dateTimeSyneObj)
@@ -71,14 +71,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_DateTimeSync>(send_function);
+                scApp.putFunBaseObj<OHxCToMts_DateTimeSync>(send_function);
             }
         }
         uint message_index = 0;
         public override void OHxCMessageDownload(string msg)
         {
-            OHxCToMtl_MessageDownload send_function =
-                scApp.getFunBaseObj<OHxCToMtl_MessageDownload>(MTS.EQPT_ID) as OHxCToMtl_MessageDownload;
+            OHxCToMts_MessageDownload send_function =
+                scApp.getFunBaseObj<OHxCToMts_MessageDownload>(MTS.EQPT_ID) as OHxCToMts_MessageDownload;
             try
             {
                 //1.建立各個Function物件
@@ -99,15 +99,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_MessageDownload>(send_function);
+                scApp.putFunBaseObj<OHxCToMts_MessageDownload>(send_function);
             }
         }
         UInt16 car_realtime_info = 0;
         public override void CarRealtimeInfo(UInt16 car_id, UInt16 action_mode, UInt16 cst_exist, UInt16 current_section_id, UInt32 current_address_id,
                                             UInt32 buffer_distance, UInt16 speed)
         {
-            OHxCToMtl_CarRealtimeInfo send_function =
-                scApp.getFunBaseObj<OHxCToMtl_CarRealtimeInfo>(MTS.EQPT_ID) as OHxCToMtl_CarRealtimeInfo;
+            OHxCToMts_CarRealtimeInfo send_function =
+                scApp.getFunBaseObj<OHxCToMts_CarRealtimeInfo>(MTS.EQPT_ID) as OHxCToMts_CarRealtimeInfo;
             try
             {
                 //1.建立各個Function物件
@@ -134,7 +134,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_MessageDownload>(send_function);
+                scApp.putFunBaseObj<OHxCToMts_MessageDownload>(send_function);
             }
         }
 
@@ -142,9 +142,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             bool isSendSuccess = false;
             var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_CarOutNotify>(MTS.EQPT_ID) as OHxCToMtl_CarOutNotify;
+                scApp.getFunBaseObj<OHxCToMts_CarOutNotify>(MTS.EQPT_ID) as OHxCToMts_CarOutNotify;
             var receive_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(MTS.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify;
+                scApp.getFunBaseObj<MtsToOHxC_ReplyCarOutNotify>(MTS.EQPT_ID) as MtsToOHxC_ReplyCarOutNotify;
             try
             {
                 //1.準備要發送的資料
@@ -182,8 +182,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_CarOutNotify>(send_function);
-                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(receive_function);
+                scApp.putFunBaseObj<OHxCToMts_CarOutNotify>(send_function);
+                scApp.putFunBaseObj<MtsToOHxC_ReplyCarOutNotify>(receive_function);
             }
             return (isSendSuccess, 0);
         }
@@ -191,10 +191,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueWrite vm_carOutInterlock = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_U2D_CAR_OUT_INTERLOCK");
-                ValueWrite vm_carOutReady = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_U2D_CAR_OUT_READY");
-                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_U2D_CAR_MOVING");
-                ValueWrite vm_carMoveCmp = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_U2D_CAR_MOVE_COMPLETE");
+                ValueWrite vm_carOutInterlock = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_U2D_CAR_OUT_INTERLOCK");
+                ValueWrite vm_carOutReady = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_U2D_CAR_OUT_READY");
+                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_U2D_CAR_MOVING");
+                ValueWrite vm_carMoveCmp = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_U2D_CAR_MOVE_COMPLETE");
                 string setValue = carOutInterlock ? "1" : "0";
                 vm_carOutInterlock.setWriteValue(carOutInterlock ? "1" : "0");
                 vm_carOutReady.setWriteValue(carOutReady ? "1" : "0");
@@ -215,10 +215,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueWrite vm_carOutInterlock = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_U2D_CAR_OUT_INTERLOCK");
+                ValueWrite vm_carOutInterlock = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_U2D_CAR_OUT_INTERLOCK");
                 string setValue = carOutInterlock ? "1" : "0";
                 vm_carOutInterlock.setWriteValue(setValue);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNew), Device: DEVICE_NAME_MTL,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNew), Device: DEVICE_NAME_MTL,
                          Data: $"Car Out Intertlock:{carOutInterlock}",
                          VehicleID: MTS.EQPT_ID);
                 bool result = ISMControl.writeDeviceBlock(bcfApp, vm_carOutInterlock);
@@ -236,8 +236,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_D2U_CAR_MOVING");
-                ValueWrite vm_carMoveCmp = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_D2U_CAR_MOVE_COMPLETE");
+                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_D2U_CAR_MOVING");
+                ValueWrite vm_carMoveCmp = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_D2U_CAR_MOVE_COMPLETE");
                 vm_carMoving.setWriteValue(carMoving ? "1" : "0");
                 vm_carMoveCmp.setWriteValue(carMoveComplete ? "1" : "0");
                 ISMControl.writeDeviceBlock(bcfApp, vm_carMoving);
@@ -252,9 +252,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTL_D2U_CAR_MOVING");
+                ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "OHXC_TO_MTS_D2U_CAR_MOVING");
                 vm_carMoving.setWriteValue(carMoving ? "1" : "0");
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNew), Device: DEVICE_NAME_MTL,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNew), Device: DEVICE_NAME_MTL,
                          Data: $"Car In Moving:{carMoving}",
                          VehicleID: MTS.EQPT_ID);
                 return ISMControl.writeDeviceBlock(bcfApp, vm_carMoving);
@@ -270,8 +270,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueRead vr_safety_check = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTL_TO_OHXC_U2D_SAFETY_CHECK");
-                // ValueRead vr_move_cmp = bcfApp.getReadValueEvent(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MTL_TO_OHXC_U2D_MOVE_COMPLETE");
+                ValueRead vr_safety_check = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTS_TO_OHXC_U2D_SAFETY_CHECK");
+                // ValueRead vr_move_cmp = bcfApp.getReadValueEvent(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MTS_TO_OHXC_U2D_MOVE_COMPLETE");
                 carOutSafelyCheck = (bool)vr_safety_check.getText();
                 // carMoveComplete = (bool)vr_move_cmp.getText();
                 carMoveComplete = false;
@@ -287,8 +287,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-                ValueRead vr_safety_check = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTL_TO_OHXC_D2U_SAFETY_CHECK");
-                ValueRead vr_car_in = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTL_TO_OHXC_D2U_CAR_IN_INTERLOCK");
+                ValueRead vr_safety_check = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTS_TO_OHXC_D2U_SAFETY_CHECK");
+                ValueRead vr_car_in = bcfApp.getReadValueEvent(MTS.EqptObjectCate, MTS.EQPT_ID, "MTS_TO_OHXC_D2U_CAR_IN_INTERLOCK");
                 carOutSafelyCheck = (bool)vr_safety_check.getText();
                 carInInterlock = (bool)vr_car_in.getText();
             }
@@ -303,7 +303,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public override void CarOutSafetyChcek(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_CarOutSafetyCheck>(MTS.EQPT_ID) as MtlToOHxC_CarOutSafetyCheck;
+                scApp.getFunBaseObj<MtsToOHxC_CarOutSafetyCheck>(MTS.EQPT_ID) as MtsToOHxC_CarOutSafetyCheck;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -318,16 +318,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_CarOutSafetyCheck>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_CarOutSafetyCheck>(recevie_function);
 
             }
         }
         public override void MTL_Alarm_Report(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_AlarmReport>(MTS.EQPT_ID) as MtlToOHxC_AlarmReport;
+                scApp.getFunBaseObj<MtsToOHxC_AlarmReport>(MTS.EQPT_ID) as MtsToOHxC_AlarmReport;
             var send_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyAlarmReport>(MTS.EQPT_ID) as MtlToOHxC_ReplyAlarmReport;
+                scApp.getFunBaseObj<MtsToOHxC_ReplyAlarmReport>(MTS.EQPT_ID) as MtsToOHxC_ReplyAlarmReport;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -353,8 +353,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_AlarmReport>(recevie_function);
-                scApp.putFunBaseObj<MtlToOHxC_ReplyAlarmReport>(send_function);
+                scApp.putFunBaseObj<MtsToOHxC_AlarmReport>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_ReplyAlarmReport>(send_function);
 
             }
         }
@@ -376,7 +376,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public override void MTL_Alive(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_Alive>(MTS.EQPT_ID) as MtlToOHxC_Alive;
+                scApp.getFunBaseObj<MtsToOHxC_Alive>(MTS.EQPT_ID) as MtsToOHxC_Alive;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -394,14 +394,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_Alive>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_Alive>(recevie_function);
 
             }
         }
         public override void MTL_Current_ID(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_CurrentCarID>(MTS.EQPT_ID) as MtlToOHxC_CurrentCarID;
+                scApp.getFunBaseObj<MtsToOHxC_CurrentCarID>(MTS.EQPT_ID) as MtsToOHxC_CurrentCarID;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -417,14 +417,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_CurrentCarID>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_CurrentCarID>(recevie_function);
 
             }
         }
         public override void MTL_TO_OHXC_REPLY_OHXC_CAR_OUT_NOTIFY_HS(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(MTS.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify;
+                scApp.getFunBaseObj<MtsToOHxC_ReplyCarOutNotify>(MTS.EQPT_ID) as MtsToOHxC_ReplyCarOutNotify;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -439,7 +439,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_ReplyCarOutNotify>(recevie_function);
 
             }
         }
@@ -448,7 +448,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public override void MTL_LFTStatus(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_LFTStatus>(MTS.EQPT_ID) as MtlToOHxC_LFTStatus;
+                scApp.getFunBaseObj<MtsToOHxC_LFTStatus>(MTS.EQPT_ID) as MtsToOHxC_LFTStatus;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -467,14 +467,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_LFTStatus>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_LFTStatus>(recevie_function);
 
             }
         }
         public override void CarInSafetyChcek(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_CarInSafetyCheck>(MTS.EQPT_ID) as MtlToOHxC_CarInSafetyCheck;
+                scApp.getFunBaseObj<MtsToOHxC_CarInSafetyCheck>(MTS.EQPT_ID) as MtsToOHxC_CarInSafetyCheck;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -486,7 +486,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 //if (eqpt.CarInSafetyCheck)
                 //{
-                //    scApp.MTLService.carInSafetyAndVehicleStatusCheck(eqpt);
+                //    scApp.MTSService.carInSafetyAndVehicleStatusCheck(eqpt);
                 //}
             }
             catch (Exception ex)
@@ -495,7 +495,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_CarInSafetyCheck>(recevie_function);
+                scApp.putFunBaseObj<MtsToOHxC_CarInSafetyCheck>(recevie_function);
 
             }
         }
@@ -503,9 +503,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
 
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_MtlCarOutRepuest>(MTS.EQPT_ID) as MtlToOHxC_MtlCarOutRepuest;
+                scApp.getFunBaseObj<MtsToOHxC_MtsCarOutRepuest>(MTS.EQPT_ID) as MtsToOHxC_MtsCarOutRepuest;
             var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_MtlCarOutReply>(MTS.EQPT_ID) as OHxCToMtl_MtlCarOutReply;
+                scApp.getFunBaseObj<OHxCToMts_MtsCarOutReply>(MTS.EQPT_ID) as OHxCToMts_MtsCarOutReply;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -521,7 +521,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     {
                         scApp.MTLService.carOutRequestCancle(MTS);
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNew), Device: DEVICE_NAME_MTL,
-                                 Data: $"Process MTL car out cancel",
+                                 Data: $"Process MTS car out cancel",
                                  VehicleID: MTS.EQPT_ID);
                     }
                     else
@@ -530,7 +530,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         var car_out_check_result = scApp.MTLService.checkVhAndMTxCarOutStatus(this.MTS, null, pre_car_out_vh);
                         send_function.ReturnCode = car_out_check_result.isSuccess ? (ushort)1 : (ushort)2;
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNew), Device: DEVICE_NAME_MTL,
-                                 Data: $"Process MTL car out request, is success:{car_out_check_result.isSuccess},result:{car_out_check_result.result}",
+                                 Data: $"Process MTS car out request, is success:{car_out_check_result.isSuccess},result:{car_out_check_result.result}",
                                  VehicleID: MTS.EQPT_ID);
 
                     }
@@ -559,16 +559,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_MtlCarOutRepuest>(recevie_function);
-                scApp.putFunBaseObj<OHxCToMtl_MtlCarOutReply>(send_function);
+                scApp.putFunBaseObj<MtsToOHxC_MtsCarOutRepuest>(recevie_function);
+                scApp.putFunBaseObj<OHxCToMts_MtsCarOutReply>(send_function);
             }
         }
         public override void MTL_CarInRequest(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_RequestCarInDataCheck>(MTS.EQPT_ID) as MtlToOHxC_RequestCarInDataCheck;
+                scApp.getFunBaseObj<MtsToOHxC_RequestCarInDataCheck>(MTS.EQPT_ID) as MtsToOHxC_RequestCarInDataCheck;
             var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_ReplyCarInDataCheck>(MTS.EQPT_ID) as OHxCToMtl_ReplyCarInDataCheck;
+                scApp.getFunBaseObj<OHxCToMts_ReplyCarInDataCheck>(MTS.EQPT_ID) as OHxCToMts_ReplyCarInDataCheck;
             try
             {
                 recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
@@ -620,8 +620,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_RequestCarInDataCheck>(recevie_function);
-                scApp.putFunBaseObj<OHxCToMtl_ReplyCarInDataCheck>(send_function);
+                scApp.putFunBaseObj<MtsToOHxC_RequestCarInDataCheck>(recevie_function);
+                scApp.putFunBaseObj<OHxCToMts_ReplyCarInDataCheck>(send_function);
 
             }
         }
