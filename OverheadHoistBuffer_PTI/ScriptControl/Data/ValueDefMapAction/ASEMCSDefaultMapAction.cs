@@ -4636,7 +4636,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = portID;
-
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = portID;
                 //2021.9.13 Hsinyu Chang: MGV使用
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_InputPermission, Vids);
                 if (reportQueues == null)
