@@ -20,11 +20,11 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         {
             scApp = SCApplication.getInstance();
         }
-
         public override void doProcess(object obj)
         {
             try
             {
+                scApp.ManualPortControlService?.RegularCheckMoveInCassetteTimedOut();
                 scApp.ManualPortControlService?.RefreshState();
             }
             catch (Exception ex)
@@ -33,4 +33,5 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             }
         }
     }
+}
 }

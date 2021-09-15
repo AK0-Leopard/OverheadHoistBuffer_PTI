@@ -78,19 +78,60 @@ namespace com.mirle.ibg3k0.sc.Service
             var logMessage = $"[{now}] {message}";
             logger.Info(logMessage);
         }
+        private void WriteLogDebug(string message)
+        {
+            var logMessage = $"[{now}] {message}";
+            logger.Debug(logMessage);
+        }
 
         #endregion Log
-
+        private long syncPoint_RegularCheckMoveInCst = 0;
+        public void RegularCheckMoveInCassetteTimedOut()
+        {
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_RegularCheckMoveInCst, 1) == 0)
+            {
+                try
+                {
+                    WriteLogDebug("Start maunalePort RegularCheckMoveInCassetteTimedOut...");
+                    CheckMoveInCassetteTimedOut();
+                    WriteLogDebug("End maunalePort RegularCheckMoveInCassetteTimedOut.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_RegularCheckMoveInCst, 0);
+                }
+            }
+        }
+        private long syncPoint_RefreshState = 0;
         public void RefreshState()
         {
-            var allCommands = ACMD_MCS.MCS_CMD_InfoList;
-
-            RefreshPlcMonitor(allCommands);
-            RefreshReadyToWaitOutCarrier();
-            RefreshComingOutCarrier();
-            CheckCommandingSignal(allCommands);
-            CheckMoveInCassetteTimedOut();
-            //TimeCalibration();
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_RefreshState, 1) == 0)
+            {
+                try
+                {
+                    var allCommands = ACMD_MCS.MCS_CMD_InfoList;
+                    WriteLogDebug("Start maunalePort RefreshState...");
+                    RefreshPlcMonitor(allCommands);
+                    RefreshReadyToWaitOutCarrier();
+                    RefreshComingOutCarrier();
+                    CheckCommandingSignal(allCommands);
+                    //CheckMoveInCassetteTimedOut();
+                    WriteLogDebug("End maunalePort RefreshState.");
+                    //TimeCalibration();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_RefreshState, 0);
+                }
+            }
         }
 
         private void RefreshPlcMonitor(ConcurrentDictionary<string, ACMD_MCS> allCommands)
