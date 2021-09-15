@@ -4483,7 +4483,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Load_Req, Vids);
                 if (reportQueues == null)
                 {
@@ -4508,7 +4508,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unload_Req, Vids);
                 if (reportQueues == null)
                 {
@@ -4532,7 +4532,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_No_Req, Vids);
                 if (reportQueues == null)
                 {
@@ -4557,7 +4557,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
-
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
                 //2021.8.29 Hsinyu Chang: MGV使用
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Input, Vids);
@@ -4584,6 +4584,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
                 //2021.8.29 Hsinyu Chang: MGV使用
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Output, Vids);
@@ -4610,6 +4611,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VIDITEM_115_DVVAL_PortID.PORT_ID = port_id;
+                Vids.VIDITEM_115_SV_PortID.PORT_ID = port_id;
                 //PTI 無定義該事件，先行註解掉 2021/04/13 Kevin
                 //2021.8.29 Hsinyu Chang: MGV使用
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Port_Type_Changing, Vids);

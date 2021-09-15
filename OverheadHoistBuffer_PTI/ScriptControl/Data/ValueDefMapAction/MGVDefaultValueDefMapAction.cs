@@ -44,6 +44,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public string PortName { get => port.PORT_ID; }
         public DirectionType PortDirection { get; private set; }
         public bool IsWaitingForInputPermission { get; private set; }
+        public bool IsMoveBacking { get; private set; }
         #endregion Implement
 
         protected MANUAL_PORTSTATION port = null;
@@ -398,7 +399,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 logger.Info(function.ToString());
 
                 if (function.IsRemoveCheck)
+                {
+                    IsMoveBacking = false;
                     OnCstRemoved?.Invoke(this, new ManualPortEventArgs(function));
+                }
             }
             catch (Exception ex)
             {
@@ -406,6 +410,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
+                
                 scApp.putFunBaseObj<ManualPortPLCInfo>(function);
             }
         }
@@ -563,6 +568,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        public void SetMoveBackFlag()
+        {
+            IsMoveBacking = true;
+        }
+
         #region Control
 
         public Task SetMoveBackReasonAsync(MoveBackReasons reason)
@@ -597,6 +607,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public Task MoveBackAsync()
         {
+            //IsMoveBacking = true;
             return Task.Run(() =>
             {
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
@@ -773,6 +784,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
                 function.IsInputPermission = isSuccess;
                 function.IsInputPermissionFailed = !isSuccess;
+                CommitChange(function);
+
+                //此訊號不會由PLC off，需由OHBC切換
+                Task.Delay(3_000).Wait();
+
+                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function.IsInputPermission = false;
+                function.IsInputPermissionFailed = false;
                 CommitChange(function);
             });
         }

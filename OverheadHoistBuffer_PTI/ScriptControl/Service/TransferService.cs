@@ -6182,6 +6182,28 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassetteData.BOXID);
                 return "OK";
             }
+            else if (isUnitType(cassetteData.Carrier_LOC, UnitType.MGV))
+            {
+                if (reportBLL.ReportCarrierRemoveFromManualPort(cassetteData))
+                {
+                    scApp.CassetteDataBLL.DeleteCSTbyBoxID(cassetteData.BOXID);
+                    TransferServiceLogger.Info
+                    (
+                        DateTime.Now.ToString("HH:mm:ss.fff ") +
+                        "OHB >> DB|Manual_DeleteCst:刪帳成功"
+                    );
+                    return "OK";
+                }
+                else
+                {
+                    TransferServiceLogger.Info
+                    (
+                        DateTime.Now.ToString("HH:mm:ss.fff ") +
+                        "Manual >> OHB|Manual_DeleteCst:刪帳失敗"
+                    );
+                    return "失敗";
+                }
+            }
             else
             {
                 if (reportBLL.ReportCarrierRemovedCompleted(cstID, boxID))

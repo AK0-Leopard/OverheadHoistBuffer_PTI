@@ -11,6 +11,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
         string PortName { get; }
         DirectionType PortDirection { get; }
         bool IsWaitingForInputPermission { get; }
+        bool IsMoveBacking { get; }
         event ManualPortEventHandler OnWaitIn;
         event ManualPortEventHandler OnWaitOut;
         event ManualPortEventHandler OnDirectionChanged;
@@ -23,6 +24,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.Interface
         event ManualPortEventHandler OnDoorOpen;
         event ManualPortEventHandler OnInputPermissionFlagChanged;
 
+        void SetMoveBackFlag();
         Task MoveBackAsync();
         Task MoveBackAsync(MoveBackReasons reason);
         Task SetMoveBackReasonAsync(MoveBackReasons reason);

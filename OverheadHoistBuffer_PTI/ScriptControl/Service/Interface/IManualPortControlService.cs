@@ -21,7 +21,7 @@ namespace com.mirle.ibg3k0.sc.Service.Interface
         bool SetStop(string portName);
         bool SetCommanding(string portName, bool setOn);
         bool SetControllerErrorIndex(string portName, int newIndex);
-        void Start(IEnumerable<IManualPortValueDefMapAction> ports, IManualPortCassetteDataBLL cassetteDataBLL);
+        void Start(IEnumerable<IManualPortValueDefMapAction> ports, IManualPortCassetteDataBLL cassetteDataBLL, IManualPortCMDBLL commandBLL);
         int TimeOutForMoveBack { get; set; }
     }
 }

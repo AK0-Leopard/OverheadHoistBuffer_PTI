@@ -28,6 +28,7 @@ namespace com.mirle.ibg3k0.sc.Service
         private const int timeoutElapsedMillisecondsForOffCommandingSignal = 12_000;
 
         private IManualPortCassetteDataBLL cassetteDataBLL;
+        private IManualPortCMDBLL commandBLL;
 
         public int TimeOutForMoveBack { get; set; } = 30;
 
@@ -36,10 +37,13 @@ namespace com.mirle.ibg3k0.sc.Service
             WriteLog($"ManualPortControlService Initial");
             //RegisterEvent(ports);
         }
-        public void Start(IEnumerable<IManualPortValueDefMapAction> ports, IManualPortCassetteDataBLL cassetteDataBLL)
+        public void Start(IEnumerable<IManualPortValueDefMapAction> ports,
+            IManualPortCassetteDataBLL cassetteDataBLL,
+            IManualPortCMDBLL commandBLL)
         {
             WriteLog($"ManualPortControlService Start");
             this.cassetteDataBLL = cassetteDataBLL;
+            this.commandBLL = commandBLL;
             RegisterPort(ports);
         }
 
@@ -86,6 +90,7 @@ namespace com.mirle.ibg3k0.sc.Service
             RefreshComingOutCarrier();
             CheckCommandingSignal(allCommands);
             CheckMoveInCassetteTimedOut();
+            //TimeCalibration();
         }
 
         private void RefreshPlcMonitor(ConcurrentDictionary<string, ACMD_MCS> allCommands)
@@ -238,11 +243,33 @@ namespace com.mirle.ibg3k0.sc.Service
                         TimeSpan timeSpan = DateTime.Now - DateTime.Parse(cassetteOnPort.TrnDT);
                         if (timeSpan.TotalSeconds > TimeOutForMoveBack)
                         {
+                            //TODO: 如果已有命令，則跳過move back
+                            if (commandBLL.GetCommandByBoxId(cassetteOnPort.BOXID, out ACMD_MCS cmd))
+                            {
+                                WriteLog($"{portName} : {cassetteOnPort.BOXID} skip move back.");
+                                continue;
+                            }
                             WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} which is already timed out for move in. Move back.");
                             //SetMoveBackReason(portName, MoveBackReasons.MoveInTimedOut);
                             MoveBack(portName, MoveBackReasons.MoveInTimedOut);
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
+
+        private void TimeCalibration()
+        {
+            try
+            {
+                foreach (var portItem in manualPorts)
+                {
+                    var portName = portItem.Key;
+                    SetTimeCalibration(portName);
                 }
             }
             catch (Exception ex)
@@ -313,6 +340,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
 
+            manualPorts[portName].SetMoveBackFlag();
             manualPorts[portName].MoveBackAsync(reason);
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
@@ -405,6 +433,19 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
             manualPorts[portName].SetControllerErrorIndexAsync(newIndex);
+            WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
+            return true;
+        }
+
+        public bool SetTimeCalibration(string portName)
+        {
+            if (manualPorts.ContainsKey(portName) == false)
+            {
+                WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName}) => Cannot Find this port");
+                return false;
+            }
+
+            manualPorts[portName].TimeCalibrationAsync();
             WriteLog($"{MethodBase.GetCurrentMethod().Name}({portName})");
             return true;
         }

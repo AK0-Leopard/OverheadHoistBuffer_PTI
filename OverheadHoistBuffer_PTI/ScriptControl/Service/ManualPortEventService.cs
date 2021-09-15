@@ -369,6 +369,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private void CheckResidualCassetteProcess(string logTitle, string portName)
         {
+            //2021.9.14 Move back中則不刪帳，延到OnCstRemoved再刪
+            if (manualPorts.TryGetValue(portName, out var plcPort))
+            {
+                if (plcPort.IsMoveBacking)
+                {
+                    WriteEventLog($"{logTitle} Move backing, skip deleting residual cassette.");
+                    return;
+                }
+            }
+
             cassetteDataBLL.GetCarrierByPortName(portName, stage: 1, out var residueCassetteData);
             var hasNoResidueData = residueCassetteData == null;
             if (hasNoResidueData)
@@ -487,6 +497,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 var stage1CarrierId = info.CarrierIdOfStage1.Trim();
 
                 WriteEventLog($"PortName[{args.PortName}] CstRemoved => CarrierIdOfStage1[{stage1CarrierId}]");
+
+                cassetteDataBLL.GetCarrierByPortName(args.PortName, stage: 1, out var CassetteData);
+                cassetteDataBLL.Delete(CassetteData.BOXID);
+
+                var logTitle = $"PortName[{args.PortName}] OnCstRemoved => ";
+                ReportForcedCarrierRemove(logTitle, CassetteData);
             }
             catch (Exception ex)
             {
