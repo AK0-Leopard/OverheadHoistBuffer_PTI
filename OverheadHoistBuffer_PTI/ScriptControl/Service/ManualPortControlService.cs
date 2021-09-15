@@ -282,6 +282,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (hasCassette && portItem.Value.PortDirection == DirectionType.InMode)
                     {
                         TimeSpan timeSpan = DateTime.Now - DateTime.Parse(cassetteOnPort.TrnDT);
+                        WriteLogDebug($"{cassetteOnPort.BOXID} on {portName} waited in at {DateTime.Parse(cassetteOnPort.TrnDT)}.");
                         if (timeSpan.TotalSeconds > TimeOutForMoveBack)
                         {
                             //TODO: 如果已有命令，則跳過move back
@@ -296,8 +297,16 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
-                            WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} for {timeSpan.TotalSeconds} second(s).");
+                            WriteLogDebug($"{portName} has cassette {cassetteOnPort.BOXID} for {timeSpan.TotalSeconds} second(s).");
                         }
+                    }
+                    else if (portItem.Value.PortDirection != DirectionType.InMode)
+                    {
+                        WriteLogDebug($"{portName} is not in mode, skip move back condition.");
+                    }
+                    else if (!hasCassette)
+                    {
+                        WriteLogDebug($"{portName} has no cassette, skip move back condition.");
                     }
                 }
             }

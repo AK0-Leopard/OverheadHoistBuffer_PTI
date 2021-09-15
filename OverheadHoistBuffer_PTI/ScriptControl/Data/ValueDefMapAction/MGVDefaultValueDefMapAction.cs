@@ -82,7 +82,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 switch (runLevel)
                 {
                     case BCFAppConstants.RUN_LEVEL.ZERO:
-
+                        initialValueRead();
                         break;
                     case BCFAppConstants.RUN_LEVEL.ONE:
                         break;
@@ -179,6 +179,41 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        private void initialValueRead()
+        {
+            try
+            {
+                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_RUN", out ValueRead vr1))
+                //{
+                //    MGV_Status_Change_RUN(vr1, null);
+                //}
+                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_DOWN", out ValueRead vr2))
+                //{
+                //    MGV_Status_Change_DOWN(vr2, null);
+                //}
+                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_FAULT", out ValueRead vr3))
+                //{
+                //    MGV_Status_Change_FAULT(vr3, null);
+                //}
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_OUTMODE", out ValueRead vr4))
+                {
+                    MGV_Status_Change_to_OutMode_InitialStage();
+                }
+                if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_INMODE", out ValueRead vr5))
+                {
+                    MGV_Status_Change_to_InMode_InitialStage();
+                }
+                //if (bcfApp.tryGetReadValueEventstring(port.EqptObjectCate, port.PORT_ID, "MGV_TO_OHxC_ERRORINDEX", out ValueRead vr6))
+                //{
+                //    MGV_Status_ErrorIndexChanged(vr6, null);
+                //}
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
+
         #region State
         private void MGV_Status_Change_RUN(object sender, ValueChangedEventArgs e)
         {
@@ -266,8 +301,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //2.read log
                 logger.Info(function.ToString());
 
-                PortDirection = DirectionType.OutMode;
-                OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
+                if (function.IsOutMode)
+                {
+                    PortDirection = DirectionType.OutMode;
+                    OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
+                }
             }
             catch (Exception ex)
             {
@@ -290,8 +328,64 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 //2.read log
                 logger.Info(function.ToString());
-                PortDirection = DirectionType.InMode;
-                OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
+                if (function.IsInMode)
+                {
+                    PortDirection = DirectionType.InMode;
+                    OnDirectionChanged?.Invoke(this, new ManualPortEventArgs(function));
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+            }
+        }
+
+        private void MGV_Status_Change_to_OutMode_InitialStage()
+        {
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+                //2.read log
+                logger.Info(function.ToString());
+
+                if (function.IsOutMode)
+                {
+                    PortDirection = DirectionType.OutMode;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<ManualPortPLCInfo>(function);
+            }
+        }
+
+        private void MGV_Status_Change_to_InMode_InitialStage()
+        {
+            var function = scApp.getFunBaseObj<ManualPortPLCInfo>(port.PORT_ID) as ManualPortPLCInfo;
+
+            try
+            {
+                //1.建立各個Function物件
+                function.Read(bcfApp, port.EqptObjectCate, port.PORT_ID);
+
+                //2.read log
+                logger.Info(function.ToString());
+                if (function.IsInMode)
+                {
+                    PortDirection = DirectionType.InMode;
+                }
             }
             catch (Exception ex)
             {
