@@ -579,7 +579,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_MoveBack>(port.PORT_ID) as ManualPortPLCControl_MoveBack;
                 function.MoveBackReason = (ushort)reason;
                 CommitChange(function);
             });
@@ -589,7 +589,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_ChangeDirection>(port.PORT_ID) as ManualPortPLCControl_ChangeDirection;
                 function.IsChangeToInMode = isOn;
                 CommitChange(function);
             });
@@ -599,7 +599,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_ChangeDirection>(port.PORT_ID) as ManualPortPLCControl_ChangeDirection;
                 function.IsChangeToOutMode = isOn;
                 CommitChange(function);
             });
@@ -610,14 +610,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //IsMoveBacking = true;
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_MoveBack>(port.PORT_ID) as ManualPortPLCControl_MoveBack;
                 function.IsMoveBack = true;
                 CommitChange(function);
 
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_MoveBack>(port.PORT_ID) as ManualPortPLCControl_MoveBack;
                 function.IsMoveBack = false;
                 CommitChange(function);
             });
@@ -627,7 +627,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_MoveBack>(port.PORT_ID) as ManualPortPLCControl_MoveBack;
                 function.MoveBackReason = (ushort)reason;
                 function.IsMoveBack = true;
                 CommitChange(function);
@@ -635,7 +635,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_MoveBack>(port.PORT_ID) as ManualPortPLCControl_MoveBack;
                 function.MoveBackReason = 0;
                 function.IsMoveBack = false;
                 CommitChange(function);
@@ -646,14 +646,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_Reset>(port.PORT_ID) as ManualPortPLCControl_Reset;
                 function.IsResetOn = true;
                 CommitChange(function);
 
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_Reset>(port.PORT_ID) as ManualPortPLCControl_Reset;
                 function.IsResetOn = false;
                 CommitChange(function);
             });
@@ -663,14 +663,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_BuzzerStop>(port.PORT_ID) as ManualPortPLCControl_BuzzerStop;
                 function.IsBuzzerStop = true;
                 CommitChange(function);
 
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_BuzzerStop>(port.PORT_ID) as ManualPortPLCControl_BuzzerStop;
                 function.IsBuzzerStop = false;
                 CommitChange(function);
             });
@@ -680,14 +680,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_Run>(port.PORT_ID) as ManualPortPLCControl_Run;
                 function.IsSetRun = true;
                 CommitChange(function);
 
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_Run>(port.PORT_ID) as ManualPortPLCControl_Run;
                 function.IsSetRun = false;
                 CommitChange(function);
             });
@@ -697,14 +697,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_Run>(port.PORT_ID) as ManualPortPLCControl_Run;
                 function.IsSetStop = true;
                 CommitChange(function);
 
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_Run>(port.PORT_ID) as ManualPortPLCControl_Run;
                 function.IsSetStop = false;
                 CommitChange(function);
             });
@@ -714,7 +714,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_Commanding>(port.PORT_ID) as ManualPortPLCControl_Commanding;
                 function.IsCommanding = setOn;
                 CommitChange(function);
             });
@@ -725,7 +725,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 return Task.Run(() =>
                 {
-                    var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                    var function = scApp.getFunBaseObj<ManualPortPLCControl_ErrorIndex>(port.PORT_ID) as ManualPortPLCControl_ErrorIndex;
 
                     if (newIndex <= 65535)
                         function.OhbcErrorIndex = (UInt16)(newIndex);
@@ -741,7 +741,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_ReadyToWaitoutCarrier>(port.PORT_ID) as ManualPortPLCControl_ReadyToWaitoutCarrier;
 
                 carrierId_1 = carrierId_1.Trim();
                 carrierId_2 = carrierId_2.Trim();
@@ -763,7 +763,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_ComingOutCarrier>(port.PORT_ID) as ManualPortPLCControl_ComingOutCarrier;
 
                 carrierId = carrierId.Trim();
 
@@ -781,7 +781,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return Task.Run(() =>
             {
                 IsWaitingForInputPermission = false;
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_InputPermission>(port.PORT_ID) as ManualPortPLCControl_InputPermission;
                 function.IsInputPermission = isSuccess;
                 function.IsInputPermissionFailed = !isSuccess;
                 CommitChange(function);
@@ -789,7 +789,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //此訊號不會由PLC off，需由OHBC切換
                 Task.Delay(3_000).Wait();
 
-                function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                function = scApp.getFunBaseObj<ManualPortPLCControl_InputPermission>(port.PORT_ID) as ManualPortPLCControl_InputPermission;
                 function.IsInputPermission = false;
                 function.IsInputPermissionFailed = false;
                 CommitChange(function);
@@ -800,14 +800,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return Task.Run(() =>
             {
-                var function = scApp.getFunBaseObj<ManualPortPLCControl>(port.PORT_ID) as ManualPortPLCControl;
+                var function = scApp.getFunBaseObj<ManualPortPLCControl_TimeCalibration>(port.PORT_ID) as ManualPortPLCControl_TimeCalibration;
 
                 function.TimeCalibrationBcdYearMonth = (UInt16)((DateTime.Now.Year.ToBCD() - 2000) * 256 + DateTime.Now.Month.ToBCD());
                 function.TimeCalibrationBcdDayHour = (UInt16)(DateTime.Now.Day.ToBCD() * 256 + DateTime.Now.Hour.ToBCD());
                 function.TimeCalibrationBcdMinuteSecond = (UInt16)(DateTime.Now.Minute.ToBCD() * 256 + DateTime.Now.Second.ToBCD());
 
                 if (function.TimeCalibrationIndex < 65535)
-                    function.TimeCalibrationIndex = (UInt16)(function.OhbcErrorIndex + 1);
+                    function.TimeCalibrationIndex = (UInt16)(function.TimeCalibrationIndex + 1);
                 else
                     function.TimeCalibrationIndex = 1;
 
