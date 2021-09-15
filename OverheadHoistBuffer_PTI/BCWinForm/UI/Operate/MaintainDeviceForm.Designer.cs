@@ -60,6 +60,8 @@
             this.txt_mtlMessage = new System.Windows.Forms.TextBox();
             this.btn_mtl_message_download = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.lbl_mtl_alive = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.lbl_mtl_in_position = new System.Windows.Forms.Label();
             this.lbl_mtl_encoder = new System.Windows.Forms.Label();
             this.lbl_mtl_moving_status = new System.Windows.Forms.Label();
@@ -84,6 +86,8 @@
             this.btn_mts_m2o_u2d_safetycheck = new System.Windows.Forms.RadioButton();
             this.btn_mts_m2o_d2u_safetycheck = new System.Windows.Forms.RadioButton();
             this.grb_lft_info = new System.Windows.Forms.GroupBox();
+            this.lbl_mts_alive = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.lbl_mts_current_car_id = new System.Windows.Forms.Label();
             this.label66 = new System.Windows.Forms.Label();
             this.lbl_mts_in_position = new System.Windows.Forms.Label();
@@ -128,10 +132,6 @@
             this.cmb_mts = new System.Windows.Forms.ComboBox();
             this.btn_mts_dateTimeSync = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label10 = new System.Windows.Forms.Label();
-            this.lbl_mtl_alive = new System.Windows.Forms.Label();
-            this.lbl_mts_alive = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.mtl_prepare_car_out_info.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -479,6 +479,24 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Lift Info";
             // 
+            // lbl_mtl_alive
+            // 
+            this.lbl_mtl_alive.AutoSize = true;
+            this.lbl_mtl_alive.Location = new System.Drawing.Point(167, 26);
+            this.lbl_mtl_alive.Name = "lbl_mtl_alive";
+            this.lbl_mtl_alive.Size = new System.Drawing.Size(120, 22);
+            this.lbl_mtl_alive.TabIndex = 71;
+            this.lbl_mtl_alive.Text = "           ";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(93, 26);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(70, 22);
+            this.label10.TabIndex = 70;
+            this.label10.Text = "Alive:";
+            // 
             // lbl_mtl_in_position
             // 
             this.lbl_mtl_in_position.AutoSize = true;
@@ -727,6 +745,24 @@
             this.grb_lft_info.TabStop = false;
             this.grb_lft_info.Text = "Space Info";
             // 
+            // lbl_mts_alive
+            // 
+            this.lbl_mts_alive.AutoSize = true;
+            this.lbl_mts_alive.Location = new System.Drawing.Point(165, 33);
+            this.lbl_mts_alive.Name = "lbl_mts_alive";
+            this.lbl_mts_alive.Size = new System.Drawing.Size(120, 22);
+            this.lbl_mts_alive.TabIndex = 73;
+            this.lbl_mts_alive.Text = "           ";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(91, 33);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(70, 22);
+            this.label13.TabIndex = 72;
+            this.label13.Text = "Alive:";
+            // 
             // lbl_mts_current_car_id
             // 
             this.lbl_mts_current_car_id.AutoSize = true;
@@ -839,6 +875,7 @@
             this.groupBox2.TabIndex = 79;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Maintain Space";
+            this.groupBox2.Visible = false;
             // 
             // btn_mts_alarm_reset
             // 
@@ -1157,42 +1194,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(93, 26);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(70, 22);
-            this.label10.TabIndex = 70;
-            this.label10.Text = "Alive:";
-            // 
-            // lbl_mtl_alive
-            // 
-            this.lbl_mtl_alive.AutoSize = true;
-            this.lbl_mtl_alive.Location = new System.Drawing.Point(167, 26);
-            this.lbl_mtl_alive.Name = "lbl_mtl_alive";
-            this.lbl_mtl_alive.Size = new System.Drawing.Size(120, 22);
-            this.lbl_mtl_alive.TabIndex = 71;
-            this.lbl_mtl_alive.Text = "           ";
-            // 
-            // lbl_mts_alive
-            // 
-            this.lbl_mts_alive.AutoSize = true;
-            this.lbl_mts_alive.Location = new System.Drawing.Point(165, 33);
-            this.lbl_mts_alive.Name = "lbl_mts_alive";
-            this.lbl_mts_alive.Size = new System.Drawing.Size(120, 22);
-            this.lbl_mts_alive.TabIndex = 73;
-            this.lbl_mts_alive.Text = "           ";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(91, 33);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(70, 22);
-            this.label13.TabIndex = 72;
-            this.label13.Text = "Alive:";
             // 
             // MaintainDeviceForm
             // 

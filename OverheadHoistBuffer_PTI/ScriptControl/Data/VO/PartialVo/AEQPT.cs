@@ -141,6 +141,12 @@ namespace com.mirle.ibg3k0.sc
         public VhInPosition VhInPosition;
         public bool CarInSafetyCheck { get; set; }
         public bool CarOutSafetyCheck { get; set; }
+        public bool CarOutActionTypeSystemOutToMTS { get; set; }
+        public bool CarOutActionTypeSystemOutToMTL { get; set; }
+        public bool CarOutActionTypeMTSToMTL { get; set; }
+        public bool CarOutActionTypeSystemInFronMTS { get; set; }
+        public bool CarOutActionTypeOnlyPass { get; set; }
+
         private bool is_Eq_Alive;
         public bool Is_Eq_Alive
         {

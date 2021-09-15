@@ -525,10 +525,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             if (!ck_autoTech.Checked) return;
             string vh_id = cmb_tcpipctr_Vehicle.Text;
             await Task.Run(() =>
-             {
-                 bcApp.SCApplication.VehicleService.AutoTeaching(vh_id);
-                 SpinWait.SpinUntil(() => !sc.App.SystemParameter.AutoTeching);
-             });
+            {
+                bcApp.SCApplication.VehicleService.AutoTeaching(vh_id);
+                SpinWait.SpinUntil(() => !sc.App.SystemParameter.AutoTeching);
+            });
             ck_autoTech.Checked = sc.App.SystemParameter.AutoTeching;
 
         }
@@ -639,7 +639,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 var mtl_mapaction = maintainEQ.
                     getMapActionByIdentityKey(nameof(com.mirle.ibg3k0.sc.Data.ValueDefMapAction.MTxValueDefMapActionBase)) as
                     com.mirle.ibg3k0.sc.Data.ValueDefMapAction.MTxValueDefMapActionBase;
-                mtl_mapaction.OHxC_CarOutNotify(car_id);
             }
             );
         }
@@ -662,9 +661,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             bool car_out_car_move_cmp = btn_mtl_o2m_u2d_carmovingcmp.Checked;
             AEQPT eQPT = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MTS");
 
-            Task.Run(() => (
-            eQPT.getMapActionByIdentityKey("MTSValueDefMapActionNew") as sc.Data.ValueDefMapAction.MTSValueDefMapActionNew)
-            .OHxC2MTL_CarOutInterface(car_out_car_out_interlock, car_out_car_out_ready, car_out_carmoving, car_out_car_move_cmp));
         }
 
         private void btn_mtl_o2m_d2u_CarInInterfaece(object sender, EventArgs e)
@@ -673,9 +669,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             bool car_in_car_move_cmp = btn_mtl_o2m_d2u_movingcmp.Checked;
             AEQPT eQPT = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MTS");
 
-            Task.Run(() =>
-            (eQPT.getMapActionByIdentityKey("MTSValueDefMapActionNew") as sc.Data.ValueDefMapAction.MTSValueDefMapActionNew)
-            .OHxC2MTL_CarInInterface(car_in_carmoving, car_in_car_move_cmp));
         }
 
         private void btn_mtl2ohxc_carinterface_refresh_Click(object sender, EventArgs e)
@@ -686,11 +679,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             bool car_in_interlock = false;
             //AEQPT eQPT = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MTS");
             string maption_action_name = "";
-            if (maintainEQ is sc.Data.VO.MaintainSpace)
-            {
-                maption_action_name = "MTSValueDefMapActionNew";
-            }
-            else
+
             {
                 maption_action_name = "MTLValueDefMapActionNew";
             }
@@ -731,11 +720,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             //var eQPT = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MTS") as sc.Data.VO.MaintainSpace;
             string maption_action_name = "";
-            if (maintainEQ is sc.Data.VO.MaintainSpace)
-            {
-                maption_action_name = "MTSValueDefMapActionNew";
-            }
-            else
+
             {
                 maption_action_name = "MTLValueDefMapActionNew";
             }
@@ -868,20 +853,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     AVEHICLE pre_car_out_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByID(vh_id);
                     if (maintainDevice is sc.Data.VO.MaintainLift)
                     {
-                        sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetMaintainSpace();
-                        r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, dockingMTS, pre_car_out_vh);
-                        if (r.isSuccess)
-                        {
-                            r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainLift, pre_car_out_vh);
-                        }
-                    }
-                    else if (maintainDevice is sc.Data.VO.MaintainSpace)
-                    {
-                        r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, null, pre_car_out_vh);
-                        if (r.isSuccess)
-                        {
-                            r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainSpace, pre_car_out_vh);
-                        }
                     }
                     isSuccess = r.isSuccess;
                     result = r.result;
@@ -919,11 +890,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void btn_refresh_carout_info_Click(object sender, EventArgs e)
         {
             var mtl = bcApp.SCApplication.EquipmentBLL.cache.GetMaintainLift();
-            var mts = bcApp.SCApplication.EquipmentBLL.cache.GetMaintainSpace();
             Adapter.Invoke((obj) =>
             {
                 lbl_mtlCarOutVh.Text = mtl.PreCarOutVhID;
-                lbl_mtsCarOutVh.Text = mts.PreCarOutVhID;
             }, null);
 
         }
@@ -1126,15 +1095,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             uint distance = Convert.ToUInt32(numericUpDown_distance.Value);
             if (MTSMTL != null)
             {
-                if (MTSMTL.EQPT_ID == "MTS")
-                {
-                    (MTSMTL as MaintainSpace).CurrentPreCarOurDistance = distance;
-                }
-                else if (MTSMTL.EQPT_ID == "MTS2")
-                {
-                    (MTSMTL as MaintainSpace).CurrentPreCarOurDistance = distance;
-                }
-                else if (MTSMTL.EQPT_ID == "MTL")
+                if (MTSMTL.EQPT_ID == "MTL")
                 {
                     (MTSMTL as MaintainLift).CurrentPreCarOurDistance = distance;
                 }
@@ -1149,9 +1110,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             bool is_success = false;
             await Task.Run(() =>
-             {
-                 is_success = bcApp.SCApplication.VehicleService.startVehicleTcpIpServer(vh_id);
-             });
+            {
+                is_success = bcApp.SCApplication.VehicleService.startVehicleTcpIpServer(vh_id);
+            });
             MessageBox.Show(is_success ? "OK" : "NG");
         }
 

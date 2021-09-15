@@ -634,6 +634,7 @@
     <Compile Include="Data\PLC_Functions\MGV\ManualPortPLCInfo.cs" />
     <Compile Include="Data\PLC_Functions\MGV\MGVToOHxC_Alive.cs" />
     <Compile Include="Data\PLC_Functions\MGV\OHxCToMGV_Status.cs" />
+    <Compile Include="Data\PLC_Functions\MtlToOHxC_CarOutActionType.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_RequestCarInDataCheck.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_MtlCarOutRepuest.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_LFTStatus.cs" />
@@ -642,6 +643,7 @@
     <Compile Include="Data\PLC_Functions\MtsToOHxC_CarInSafetyCheck.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_Alive.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_AlarmReport.cs" />
+    <Compile Include="Data\PLC_Functions\OHxCToMtl_DateTimeSyncPH2.cs" />
     <Compile Include="Data\PLC_Functions\OHxCToMts_MessageDownload.cs" />
     <Compile Include="Data\PLC_Functions\OHxCToMts_DateTimeSync.cs" />
     <Compile Include="Data\PLC_Functions\OHxCToMts_CarRealtimeInfo.cs" />
@@ -912,7 +914,6 @@
     <Compile Include="Data\ValueDefMapAction\OHCVValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\HIDValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\MTLValueDefMapActionNew.cs" />
-    <Compile Include="Data\ValueDefMapAction\MTSValueDefMapActionNew.cs" />
     <Compile Include="Data\ValueDefMapAction\MTxValueDefMapActionBase.cs" />
     <Compile Include="Data\ValueDefMapAction\MESDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\PLCSystemInfoMapAction.cs" />

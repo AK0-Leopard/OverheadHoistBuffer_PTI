@@ -44,18 +44,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (eqpt is IMaintainDevice)
                 {
                     IMaintainDevice maintainDevice = eqpt as IMaintainDevice;
-                    if (maintainDevice is MaintainSpace)
-                    {
-                        MaintainSpace maintainSpace = eqpt as MaintainSpace;
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Plc_Link_Stat), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Is_Eq_Alive), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.MTxMode), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Interlock), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentCarID), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentPreCarOurDistance), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.SynchronizeTime), PublishMTSInfo);
-                    }
-                    else if (maintainDevice is MaintainLift)
+                    if (maintainDevice is MaintainLift)
                     {
                         MaintainLift maintainLift = eqpt as MaintainLift;
                         maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Plc_Link_Stat), PublishMTLInfo);
@@ -104,10 +93,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         process_result = processCarOutScenario(mtx as MaintainLift, pre_car_out_vh);
                     }
-                    else if (mtx is MaintainSpace)
-                    {
-                        process_result = processCarOutScenario(mtx as MaintainSpace, pre_car_out_vh);
-                    }
+
                     else
                     {
                         return process_result;
@@ -144,10 +130,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (mtx is MaintainLift)
                     {
                         process_result = processCarOutScenario(mtx as MaintainLift, pre_car_out_vh);
-                    }
-                    else if (mtx is MaintainSpace)
-                    {
-                        process_result = processCarOutScenario(mtx as MaintainSpace, pre_car_out_vh);
                     }
                     else
                     {
@@ -293,38 +275,6 @@ namespace com.mirle.ibg3k0.sc.Service
             return (isSuccess, result);
         }
 
-
-        public (bool isSuccess, string result) processCarOutScenario(MaintainSpace mtx, AVEHICLE preCarOutVh)
-        {
-            string pre_car_out_vh_id = preCarOutVh.VEHICLE_ID;
-            string pre_car_out_vh_ohtc_cmd_id = preCarOutVh.OHTC_CMD;
-            string pre_car_out_vh_cur_adr_id = preCarOutVh.CUR_ADR_ID;
-            bool isSuccess;
-            string result = "";
-            mtx.CancelCarOutRequest = false;
-            mtx.CarOurSuccess = false;
-            mtx.SetCarOutInterlock(true);
-            isSuccess = VehicleService.doReservationVhToMaintainsSpace(pre_car_out_vh_id);
-            if (isSuccess && SCUtility.isEmpty(pre_car_out_vh_ohtc_cmd_id))
-            {
-                //在收到OHT的ID:132-命令結束後或者在變為AutoLocal後此時OHT沒有命令的話則會呼叫此Function來創建一個Transfer command，讓Vh移至移動至System out上
-                isSuccess = VehicleService.doAskVhToSystemOutAddress(pre_car_out_vh_id, mtx.MTS_ADDRESS);
-            }
-            if (isSuccess)
-            {
-                //carOutVhID = pre_car_out_vh_id;
-                mtx.PreCarOutVhID = pre_car_out_vh_id;
-                Task.Run(() => RegularUpdateRealTimeCarInfo(mtx, preCarOutVh));
-            }
-            else
-            {
-                mtx.SetCarOutInterlock(false);
-                isSuccess = false;
-                result = $"Reservation vh to mtl fail.";
-            }
-
-            return (isSuccess, result);
-        }
 
         private void RegularUpdateRealTimeCarInfo(IMaintainDevice mtx, AVEHICLE carOurVh)
         {
@@ -508,43 +458,6 @@ namespace com.mirle.ibg3k0.sc.Service
             return (isSuccess, result);
         }
 
-        public void processCarInScenario(MaintainSpace mts)
-        {
-            //在收到MTL的 Car in safety check後，就可以叫Vh移動至Car in 的buffer區(MTL Home)
-            //不過要先判斷vh是否已經在Auto模式下如果是則先將它變成AutoLocal的模式
-            if (!SpinWait.SpinUntil(() => mts.CarInSafetyCheck && mts.MTxMode == MTxMode.Auto, 10000))
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLService), Device: "OHTC",
-                         Data: $"mts:{mts.DeviceID}, status not ready  CarInSafetyCheck:{mts.CarInSafetyCheck},Mode:{mts.MTxMode} ,can't excute car in",
-                         XID: mts.DeviceID);
-                return;
-            }
-            AVEHICLE car_in_vh = vehicleBLL.cache.getVhByAddressID(mts.MTS_ADDRESS);
-            if (car_in_vh != null && car_in_vh.isTcpIpConnect)
-            {
-                if (car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.Manual)
-                {
-                    VehicleService.ModeChangeRequest(car_in_vh.VEHICLE_ID, ProtocolFormat.OHTMessage.OperatingVHMode.OperatingAuto);
-
-                    if (SpinWait.SpinUntil(() => car_in_vh.MODE_STATUS == VHModeStatus.AutoMts, 10000))
-                    {
-                        mts.SetCarInMoving(true);
-                        VehicleService.doAskVhToSystemInAddress(car_in_vh.VEHICLE_ID, mts.MTS_SYSTEM_IN_ADDRESS);
-                    }
-                    else
-                    {
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLService), Device: "OHTC",
-                                 Data: $"Process car in scenario:{mts.DeviceID} fail. ask vh change to auto mode time out",
-                                 VehicleID: car_in_vh.VEHICLE_ID);
-                    }
-                }
-                else if (car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoMts)
-                {
-                    mts.SetCarInMoving(true);
-                    VehicleService.doAskVhToSystemInAddress(car_in_vh.VEHICLE_ID, mts.MTS_SYSTEM_IN_ADDRESS);
-                }
-            }
-        }
 
         public void carInComplete(IMaintainDevice mtx, string vhID)
         {
@@ -574,25 +487,6 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
-        public void PublishMTSInfo(object sender, PropertyChangedEventArgs e)
-        {
-            try
-            {
-                MaintainSpace eqpt = sender as MaintainSpace;
-                if (sender == null) return;
-                byte[] line_serialize = BLL.LineBLL.Convert2GPB_MTLMTSInfo(eqpt);
-                scApp.getNatsManager().PublishAsync
-                    (SCAppConstants.NATS_SUBJECT_MTLMTS, line_serialize);
-                //TODO 要改用GPP傳送
-                //var line_Serialize = ZeroFormatter.ZeroFormatterSerializer.Serialize(line);
-                //scApp.getNatsManager().PublishAsync
-                //    (string.Format(SCAppConstants.NATS_SUBJECT_LINE_INFO), line_Serialize);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception:");
-            }
-        }
 
         public void PublishMTLInfo(object sender, PropertyChangedEventArgs e)
         {

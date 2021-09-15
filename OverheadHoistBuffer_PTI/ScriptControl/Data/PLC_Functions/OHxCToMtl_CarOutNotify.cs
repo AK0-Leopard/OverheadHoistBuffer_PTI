@@ -16,6 +16,17 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         [PLCElement(ValueName = "OHXC_TO_MTL_CAR_OUT_NOTIFY_HS", IsHandshakeProp = true)]
         public UInt16 Handshake;
     }
+
+    class OHxCToMtl_CarOutNotify_PH2 : PLC_FunBase
+    {
+        [PLCElement(ValueName = "OHXC_TO_MTL_CAR_OUT_NOTIFY_CAR_ID_PH2 ")]
+        public UInt16 CarID;
+        [PLCElement(ValueName = "OHXC_TO_MTL_CAR_OUT_ACTION_TYPE_PH2")]
+        public UInt16 ActionType;
+        [PLCElement(ValueName = "OHXC_TO_MTL_CAR_OUT_NOTIFY_HS_PH2", IsHandshakeProp = true)]
+        public UInt16 Handshake;
+    }
+
     class MtlToOHxC_ReplyCarOutNotify : PLC_FunBase
     {
         [PLCElement(ValueName = "MTL_TO_OHXC_REPLY_OHXC_CAR_OUT_NOTIFY_RETURN_CODE")]
@@ -24,4 +35,11 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         public UInt16 Handshake;
     }
 
+    class MtlToOHxC_ReplyCarOutNotify_PH2 : PLC_FunBase
+    {
+        [PLCElement(ValueName = "MTL_TO_OHXC_REPLY_OHXC_CAR_OUT_NOTIFY_RETURN_CODE_PH2")]
+        public UInt16 ReturnCode;
+        [PLCElement(ValueName = "MTL_TO_OHXC_REPLY_OHXC_CAR_OUT_NOTIFY_HS_PH2", IsHandshakeProp = true)]
+        public UInt16 Handshake;
+    }
 }

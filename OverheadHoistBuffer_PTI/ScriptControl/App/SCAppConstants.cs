@@ -29,6 +29,13 @@ namespace com.mirle.ibg3k0.sc.App
     public class SCAppConstants
     {
         public const string System_ID = "OHxC";
+        public class DeviceName
+        {
+            public const string DEVICE_NAME_OHT = "OHT";
+            public const string DEVICE_NAME_MTx = "MTx";
+            public const string DEVICE_NAME_MCS = "MCS";
+            public const string DEVICE_NAME_HID = "HID";
+        }
 
         #region ECID
         //String.Format("{0:00000}", value)

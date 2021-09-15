@@ -51,12 +51,12 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         public ushort CurrentPreCarOurSpeed { get; set; }
         public bool CarOutInterlock
         {
-            get { return getExcuteMapAction().GetOHxC2MTL_CarOutInterlock(); }
+            get { return false; }
             set { }
         }
         public bool CarInMoving
         {
-            get { return getExcuteMapAction().GetOHxC2MTL_CarInMoving(); }
+            get { return false; }
             set { }
         }
         public bool IsAlive { get { return base.Is_Eq_Alive; } set { } }
@@ -76,30 +76,22 @@ namespace com.mirle.ibg3k0.sc.Data.VO
 
         public (bool isSendSuccess, UInt16 returnCode) carOutRequest(UInt16 carNum)
         {
-            return getExcuteMapAction().OHxC_CarOutNotify(carNum);
+            return (false, 0);
         }
         public bool SetCarOutInterlock(bool onOff)
         {
-            return getExcuteMapAction().setOHxC2MTL_CarOutInterlock(onOff);
+            return false;
         }
         public bool SetCarInMoving(bool onOff)
         {
-            return getExcuteMapAction().setOHxC2MTL_CarInMoving(onOff);
+            return false;
         }
 
         public void setCarRealTimeInfo(UInt16 car_id, UInt16 action_mode, UInt16 cst_exist, UInt16 current_section_id, UInt32 current_address_id,
                                             UInt32 buffer_distance, UInt16 speed)
         {
-            getExcuteMapAction().CarRealtimeInfo(car_id, action_mode, cst_exist, current_section_id, current_address_id, buffer_distance, speed);
         }
 
-        private MTSValueDefMapActionNew getExcuteMapAction()
-        {
-            MTSValueDefMapActionNew mapAction;
-            mapAction = this.getMapActionByIdentityKey(typeof(MTSValueDefMapActionNew).Name) as MTSValueDefMapActionNew;
-
-            return mapAction;
-        }
 
     }
 }

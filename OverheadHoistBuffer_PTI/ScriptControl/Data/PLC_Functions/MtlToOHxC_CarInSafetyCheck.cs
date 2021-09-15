@@ -15,5 +15,11 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         public bool SafetyCheck;
     }
 
+    class MtlToOHxC_CarInSafetyCheck_PH2 : PLC_FunBase
+    {
+        [PLCElement(ValueName = "MTL_TO_OHXC_D2U_SAFETY_CHECK_PH2")]
+        public bool SafetyCheck;
+    }
+
 
 }

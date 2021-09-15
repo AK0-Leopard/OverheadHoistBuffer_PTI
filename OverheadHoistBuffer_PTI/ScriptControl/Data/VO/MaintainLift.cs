@@ -69,7 +69,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
 
         public (bool isSendSuccess, UInt16 returnCode) carOutRequest(UInt16 carNum)
         {
-            return getExcuteMapAction().OHxC_CarOutNotify(carNum);
+            return getExcuteMapAction().OHxC_CarOutNotify(carNum, 2);
         }
         public bool SetCarOutInterlock(bool onOff)
         {
