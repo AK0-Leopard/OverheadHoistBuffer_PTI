@@ -287,12 +287,16 @@ namespace com.mirle.ibg3k0.sc.Service
                             //TODO: 如果已有命令，則跳過move back
                             if (commandBLL.GetCommandByBoxId(cassetteOnPort.BOXID, out ACMD_MCS cmd))
                             {
-                                WriteLog($"{portName} : {cassetteOnPort.BOXID} skip move back.");
+                                WriteLog($"{cassetteOnPort.BOXID} on {portName} is already waiting for transferring, skip move back.");
                                 continue;
                             }
                             WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} which is already timed out for move in. Move back.");
                             //SetMoveBackReason(portName, MoveBackReasons.MoveInTimedOut);
                             MoveBack(portName, MoveBackReasons.MoveInTimedOut);
+                        }
+                        else
+                        {
+                            WriteLog($"{portName} has cassette {cassetteOnPort.BOXID} for {timeSpan.TotalSeconds} second(s).");
                         }
                     }
                 }
