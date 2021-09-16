@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btn_reset_handshake = new System.Windows.Forms.Button();
             this.btn_mtl_alarm_reset = new System.Windows.Forms.Button();
             this.mtl_prepare_car_out_info = new System.Windows.Forms.GroupBox();
             this.btn_mtl_car_in_interlock_off = new System.Windows.Forms.Button();
@@ -144,7 +145,7 @@
             this.cmb_mts = new System.Windows.Forms.ComboBox();
             this.btn_mts_dateTimeSync = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btn_reset_handshake = new System.Windows.Forms.Button();
+            this.btnCarInFromMTS = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.mtl_prepare_car_out_info.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -178,6 +179,16 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Maintain Lift";
+            // 
+            // btn_reset_handshake
+            // 
+            this.btn_reset_handshake.Location = new System.Drawing.Point(373, 147);
+            this.btn_reset_handshake.Name = "btn_reset_handshake";
+            this.btn_reset_handshake.Size = new System.Drawing.Size(210, 31);
+            this.btn_reset_handshake.TabIndex = 80;
+            this.btn_reset_handshake.Text = "Reset All Handshake";
+            this.btn_reset_handshake.UseVisualStyleBackColor = true;
+            this.btn_reset_handshake.Click += new System.EventHandler(this.btn_reset_handshake_Click);
             // 
             // btn_mtl_alarm_reset
             // 
@@ -954,6 +965,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnCarInFromMTS);
             this.groupBox2.Controls.Add(this.btn_mts_alarm_reset);
             this.groupBox2.Controls.Add(this.mts_prepare_car_out_info);
             this.groupBox2.Controls.Add(this.groupBox6);
@@ -1338,15 +1350,15 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btn_reset_handshake
+            // btnCarInFromMTS
             // 
-            this.btn_reset_handshake.Location = new System.Drawing.Point(373, 147);
-            this.btn_reset_handshake.Name = "btn_reset_handshake";
-            this.btn_reset_handshake.Size = new System.Drawing.Size(210, 31);
-            this.btn_reset_handshake.TabIndex = 80;
-            this.btn_reset_handshake.Text = "Reset All Handshake";
-            this.btn_reset_handshake.UseVisualStyleBackColor = true;
-            this.btn_reset_handshake.Click += new System.EventHandler(this.btn_reset_handshake_Click);
+            this.btnCarInFromMTS.Location = new System.Drawing.Point(419, 325);
+            this.btnCarInFromMTS.Name = "btnCarInFromMTS";
+            this.btnCarInFromMTS.Size = new System.Drawing.Size(169, 39);
+            this.btnCarInFromMTS.TabIndex = 77;
+            this.btnCarInFromMTS.Text = "Car In";
+            this.btnCarInFromMTS.UseVisualStyleBackColor = true;
+            this.btnCarInFromMTS.Click += new System.EventHandler(this.btnCarInFromMTS_Click);
             // 
             // MaintainDeviceForm
             // 
@@ -1501,5 +1513,6 @@
         private System.Windows.Forms.Button btn_mts_car_out_interlock_off;
         private System.Windows.Forms.Button btn_mts_car_out_interlock_on;
         private System.Windows.Forms.Button btn_reset_handshake;
+        private System.Windows.Forms.Button btnCarInFromMTS;
     }
 }

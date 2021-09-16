@@ -482,5 +482,40 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             await Task.Run(() => MTSValueDefMapActionBase.OHxCResetAllhandshake());
 
         }
+
+        private async void btnCarInFromMTS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                UInt16 car_id = UInt16.Parse(txt_mts_car_out_notify_car_id.Text);
+                btnCarInFromMTS.Enabled = false;
+                var r = default((bool isSuccess, string result));
+                await Task.Run(() => r = CarInFromMTS(car_id, MTS));
+
+                MessageBox.Show(r.result);
+            }
+            finally
+            {
+                btnCarInFromMTS.Enabled = true;
+            }
+        }
+
+        private (bool isSuccess, string result) CarInFromMTS(UInt16 car_id, MaintainSpace MTS)
+        {
+            bool isSuccess = true;
+            string result = "OK";
+            CarOutNotify(MTSValueDefMapActionBase, car_id, 3);
+
+            if (!SpinWait.SpinUntil(() => MTS.CarOutSafetyCheck == true, 60000))
+            {
+                isSuccess = false;
+                result = $"Process car in scenario,but mtl:{MTS.DeviceID} status not ready " +
+                $"{nameof(MTS.CarOutSafetyCheck)}:{MTS.CarOutSafetyCheck}";
+                return (isSuccess, result);
+            }
+
+            (isSuccess, result) = bcApp.SCApplication.MTLService.processCarInScenario(MTS);
+            return (isSuccess, result);
+        }
     }
 }

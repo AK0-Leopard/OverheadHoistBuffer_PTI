@@ -858,18 +858,23 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
         const int MTS_DOOR_OPEN_TIME_OUT_ms = 20000;
-        public void processCarInScenario(MaintainSpace mts)
+        public (bool isSuccess, string result) processCarInScenario(MaintainSpace mts)
         {
+            bool isSuccess = true;
+            string result = "OK";
+
             CarInStart(mts);
             //在收到MTL的 Car in safety check後，就可以叫Vh移動至Car in 的buffer區(MTL Home)
             //不過要先判斷vh是否已經在Auto模式下如果是則先將它變成AutoLocal的模式
-            if (!SpinWait.SpinUntil(() => mts.CarInSafetyCheck && mts.MTxMode == MTxMode.Auto, 10000))
+            if (!SpinWait.SpinUntil(() => /*mts.CarInSafetyCheck &&*/ mts.MTxMode == MTxMode.Auto, 10000))
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(MTLService), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                          Data: $"mts:{mts.DeviceID}, status not ready CarInSafetyCheck:{mts.CarInSafetyCheck},Mode:{mts.MTxMode} ,can't excute car in",
                          XID: mts.DeviceID);
+                result = $"mts:{mts.DeviceID}, status not ready CarInSafetyCheck:{mts.CarInSafetyCheck},Mode:{mts.MTxMode} ,can't excute car in";
+                isSuccess = false;
                 CarInFinish(mts);
-                return;
+                return (isSuccess, result);
             }
 
             //在車子要Car In的時候，要判斷MTS的前門是否已經開啟
@@ -879,7 +884,9 @@ namespace com.mirle.ibg3k0.sc.Service
                          Data: $"mts:{mts.DeviceID}, status not ready {nameof(mts.MTSFrontDoorStatus)}:{ mts.MTSFrontDoorStatus} ,can't excute car in",
                          XID: mts.DeviceID);
                 CarInFinish(mts);
-                return;
+                result = $"mts:{mts.DeviceID}, status not ready {nameof(mts.MTSFrontDoorStatus)}:{ mts.MTSFrontDoorStatus} ,can't excute car in";
+                isSuccess = false;
+                return (isSuccess, result);
             }
 
             AVEHICLE car_in_vh = vehicleBLL.cache.getVhByAddressID(mts.MTS_ADDRESS);
@@ -903,6 +910,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                      Data: $"Process car in scenario:{mts.DeviceID} fail. ask vh change to auto mode time out",
                                      XID: mts.DeviceID,
                                      VehicleID: car_in_vh.VEHICLE_ID);
+                            isSuccess = false;
+                            result = $"Process car in scenario:{mts.DeviceID} fail. ask vh change to auto mode time out";
                             CarInFinish(mts);
                         }
                     }
@@ -919,6 +928,8 @@ namespace com.mirle.ibg3k0.sc.Service
                              XID: mts.DeviceID,
                              VehicleID: car_in_vh.VEHICLE_ID);
                     //mts.SetCarInMoving(false);
+                    isSuccess = false;
+                    result = $"Process car in scenario fail, mts:{mts.DeviceID}. because on mts of vh:{car_in_vh.VEHICLE_ID} is disconnect";
                     CarInFinish(mts);
                 }
             }
@@ -928,8 +939,11 @@ namespace com.mirle.ibg3k0.sc.Service
                          Data: $"Process car in scenario fail, mts:{mts.DeviceID}. because no vh in mts",
                          XID: mts.DeviceID);
                 //mts.SetCarInMoving(false);
+                isSuccess = false;
+                result = $"Process car in scenario fail, mts:{mts.DeviceID}. because no vh in mts";
                 CarInFinish(mts);
             }
+            return (isSuccess, result);
         }
 
         private void CarInStart(MaintainSpace mts)
