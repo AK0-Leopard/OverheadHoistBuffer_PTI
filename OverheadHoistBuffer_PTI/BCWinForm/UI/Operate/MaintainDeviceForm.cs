@@ -38,18 +38,14 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             string device_id = (sender as ComboBox).Text;
             MTL = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID(device_id) as MaintainLift;
-            MTLValueDefMapActionBase = MTL.getMapActionByIdentityKey(nameof(MTLValueDefMapActionNew)) as MTxValueDefMapActionBase;
+            MTLValueDefMapActionBase = MTL.getMapActionByIdentityKey(nameof(MTLValueDefMapActionNewPH2)) as MTxValueDefMapActionBase;
         }
 
         private void cmb_mts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //string device_id = (sender as ComboBox).Text;
-            //MTS = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID(device_id) as MaintainSpace;
-            //MTSValueDefMapActionBase = MTS.getMapActionByIdentityKey(nameof(MTSValueDefMapActionNew)) as MTxValueDefMapActionBase;
-            //if (MTSValueDefMapActionBase == null)
-            //{
-            //    MTSValueDefMapActionBase = MTS.getMapActionByIdentityKey(nameof(MTSValueDefMapActionNewPH2)) as MTxValueDefMapActionBase;
-            //}
+            string device_id = (sender as ComboBox).Text;
+            MTS = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID(device_id) as MaintainSpace;
+            MTSValueDefMapActionBase = MTS.getMapActionByIdentityKey(nameof(MTSValueDefMapActionNewPH2)) as MTxValueDefMapActionBase;
         }
 
         private void btn_mtl_dateTimeSync_Click(object sender, EventArgs e)
@@ -80,7 +76,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             CarOutNotify(MTSValueDefMapActionBase, car_id, 1);
         }
 
-        private void CarOutNotify(MTxValueDefMapActionBase mTxValueDefMapActionBase, ushort carNum, ushort action_type)
+        private void CarOutNotify(MTxValueDefMapActionBase mTxValueDefMapActionBase, ushort carNum,ushort action_type)
         {
             Task.Run(() =>
             {
@@ -179,8 +175,58 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             var r = default((bool isSuccess, string result));
             try
             {
+                //var r = bcApp.SCApplication.MTLService.carOutRequset(maintainDevice, vh_id);
+                AVEHICLE pre_car_out_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByID(preCarOutVhID);
+                if (maintainDevice is sc.Data.VO.MaintainLift)
+                {
+                    sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
+                    if((maintainDevice as sc.Data.VO.MaintainLift).EQPT_ID=="MTL"&& dockingMTS != null)
+                    {
+                        r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, dockingMTS, pre_car_out_vh);
+                    }
+                    else
+                    {
+                        r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, null, pre_car_out_vh);
+                        //r.isSuccess = true;
+                    }
+                    if (r.isSuccess)
+                    {
+                        r = bcApp.SCApplication.MTLService.CarOurRequest(maintainDevice, pre_car_out_vh);
+                    }
+                    //if (!SpinWait.SpinUntil(() => maintainDevice.CarOutSafetyCheck == true &&
+                    ////maintainDevice.CarOutActionTypeSystemOutToMTL == true && 
+                    //( dockingMTS==null||dockingMTS.CarOutSafetyCheck == true), 60000))
+                    //{
+                    //    r.isSuccess = false;
+                    //    string  result = $"Process car out scenario,but mtl:{maintainDevice.DeviceID} status not ready " +
+                    //    $"{nameof(maintainDevice.CarOutSafetyCheck)}:{maintainDevice.CarOutSafetyCheck}";
+                    //    MessageBox.Show(result);
+                    //}
+                    if (r.isSuccess)
+                    {
+                        r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainLift, pre_car_out_vh);
+                    }
+                }
+                else if (maintainDevice is sc.Data.VO.MaintainSpace)
+                {
+                    r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, null, pre_car_out_vh);
+                    if (r.isSuccess)
+                    {
+                        r = bcApp.SCApplication.MTLService.CarOurRequest(maintainDevice, pre_car_out_vh);
+                    }
+                    //if (!SpinWait.SpinUntil(() => maintainDevice.CarOutSafetyCheck == true, 30000))
+                    //{
+                    //    r.isSuccess = false;
+                    //    string result = $"Process car out scenario,but mtl:{maintainDevice.DeviceID} status not ready " +
+                    //    $"{nameof(maintainDevice.CarOutSafetyCheck)}:{maintainDevice.CarOutSafetyCheck}";
+                    //    MessageBox.Show(result);
+                    //}
 
-
+                    if (r.isSuccess)
+                    {
+                        r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainSpace, pre_car_out_vh);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -263,7 +309,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (SCUtility.isEmpty(cmb_mtl.Text)) return;
+
             lbl_mtl_alive.Text = MTL.Is_Eq_Alive.ToString();
             lbl_mtl_current_car_id.Text = MTL.CurrentCarID;
             lbl_mtl_has_vh.Text = MTL.HasVehicle.ToString();
@@ -288,6 +334,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             btn_mts_m2o_d2u_safetycheck.Checked = MTS.CarInSafetyCheck;
             btn_mts_o2m_u2d_caroutInterlock.Checked = MTS.CarOutInterlock;
             btn_mts_o2m_d2u_moving.Checked = MTS.CarInMoving;
+            lbl_mts_front_door_value.Text = MTS.MTSFrontDoorStatus.ToString();
+            lbl_mts_back_door_value.Text = MTS.MTSBackDoorStatus.ToString();
 
             if (!mtl_prepare_car_out_info.Enabled)
             {
@@ -329,10 +377,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             List<AEQPT> maintainDevices = bcApp.SCApplication.EquipmentBLL.cache.loadMaintainLift();
             string[] maintain_Lift_id = maintainDevices.Select(eq => eq.EQPT_ID).ToArray();
-            List<string> lift_ids = new List<string>();
-            lift_ids.Add("");
-            lift_ids.AddRange(maintain_Lift_id);
-            BCUtility.setComboboxDataSource(cmb_mtl, lift_ids.ToArray());
+            BCUtility.setComboboxDataSource(cmb_mtl, maintain_Lift_id.ToArray());
             maintainDevices = bcApp.SCApplication.EquipmentBLL.cache.loadMaintainSpace();
             string[] maintain_Space_id = maintainDevices.Select(eq => eq.EQPT_ID).ToArray();
             BCUtility.setComboboxDataSource(cmb_mts, maintain_Space_id.ToArray());

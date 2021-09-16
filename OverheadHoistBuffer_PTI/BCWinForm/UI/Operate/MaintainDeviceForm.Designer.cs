@@ -32,6 +32,10 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_mtl_alarm_reset = new System.Windows.Forms.Button();
             this.mtl_prepare_car_out_info = new System.Windows.Forms.GroupBox();
+            this.btn_mtl_car_in_interlock_off = new System.Windows.Forms.Button();
+            this.btn_mtl_car_in_interlock_on = new System.Windows.Forms.Button();
+            this.btn_mtl_car_out_interlock_off = new System.Windows.Forms.Button();
+            this.btn_mtl_car_out_interlock_on = new System.Windows.Forms.Button();
             this.txt_mtl_car_id = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.txt_mtl_action_mode = new System.Windows.Forms.TextBox();
@@ -86,6 +90,10 @@
             this.btn_mts_m2o_u2d_safetycheck = new System.Windows.Forms.RadioButton();
             this.btn_mts_m2o_d2u_safetycheck = new System.Windows.Forms.RadioButton();
             this.grb_lft_info = new System.Windows.Forms.GroupBox();
+            this.lbl_mts_back_door_value = new System.Windows.Forms.Label();
+            this.lbl_mts_front_door_value = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
             this.lbl_mts_alive = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.lbl_mts_current_car_id = new System.Windows.Forms.Label();
@@ -101,6 +109,10 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btn_mts_alarm_reset = new System.Windows.Forms.Button();
             this.mts_prepare_car_out_info = new System.Windows.Forms.GroupBox();
+            this.btn_mts_car_in_interlock_off = new System.Windows.Forms.Button();
+            this.btn_mts_car_in_interlock_on = new System.Windows.Forms.Button();
+            this.btn_mts_car_out_interlock_off = new System.Windows.Forms.Button();
+            this.btn_mts_car_out_interlock_on = new System.Windows.Forms.Button();
             this.txt_mts_car_id = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txt_mts_action_mode = new System.Windows.Forms.TextBox();
@@ -132,6 +144,7 @@
             this.cmb_mts = new System.Windows.Forms.ComboBox();
             this.btn_mts_dateTimeSync = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.btn_reset_handshake = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.mtl_prepare_car_out_info.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -144,6 +157,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btn_reset_handshake);
             this.groupBox1.Controls.Add(this.btn_mtl_alarm_reset);
             this.groupBox1.Controls.Add(this.mtl_prepare_car_out_info);
             this.groupBox1.Controls.Add(this.groupBox3);
@@ -167,7 +181,7 @@
             // 
             // btn_mtl_alarm_reset
             // 
-            this.btn_mtl_alarm_reset.Location = new System.Drawing.Point(377, 177);
+            this.btn_mtl_alarm_reset.Location = new System.Drawing.Point(373, 213);
             this.btn_mtl_alarm_reset.Name = "btn_mtl_alarm_reset";
             this.btn_mtl_alarm_reset.Size = new System.Drawing.Size(198, 67);
             this.btn_mtl_alarm_reset.TabIndex = 79;
@@ -177,6 +191,10 @@
             // 
             // mtl_prepare_car_out_info
             // 
+            this.mtl_prepare_car_out_info.Controls.Add(this.btn_mtl_car_in_interlock_off);
+            this.mtl_prepare_car_out_info.Controls.Add(this.btn_mtl_car_in_interlock_on);
+            this.mtl_prepare_car_out_info.Controls.Add(this.btn_mtl_car_out_interlock_off);
+            this.mtl_prepare_car_out_info.Controls.Add(this.btn_mtl_car_out_interlock_on);
             this.mtl_prepare_car_out_info.Controls.Add(this.txt_mtl_car_id);
             this.mtl_prepare_car_out_info.Controls.Add(this.label24);
             this.mtl_prepare_car_out_info.Controls.Add(this.txt_mtl_action_mode);
@@ -200,6 +218,46 @@
             this.mtl_prepare_car_out_info.TabIndex = 78;
             this.mtl_prepare_car_out_info.TabStop = false;
             this.mtl_prepare_car_out_info.Text = "Prepare Car Out Info";
+            // 
+            // btn_mtl_car_in_interlock_off
+            // 
+            this.btn_mtl_car_in_interlock_off.Location = new System.Drawing.Point(486, 132);
+            this.btn_mtl_car_in_interlock_off.Name = "btn_mtl_car_in_interlock_off";
+            this.btn_mtl_car_in_interlock_off.Size = new System.Drawing.Size(75, 31);
+            this.btn_mtl_car_in_interlock_off.TabIndex = 75;
+            this.btn_mtl_car_in_interlock_off.Text = "OFF";
+            this.btn_mtl_car_in_interlock_off.UseVisualStyleBackColor = true;
+            this.btn_mtl_car_in_interlock_off.Click += new System.EventHandler(this.btn_mtl_car_in_interlock_off_Click);
+            // 
+            // btn_mtl_car_in_interlock_on
+            // 
+            this.btn_mtl_car_in_interlock_on.Location = new System.Drawing.Point(396, 132);
+            this.btn_mtl_car_in_interlock_on.Name = "btn_mtl_car_in_interlock_on";
+            this.btn_mtl_car_in_interlock_on.Size = new System.Drawing.Size(75, 31);
+            this.btn_mtl_car_in_interlock_on.TabIndex = 74;
+            this.btn_mtl_car_in_interlock_on.Text = "ON";
+            this.btn_mtl_car_in_interlock_on.UseVisualStyleBackColor = true;
+            this.btn_mtl_car_in_interlock_on.Click += new System.EventHandler(this.btn_mtl_car_in_interlock_on_Click);
+            // 
+            // btn_mtl_car_out_interlock_off
+            // 
+            this.btn_mtl_car_out_interlock_off.Location = new System.Drawing.Point(486, 64);
+            this.btn_mtl_car_out_interlock_off.Name = "btn_mtl_car_out_interlock_off";
+            this.btn_mtl_car_out_interlock_off.Size = new System.Drawing.Size(75, 31);
+            this.btn_mtl_car_out_interlock_off.TabIndex = 73;
+            this.btn_mtl_car_out_interlock_off.Text = "OFF";
+            this.btn_mtl_car_out_interlock_off.UseVisualStyleBackColor = true;
+            this.btn_mtl_car_out_interlock_off.Click += new System.EventHandler(this.btn_mtl_car_out_interlock_off_Click);
+            // 
+            // btn_mtl_car_out_interlock_on
+            // 
+            this.btn_mtl_car_out_interlock_on.Location = new System.Drawing.Point(396, 64);
+            this.btn_mtl_car_out_interlock_on.Name = "btn_mtl_car_out_interlock_on";
+            this.btn_mtl_car_out_interlock_on.Size = new System.Drawing.Size(75, 31);
+            this.btn_mtl_car_out_interlock_on.TabIndex = 72;
+            this.btn_mtl_car_out_interlock_on.Text = "ON";
+            this.btn_mtl_car_out_interlock_on.UseVisualStyleBackColor = true;
+            this.btn_mtl_car_out_interlock_on.Click += new System.EventHandler(this.btn_mtl_car_out_interlock_on_Click);
             // 
             // txt_mtl_car_id
             // 
@@ -266,14 +324,14 @@
             // 
             this.btn_mtl_o2m_d2u_moving.AutoCheck = false;
             this.btn_mtl_o2m_d2u_moving.AutoSize = true;
-            this.btn_mtl_o2m_d2u_moving.Location = new System.Drawing.Point(339, 64);
+            this.btn_mtl_o2m_d2u_moving.Enabled = false;
+            this.btn_mtl_o2m_d2u_moving.Location = new System.Drawing.Point(339, 101);
             this.btn_mtl_o2m_d2u_moving.Name = "btn_mtl_o2m_d2u_moving";
-            this.btn_mtl_o2m_d2u_moving.Size = new System.Drawing.Size(188, 26);
+            this.btn_mtl_o2m_d2u_moving.Size = new System.Drawing.Size(218, 26);
             this.btn_mtl_o2m_d2u_moving.TabIndex = 51;
             this.btn_mtl_o2m_d2u_moving.TabStop = true;
-            this.btn_mtl_o2m_d2u_moving.Text = "Bit15_Car Moving";
+            this.btn_mtl_o2m_d2u_moving.Text = "Bit15_Car In Moving";
             this.btn_mtl_o2m_d2u_moving.UseVisualStyleBackColor = true;
-            this.btn_mtl_o2m_d2u_moving.Click += new System.EventHandler(this.btn_mtl_o2m_d2u_moving_Click);
             // 
             // label28
             // 
@@ -288,14 +346,14 @@
             // 
             this.btn_mtl_o2m_u2d_caroutInterlock.AutoCheck = false;
             this.btn_mtl_o2m_u2d_caroutInterlock.AutoSize = true;
-            this.btn_mtl_o2m_u2d_caroutInterlock.Location = new System.Drawing.Point(339, 32);
+            this.btn_mtl_o2m_u2d_caroutInterlock.Enabled = false;
+            this.btn_mtl_o2m_u2d_caroutInterlock.Location = new System.Drawing.Point(339, 33);
             this.btn_mtl_o2m_u2d_caroutInterlock.Name = "btn_mtl_o2m_u2d_caroutInterlock";
             this.btn_mtl_o2m_u2d_caroutInterlock.Size = new System.Drawing.Size(248, 26);
             this.btn_mtl_o2m_u2d_caroutInterlock.TabIndex = 50;
             this.btn_mtl_o2m_u2d_caroutInterlock.TabStop = true;
             this.btn_mtl_o2m_u2d_caroutInterlock.Text = "Bit0_Car out interlock";
             this.btn_mtl_o2m_u2d_caroutInterlock.UseVisualStyleBackColor = true;
-            this.btn_mtl_o2m_u2d_caroutInterlock.Click += new System.EventHandler(this.btn_mtl_o2m_u2d_caroutInterlock_Click);
             // 
             // txt_mtl_speed
             // 
@@ -449,6 +507,7 @@
             this.btn_mtl_message_download.TabIndex = 55;
             this.btn_mtl_message_download.Text = "MTL Msg Download";
             this.btn_mtl_message_download.UseVisualStyleBackColor = true;
+            this.btn_mtl_message_download.Click += new System.EventHandler(this.btn_mtl_message_download_Click);
             // 
             // groupBox7
             // 
@@ -724,6 +783,10 @@
             // 
             // grb_lft_info
             // 
+            this.grb_lft_info.Controls.Add(this.lbl_mts_back_door_value);
+            this.grb_lft_info.Controls.Add(this.lbl_mts_front_door_value);
+            this.grb_lft_info.Controls.Add(this.label18);
+            this.grb_lft_info.Controls.Add(this.label21);
             this.grb_lft_info.Controls.Add(this.lbl_mts_alive);
             this.grb_lft_info.Controls.Add(this.label13);
             this.grb_lft_info.Controls.Add(this.lbl_mts_current_car_id);
@@ -744,6 +807,42 @@
             this.grb_lft_info.TabIndex = 54;
             this.grb_lft_info.TabStop = false;
             this.grb_lft_info.Text = "Space Info";
+            // 
+            // lbl_mts_back_door_value
+            // 
+            this.lbl_mts_back_door_value.AutoSize = true;
+            this.lbl_mts_back_door_value.Location = new System.Drawing.Point(412, 201);
+            this.lbl_mts_back_door_value.Name = "lbl_mts_back_door_value";
+            this.lbl_mts_back_door_value.Size = new System.Drawing.Size(120, 22);
+            this.lbl_mts_back_door_value.TabIndex = 77;
+            this.lbl_mts_back_door_value.Text = "           ";
+            // 
+            // lbl_mts_front_door_value
+            // 
+            this.lbl_mts_front_door_value.AutoSize = true;
+            this.lbl_mts_front_door_value.Location = new System.Drawing.Point(412, 169);
+            this.lbl_mts_front_door_value.Name = "lbl_mts_front_door_value";
+            this.lbl_mts_front_door_value.Size = new System.Drawing.Size(120, 22);
+            this.lbl_mts_front_door_value.TabIndex = 76;
+            this.lbl_mts_front_door_value.Text = "           ";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(296, 201);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(110, 22);
+            this.label18.TabIndex = 75;
+            this.label18.Text = "Back Door:";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(286, 169);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(120, 22);
+            this.label21.TabIndex = 74;
+            this.label21.Text = "Front Door:";
             // 
             // lbl_mts_alive
             // 
@@ -875,7 +974,6 @@
             this.groupBox2.TabIndex = 79;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Maintain Space";
-            this.groupBox2.Visible = false;
             // 
             // btn_mts_alarm_reset
             // 
@@ -889,6 +987,10 @@
             // 
             // mts_prepare_car_out_info
             // 
+            this.mts_prepare_car_out_info.Controls.Add(this.btn_mts_car_in_interlock_off);
+            this.mts_prepare_car_out_info.Controls.Add(this.btn_mts_car_in_interlock_on);
+            this.mts_prepare_car_out_info.Controls.Add(this.btn_mts_car_out_interlock_off);
+            this.mts_prepare_car_out_info.Controls.Add(this.btn_mts_car_out_interlock_on);
             this.mts_prepare_car_out_info.Controls.Add(this.txt_mts_car_id);
             this.mts_prepare_car_out_info.Controls.Add(this.label1);
             this.mts_prepare_car_out_info.Controls.Add(this.txt_mts_action_mode);
@@ -912,6 +1014,46 @@
             this.mts_prepare_car_out_info.TabIndex = 78;
             this.mts_prepare_car_out_info.TabStop = false;
             this.mts_prepare_car_out_info.Text = "Prepare Car Out Info";
+            // 
+            // btn_mts_car_in_interlock_off
+            // 
+            this.btn_mts_car_in_interlock_off.Location = new System.Drawing.Point(479, 132);
+            this.btn_mts_car_in_interlock_off.Name = "btn_mts_car_in_interlock_off";
+            this.btn_mts_car_in_interlock_off.Size = new System.Drawing.Size(75, 31);
+            this.btn_mts_car_in_interlock_off.TabIndex = 77;
+            this.btn_mts_car_in_interlock_off.Text = "OFF";
+            this.btn_mts_car_in_interlock_off.UseVisualStyleBackColor = true;
+            this.btn_mts_car_in_interlock_off.Click += new System.EventHandler(this.btn_mts_car_in_interlock_off_Click);
+            // 
+            // btn_mts_car_in_interlock_on
+            // 
+            this.btn_mts_car_in_interlock_on.Location = new System.Drawing.Point(389, 132);
+            this.btn_mts_car_in_interlock_on.Name = "btn_mts_car_in_interlock_on";
+            this.btn_mts_car_in_interlock_on.Size = new System.Drawing.Size(75, 31);
+            this.btn_mts_car_in_interlock_on.TabIndex = 76;
+            this.btn_mts_car_in_interlock_on.Text = "ON";
+            this.btn_mts_car_in_interlock_on.UseVisualStyleBackColor = true;
+            this.btn_mts_car_in_interlock_on.Click += new System.EventHandler(this.btn_mts_car_in_interlock_on_Click);
+            // 
+            // btn_mts_car_out_interlock_off
+            // 
+            this.btn_mts_car_out_interlock_off.Location = new System.Drawing.Point(479, 64);
+            this.btn_mts_car_out_interlock_off.Name = "btn_mts_car_out_interlock_off";
+            this.btn_mts_car_out_interlock_off.Size = new System.Drawing.Size(75, 31);
+            this.btn_mts_car_out_interlock_off.TabIndex = 75;
+            this.btn_mts_car_out_interlock_off.Text = "OFF";
+            this.btn_mts_car_out_interlock_off.UseVisualStyleBackColor = true;
+            this.btn_mts_car_out_interlock_off.Click += new System.EventHandler(this.btn_mts_car_out_interlock_off_Click);
+            // 
+            // btn_mts_car_out_interlock_on
+            // 
+            this.btn_mts_car_out_interlock_on.Location = new System.Drawing.Point(389, 64);
+            this.btn_mts_car_out_interlock_on.Name = "btn_mts_car_out_interlock_on";
+            this.btn_mts_car_out_interlock_on.Size = new System.Drawing.Size(75, 31);
+            this.btn_mts_car_out_interlock_on.TabIndex = 74;
+            this.btn_mts_car_out_interlock_on.Text = "ON";
+            this.btn_mts_car_out_interlock_on.UseVisualStyleBackColor = true;
+            this.btn_mts_car_out_interlock_on.Click += new System.EventHandler(this.btn_mts_car_out_interlock_on_Click);
             // 
             // txt_mts_car_id
             // 
@@ -987,19 +1129,20 @@
             // 
             this.btn_mts_o2m_d2u_moving.AutoCheck = false;
             this.btn_mts_o2m_d2u_moving.AutoSize = true;
-            this.btn_mts_o2m_d2u_moving.Location = new System.Drawing.Point(332, 64);
+            this.btn_mts_o2m_d2u_moving.Enabled = false;
+            this.btn_mts_o2m_d2u_moving.Location = new System.Drawing.Point(332, 101);
             this.btn_mts_o2m_d2u_moving.Name = "btn_mts_o2m_d2u_moving";
             this.btn_mts_o2m_d2u_moving.Size = new System.Drawing.Size(188, 26);
             this.btn_mts_o2m_d2u_moving.TabIndex = 51;
             this.btn_mts_o2m_d2u_moving.TabStop = true;
             this.btn_mts_o2m_d2u_moving.Text = "Bit15_Car Moving";
             this.btn_mts_o2m_d2u_moving.UseVisualStyleBackColor = true;
-            this.btn_mts_o2m_d2u_moving.Click += new System.EventHandler(this.btn_mts_o2m_d2u_moving_Click);
             // 
             // btn_mts_o2m_u2d_caroutInterlock
             // 
             this.btn_mts_o2m_u2d_caroutInterlock.AutoCheck = false;
             this.btn_mts_o2m_u2d_caroutInterlock.AutoSize = true;
+            this.btn_mts_o2m_u2d_caroutInterlock.Enabled = false;
             this.btn_mts_o2m_u2d_caroutInterlock.Location = new System.Drawing.Point(332, 32);
             this.btn_mts_o2m_u2d_caroutInterlock.Name = "btn_mts_o2m_u2d_caroutInterlock";
             this.btn_mts_o2m_u2d_caroutInterlock.Size = new System.Drawing.Size(248, 26);
@@ -1007,7 +1150,6 @@
             this.btn_mts_o2m_u2d_caroutInterlock.TabStop = true;
             this.btn_mts_o2m_u2d_caroutInterlock.Text = "Bit0_Car out interlock";
             this.btn_mts_o2m_u2d_caroutInterlock.UseVisualStyleBackColor = true;
-            this.btn_mts_o2m_u2d_caroutInterlock.Click += new System.EventHandler(this.btn_mts_o2m_u2d_caroutInterlock_Click);
             // 
             // txt_mts_speed
             // 
@@ -1161,6 +1303,7 @@
             this.btn_mts_message_download.TabIndex = 55;
             this.btn_mts_message_download.Text = "MTL Msg Download";
             this.btn_mts_message_download.UseVisualStyleBackColor = true;
+            this.btn_mts_message_download.Click += new System.EventHandler(this.btn_mts_message_download_Click);
             // 
             // label20
             // 
@@ -1194,6 +1337,16 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // btn_reset_handshake
+            // 
+            this.btn_reset_handshake.Location = new System.Drawing.Point(373, 147);
+            this.btn_reset_handshake.Name = "btn_reset_handshake";
+            this.btn_reset_handshake.Size = new System.Drawing.Size(210, 31);
+            this.btn_reset_handshake.TabIndex = 80;
+            this.btn_reset_handshake.Text = "Reset All Handshake";
+            this.btn_reset_handshake.UseVisualStyleBackColor = true;
+            this.btn_reset_handshake.Click += new System.EventHandler(this.btn_reset_handshake_Click);
             // 
             // MaintainDeviceForm
             // 
@@ -1335,5 +1488,18 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label lbl_mts_alive;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label lbl_mts_back_door_value;
+        private System.Windows.Forms.Label lbl_mts_front_door_value;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Button btn_mtl_car_in_interlock_off;
+        private System.Windows.Forms.Button btn_mtl_car_in_interlock_on;
+        private System.Windows.Forms.Button btn_mtl_car_out_interlock_off;
+        private System.Windows.Forms.Button btn_mtl_car_out_interlock_on;
+        private System.Windows.Forms.Button btn_mts_car_in_interlock_off;
+        private System.Windows.Forms.Button btn_mts_car_in_interlock_on;
+        private System.Windows.Forms.Button btn_mts_car_out_interlock_off;
+        private System.Windows.Forms.Button btn_mts_car_out_interlock_on;
+        private System.Windows.Forms.Button btn_reset_handshake;
     }
 }
