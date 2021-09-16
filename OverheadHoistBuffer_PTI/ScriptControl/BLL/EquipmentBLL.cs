@@ -102,8 +102,15 @@ namespace com.mirle.ibg3k0.sc.BLL
                 foreach (IMaintainDevice device in maintain_device)
                 {
                     ASEGMENT device_segment = segmentBLL.cache.GetSegment(device.DeviceSegment);
-                    string[] segment_of_section_from_address = device_segment.Sections.Select(section => section.FROM_ADR_ID.Trim()).ToArray();
-                    string[] segment_of_section_to_address = device_segment.Sections.Select(section => section.TO_ADR_ID.Trim()).ToArray();
+                    //除了第一段的from address以外其他要屬於該Segment的Address
+                    string[] segment_of_section_from_address = device_segment.Sections.
+                                                                              Where(sec => sec != device_segment.Sections.First()).
+                                                                              Select(section => section.FROM_ADR_ID.Trim()).ToArray();
+                    //除了最後一段的to address以外其他要屬於該Segment的Address
+                    string[] segment_of_section_to_address = device_segment.Sections.
+                                                                            Where(sec => sec != device_segment.Sections.Last()).
+                                                                            Select(section => section.TO_ADR_ID.Trim()).ToArray();
+
                     string[] segment_include_address = segment_of_section_from_address.Concat(segment_of_section_to_address).ToArray();
                     if (segment_include_address.Contains(adr_id))
                     {
@@ -157,7 +164,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             SingleOrDefault();
                 return eqpt as MaintainLift;
             }
-            public MaintainSpace GetMaintainSpace()
+            public MaintainSpace GetDockingMTLOfMaintainSpace()
             {
                 var eqpt = eqObjCacheManager.getAllEquipment().
                             Where(eq => eq is MaintainSpace &&
@@ -241,6 +248,24 @@ namespace com.mirle.ibg3k0.sc.BLL
                             SingleOrDefault();
                 return eqpt as OHCV;
             }
+
+            public AEQPT getFourColorLighthouse()
+            {
+                var eqpt = eqObjCacheManager.getAllEquipment().
+                            Where(eq => SCUtility.isMatche(eq.EQPT_ID, "FOUR_COLOR_LIGHT")).
+                            SingleOrDefault();
+                return eqpt;
+            }
+
+            public AEQPT getEQ(string eqID)
+            {
+                var eqpt = eqObjCacheManager.getAllEquipment().
+                            Where(eq => SCUtility.isMatche(eq.EQPT_ID, eqID)).
+                            FirstOrDefault();
+                return eqpt;
+            }
+
+
         }
 
     }

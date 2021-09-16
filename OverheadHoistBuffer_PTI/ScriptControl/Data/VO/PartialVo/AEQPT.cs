@@ -139,6 +139,8 @@ namespace com.mirle.ibg3k0.sc
         public UInt32 Encoder;
 
         public VhInPosition VhInPosition;
+        public MTSDoorStatus MTSFrontDoorStatus;
+        public MTSDoorStatus MTSBackDoorStatus;
         public bool CarInSafetyCheck { get; set; }
         public bool CarOutSafetyCheck { get; set; }
         public bool CarOutActionTypeSystemOutToMTS { get; set; }

@@ -1013,6 +1013,8 @@ message Timestamp {
 	string MTLLocation =7;
 	string SynchronizeTime =8;
 	string distance =9;
+	bool CarOutInterlock = 10;
+	bool CarInMoving = 11;
    }
 
    message TRANSFER_INFO 
@@ -1076,6 +1078,11 @@ message Timestamp {
    {
         VhInPosition_Nothing = 0;
         VhInPosition_InPostion = 1;
+   }
+   enum MTSDoorStatus
+   {
+        MTSDoorStatus_Close = 0;
+        MTSDoorStatus_Open = 1;
    }
 
   message WrapperMessage {

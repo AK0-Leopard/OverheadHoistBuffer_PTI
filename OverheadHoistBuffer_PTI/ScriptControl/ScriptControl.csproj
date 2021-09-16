@@ -909,6 +909,8 @@
     <Compile Include="Data\ValueDefMapAction\Interface\ICommonPortInfoValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\Interface\IManualPortValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\MGVDefaultValueDefMapAction.cs" />
+    <Compile Include="Data\ValueDefMapAction\MTLValueDefMapActionNewPH2.cs" />
+    <Compile Include="Data\ValueDefMapAction\MTSValueDefMapActionNewPH2.cs" />
     <Compile Include="Data\ValueDefMapAction\PTI_MCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SimpleMTLValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\OHCVValueDefMapAction.cs" />
@@ -925,6 +927,7 @@
     <Compile Include="Data\VO\AlarmHisList.cs" />
     <Compile Include="Data\VO\Interface\IConnectionStatusChange.cs" />
     <Compile Include="Data\VO\Interface\IMaintainDevice.cs" />
+    <Compile Include="Data\VO\MTLSetting.cs" />
     <Compile Include="Data\VO\OHCV.cs" />
     <Compile Include="Data\VO\MaintainSpace.cs" />
     <Compile Include="Data\VO\MaintainLift.cs" />

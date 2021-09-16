@@ -1605,6 +1605,90 @@ namespace RouteKit
             return isWalkable;
         }
 
+        public bool checkRoadIsWalkable(string from_adr, string to_adr, bool isMaintainDeviceCommand, out double route_distance)
+        {
+            //route_distance = default(KeyValuePair<string[], double>);
+            route_distance = double.MaxValue;
+
+            string[] route = DownstreamSearchSection
+                                 (from_adr, to_adr, 1);
+            if (SCUtility.isEmpty(route[0]))
+            {
+                return false;
+            }
+            string[] AllRoute = route[1].Split(';');
+            List<KeyValuePair<string[], double>> routeDetailAndDistance = PaserRoute2SectionsAndDistance(AllRoute);
+            bool isWalkable = false;
+
+            //判斷找出來的路徑是否有經過MaintainDevice的，有的話要將他過濾掉
+            if (!isMaintainDeviceCommand)
+            {
+                foreach (var routeDetial in routeDetailAndDistance.ToList())
+                {
+                    List<string> maintain_device_ids = scApp.EquipmentBLL.cache.GetAllMaintainDeviceSegments();
+                    List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                    string[] secOfSegments = lstSec.Select(s => s.SEG_NUM).Distinct().ToArray();
+                    bool is_include_maintain_device_segment = secOfSegments.Where(seg => maintain_device_ids.Contains(seg)).Count() != 0;
+                    if (is_include_maintain_device_segment)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                    }
+                }
+            }
+
+            //判斷將要走過的路上是否有故障車 A0.02
+            foreach (var routeDetial in routeDetailAndDistance.ToList())
+            {
+                List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                List<AVEHICLE> vhs = scApp.VehicleBLL.loadAllErrorVehicle();
+                foreach (AVEHICLE vh in vhs)
+                {
+                    bool IsErrorVhOnPassSection = lstSec.Where(sec => sec.SEC_ID.Trim() == vh.CUR_SEC_ID.Trim()).Count() > 0;
+                    if (IsErrorVhOnPassSection)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                        if (routeDetailAndDistance.Count == 0)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(Guide), Device: "OHT",
+                               Data: $"Can't find the way on check road is walkable.Because block by error vehicle [{vh.VEHICLE_ID}] on sec [{vh.CUR_SEC_ID}]");
+                        }
+                    }
+                }
+            }
+
+            //判斷是否有路徑是被Disable或是Pre disable
+            if (scApp.getEQObjCacheManager().getLine().SegmentPreDisableExcuting)
+            {
+                List<string> nonActiveSeg = scApp.MapBLL.loadNonActiveSegmentNum();
+                //string[] AllRoute = route[1].Split(';');
+                //List<KeyValuePair<string[], double>> routeDetailAndDistance = PaserRoute2SectionsAndDistance(AllRoute);
+                foreach (var routeDetial in routeDetailAndDistance.ToList())
+                {
+                    List<ASECTION> lstSec = scApp.MapBLL.loadSectionBySecIDs(routeDetial.Key.ToList());
+                    string[] secOfSegments = lstSec.Select(s => s.SEG_NUM).Distinct().ToArray();
+                    bool isIncludePassSeg = secOfSegments.Where(seg => nonActiveSeg.Contains(seg)).Count() != 0;
+                    if (isIncludePassSeg)
+                    {
+                        routeDetailAndDistance.Remove(routeDetial);
+                    }
+                }
+            }
+            if (routeDetailAndDistance.Count > 0)
+            {
+                route_distance = routeDetailAndDistance.OrderBy(keyValue => keyValue.Value).FirstOrDefault().Value;
+                isWalkable = true;
+            }
+            //else
+            //{
+            //    string[] routeSection;
+            //    double idistance;
+            //    RouteInfo2KeyValue(route[0], out routeSection, out idistance);
+            //    route_distance = new KeyValuePair<string[], double>(routeSection, idistance);
+            //    isWalkable = true;
+            //}
+            return isWalkable;
+        }
+
         private List<KeyValuePair<string[], double>> PaserRoute2SectionsAndDistance(string[] AllRoute)
         {
             List<KeyValuePair<string[], double>> routeDetailAndDistance = new List<KeyValuePair<string[], double>>();

@@ -56,6 +56,12 @@ namespace com.mirle.ibg3k0.sc.Common
             new MTSSetting(){ID = "MTS",MTSSegment="013", MTSAddress ="20292", SystemInAddress ="20199" },
             new MTSSetting(){ID = "MTS2",MTSSegment="019", MTSAddress ="20296", SystemInAddress ="20037" }
         };
+        private List<MTLSetting> MTLSettings = new List<MTLSetting>()
+        {
+            new MTLSetting(){ID = "MTL",MTLSegment="013", MTLAddress ="20293", SystemInAddress ="20199",MTL_CAR_IN_BUFFER_ADDRESS ="24294" ,MTL_SYSTEM_OUT_ADDRESS = "20292" },
+            new MTLSetting(){ID = "MTL2",MTLSegment="132", MTLAddress ="10387", SystemInAddress ="10043",MTL_CAR_IN_BUFFER_ADDRESS ="10388" ,MTL_SYSTEM_OUT_ADDRESS = "10387" },
+        };
+
 
         /// <summary>
         /// The logger
@@ -432,6 +438,17 @@ namespace com.mirle.ibg3k0.sc.Common
                         if (eqptType == SCAppConstants.EqptType.MTL)
                         {
                             eqTemp = new MaintainLift();
+                            MTLSetting mTLSetting = getMTLSetting(eqpt_id);
+                            if (mTLSetting == null)
+                            {
+                                throw new Exception($"No setting mtl:{eqpt_id} of addresses.");
+                            }
+                            (eqTemp as MaintainLift).setMTLSegment(mTLSetting.MTLSegment);
+                            (eqTemp as MaintainLift).setMTLAddress(mTLSetting.MTLAddress);
+                            (eqTemp as MaintainLift).setMTLSystemInAddress(mTLSetting.SystemInAddress);
+                            (eqTemp as MaintainLift).setMTLSystemOutAddress(mTLSetting.MTL_SYSTEM_OUT_ADDRESS);
+                            (eqTemp as MaintainLift).setMTLCarInBufferAddress(mTLSetting.MTL_CAR_IN_BUFFER_ADDRESS);
+
                         }
                         else if (eqptType == SCAppConstants.EqptType.MTS)
                         {
@@ -591,6 +608,12 @@ namespace com.mirle.ibg3k0.sc.Common
         private MTSSetting getMTSSetting(string mtsID)
         {
             var setting = MTSSettings.Where(id => id.ID.Trim() == mtsID.Trim()).SingleOrDefault();
+
+            return setting;
+        }
+        private MTLSetting getMTLSetting(string mtlID)
+        {
+            var setting = MTLSettings.Where(id => id.ID.Trim() == mtlID.Trim()).SingleOrDefault();
 
             return setting;
         }

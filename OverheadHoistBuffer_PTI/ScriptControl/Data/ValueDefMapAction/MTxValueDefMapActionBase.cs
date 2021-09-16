@@ -74,6 +74,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         CarInSafetyChcek(null, null);
                         MTL_LFTStatus(null, null);
 
+                        //如果該機台為MTS1或者是MTL時，需要將兩台設定為互相doking的機台
+                        if (eqpt is MaintainSpace &&
+                            SCUtility.isMatche((eqpt as MaintainSpace).EQPT_ID, "MTS"))
+                        {
+                            (eqpt as MaintainSpace).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetMaintainLift();
+                        }
+                        else if (eqpt is MaintainLift &&
+                            SCUtility.isMatche((eqpt as MaintainLift).EQPT_ID, "MTL"))
+                        {
+                            (eqpt as MaintainLift).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
+                        }
                         break;
                     case BCFAppConstants.RUN_LEVEL.ONE:
                         break;
@@ -94,8 +105,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public virtual void DateTimeSyncCommand(DateTime dateTime)
         {
 
-            OHxCToMtl_DateTimeSync send_function =
-               scApp.getFunBaseObj<OHxCToMtl_DateTimeSync>(eqpt.EQPT_ID) as OHxCToMtl_DateTimeSync;
+            OHxCToMtl_DateTimeSyncPH2 send_function =
+               scApp.getFunBaseObj<OHxCToMtl_DateTimeSyncPH2>(eqpt.EQPT_ID) as OHxCToMtl_DateTimeSyncPH2;
             try
             {
                 lock (dateTimeSyneObj)
@@ -124,14 +135,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_DateTimeSync>(send_function);
+                scApp.putFunBaseObj<OHxCToMtl_DateTimeSyncPH2>(send_function);
             }
         }
         uint message_index = 0;
         public virtual void OHxCMessageDownload(string msg)
         {
-            OHxCToMtl_MessageDownload send_function =
-                scApp.getFunBaseObj<OHxCToMtl_MessageDownload>(eqpt.EQPT_ID) as OHxCToMtl_MessageDownload;
+            OHxCToMtl_MessageDownload_PH2 send_function =
+                scApp.getFunBaseObj<OHxCToMtl_MessageDownload_PH2>(eqpt.EQPT_ID) as OHxCToMtl_MessageDownload_PH2;
             try
             {
                 //1.建立各個Function物件
@@ -152,15 +163,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_MessageDownload>(send_function);
+                scApp.putFunBaseObj<OHxCToMtl_MessageDownload_PH2>(send_function);
             }
         }
         UInt16 car_realtime_info = 0;
         public virtual void CarRealtimeInfo(UInt16 car_id, UInt16 action_mode, UInt16 cst_exist, UInt16 current_section_id, UInt32 current_address_id,
                                             UInt32 buffer_distance, UInt16 speed)
         {
-            OHxCToMtl_CarRealtimeInfo send_function =
-                scApp.getFunBaseObj<OHxCToMtl_CarRealtimeInfo>(eqpt.EQPT_ID) as OHxCToMtl_CarRealtimeInfo;
+            OHxCToMtl_CarRealtimeInfo_PH2 send_function =
+                scApp.getFunBaseObj<OHxCToMtl_CarRealtimeInfo_PH2>(eqpt.EQPT_ID) as OHxCToMtl_CarRealtimeInfo_PH2;
             try
             {
                 //1.建立各個Function物件
@@ -187,7 +198,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_MessageDownload>(send_function);
+                scApp.putFunBaseObj<OHxCToMtl_CarRealtimeInfo_PH2>(send_function);
             }
         }
 
@@ -195,9 +206,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             bool isSendSuccess = false;
             var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_CarOutNotify>(eqpt.EQPT_ID) as OHxCToMtl_CarOutNotify;
+                scApp.getFunBaseObj<OHxCToMtl_CarOutNotify_PH2>(eqpt.EQPT_ID) as OHxCToMtl_CarOutNotify_PH2;
             var receive_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(eqpt.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify;
+                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify_PH2>(eqpt.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify_PH2;
             try
             {
                 //1.準備要發送的資料
@@ -235,8 +246,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_CarOutNotify>(send_function);
-                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(receive_function);
+                scApp.putFunBaseObj<OHxCToMtl_CarOutNotify_PH2>(send_function);
+                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify_PH2>(receive_function);
             }
             return (isSendSuccess, 0);
         }
@@ -245,9 +256,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             bool isSendSuccess = false;
             var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_AlarmResetRequest>(eqpt.EQPT_ID) as OHxCToMtl_AlarmResetRequest;
+                scApp.getFunBaseObj<OHxCToMtl_AlarmResetRequest_PH2>(eqpt.EQPT_ID) as OHxCToMtl_AlarmResetRequest_PH2;
             var receive_function =
-                scApp.getFunBaseObj<MtlToOHxC_AlarmResetReply>(eqpt.EQPT_ID) as MtlToOHxC_AlarmResetReply;
+                scApp.getFunBaseObj<MtlToOHxC_AlarmResetReply_PH2>(eqpt.EQPT_ID) as MtlToOHxC_AlarmResetReply_PH2;
             try
             {
                 //1.準備要發送的資料
@@ -283,8 +294,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<OHxCToMtl_AlarmResetRequest>(send_function);
-                scApp.putFunBaseObj<MtlToOHxC_AlarmResetReply>(receive_function);
+                scApp.putFunBaseObj<OHxCToMtl_AlarmResetRequest_PH2>(send_function);
+                scApp.putFunBaseObj<MtlToOHxC_AlarmResetReply_PH2>(receive_function);
             }
             return (isSendSuccess);
         }
@@ -433,7 +444,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public virtual void CarOutSafetyChcek(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_CarOutSafetyCheck>(eqpt.EQPT_ID) as MtlToOHxC_CarOutSafetyCheck;
+                scApp.getFunBaseObj<MtlToOHxC_CarOutSafetyCheck_PH2>(eqpt.EQPT_ID) as MtlToOHxC_CarOutSafetyCheck_PH2;
             try
             {
                 recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
@@ -449,7 +460,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_CarOutSafetyCheck>(recevie_function);
+                scApp.putFunBaseObj<MtlToOHxC_CarOutSafetyCheck_PH2>(recevie_function);
 
             }
         }
@@ -486,9 +497,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public virtual void MTL_Alarm_Report(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_AlarmReport>(eqpt.EQPT_ID) as MtlToOHxC_AlarmReport;
+                scApp.getFunBaseObj<MtlToOHxC_AlarmReport_PH2>(eqpt.EQPT_ID) as MtlToOHxC_AlarmReport_PH2;
             var send_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyAlarmReport>(eqpt.EQPT_ID) as MtlToOHxC_ReplyAlarmReport;
+                scApp.getFunBaseObj<MtlToOHxC_ReplyAlarmReport_PH2>(eqpt.EQPT_ID) as MtlToOHxC_ReplyAlarmReport_PH2;
             try
             {
                 recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
@@ -517,8 +528,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_AlarmReport>(recevie_function);
-                scApp.putFunBaseObj<MtlToOHxC_ReplyAlarmReport>(send_function);
+                scApp.putFunBaseObj<MtlToOHxC_AlarmReport_PH2>(recevie_function);
+                scApp.putFunBaseObj<MtlToOHxC_ReplyAlarmReport_PH2>(send_function);
 
             }
         }
@@ -540,7 +551,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         public virtual void MTL_Alive(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_Alive>(eqpt.EQPT_ID) as MtlToOHxC_Alive;
+                scApp.getFunBaseObj<MtlToOHxC_Alive_PH2>(eqpt.EQPT_ID) as MtlToOHxC_Alive_PH2;
             try
             {
                 recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
@@ -556,14 +567,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_Alive>(recevie_function);
+                scApp.putFunBaseObj<MtlToOHxC_Alive_PH2>(recevie_function);
 
             }
         }
         public virtual void MTL_Current_ID(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_CurrentCarID>(eqpt.EQPT_ID) as MtlToOHxC_CurrentCarID;
+                scApp.getFunBaseObj<MtlToOHxC_CurrentCarID_PH2>(eqpt.EQPT_ID) as MtlToOHxC_CurrentCarID_PH2;
             try
             {
                 recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
@@ -579,14 +590,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_CurrentCarID>(recevie_function);
+                scApp.putFunBaseObj<MtlToOHxC_CurrentCarID_PH2>(recevie_function);
 
             }
         }
         public virtual void MTL_TO_OHXC_REPLY_OHXC_CAR_OUT_NOTIFY_HS(object sender, ValueChangedEventArgs args)
         {
             var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(eqpt.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify;
+                scApp.getFunBaseObj<MtlToOHxC_ReplyCarOutNotify_PH2>(eqpt.EQPT_ID) as MtlToOHxC_ReplyCarOutNotify_PH2;
             try
             {
                 recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
@@ -601,7 +612,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             finally
             {
-                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify>(recevie_function);
+                scApp.putFunBaseObj<MtlToOHxC_ReplyCarOutNotify_PH2>(recevie_function);
 
             }
         }
