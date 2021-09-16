@@ -53,13 +53,13 @@ namespace com.mirle.ibg3k0.sc.Common
         };
         private List<MTSSetting> MTSSettings = new List<MTSSetting>()
         {
-            new MTSSetting(){ID = "MTS",MTSSegment="013", MTSAddress ="20292", SystemInAddress ="20199" },
-            new MTSSetting(){ID = "MTS2",MTSSegment="019", MTSAddress ="20296", SystemInAddress ="20037" }
+            new MTSSetting(){ID = "MTx01",MTSSegment="013", MTSAddress ="20292", SystemInAddress ="20199" },
+            new MTSSetting(){ID = "MTx02",MTSSegment="019", MTSAddress ="20296", SystemInAddress ="20037" }
         };
         private List<MTLSetting> MTLSettings = new List<MTLSetting>()
         {
-            new MTLSetting(){ID = "MTL",MTLSegment="013", MTLAddress ="20293", SystemInAddress ="20199",MTL_CAR_IN_BUFFER_ADDRESS ="24294" ,MTL_SYSTEM_OUT_ADDRESS = "20292" },
-            new MTLSetting(){ID = "MTL2",MTLSegment="132", MTLAddress ="10387", SystemInAddress ="10043",MTL_CAR_IN_BUFFER_ADDRESS ="10388" ,MTL_SYSTEM_OUT_ADDRESS = "10387" },
+            new MTLSetting(){ID = "MTx01",MTLSegment="013", MTLAddress ="20293", SystemInAddress ="20199",CarInBufferAddress ="24294" ,SystemOutAddress = "20292" },
+            new MTLSetting(){ID = "MTx02",MTLSegment="132", MTLAddress ="10387", SystemInAddress ="10043",CarInBufferAddress ="10388" ,SystemOutAddress = "10387" },
         };
 
 
@@ -446,8 +446,8 @@ namespace com.mirle.ibg3k0.sc.Common
                             (eqTemp as MaintainLift).setMTLSegment(mTLSetting.MTLSegment);
                             (eqTemp as MaintainLift).setMTLAddress(mTLSetting.MTLAddress);
                             (eqTemp as MaintainLift).setMTLSystemInAddress(mTLSetting.SystemInAddress);
-                            (eqTemp as MaintainLift).setMTLSystemOutAddress(mTLSetting.MTL_SYSTEM_OUT_ADDRESS);
-                            (eqTemp as MaintainLift).setMTLCarInBufferAddress(mTLSetting.MTL_CAR_IN_BUFFER_ADDRESS);
+                            (eqTemp as MaintainLift).setMTLSystemOutAddress(mTLSetting.SystemOutAddress);
+                            (eqTemp as MaintainLift).setMTLCarInBufferAddress(mTLSetting.CarInBufferAddress);
 
                         }
                         else if (eqptType == SCAppConstants.EqptType.MTS)
@@ -607,15 +607,15 @@ namespace com.mirle.ibg3k0.sc.Common
         }
         private MTSSetting getMTSSetting(string mtsID)
         {
-            var setting = MTSSettings.Where(id => id.ID.Trim() == mtsID.Trim()).SingleOrDefault();
-
-            return setting;
+            //var setting = MTSSettings.Where(id => id.ID.Trim() == mtsID.Trim()).SingleOrDefault();
+            //return setting;
+            return scApp.MTLMTSInfoDao.getMTSInfo(scApp, mtsID);
         }
         private MTLSetting getMTLSetting(string mtlID)
         {
-            var setting = MTLSettings.Where(id => id.ID.Trim() == mtlID.Trim()).SingleOrDefault();
-
-            return setting;
+            //var setting = MTLSettings.Where(id => id.ID.Trim() == mtlID.Trim()).SingleOrDefault();
+            //return setting;
+            return scApp.MTLMTSInfoDao.getMTLInfo(scApp, mtlID);
         }
         private string getOHCVLocation(string ohcvID)
         {

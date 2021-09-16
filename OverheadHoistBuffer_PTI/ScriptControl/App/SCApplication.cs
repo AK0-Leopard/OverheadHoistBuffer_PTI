@@ -457,6 +457,8 @@ namespace com.mirle.ibg3k0.sc.App
         public HCMD_MCSDao HCMD_MCSDao { get { return hcmd_mcsDao; } }
         private HCMD_OHTCDao hcmd_ohtcDao = null;
         public HCMD_OHTCDao HCMD_OHTCDao { get { return hcmd_ohtcDao; } }
+        private MTLMTSInfoDao mtlMTSInfoDao = null;
+        public MTLMTSInfoDao MTLMTSInfoDao { get { return mtlMTSInfoDao; } }
 
 
         //BLL
@@ -1241,6 +1243,9 @@ namespace com.mirle.ibg3k0.sc.App
 
             hcmd_mcsDao = new HCMD_MCSDao();
             hcmd_ohtcDao = new HCMD_OHTCDao();
+
+            //MTL/MTS
+            mtlMTSInfoDao = new MTLMTSInfoDao();
         }
 
         /// <summary>
@@ -1259,6 +1264,8 @@ namespace com.mirle.ibg3k0.sc.App
                 loadCSVToDataset(ohxcConfig, "RETURNCODEMAP");
                 loadCSVToDataset(ohxcConfig, "EQPTLOCATIONINFO");
                 loadCSVToDataset(ohxcConfig, "RESERVEENHANCEINFO");
+                loadCSVToDataset(ohxcConfig, "MTLINFO");
+                loadCSVToDataset(ohxcConfig, "MTSINFO");
                 loadMapInfoCSVToDataset(ohxcConfig, "AADDRESS");
                 loadMapInfoCSVToDataset(ohxcConfig, "ASECTION");
                 logger.Info("init bc_Config success");

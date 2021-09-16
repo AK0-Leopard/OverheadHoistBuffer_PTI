@@ -566,6 +566,7 @@
     <Compile Include="Data\DAO\EntityFramework\HCMD_MCSDao.cs" />
     <Compile Include="Data\DAO\EqptLocationInfoDao.cs" />
     <Compile Include="Data\DAO\191204Test\PortDefDao.cs" />
+    <Compile Include="Data\DAO\MTLMTSInfoDao.cs" />
     <Compile Include="Data\DAO\ReserveEnhanceInfoDao.cs" />
     <Compile Include="Data\DAO\VCMD_MCSDao.cs" />
     <Compile Include="Data\DAO\PortStationDao.cs" />

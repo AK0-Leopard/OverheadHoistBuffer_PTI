@@ -857,6 +857,12 @@
     <None Include="Config\ASE_LOOP\TcpIpConnectionSetting.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Config\PTI\CSV\MTSINFO.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\PTI\CSV\MTLINFO.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Config\PTI_TEST\AddressBaseDefs_simple.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
