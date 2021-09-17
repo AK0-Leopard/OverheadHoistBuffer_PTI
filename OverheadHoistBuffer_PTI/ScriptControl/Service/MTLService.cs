@@ -779,10 +779,11 @@ namespace com.mirle.ibg3k0.sc.Service
             mtl.SetCarInMoving(false);
         }
 
-        public (bool isSuccess, string result) checkVhAndMTxCarInStatus(IMaintainDevice mtx, IMaintainDevice dockingMtx, AVEHICLE car_in_vh)
+        public (bool isSuccess, string result, UInt16 resultCode) checkVhAndMTxCarInStatus(IMaintainDevice mtx, IMaintainDevice dockingMtx, AVEHICLE car_in_vh)
         {
             bool isSuccess = true;
             string result = "";
+            UInt16 resultCode = 1;
 
             string vh_id = car_in_vh.VEHICLE_ID;
             //1.要判斷目前車子的狀態
@@ -791,11 +792,13 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 isSuccess = false;
                 result = $"MTx:{mtx.DeviceID} Current CarInMoving:{mtx.CarInMoving}, can't excute cat in requset.";
+                resultCode = 3;
             }
             if (isSuccess && !car_in_vh.isTcpIpConnect)
             {
                 isSuccess = false;
                 result = $"vh id:{vh_id}, not connection.";
+                resultCode = 4;
             }
             //if (isSuccess && car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.Manual)
             //{
@@ -806,11 +809,13 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 isSuccess = false;
                 result = $"vh id:{vh_id}, both current section and current address are empty.";
+                resultCode = 5;
             }
             if (isSuccess && !SCUtility.isMatche(car_in_vh.CUR_ADR_ID, mtx.DeviceAddress))
             {
                 isSuccess = false;
                 result = $"vh id:{vh_id}, current address:{car_in_vh.CUR_ADR_ID} not match mtx device address:{mtx.DeviceAddress}.";
+                resultCode = 6;
             }
 
 
@@ -820,6 +825,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 isSuccess = false;
                 result = $"MTx:{mtx.DeviceID} Current Mode:{mtx.MTxMode}, can't excute cat in requset.";
+                resultCode = 7;
             }
             //3.要判斷MTS的 Car In Safety Check是否是準備好的
             //if (mtx is MaintainSpace)
@@ -837,6 +843,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     isSuccess = false;
                     result = $"Docking MTx:{dockingMtx.DeviceID} Current Mode:{dockingMtx.MTxMode}, can't excute cat in requset.";
+                    resultCode = 8;
                 }
                 //if (isSuccess && !dockingMtx.CarOutSafetyCheck)
                 //{
@@ -851,10 +858,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         isSuccess = false;
                         result = $"Docking MTx:{dockingMtx.DeviceID} {nameof(dockingMtx.HasVehicle)}:{dockingMtx.HasVehicle}, can't excute cat in requset.";
+                        resultCode = 9;
                     }
                 }
             }
-            return (isSuccess, result);
+            return (isSuccess, result, resultCode);
         }
 
         public (bool isSuccess, string result) CarInFromMTSRequest(MaintainSpace mtx, AVEHICLE car_out_vh)

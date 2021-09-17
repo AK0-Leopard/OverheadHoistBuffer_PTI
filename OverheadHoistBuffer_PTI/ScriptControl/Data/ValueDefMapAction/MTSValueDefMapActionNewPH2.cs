@@ -635,7 +635,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         mtl = scApp.EquipmentBLL.cache.GetMaintainLift();
                     }
                     var check_result = scApp.MTLService.checkVhAndMTxCarInStatus(MTS, mtl, pre_car_in_vh);
-                    send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : (UInt16)3;
+                    send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : check_result.resultCode;
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                              Data: $"check mts car in result, is success:{check_result.isSuccess},result:{check_result.result}",
                              XID: MTS.EQPT_ID);

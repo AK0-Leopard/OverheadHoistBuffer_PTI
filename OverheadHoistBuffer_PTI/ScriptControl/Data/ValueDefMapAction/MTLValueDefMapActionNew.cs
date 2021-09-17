@@ -505,7 +505,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (pre_car_in_vh != null)
                 {
                     var check_result = scApp.MTLService.checkVhAndMTxCarInStatus(MTL, null, pre_car_in_vh);
-                    send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : (UInt16)3;
+                    send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : check_result.resultCode;
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNew), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                              Data: $"check mtl car in result, is success:{check_result.isSuccess},result:{check_result.result}",
                              XID: MTL.EQPT_ID);
