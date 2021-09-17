@@ -491,8 +491,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                          Data: recevie_function.ToString(),
                          XID: MTS.EQPT_ID);
-                MTS.HasVehicle = recevie_function.HasVehicle;
-                MTS.StopSingle = recevie_function.StopSingle;
+                MTS.HasVehicle = recevie_function.MTSHasVehicle;
+                MTS.StopSingle = recevie_function.MTSStopSingle;
                 MTS.MTxMode = (ProtocolFormat.OHTMessage.MTxMode)recevie_function.Mode;
                 MTS.VhInPosition = (ProtocolFormat.OHTMessage.VhInPosition)recevie_function.VhInPosition;
                 MTS.MTSFrontDoorStatus = (ProtocolFormat.OHTMessage.MTSDoorStatus)recevie_function.FrontDoorStatus;
@@ -612,65 +612,65 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         public override void MTL_CarInRequest(object sender, ValueChangedEventArgs args)
         {
-            var recevie_function =
-                scApp.getFunBaseObj<MtlToOHxC_RequestCarInDataCheck_PH2>(MTS.EQPT_ID) as MtlToOHxC_RequestCarInDataCheck_PH2;
-            var send_function =
-                scApp.getFunBaseObj<OHxCToMtl_ReplyCarInDataCheck_PH2>(MTS.EQPT_ID) as OHxCToMtl_ReplyCarInDataCheck_PH2;
-            try
-            {
-                recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
-                         Data: recevie_function.ToString(),
-                         XID: MTS.EQPT_ID);
-                ushort vh_num = recevie_function.CarID;
-                ushort hand_shake = recevie_function.Handshake;
+            //var recevie_function =
+            //    scApp.getFunBaseObj<MtlToOHxC_RequestCarInDataCheck_PH2>(MTS.EQPT_ID) as MtlToOHxC_RequestCarInDataCheck_PH2;
+            //var send_function =
+            //    scApp.getFunBaseObj<OHxCToMtl_ReplyCarInDataCheck_PH2>(MTS.EQPT_ID) as OHxCToMtl_ReplyCarInDataCheck_PH2;
+            //try
+            //{
+            //    recevie_function.Read(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+            //             Data: recevie_function.ToString(),
+            //             XID: MTS.EQPT_ID);
+            //    ushort vh_num = recevie_function.CarID;
+            //    ushort hand_shake = recevie_function.Handshake;
 
-                AVEHICLE pre_car_in_vh = scApp.VehicleBLL.cache.getVhByNum(vh_num);
-                if (pre_car_in_vh != null)
-                {
-                    MaintainLift mtl = null;
-                    //如果是MTS(即MTS1)的話，則需要去判斷MTL的狀態是否是可以通過的
-                    if (SCUtility.isMatche(MTS.EQPT_ID, "MTS"))
-                    {
-                        mtl = scApp.EquipmentBLL.cache.GetMaintainLift();
-                    }
-                    var check_result = scApp.MTLService.checkVhAndMTxCarInStatus(MTS, mtl, pre_car_in_vh);
-                    send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : check_result.resultCode;
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
-                             Data: $"check mts car in result, is success:{check_result.isSuccess},result:{check_result.result}",
-                             XID: MTS.EQPT_ID);
-                }
-                else
-                {
-                    send_function.ReturnCode = 2;
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
-                             Data: $"check mts car in result, vehicle num:{vh_num} not exist.",
-                             XID: MTS.EQPT_ID);
-                }
-                send_function.Handshake = hand_shake;
-                send_function.Write(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
+            //    AVEHICLE pre_car_in_vh = scApp.VehicleBLL.cache.getVhByNum(vh_num);
+            //    if (pre_car_in_vh != null)
+            //    {
+            //        MaintainLift mtl = null;
+            //        //如果是MTS(即MTS1)的話，則需要去判斷MTL的狀態是否是可以通過的
+            //        if (SCUtility.isMatche(MTS.EQPT_ID, "MTS"))
+            //        {
+            //            mtl = scApp.EquipmentBLL.cache.GetMaintainLift();
+            //        }
+            //        var check_result = scApp.MTLService.checkVhAndMTxCarInStatus(MTS, mtl, pre_car_in_vh);
+            //        send_function.ReturnCode = check_result.isSuccess ? (UInt16)1 : check_result.resultCode;
+            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+            //                 Data: $"check mts car in result, is success:{check_result.isSuccess},result:{check_result.result}",
+            //                 XID: MTS.EQPT_ID);
+            //    }
+            //    else
+            //    {
+            //        send_function.ReturnCode = 2;
+            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+            //                 Data: $"check mts car in result, vehicle num:{vh_num} not exist.",
+            //                 XID: MTS.EQPT_ID);
+            //    }
+            //    send_function.Handshake = hand_shake;
+            //    send_function.Write(bcfApp, MTS.EqptObjectCate, MTS.EQPT_ID);
 
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
-                         Data: send_function.ToString(),
-                         XID: MTS.EQPT_ID);
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTSValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+            //             Data: send_function.ToString(),
+            //             XID: MTS.EQPT_ID);
 
-                MTS.SynchronizeTime = DateTime.Now;
+            //    MTS.SynchronizeTime = DateTime.Now;
 
-                if (send_function.Handshake == 1 && send_function.ReturnCode == 1)
-                {
-                    scApp.MTLService.processCarInScenario(MTS);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-            finally
-            {
-                scApp.putFunBaseObj<MtlToOHxC_RequestCarInDataCheck_PH2>(recevie_function);
-                scApp.putFunBaseObj<OHxCToMtl_ReplyCarInDataCheck_PH2>(send_function);
+            //    if (send_function.Handshake == 1 && send_function.ReturnCode == 1)
+            //    {
+            //        scApp.MTLService.processCarInScenario(MTS);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex, "Exception");
+            //}
+            //finally
+            //{
+            //    scApp.putFunBaseObj<MtlToOHxC_RequestCarInDataCheck_PH2>(recevie_function);
+            //    scApp.putFunBaseObj<OHxCToMtl_ReplyCarInDataCheck_PH2>(send_function);
 
-            }
+            //}
         }
 
 
