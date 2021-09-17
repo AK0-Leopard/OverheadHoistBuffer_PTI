@@ -504,9 +504,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             bool isSuccess = true;
             string result = "OK";
-            CarOutNotify(MTSValueDefMapActionBase, car_id, 3);
+            if (isSuccess)
+            {
+                AVEHICLE pre_car_in_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByNum(car_id);
+                (isSuccess, result) = bcApp.SCApplication.MTLService.CarInFromMTSRequest(MTS, pre_car_in_vh);
+            }
 
-            if (!SpinWait.SpinUntil(() => MTS.CarOutSafetyCheck == true, 60000))
+            if (isSuccess && !SpinWait.SpinUntil(() => MTS.CarOutSafetyCheck == true, 60000))
             {
                 isSuccess = false;
                 result = $"Process car in scenario,but mtl:{MTS.DeviceID} status not ready " +
@@ -514,7 +518,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 return (isSuccess, result);
             }
 
-            (isSuccess, result) = bcApp.SCApplication.MTLService.processCarInScenario(MTS);
+            if (isSuccess)
+            {
+                (isSuccess, result) = bcApp.SCApplication.MTLService.processCarInScenario(MTS);
+            }
             return (isSuccess, result);
         }
     }
