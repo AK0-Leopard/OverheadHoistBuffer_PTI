@@ -37,6 +37,10 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         public bool HasVehicle;
         [PLCElement(ValueName = "MTL_TO_OHXC_LFT_STATUS_STOP_SINGLE_PH2")]
         public bool StopSingle;
+        [PLCElement(ValueName = "MTS_TO_OHXC_MTS_STATUS_HAS_VEHICLE_PH2")]
+        public bool MTSHasVehicle;
+        [PLCElement(ValueName = "MTS_TO_OHXC_MTS_STATUS_STOP_SINGLE_PH2")]
+        public bool MTSStopSingle;
         [PLCElement(ValueName = "MTL_TO_OHXC_LFT_MODE_PH2")]
         public UInt16 Mode;
         [PLCElement(ValueName = "MTL_TO_OHXC_LFT_LOCATION_PH2")]
