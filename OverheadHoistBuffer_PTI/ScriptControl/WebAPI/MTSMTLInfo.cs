@@ -51,7 +51,7 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                         if (MTLMTS.EQPT_ID.StartsWith("MTL"))
                         {
                             MTLMTS = MTLMTS as MaintainLift;
-                            MTxValueDefMapActionBase MTLValueDefMapActionBase = MTLMTS.getMapActionByIdentityKey(nameof(MTLValueDefMapActionNew)) as MTxValueDefMapActionBase;
+                            MTxValueDefMapActionBase MTLValueDefMapActionBase = MTLMTS.getMapActionByIdentityKey(nameof(MTLValueDefMapActionNewPH2)) as MTxValueDefMapActionBase;
                             isSuccess = MTLValueDefMapActionBase.setOHxC2MTL_CarOutInterlock(setValue);
                         }
                         else

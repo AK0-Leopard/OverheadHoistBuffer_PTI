@@ -93,7 +93,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         {
 
             //return getExcuteMapAction().OHxC_CarOutNotify(carNum,2);
-            MTLValueDefMapActionNew mapAction = getExcuteMapAction();
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
             if (mapAction != null)
             {
                 return mapAction.OHxC_CarOutNotify(carNum, 2);
@@ -108,7 +108,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         {
             //return getExcuteMapAction().setOHxC2MTL_CarOutInterlock(onOff);
 
-            MTLValueDefMapActionNew mapAction = getExcuteMapAction();
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
             if (mapAction != null)
             {
                 return mapAction.setOHxC2MTL_CarOutInterlock(onOff);
@@ -123,7 +123,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             //return getExcuteMapAction().setOHxC2MTL_CarInMoving(onOff);
 
 
-            MTLValueDefMapActionNew mapAction = getExcuteMapAction();
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
             if (mapAction != null)
             {
                 return mapAction.setOHxC2MTL_CarInMoving(onOff);
@@ -139,7 +139,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         public void setCarRealTimeInfo(UInt16 car_id, UInt16 action_mode, UInt16 cst_exist, UInt16 current_section_id, UInt32 current_address_id,
                                             UInt32 buffer_distance, UInt16 speed)
         {
-            MTLValueDefMapActionNew mapAction = getExcuteMapAction();
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
             if (mapAction != null)
             {
                 mapAction.CarRealtimeInfo(car_id, action_mode, cst_exist, current_section_id, current_address_id, buffer_distance, speed);
@@ -149,14 +149,6 @@ namespace com.mirle.ibg3k0.sc.Data.VO
                 getExcuteMapActionNew().CarRealtimeInfo(car_id, action_mode, cst_exist, current_section_id, current_address_id, buffer_distance, speed);
             }
 
-        }
-
-        private MTLValueDefMapActionNew getExcuteMapAction()
-        {
-            MTLValueDefMapActionNew mapAction;
-            mapAction = this.getMapActionByIdentityKey(typeof(MTLValueDefMapActionNew).Name) as MTLValueDefMapActionNew;
-
-            return mapAction;
         }
 
         private MTLValueDefMapActionNewPH2 getExcuteMapActionNew()

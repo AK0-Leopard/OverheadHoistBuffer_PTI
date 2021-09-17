@@ -681,7 +681,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string maption_action_name = "";
 
             {
-                maption_action_name = "MTLValueDefMapActionNew";
+                maption_action_name = "MTLValueDefMapActionNewPH2";
             }
 
             (maintainEQ.getMapActionByIdentityKey(maption_action_name) as sc.Data.ValueDefMapAction.MTxValueDefMapActionBase)
@@ -722,7 +722,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string maption_action_name = "";
 
             {
-                maption_action_name = "MTLValueDefMapActionNew";
+                maption_action_name = "MTLValueDefMapActionNewPH2";
             }
 
             Task.Run(() => (

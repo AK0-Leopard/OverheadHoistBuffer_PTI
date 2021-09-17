@@ -3836,27 +3836,27 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool doAskVhToSystemOutAddress(string vhID, string carOutBufferAdr)
         {
             bool isSuccess = true;
-            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.SystemOut, destination: carOutBufferAdr);
+            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.SystemOut, destination_address: carOutBufferAdr);
             return isSuccess;
         }
 
         public bool doAskVhToMaintainsAddress(string vhID, string mtlAdtID)
         {
             bool isSuccess = true;
-            isSuccess = isSuccess && scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.MoveToMTL, destination: mtlAdtID);
+            isSuccess = isSuccess && scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.MoveToMTL, destination_address: mtlAdtID);
             return isSuccess;
         }
         public bool doAskVhToCarInBufferAddress(string vhID, string carInBufferAdr)
         {
             bool isSuccess = true;
-            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.MTLHome, destination: carInBufferAdr);
+            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.MTLHome, destination_address: carInBufferAdr);
             return isSuccess;
         }
 
         public bool doAskVhToSystemInAddress(string vhID, string systemInAdr)
         {
             bool isSuccess = true;
-            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.SystemIn, destination: systemInAdr);
+            isSuccess = scApp.CMDBLL.doCreatTransferCommand(vh_id: vhID, cmd_type: E_CMD_TYPE.SystemIn, destination_address: systemInAdr);
             return isSuccess;
         }
 

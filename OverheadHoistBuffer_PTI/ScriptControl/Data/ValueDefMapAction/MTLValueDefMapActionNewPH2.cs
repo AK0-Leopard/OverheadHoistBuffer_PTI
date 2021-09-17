@@ -258,7 +258,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 ValueWrite vm_carMoving = bcfApp.getWriteValueEvent(MTL.EqptObjectCate, MTL.EQPT_ID, "OHXC_TO_MTL_D2U_CAR_MOVING_PH2");
                 vm_carMoving.setWriteValue(carMoving ? "1" : "0");
                 bool result = ISMControl.writeDeviceBlock(bcfApp, vm_carMoving);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNew), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                          Data: $"Set Car In Moving:{carMoving},result:{result}",
                          XID: MTL.EQPT_ID);
                 MTL.CarInMoving = carMoving;
