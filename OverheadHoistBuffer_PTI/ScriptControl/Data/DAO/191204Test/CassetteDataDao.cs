@@ -72,7 +72,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             try
             {
                 var port = from a in conn.CassetteData
-                           where a.Carrier_LOC.Contains(portName.Trim())
+                           where a.Carrier_LOC.StartsWith(portName.Trim())
                            select a;
                 return port.ToList();
             }
