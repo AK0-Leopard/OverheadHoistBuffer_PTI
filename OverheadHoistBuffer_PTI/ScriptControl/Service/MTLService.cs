@@ -212,10 +212,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 isSuccess = false;
                 result = $"Vehicle:{vh_id}, current mode is:{car_out_vh.MODE_STATUS}, can't excute auto car out";
             }
-            if (isSuccess && SCUtility.isEmpty(car_out_vh.CUR_SEC_ID))
+            if (isSuccess && SCUtility.isEmpty(car_out_vh.CUR_SEC_ID) && SCUtility.isEmpty(car_out_vh.CUR_ADR_ID))
             {
                 isSuccess = false;
-                result = $"vh id:{vh_id}, current section is empty.";
+                result = $"vh id:{vh_id}, both current section and current address are empty.";
             }
             if (isSuccess && SCUtility.isEmpty(car_out_vh.CUR_ADR_ID))
             {
@@ -802,10 +802,10 @@ namespace com.mirle.ibg3k0.sc.Service
             //    isSuccess = false;
             //    result = $"Vehicle:{vh_id}, current mode is:{car_in_vh.MODE_STATUS}, can't excute auto car out";
             //}
-            if (isSuccess && SCUtility.isEmpty(car_in_vh.CUR_SEC_ID))
+            if (isSuccess && SCUtility.isEmpty(car_in_vh.CUR_SEC_ID) && SCUtility.isEmpty(car_in_vh.CUR_ADR_ID))
             {
                 isSuccess = false;
-                result = $"vh id:{vh_id}, current section is empty.";
+                result = $"vh id:{vh_id}, both current section and current address are empty.";
             }
             if (isSuccess && !SCUtility.isMatche(car_in_vh.CUR_ADR_ID, mtx.DeviceAddress))
             {
@@ -855,6 +855,23 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
             return (isSuccess, result);
+        }
+
+        public (bool isSuccess, string result) CarInFromMTSRequest(MaintainSpace mtx, AVEHICLE car_out_vh)
+        {
+            bool is_success = false;
+            string result = "";
+            var send_result = mtx.carInRequest((UInt16)car_out_vh.Num);
+            is_success = send_result.isSendSuccess && send_result.returnCode == 1;
+            if (!is_success)
+            {
+                result = $"MTL:{mtx.DeviceID} reject car in request. return code:{send_result.returnCode}";
+            }
+            else
+            {
+                result = "OK";
+            }
+            return (is_success, result);
         }
 
         const int MTS_DOOR_OPEN_TIME_OUT_ms = 20000;
