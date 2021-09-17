@@ -5094,6 +5094,20 @@ namespace com.mirle.ibg3k0.sc.BLL
                             isSuccess = false;
                         }
                         break;
+                    case ActiveType.Movetomtl:
+                    case ActiveType.Mtlhome:
+                    case ActiveType.Systemin:
+                    case ActiveType.Systemout:
+                        if (!SCUtility.isMatche(vh_current_address, dest_adr))
+                        {
+                            (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
+                                = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, byPassSectionIDs);
+                        }
+                        else
+                        {
+                            isSuccess = true;
+                        }
+                        break;
                 }
                 return (isSuccess, total_cost, guide_start_to_from_section_ids, guide_start_to_from_address_ids, guide_to_dest_section_ids, guide_to_dest_address_ids);
             }
