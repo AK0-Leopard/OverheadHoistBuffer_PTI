@@ -1011,6 +1011,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (mtx is MaintainLift)
             {
                 CarInFinish(mtx as MaintainLift);
+                VehicleService.doAskVhToSystemInAddress(vhID, (mtx as MaintainLift).MTL_SYSTEM_IN_ADDRESS);
             }
             else if (mtx is MaintainSpace)
             {

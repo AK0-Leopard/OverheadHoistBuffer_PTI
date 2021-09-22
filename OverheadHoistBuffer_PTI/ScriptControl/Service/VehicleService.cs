@@ -3319,6 +3319,40 @@ namespace com.mirle.ibg3k0.sc.Service
                         break;
                 }
 
+                //2021.9.22 System Out到MTL後要接MTLMove
+                if (recive_str.CmpStatus == CompleteStatus.CmpStatusSystemOut)
+                {
+                    MaintainLift maintainLift = scApp.EquipmentBLL.cache.GetMaintainLiftBySystemOutAdr(recive_str.CurrentAdrID);
+                    if (maintainLift != null)
+                    {
+                        doAskVhToMaintainsAddress(vh_id, maintainLift.MTL_ADDRESS);
+                    }
+                }
+                //2021.9.22 MTLMove完成後接car out success scenario
+                if (recive_str.CmpStatus == CompleteStatus.CmpStatusMoveToMtl)
+                {
+                    Task.Run(() =>
+                    {
+                        MaintainLift maintainLift = scApp.EquipmentBLL.cache.GetMaintainLiftByMTLAdr(recive_str.CurrentAdrID);
+                        if (maintainLift != null)
+                        {
+                            scApp.MTLService.carOutComplete(maintainLift);
+                        }
+                    });
+                }
+                //2021.9.22 MTLHome後要接car in complete -> system in
+                if (recive_str.CmpStatus == CompleteStatus.CmpStatusMtlhome)
+                {
+                    Task.Run(() =>
+                    {
+                        MaintainLift maintainLift = scApp.EquipmentBLL.cache.GetMaintainLiftByMTLAdr(recive_str.CurrentAdrID);
+                        if (maintainLift != null)
+                        {
+                            scApp.MTLService.carInComplete(maintainLift, vh_id);
+                        }
+                    });
+                }
+
                 if (DebugParameter.IsDebugMode && DebugParameter.IsCycleRun)
                 {
                     SpinWait.SpinUntil(() => false, 3000);
