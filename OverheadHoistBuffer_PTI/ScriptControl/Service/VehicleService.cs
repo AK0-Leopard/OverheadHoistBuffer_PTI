@@ -3355,6 +3355,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                             }
                             scApp.ReportBLL.newReportVehicleRemoved(eqpt.VEHICLE_ID, null);
+                            //將該VH標記 Remove
+                            Remove(eqpt.VEHICLE_ID);
                             break;
                         case CompleteStatus.CmpStatusMoveToMtl:
                             maintainLift = scApp.EquipmentBLL.cache.GetMaintainLiftByMTLAdr(cur_adr_id);
@@ -3368,10 +3370,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                    Data: $"Process vh:{eqpt.VEHICLE_ID} move to mtl complete, notify mtx:{maintainLift.DeviceID} is complete",
                                    VehicleID: eqpt.VEHICLE_ID,
                                    CarrierID: eqpt.CST_ID);
-                                //1.通知MTL Car out完成
+                                //通知MTL Car out完成
                                 scApp.MTLService.carOutComplete(maintainLift);
-                                //2.將該VH上報 Remove
-                                Remove(eqpt.VEHICLE_ID);
                             }
                             break;
                         case CompleteStatus.CmpStatusMtlhome:
@@ -3387,10 +3387,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (maintain_device != null)
                             {
                                 scApp.MTLService.carInComplete(maintain_device, eqpt.VEHICLE_ID);
-                                if (maintain_device is MaintainLift)
-                                {
-                                    Install(eqpt.VEHICLE_ID);
-                                }
+                                Install(eqpt.VEHICLE_ID);
                             }
                             break;
                         default:
@@ -4119,8 +4116,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                 is_success = is_success && scApp.ReportBLL.newReportVehicleInstalled(vhID, reportqueues);
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);
-
-
             }
             catch (Exception ex)
             {
