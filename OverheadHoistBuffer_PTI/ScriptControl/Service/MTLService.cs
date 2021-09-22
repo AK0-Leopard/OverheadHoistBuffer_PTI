@@ -659,7 +659,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (!mtl.CarInSafetyCheck || mtl.MTxMode != ProtocolFormat.OHTMessage.MTxMode.Auto || mtl.MTLLocation != MTLLocation.Upper)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(MTLService), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
-                         Data: $"Device:{mtl.DeviceID} car in safety check in on, but mts mode:{mtl.MTxMode} or Location:{mtl.MTLLocation}, can't excute car in.",
+                         Data: $"Device:{mtl.DeviceID} car in safety check in on, but mtl mode:{mtl.MTxMode} or Location:{mtl.MTLLocation}, can't excute car in.",
                          XID: mtl.DeviceID);
                 return;
             }

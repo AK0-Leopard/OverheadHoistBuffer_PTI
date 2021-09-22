@@ -3373,6 +3373,11 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //通知MTL Car out完成
                                 scApp.MTLService.carOutComplete(maintainLift);
                             }
+                            //將該VH標記 Remove
+                            if (eqpt.IS_INSTALLED)
+                            {
+                                Remove(eqpt.VEHICLE_ID);
+                            }
                             break;
                         case CompleteStatus.CmpStatusMtlhome:
                             maintainLift = scApp.EquipmentBLL.cache.GetMaintainLiftByMTLHomeAdr(cur_adr_id);
