@@ -3401,9 +3401,9 @@ namespace com.mirle.ibg3k0.sc.Service
                                 maintainLift = scApp.EquipmentBLL.cache.GetExcuteCarOutMTL(eqpt.VEHICLE_ID);
                                 if (maintainLift != null)
                                 {
-                                    if (maintainLift.DokingMaintainDevice != null && maintainLift.DokingMaintainDevice.CarOutSafetyCheck)
+                                    if (maintainLift.DokingMaintainDevice == null || maintainLift.DokingMaintainDevice.CarOutSafetyCheck)
                                     {
-                                        if (maintainLift.DokingMaintainDevice.CarOutSafetyCheck)//如果SafetyCheck已經解除則不能進行出車
+                                        if (maintainLift.CarOutSafetyCheck)//如果SafetyCheck已經解除則不能進行出車
                                         {
                                             doAskVhToSystemOutAddress(eqpt.VEHICLE_ID, maintainLift.MTL_SYSTEM_OUT_ADDRESS);
                                         }
