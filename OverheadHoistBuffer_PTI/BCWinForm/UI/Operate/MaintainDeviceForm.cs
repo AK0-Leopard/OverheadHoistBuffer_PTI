@@ -170,7 +170,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 btn_mtscarOutTest.Enabled = true;
             }
         }
-        private (bool isSuccess, string result) AutoCarOutTest(IMaintainDevice maintainDevice, string preCarOutVhID)
+        private (bool isSuccess, string result) AutoCarOutTest(IMaintainDevice maintainDevice, string preCarOutVhID, bool isMTStoMTL = false)
         {
             var r = default((bool isSuccess, string result));
             try
@@ -179,8 +179,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 AVEHICLE pre_car_out_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByID(preCarOutVhID);
                 if (maintainDevice is sc.Data.VO.MaintainLift)
                 {
-                    sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
-                    if((maintainDevice as sc.Data.VO.MaintainLift).EQPT_ID=="MTL"&& dockingMTS != null)
+                    //sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
+                    sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace(maintainDevice);
+                    if ((maintainDevice as sc.Data.VO.MaintainLift).EQPT_ID=="MTL"&& dockingMTS != null)
                     {
                         r = bcApp.SCApplication.MTLService.checkVhAndMTxCarOutStatus(maintainDevice, dockingMTS, pre_car_out_vh);
                     }
@@ -191,7 +192,14 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     }
                     if (r.isSuccess)
                     {
-                        r = bcApp.SCApplication.MTLService.CarOurRequest(maintainDevice, pre_car_out_vh);
+                        if (isMTStoMTL)
+                        {
+                            r = bcApp.SCApplication.MTLService.MTStoMTLRequest(maintainDevice as MaintainLift, pre_car_out_vh);
+                        }
+                        else
+                        {
+                            r = bcApp.SCApplication.MTLService.CarOurRequest(maintainDevice, pre_car_out_vh);
+                        }
                     }
                     //if (!SpinWait.SpinUntil(() => maintainDevice.CarOutSafetyCheck == true &&
                     ////maintainDevice.CarOutActionTypeSystemOutToMTL == true && 
@@ -204,7 +212,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     //}
                     if (r.isSuccess)
                     {
-                        r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainLift, pre_car_out_vh);
+                        r = bcApp.SCApplication.MTLService.processCarOutScenario(maintainDevice as sc.Data.VO.MaintainLift, pre_car_out_vh, isMTStoMTL);
                     }
                 }
                 else if (maintainDevice is sc.Data.VO.MaintainSpace)
@@ -523,6 +531,23 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 (isSuccess, result) = bcApp.SCApplication.MTLService.processCarInScenario(MTS);
             }
             return (isSuccess, result);
+        }
+
+        private async void btnMTStoMTL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string pre_car_out_vh = cmb_mts_car_out_vh.Text;
+                btn_mtscarOutTest.Enabled = false;
+                var r = default((bool isSuccess, string result));
+                await Task.Run(() => r = AutoCarOutTest(MTS.DokingMaintainDevice, pre_car_out_vh, isMTStoMTL: true));
+
+                MessageBox.Show(r.result);
+            }
+            finally
+            {
+                btn_mtscarOutTest.Enabled = true;
+            }
         }
     }
 }

@@ -108,6 +108,7 @@
             this.label60 = new System.Windows.Forms.Label();
             this.label59 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnCarInFromMTS = new System.Windows.Forms.Button();
             this.btn_mts_alarm_reset = new System.Windows.Forms.Button();
             this.mts_prepare_car_out_info = new System.Windows.Forms.GroupBox();
             this.btn_mts_car_in_interlock_off = new System.Windows.Forms.Button();
@@ -145,7 +146,7 @@
             this.cmb_mts = new System.Windows.Forms.ComboBox();
             this.btn_mts_dateTimeSync = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btnCarInFromMTS = new System.Windows.Forms.Button();
+            this.btnMTStoMTL = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.mtl_prepare_car_out_info.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -965,6 +966,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnMTStoMTL);
             this.groupBox2.Controls.Add(this.btnCarInFromMTS);
             this.groupBox2.Controls.Add(this.btn_mts_alarm_reset);
             this.groupBox2.Controls.Add(this.mts_prepare_car_out_info);
@@ -986,6 +988,16 @@
             this.groupBox2.TabIndex = 79;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Maintain Space";
+            // 
+            // btnCarInFromMTS
+            // 
+            this.btnCarInFromMTS.Location = new System.Drawing.Point(419, 325);
+            this.btnCarInFromMTS.Name = "btnCarInFromMTS";
+            this.btnCarInFromMTS.Size = new System.Drawing.Size(169, 39);
+            this.btnCarInFromMTS.TabIndex = 77;
+            this.btnCarInFromMTS.Text = "Car In";
+            this.btnCarInFromMTS.UseVisualStyleBackColor = true;
+            this.btnCarInFromMTS.Click += new System.EventHandler(this.btnCarInFromMTS_Click);
             // 
             // btn_mts_alarm_reset
             // 
@@ -1350,15 +1362,15 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btnCarInFromMTS
+            // btnMTStoMTL
             // 
-            this.btnCarInFromMTS.Location = new System.Drawing.Point(419, 325);
-            this.btnCarInFromMTS.Name = "btnCarInFromMTS";
-            this.btnCarInFromMTS.Size = new System.Drawing.Size(169, 39);
-            this.btnCarInFromMTS.TabIndex = 77;
-            this.btnCarInFromMTS.Text = "Car In";
-            this.btnCarInFromMTS.UseVisualStyleBackColor = true;
-            this.btnCarInFromMTS.Click += new System.EventHandler(this.btnCarInFromMTS_Click);
+            this.btnMTStoMTL.Location = new System.Drawing.Point(419, 383);
+            this.btnMTStoMTL.Name = "btnMTStoMTL";
+            this.btnMTStoMTL.Size = new System.Drawing.Size(169, 39);
+            this.btnMTStoMTL.TabIndex = 81;
+            this.btnMTStoMTL.Text = "MTS to MTL";
+            this.btnMTStoMTL.UseVisualStyleBackColor = true;
+            this.btnMTStoMTL.Click += new System.EventHandler(this.btnMTStoMTL_Click);
             // 
             // MaintainDeviceForm
             // 
@@ -1514,5 +1526,6 @@
         private System.Windows.Forms.Button btn_mts_car_out_interlock_on;
         private System.Windows.Forms.Button btn_reset_handshake;
         private System.Windows.Forms.Button btnCarInFromMTS;
+        private System.Windows.Forms.Button btnMTStoMTL;
     }
 }

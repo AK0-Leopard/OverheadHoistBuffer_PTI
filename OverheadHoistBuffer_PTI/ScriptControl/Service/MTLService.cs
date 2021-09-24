@@ -311,7 +311,7 @@ namespace com.mirle.ibg3k0.sc.Service
             return (is_success, result);
         }
 
-        public (bool isSuccess, string result) processCarOutScenario(MaintainLift mtx, AVEHICLE preCarOutVh)
+        public (bool isSuccess, string result) processCarOutScenario(MaintainLift mtx, AVEHICLE preCarOutVh, bool isMTStoMTL = false)
         {
             string pre_car_out_vh_id = preCarOutVh.VEHICLE_ID;
             string pre_car_out_vh_ohtc_cmd_id = preCarOutVh.OHTC_CMD;
@@ -360,7 +360,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (isSuccess && SCUtility.isEmpty(pre_car_out_vh_ohtc_cmd_id))
             {
                 //在收到OHT的ID:132-命令結束後或者在變為AutoLocal後此時OHT沒有命令的話則會呼叫此Function來創建一個Transfer command，讓Vh移至移動至System out上
-                if (SCUtility.isMatche(pre_car_out_vh_cur_adr_id, mtx.MTL_SYSTEM_OUT_ADDRESS))
+                if (SCUtility.isMatche(pre_car_out_vh_cur_adr_id, mtx.MTL_SYSTEM_OUT_ADDRESS) || isMTStoMTL)
                 {
                     VehicleService.doAskVhToMaintainsAddress(pre_car_out_vh_id, mtx.MTL_ADDRESS);
                 }
@@ -873,7 +873,24 @@ namespace com.mirle.ibg3k0.sc.Service
             is_success = send_result.isSendSuccess && send_result.returnCode == 1;
             if (!is_success)
             {
-                result = $"MTL:{mtx.DeviceID} reject car in request. return code:{send_result.returnCode}";
+                result = $"MTS:{mtx.DeviceID} reject car in request. return code:{send_result.returnCode}";
+            }
+            else
+            {
+                result = "OK";
+            }
+            return (is_success, result);
+        }
+
+        public (bool isSuccess, string result) MTStoMTLRequest(MaintainLift mtx, AVEHICLE car_out_vh)
+        {
+            bool is_success = false;
+            string result = "";
+            var send_result = mtx.MTSToMTLRequest((UInt16)car_out_vh.Num);
+            is_success = send_result.isSendSuccess && send_result.returnCode == 1;
+            if (!is_success)
+            {
+                result = $"MTL:{mtx.DeviceID} reject MTS to MTL request. return code:{send_result.returnCode}";
             }
             else
             {

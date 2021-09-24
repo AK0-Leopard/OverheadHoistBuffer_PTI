@@ -25,6 +25,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
@@ -75,15 +76,21 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         MTL_LFTStatus(null, null);
 
                         //如果該機台為MTS1或者是MTL時，需要將兩台設定為互相doking的機台
-                        if (eqpt is MaintainSpace &&
-                            SCUtility.isMatche((eqpt as MaintainSpace).EQPT_ID, "MTS"))
+                        if (eqpt is MaintainSpace)
                         {
-                            (eqpt as MaintainSpace).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetMaintainLift();
+                            //(eqpt as MaintainSpace).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetMaintainLift();
+                            var dockingMTL = scApp.EquipmentBLL.cache.loadMaintainLift()
+                                .Where(mtl => (mtl as MaintainLift).MTL_SEGMENT.Equals((eqpt as MaintainSpace).MTS_SEGMENT))
+                                .FirstOrDefault();
+                            (eqpt as MaintainSpace).DokingMaintainDevice = dockingMTL as MaintainLift;
                         }
-                        else if (eqpt is MaintainLift &&
-                            SCUtility.isMatche((eqpt as MaintainLift).EQPT_ID, "MTL"))
+                        else if (eqpt is MaintainLift)
                         {
-                            (eqpt as MaintainLift).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
+                            //(eqpt as MaintainLift).DokingMaintainDevice = scApp.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
+                            var dockingMTS = scApp.EquipmentBLL.cache.loadMaintainSpace()
+                                .Where(mts => (mts as MaintainSpace).MTS_SEGMENT.Equals((eqpt as MaintainLift).MTL_SEGMENT))
+                                .FirstOrDefault();
+                            (eqpt as MaintainLift).DokingMaintainDevice = dockingMTS as MaintainSpace;
                         }
                         break;
                     case BCFAppConstants.RUN_LEVEL.ONE:

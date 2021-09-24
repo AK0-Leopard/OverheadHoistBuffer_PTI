@@ -102,8 +102,21 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             {
                 return getExcuteMapActionNew().OHxC_CarOutNotify(carNum, 2);
             }
-
         }
+
+        public (bool isSendSuccess, UInt16 returnCode) MTSToMTLRequest(UInt16 carNum)
+        {
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
+            if (mapAction != null)
+            {
+                return mapAction.OHxC_CarOutNotify(carNum, 3);
+            }
+            else
+            {
+                return getExcuteMapActionNew().OHxC_CarOutNotify(carNum, 3);
+            }
+        }
+
         public bool SetCarOutInterlock(bool onOff)
         {
             //return getExcuteMapAction().setOHxC2MTL_CarOutInterlock(onOff);

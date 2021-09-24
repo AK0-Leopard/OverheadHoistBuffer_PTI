@@ -164,13 +164,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                             SingleOrDefault();
                 return eqpt as MaintainLift;
             }
-            public MaintainSpace GetDockingMTLOfMaintainSpace()
+            public MaintainSpace GetDockingMTLOfMaintainSpace(IMaintainDevice maintainDevice)
             {
-                var eqpt = eqObjCacheManager.getAllEquipment().
-                            Where(eq => eq is MaintainSpace &&
-                                        SCUtility.isMatche(eq.EQPT_ID, "MTS")).
-                            SingleOrDefault();
-                return eqpt as MaintainSpace;
+                //var eqpt = eqObjCacheManager.getAllEquipment().
+                //            Where(eq => eq is MaintainSpace &&
+                //                        SCUtility.isMatche(eq.EQPT_ID, "MTS")).
+                //            SingleOrDefault();
+                //return eqpt as MaintainSpace;
+                var dockingMTS = loadMaintainSpace()
+                    .Where(mts => (mts as MaintainSpace).MTS_SEGMENT.Equals((maintainDevice as MaintainLift).MTL_SEGMENT))
+                    .FirstOrDefault();
+                return dockingMTS as MaintainSpace;
             }
             public MaintainLift GetMaintainLiftByMTLAdr(string mtlAdr)
             {

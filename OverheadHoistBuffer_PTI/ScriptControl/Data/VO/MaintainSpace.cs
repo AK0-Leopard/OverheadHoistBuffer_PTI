@@ -125,7 +125,6 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             {
                 return getExcuteMapActionNew().OHxC_CarOutNotify(carNum, 4);
             }
-
         }
 
         public bool SetCarOutInterlock(bool onOff)
