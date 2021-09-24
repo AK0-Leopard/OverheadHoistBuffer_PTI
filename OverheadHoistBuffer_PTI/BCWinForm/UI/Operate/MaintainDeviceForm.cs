@@ -495,10 +495,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             try
             {
-                UInt16 car_id = UInt16.Parse(txt_mts_car_out_notify_car_id.Text);
+                string pre_car_out_vh = cmb_mts_car_out_vh.Text;
                 btnCarInFromMTS.Enabled = false;
                 var r = default((bool isSuccess, string result));
-                await Task.Run(() => r = CarInFromMTS(car_id, MTS));
+                await Task.Run(() => r = CarInFromMTS(pre_car_out_vh, MTS));
 
                 MessageBox.Show(r.result);
             }
@@ -508,13 +508,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             }
         }
 
-        private (bool isSuccess, string result) CarInFromMTS(UInt16 car_id, MaintainSpace MTS)
+        private (bool isSuccess, string result) CarInFromMTS(string car_id, MaintainSpace MTS)
         {
             bool isSuccess = true;
             string result = "OK";
             if (isSuccess)
             {
-                AVEHICLE pre_car_in_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByNum(car_id);
+                AVEHICLE pre_car_in_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByID(car_id);
                 (isSuccess, result) = bcApp.SCApplication.MTLService.CarInFromMTSRequest(MTS, pre_car_in_vh);
             }
 

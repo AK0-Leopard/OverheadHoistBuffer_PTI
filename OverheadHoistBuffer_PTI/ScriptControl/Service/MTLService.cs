@@ -225,11 +225,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
             //要判斷目前到車子所在位置到目的地(MTL/MTS)路徑是不是通的
             //KeyValuePair<string[], double> route_distance;
-            double route_distance;
-            if (isSuccess && !scApp.RouteGuide.checkRoadIsWalkable(car_out_vh.CUR_ADR_ID, mtx.DeviceAddress, true, out route_distance))
+            //double route_distance;
+            //if (isSuccess && !scApp.RouteGuide.checkRoadIsWalkable(car_out_vh.CUR_ADR_ID, mtx.DeviceAddress, true, out route_distance))
+            if (isSuccess)
             {
-                isSuccess = false;
-                result = $"vh id:{vh_id}, current address:{car_out_vh.CUR_ADR_ID} to device:{mtx.DeviceID} of address id:{mtx.DeviceAddress} not walkable.";
+                (bool guideResult, int _) = scApp.GuideBLL.IsRoadWalkable(car_out_vh.CUR_ADR_ID, mtx.DeviceAddress);
+                if (!guideResult)
+                {
+                    isSuccess = false;
+                    result = $"vh id:{vh_id}, current address:{car_out_vh.CUR_ADR_ID} to device:{mtx.DeviceID} of address id:{mtx.DeviceAddress} not walkable.";
+                }
             }
 
             //2.要判斷MTL的 Safety check是否有On且是否為Auto Mode
