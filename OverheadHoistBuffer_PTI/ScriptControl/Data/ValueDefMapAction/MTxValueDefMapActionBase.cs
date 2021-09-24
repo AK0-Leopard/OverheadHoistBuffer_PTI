@@ -848,6 +848,34 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         }
 
-
+        UInt32 aliveIndex = 0;
+        public virtual void OHxCToMTx_Alive()
+        {
+            OHxCToMTL_Alive send_function =
+                scApp.getFunBaseObj<OHxCToMTL_Alive>(eqpt.EQPT_ID) as OHxCToMTL_Alive;
+            try
+            {
+                //1.建立各個Function物件
+                if (aliveIndex > 65535)
+                {
+                    aliveIndex = 0;
+                }
+                send_function.Index = ++aliveIndex;
+                //2.紀錄發送資料的Log
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTxValueDefMapActionBase), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+                         Data: send_function.ToString(),
+                         XID: eqpt.EQPT_ID);
+                //3.發送訊息
+                send_function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<OHxCToMTL_Alive>(send_function);
+            }
+        }
     }
 }

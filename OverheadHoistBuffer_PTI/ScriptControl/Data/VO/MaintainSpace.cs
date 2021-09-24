@@ -191,5 +191,10 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             return mapAction;
         }
 
+        public void SetOHxCToMTx_Alive()
+        {
+            //throw new NotImplementedException();
+            //2021.9.24 實作在MaintainLift就可以了
+        }
     }
 }

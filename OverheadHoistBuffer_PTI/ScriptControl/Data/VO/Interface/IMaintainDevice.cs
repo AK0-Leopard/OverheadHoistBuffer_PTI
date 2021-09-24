@@ -40,6 +40,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO.Interface
 
         void setCarRealTimeInfo(UInt16 car_id, UInt16 action_mode, UInt16 cst_exist, UInt16 current_section_id, UInt32 current_address_id,
                                             UInt32 buffer_distance, UInt16 speed);
+        void SetOHxCToMTx_Alive();
         #endregion OHTC to MTx
 
     }

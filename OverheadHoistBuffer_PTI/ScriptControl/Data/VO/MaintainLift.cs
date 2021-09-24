@@ -193,6 +193,17 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             MTL_SYSTEM_OUT_ADDRESS = adrID;
         }
 
-
+        public void SetOHxCToMTx_Alive()
+        {
+            MTLValueDefMapActionNewPH2 mapAction = getExcuteMapActionNew();
+            if (mapAction != null)
+            {
+                mapAction.OHxCToMTx_Alive();
+            }
+            else
+            {
+                getExcuteMapActionNew().OHxCToMTx_Alive();
+            }
+        }
     }
 }

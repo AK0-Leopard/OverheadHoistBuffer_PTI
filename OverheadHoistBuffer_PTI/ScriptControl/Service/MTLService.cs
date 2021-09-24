@@ -31,6 +31,7 @@ namespace com.mirle.ibg3k0.sc.Service
         //MaintainLift mtx = null;
         //string carOutVhID = "";
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private List<IMaintainDevice> maintainDevices = new List<IMaintainDevice>();
         public MTLService()
         {
         }
@@ -57,6 +58,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (eqpt is IMaintainDevice)
                 {
                     IMaintainDevice maintainDevice = eqpt as IMaintainDevice;
+                    maintainDevices.Add(maintainDevice);
                     if (maintainDevice is MaintainSpace)
                     {
                         MaintainSpace maintainSpace = eqpt as MaintainSpace;
@@ -744,6 +746,7 @@ namespace com.mirle.ibg3k0.sc.Service
                              Data: $"vh:{car_in_vh.VEHICLE_ID} request car in, but status is incorrect current status:{car_in_vh.MODE_STATUS}.",
                              XID: mtl.DeviceID,
                              VehicleID: car_in_vh.VEHICLE_ID);
+                    CarInFinish(mtl);
                 }
             }
             else
@@ -751,6 +754,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLService), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                      Data: $"Request car in, but no vehicle at MTL or vehicle is not connected.",
                     XID: mtl.DeviceID);
+                CarInFinish(mtl);
             }
         }
 
@@ -1092,5 +1096,12 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        public void OHxCTOMTxAlive()
+        {
+            foreach (var maintainDevice in maintainDevices)
+            {
+                maintainDevice.SetOHxCToMTx_Alive();
+            }
+        }
     }
 }
