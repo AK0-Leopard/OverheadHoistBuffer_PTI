@@ -149,10 +149,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Ionic.Zip.dll</HintPath>
-    </Reference>
     <Reference Include="KingAOP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\KingAOP.1.0.0\lib\KingAOP.dll</HintPath>
       <Private>True</Private>
@@ -249,6 +245,7 @@
       <HintPath>DLL\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
@@ -880,6 +877,7 @@
     <Compile Include="Data\SECS\SECSDriver\IBSEMDriver.cs" />
     <Compile Include="Data\SECS\SECSDriver\SEMDriver.cs" />
     <Compile Include="Data\TcpIp\MsgStructure.cs" />
+    <Compile Include="Data\TimerAction\LogFileHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\EmptyBoxHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\OHCVAliveTimer.cs" />
     <Compile Include="Data\TimerAction\OHxCAliveTimer.cs" />
