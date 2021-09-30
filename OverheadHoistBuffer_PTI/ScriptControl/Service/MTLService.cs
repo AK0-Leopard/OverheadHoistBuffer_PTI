@@ -642,6 +642,7 @@ namespace com.mirle.ibg3k0.sc.Service
                              Data: $"Process car out cancel request. mtx:{mtx.DeviceID}, pre car out vh:{mtx.PreCarOutVhID}, is force finish:{isForceFinish}," +
                                    $"But vh current section is in MTL segment:{mtx.DeviceSegment} .can't trun off car out single ",
                              XID: mtx.DeviceID);
+                    mtx.PreCarOutVhID = "";
                     return;
                 }
             }
