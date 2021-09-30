@@ -6941,7 +6941,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             try
             {
-                SpinWait.SpinUntil(() => portINIData[_craneName].alarmSetIng == false, 5000);
+                SpinWait.SpinUntil(() => portINIData?[_craneName].alarmSetIng == false, 5000);
 
                 string craneName = _craneName.Trim();
                 errCode = errCode.Trim();

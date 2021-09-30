@@ -219,7 +219,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (systemMsg_Serialize != null)
                     {
-                        scApp.getNatsManager().PublishAsync
+                        scApp?.getNatsManager().PublishAsync
                             (SCAppConstants.NATS_SUBJECT_SYSTEM_LOG, systemMsg_Serialize);
                     }
                 }
