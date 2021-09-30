@@ -22,7 +22,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         public LogFileHandlerTimer(string name, long intervalMilliSec)
             : base(name, intervalMilliSec)
         {
-            _DefaultLogFilePath = getString("LogFilePath", @"D:\LogFiles\OHxC\PTI");
+            _DefaultLogFilePath = getString("LogFilePath", @"D:\LogFiles\OHxC");
             _KeepLogDay = getInt("LogKeepData", 90);
         }
         private string getString(string key, string defaultValue)
@@ -55,7 +55,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             }
             return rtn;
         }
-        private string _DefaultLogFilePath = @"D:\LogFiles\OHxC\PTI";
+        private string _DefaultLogFilePath = @"D:\LogFiles\OHxC";
         private int _CompressLogDay = 1;
         private int _KeepLogDay = 90;
         private DateTime LastProcessDateTime = DateTime.MinValue;
