@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.IO.Compression;
 using System.Configuration;
 using com.mirle.ibg3k0.sc.Common;
+using System.Threading;
 
 namespace com.mirle.ibg3k0.sc.Data.TimerAction
 {
@@ -98,6 +99,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                     directoryInfo.Delete(true);
                             }
                         }
+                        SpinWait.SpinUntil(() => false, 1000);
                     }
 
                     var zip_file = dirLogPath.GetFiles().Where(f => f.Name.Contains(".zip")).ToList();
@@ -117,6 +119,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                     File.Delete(strZipName);
                             }
                         }
+                        SpinWait.SpinUntil(() => false, 1000);
                     }
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(LogFileHandlerTimer), Device: string.Empty,
                        Data: $"End process log handler,path:{_DefaultLogFilePath}");
