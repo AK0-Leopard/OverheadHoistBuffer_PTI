@@ -862,7 +862,9 @@ namespace com.mirle.ibg3k0.sc.App
             //loadECDataToSystem();
             //bdTableWatcher = new DBTableWatcher(this);
 
-
+            cmdBLL.PortPriorityWeight = getDouble("PortPriorityWeight", 1);
+            cmdBLL.TimePriorityWeight = getDouble("TimePriorityWeight", 1);
+            cmdBLL.MCSPriorityWeight = getDouble("MCSPriorityWeight", 1);
         }
 
         private void initialRouteBan()

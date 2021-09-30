@@ -5667,7 +5667,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.TIME_PRIORITY = 0;
                 datainfo.PORT_PRIORITY = 0;
                 datainfo.REPLACE = 1;
-                datainfo.PRIORITY_SUM = datainfo.PRIORITY + datainfo.TIME_PRIORITY + datainfo.PORT_PRIORITY;
+                datainfo.PRIORITY_SUM = (int)Math.Round((datainfo.PRIORITY * cmdBLL.MCSPriorityWeight)
+                    + (datainfo.TIME_PRIORITY * cmdBLL.TimePriorityWeight)
+                    + (datainfo.PORT_PRIORITY * cmdBLL.PortPriorityWeight));
                 datainfo.CRANE = "";
 
                 if (cmdBLL.creatCommand_MCS(datainfo))
@@ -6464,7 +6466,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.TIME_PRIORITY = 0;
                 datainfo.PORT_PRIORITY = 0;
                 datainfo.REPLACE = 1;
-                datainfo.PRIORITY_SUM = datainfo.PRIORITY + datainfo.TIME_PRIORITY + datainfo.PORT_PRIORITY;
+                datainfo.PRIORITY_SUM = (int)Math.Round((datainfo.PRIORITY * cmdBLL.MCSPriorityWeight)
+                    + (datainfo.TIME_PRIORITY * cmdBLL.TimePriorityWeight)
+                    + (datainfo.PORT_PRIORITY * cmdBLL.PortPriorityWeight));
                 datainfo.CRANE = "";
 
                 if (cmdBLL.getCMD_MCSByID(datainfo.CMD_ID) == null)
@@ -6513,7 +6517,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.TIME_PRIORITY = 0;
                 datainfo.PORT_PRIORITY = 0;
                 datainfo.REPLACE = 1;
-                datainfo.PRIORITY_SUM = datainfo.PRIORITY + datainfo.TIME_PRIORITY + datainfo.PORT_PRIORITY;
+                datainfo.PRIORITY_SUM = (int)Math.Round((datainfo.PRIORITY * cmdBLL.MCSPriorityWeight)
+                    + (datainfo.TIME_PRIORITY * cmdBLL.TimePriorityWeight)
+                    + (datainfo.PORT_PRIORITY * cmdBLL.PortPriorityWeight));
                 datainfo.CRANE = "";
 
                 if (cmdBLL.getCMD_MCSByID(datainfo.CMD_ID) != null)
@@ -7417,7 +7423,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.TIME_PRIORITY = 0;
                 datainfo.PORT_PRIORITY = 0;
                 datainfo.REPLACE = 1;
-                datainfo.PRIORITY_SUM = datainfo.PRIORITY + datainfo.TIME_PRIORITY + datainfo.PORT_PRIORITY;
+                datainfo.PRIORITY_SUM = (int)Math.Round((datainfo.PRIORITY * cmdBLL.MCSPriorityWeight)
+                    + (datainfo.TIME_PRIORITY * cmdBLL.TimePriorityWeight)
+                    + (datainfo.PORT_PRIORITY * cmdBLL.PortPriorityWeight));
                 datainfo.LOT_ID = sourceData.LotID?.Trim() ?? "";
                 datainfo.CMDTYPE = cmdType.ToString();
                 datainfo.CRANE = "";

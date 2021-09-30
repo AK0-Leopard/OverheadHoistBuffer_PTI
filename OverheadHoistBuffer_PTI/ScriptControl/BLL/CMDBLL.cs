@@ -55,6 +55,51 @@ namespace com.mirle.ibg3k0.sc.BLL
         private SCApplication scApp = null;
         private CassetteDataBLL cassette_dataBLL = null; // PTI++ 對應到OHCV Wait in 時間若比S2F49 下至 OHBC 之時間慢時自動建帳
 
+        private double _portPriorityWeight;
+        public double PortPriorityWeight
+        {
+            get
+            {
+                return _portPriorityWeight;
+            }
+            set
+            {
+                if (0 <= value)
+                    _portPriorityWeight = value;
+                else
+                    _portPriorityWeight = 1;
+            }
+        }
+        private double _timePriorityWeight;
+        public double TimePriorityWeight
+        {
+            get
+            {
+                return _timePriorityWeight;
+            }
+            set
+            {
+                if (0 <= value)
+                    _timePriorityWeight = value;
+                else
+                    _timePriorityWeight = 1;
+            }
+        }
+        private double _mcsPriorityWeight;
+        public double MCSPriorityWeight
+        {
+            get
+            {
+                return _mcsPriorityWeight;
+            }
+            set
+            {
+                if (0 <= value)
+                    _mcsPriorityWeight = value;
+                else
+                    _mcsPriorityWeight = 1;
+            }
+        }
 
         ALINE line
         {
@@ -831,7 +876,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     CMD_INSER_TIME = DateTime.Now,
                     TIME_PRIORITY = 0,
                     PORT_PRIORITY = port_priority,
-                    PRIORITY_SUM = Priority + port_priority,
+                    PRIORITY_SUM = Priority + (int)Math.Round(port_priority * PortPriorityWeight),
                     REPLACE = replace,
                     BOX_ID = Box_ID,
                     LOT_ID = LOT_ID,
@@ -1533,7 +1578,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                     cmd.TIME_PRIORITY = priority;
-                    cmd.PRIORITY_SUM = cmd.PRIORITY + cmd.TIME_PRIORITY + cmd.PORT_PRIORITY;
+                    cmd.PRIORITY_SUM = (int)Math.Round((cmd.PRIORITY * MCSPriorityWeight)
+                        + (cmd.TIME_PRIORITY * TimePriorityWeight)
+                        + (cmd.PORT_PRIORITY * PortPriorityWeight));
                     cmd_mcsDao.update(con, cmd);
                 }
             }
@@ -1555,7 +1602,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                     cmd.PORT_PRIORITY = priority;
-                    cmd.PRIORITY_SUM = cmd.PRIORITY + cmd.TIME_PRIORITY + cmd.PORT_PRIORITY;
+                    cmd.PRIORITY_SUM = (int)Math.Round((cmd.PRIORITY * MCSPriorityWeight)
+                        + (cmd.TIME_PRIORITY * TimePriorityWeight)
+                        + (cmd.PORT_PRIORITY * PortPriorityWeight));
                     cmd_mcsDao.update(con, cmd);
                 }
             }
@@ -1576,7 +1625,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
                     ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
-                    cmd.PRIORITY_SUM = cmd.PRIORITY + cmd.TIME_PRIORITY + cmd.PORT_PRIORITY;
+                    cmd.PRIORITY_SUM = (int)Math.Round((cmd.PRIORITY * MCSPriorityWeight)
+                        + (cmd.TIME_PRIORITY * TimePriorityWeight)
+                        + (cmd.PORT_PRIORITY * PortPriorityWeight));
                     cmd_mcsDao.update(con, cmd);
                 }
             }
