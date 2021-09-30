@@ -76,6 +76,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     {
                         return;
                     }
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(LogFileHandlerTimer), Device: string.Empty,
+                       Data: $"Start process log handler,path:{_DefaultLogFilePath}");
                     LastProcessDateTime = DateTime.Now;
 
                     var dirLogPath = new DirectoryInfo(_DefaultLogFilePath);
@@ -116,6 +118,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                             }
                         }
                     }
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(LogFileHandlerTimer), Device: string.Empty,
+                       Data: $"End process log handler,path:{_DefaultLogFilePath}");
                 }
                 catch (Exception ex)
                 {
