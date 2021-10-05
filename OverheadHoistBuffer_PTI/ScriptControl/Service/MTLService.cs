@@ -680,7 +680,7 @@ namespace com.mirle.ibg3k0.sc.Service
             AVEHICLE car_in_vh = vehicleBLL.cache.getVhByAddressID(mtl.MTL_ADDRESS);
             if (car_in_vh != null && car_in_vh.isTcpIpConnect)
             {
-                if (car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.Manual)
+                if (car_in_vh.MODE_STATUS == VHModeStatus.Manual)
                 {
                     VehicleService.ModeChangeRequest(car_in_vh.VEHICLE_ID, OperatingVHMode.OperatingAuto);
                     //if (SpinWait.SpinUntil(() => car_in_vh.MODE_STATUS == VHModeStatus.AutoMtl, 10000))
@@ -717,7 +717,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         CarInFinish(mtl);
                     }
                 }
-                else if (car_in_vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoMtl)
+                else if (car_in_vh.MODE_STATUS == VHModeStatus.AutoMtl && car_in_vh.MODE_STATUS == VHModeStatus.AutoMts)
                 {
                     //mtl.SetCarInMoving(true);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLService), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
