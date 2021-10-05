@@ -2317,35 +2317,31 @@ namespace com.mirle.ibg3k0.sc.Service
 
             if (!vh.IsOnAdr)
             {
+                ASECTION vh_current_sec = scApp.SectionBLL.cache.GetSection(vh_current_section_id);
+                //確認是否有車子是在to Address的位置上
+                var on_to_adr_vh = scApp.VehicleBLL.cache.getVhByAddressID(vh_current_sec.TO_ADR_ID);
+                if (on_to_adr_vh != null)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Has vh:{on_to_adr_vh.VEHICLE_ID} on section:{vh_current_section_id} of to adr:{vh_current_sec.TO_ADR_ID}," +
+                             $"so request vh:{vh.VEHICLE_ID} it not closest block vh",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return false;
+                }
                 //a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
                 var on_same_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(vh_current_section_id);
                 foreach (AVEHICLE same_section_vh in on_same_section_of_vhs)
                 {
                     if (same_section_vh == vh) continue;
-                    if (same_section_vh.IsOnAdr)
+                    if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
                     {
-                        ASECTION vh_current_sec = scApp.SectionBLL.cache.GetSection(vh_current_section_id);
-                        if (SCUtility.isMatche(same_section_vh.CUR_ADR_ID, vh_current_sec.TO_ADR_ID))
-                        {
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                               Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
-                                     $"request vh current adr:{vh.CUR_ADR_ID} is section [to adr] ,so request vh:{vh.VEHICLE_ID} it not closest block vh",
-                               VehicleID: vh.VEHICLE_ID,
-                               CarrierID: vh.CST_ID);
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
-                        {
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                               Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
-                                     $"request vh distance:{vh.ACC_SEC_DIST} orther vh distance:{same_section_vh.ACC_SEC_DIST},so request vh:{vh.VEHICLE_ID} it not closest block vh",
-                               VehicleID: vh.VEHICLE_ID,
-                               CarrierID: vh.CST_ID);
-                            return false;
-                        }
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"Has vh:{same_section_vh.VEHICLE_ID} in same section:{vh_current_section_id} and infront of the request vh:{vh.VEHICLE_ID}," +
+                                 $"request vh distance:{vh.ACC_SEC_DIST} orther vh distance:{same_section_vh.ACC_SEC_DIST},so request vh:{vh.VEHICLE_ID} it not closest block vh",
+                           VehicleID: vh.VEHICLE_ID,
+                           CarrierID: vh.CST_ID);
+                        return false;
                     }
                 }
 
