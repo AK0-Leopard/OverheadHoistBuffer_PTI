@@ -18,6 +18,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         HIDZoneQueueDao HIDQueueDao = null;
         RedisCacheManager RedisCacheManager = null;
         Dictionary<string, int> AHIDZONEMASTERs = null;
+        public Cache cache { get; private set; }
+
         private SCApplication scApp = null;
         public HIDBLL()
         {
@@ -30,7 +32,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             HIDDetailDao = scApp.HIDZoneDetailDao;
             HIDQueueDao = scApp.HIDZoneQueueDao;
             RedisCacheManager = scApp.getRedisCacheManager();
-            AHIDZONEMASTERs = loadAllHIDZoneMAXLoadCount();
+            //AHIDZONEMASTERs = loadAllHIDZoneMAXLoadCount();
+            cache = new Cache(scApp.getCommObjCacheManager());
         }
 
         public Dictionary<string, int> loadAllHIDZoneMAXLoadCount()
@@ -53,6 +56,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return hid_zone_master;
         }
+        public List<AHIDZONEMASTER> loadAllHidZoneMaster()
+        {
+            List<AHIDZONEMASTER> hid_zone_masters = null;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hid_zone_masters = HIDMasterDao.loadAllHIDZoneMaster(con);
+            }
+            return hid_zone_masters;
+        }
         public List<string> loadAllHIDLeaveAdr()
         {
             List<string> adrs = null;
@@ -63,6 +75,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             return adrs;
         }
         #endregion Master
+
+        #region Detail
+        public List<string> loadAllHIDDetailSegmentIDs(string hidID)
+        {
+            List<string> segment_ids = null;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                segment_ids = HIDDetailDao.loadHIDDetailSegmentIDByEntrySectionID(con, hidID);
+            }
+            return segment_ids;
+        }
+        #endregion Detail
 
         #region Queue
         public bool doCreatHIDZoneQueueByReqStatus(string vh_id, string entry_sec_id, bool canPass, DateTime req_time)
@@ -172,7 +196,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
         const string REDIS_BLOCK_CONTROL_KEY_VHID = "HID_ZONE_{0}_COUNT";
-        public bool hasEnoughSeat(string hid_zone_id, out long current_vh_count,out int hid_zone_max_load_count)
+        public bool hasEnoughSeat(string hid_zone_id, out long current_vh_count, out int hid_zone_max_load_count)
         {
             bool hasEnough = false;
             string check_hid_zone_key = string.Format(REDIS_BLOCK_CONTROL_KEY_VHID, hid_zone_id);
@@ -195,6 +219,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             string check_hid_zone_key = string.Format(REDIS_BLOCK_CONTROL_KEY_VHID, hid_zone_id);
             RedisCacheManager.StringDecrementAsync(check_hid_zone_key);
         }
-
+        public class Cache
+        {
+            CommObjCacheManager commObjCache;
+            public Cache(CommObjCacheManager _commObjCache)
+            {
+                commObjCache = _commObjCache;
+            }
+            public (bool isExist, AHIDZONEMASTER hid_zone_master) tryGetHIDZoneMaster(string entrySection)
+            {
+                var hid_zone_masters = commObjCache.getHIDMasterZone();
+                var hid_zone_master = hid_zone_masters.Where(hid => SCUtility.isMatche(hid.ENTRY_SEC_ID, entrySection)).FirstOrDefault();
+                return (hid_zone_master != null, hid_zone_master);
+            }
+        }
     }
 }

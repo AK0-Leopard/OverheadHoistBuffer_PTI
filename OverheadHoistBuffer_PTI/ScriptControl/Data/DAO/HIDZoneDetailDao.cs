@@ -103,14 +103,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         /// <param name="conn">The connection.</param>
         /// <param name="line_id">The line_id.</param>
         /// <returns>List&lt;Zone&gt;.</returns>
-        public List<AZONE> loadZoneListByLineID(DBConnection_EF conn, string line_id)
+        public List<string> loadHIDDetailSegmentIDByEntrySectionID(DBConnection_EF conn, string entrySecID)
         {
-            List<AZONE> rtnList = null;
+            List<string> rtnList = null;
             try
             {
-                var query = from zone in conn.AZONE
-                            where zone.LINE_ID == line_id.Trim()
-                            select zone;
+                var query = from detail in conn.AHIDZONEDETAIL
+                            where detail.ENTRY_SEC_ID.Trim() == entrySecID.Trim()
+                            select detail.SEC_ID.Trim();
                 rtnList = query.ToList();
             }
             catch (Exception ex)

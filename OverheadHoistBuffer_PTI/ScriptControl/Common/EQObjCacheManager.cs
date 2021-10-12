@@ -473,6 +473,12 @@ namespace com.mirle.ibg3k0.sc.Common
                             }
                             (eqTemp as OHCV).setSegmentLocation(segment_location);
                         }
+                        else if (eqptType == SCAppConstants.EqptType.HID)
+                        {
+                            eqTemp = new HID();
+                            var segments = getHIDRelatedSegments(eqpt_id);
+                            (eqTemp as HID).setSegments(segments);
+                        }
                         else
                         {
                             eqTemp = new AEQPT();
@@ -625,6 +631,15 @@ namespace com.mirle.ibg3k0.sc.Common
                 return "";
             }
             return setting.SEGMENT_ID;
+        }
+        private List<string> getHIDRelatedSegments(string hidID)
+        {
+            var setting = scApp.HIDBLL.loadAllHIDDetailSegmentIDs(hidID);
+            if (setting == null)
+            {
+                return new List<string>();
+            }
+            return setting;
         }
 
         /// <summary>

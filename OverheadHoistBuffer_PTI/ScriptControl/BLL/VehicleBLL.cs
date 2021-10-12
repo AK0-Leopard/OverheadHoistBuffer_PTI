@@ -2344,6 +2344,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 vhs = vhs.Where(vh => SCUtility.isMatche(vh.CUR_SEG_ID, segmentID)).ToList();
                 return vhs;
             }
+            public List<AVEHICLE> loadVhsBySegmentIDs(List<string> segmentIDs)
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                vhs = vhs.Where(vh => segmentIDs.Contains(vh.CUR_SEG_ID)).ToList();
+                return vhs;
+            }
             public List<AVEHICLE> loadVhsByOHTCCommandIDs(List<string> cmdIDs)
             {
                 var vhs = eqObjCacheManager.getAllVehicle();

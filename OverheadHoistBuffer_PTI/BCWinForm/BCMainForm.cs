@@ -1054,5 +1054,10 @@ namespace com.mirle.ibg3k0.bc.winform
         {
 
         }
+
+        private void hIDInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openForm(typeof(HIDMaintenanceForm).Name, true, false);
+        }
     }
 }

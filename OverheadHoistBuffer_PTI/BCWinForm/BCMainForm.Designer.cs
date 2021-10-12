@@ -107,6 +107,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.搬送模擬ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.port內容值ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.命令卡匣資料ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hIDInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.CMS_OnLineMode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -365,7 +366,8 @@ namespace com.mirle.ibg3k0.bc.winform
             this.toolStripSeparator1,
             this.transferCommandToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.reserveInfoToolStripMenuItem});
+            this.reserveInfoToolStripMenuItem,
+            this.hIDInfoToolStripMenuItem});
             this.mataToolStripMenuItem.Name = "mataToolStripMenuItem";
             resources.ApplyResources(this.mataToolStripMenuItem, "mataToolStripMenuItem");
             this.mataToolStripMenuItem.Click += new System.EventHandler(this.mataToolStripMenuItem_Click);
@@ -497,6 +499,12 @@ namespace com.mirle.ibg3k0.bc.winform
             resources.ApplyResources(this.命令卡匣資料ToolStripMenuItem, "命令卡匣資料ToolStripMenuItem");
             this.命令卡匣資料ToolStripMenuItem.Name = "命令卡匣資料ToolStripMenuItem";
             this.命令卡匣資料ToolStripMenuItem.Click += new System.EventHandler(this.命令卡匣資料ToolStripMenuItem_Click);
+            // 
+            // hIDInfoToolStripMenuItem
+            // 
+            this.hIDInfoToolStripMenuItem.Name = "hIDInfoToolStripMenuItem";
+            resources.ApplyResources(this.hIDInfoToolStripMenuItem, "hIDInfoToolStripMenuItem");
+            this.hIDInfoToolStripMenuItem.Click += new System.EventHandler(this.hIDInfoToolStripMenuItem_Click);
             // 
             // BCMainForm
             // 
@@ -653,6 +661,7 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem 搬送模擬ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem port內容值ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 命令卡匣資料ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hIDInfoToolStripMenuItem;
     }
 
     /// <summary>

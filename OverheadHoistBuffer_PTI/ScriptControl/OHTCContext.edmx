@@ -2588,14 +2588,14 @@
             <PropertyRef Name="ENTRY_SEC_ID" />
             <PropertyRef Name="SEC_ID" />
           </Key>
-          <Property Name="ENTRY_SEC_ID" Type="String" Nullable="false" MaxLength="5" FixedLength="true" Unicode="false" />
+          <Property Name="ENTRY_SEC_ID" Type="String" Nullable="false" MaxLength="6" FixedLength="true" Unicode="false" />
           <Property Name="SEC_ID" Type="String" Nullable="false" MaxLength="5" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="AHIDZONEMASTER">
           <Key>
             <PropertyRef Name="ENTRY_SEC_ID" />
           </Key>
-          <Property Name="ENTRY_SEC_ID" Type="String" Nullable="false" MaxLength="5" FixedLength="true" Unicode="false" />
+          <Property Name="ENTRY_SEC_ID" Type="String" Nullable="false" MaxLength="6" FixedLength="true" Unicode="false" />
           <Property Name="LEAVE_ADR_ID_1" Type="String" Nullable="false" MaxLength="5" FixedLength="true" Unicode="false" />
           <Property Name="LEAVE_ADR_ID_2" Type="String" MaxLength="5" FixedLength="true" Unicode="false" />
           <Property Name="MAX_LOAD_COUNT" Type="Int32" Nullable="false" />

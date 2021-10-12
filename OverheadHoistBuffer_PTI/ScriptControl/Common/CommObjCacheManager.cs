@@ -45,6 +45,7 @@ namespace com.mirle.ibg3k0.sc.Common
         private List<ReserveEnhanceInfo> ReserveEnhanceInfos;
         //BlockMaster
         private List<ABLOCKZONEMASTER> BlockZoneMasters;
+        private List<AHIDZONEMASTER> HIDZoneMasters;
         private CommonInfo CommonInfo;
 
         private CommObjCacheManager() { }
@@ -72,6 +73,7 @@ namespace com.mirle.ibg3k0.sc.Common
             Segments = scApp.MapBLL.loadAllSegments();
             Sections = scApp.MapBLL.loadAllSection();
             BlockZoneMasters = scApp.MapBLL.loadAllBlockZoneMaster();
+            HIDZoneMasters = scApp.HIDBLL.loadAllHidZoneMaster();
 
             ReserveEnhanceInfos = scApp.ReserveEnhanceInfoDao.loadReserveInfos(scApp);
             foreach (ASEGMENT segment in Segments)
@@ -86,7 +88,6 @@ namespace com.mirle.ibg3k0.sc.Common
             {
                 addresses.initialAddressType();
             }
-
             CommonInfo = new CommonInfo();
         }
 
@@ -158,6 +159,10 @@ namespace com.mirle.ibg3k0.sc.Common
         public List<ABLOCKZONEMASTER> getBlockMasterZone()
         {
             return BlockZoneMasters;
+        }
+        public List<AHIDZONEMASTER> getHIDMasterZone()
+        {
+            return HIDZoneMasters;
         }
 
         #region 將最新物件資料，放置入Cache的方法

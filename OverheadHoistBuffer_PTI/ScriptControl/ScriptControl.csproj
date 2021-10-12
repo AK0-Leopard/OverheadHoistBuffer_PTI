@@ -929,9 +929,11 @@
     <Compile Include="Data\VO\Interface\IConnectionStatusChange.cs" />
     <Compile Include="Data\VO\Interface\IMaintainDevice.cs" />
     <Compile Include="Data\VO\MTLSetting.cs" />
+    <Compile Include="Data\VO\HID.cs" />
     <Compile Include="Data\VO\OHCV.cs" />
     <Compile Include="Data\VO\MaintainSpace.cs" />
     <Compile Include="Data\VO\MaintainLift.cs" />
+    <Compile Include="Data\VO\PartialVo\AHIDZONEMASTER.cs" />
     <Compile Include="Data\VO\PartialVo\ACMD_OHTC.cs" />
     <Compile Include="Data\VO\PartialVo\AADDRESS.cs" />
     <Compile Include="Data\VO\PartialVo\ABLOCKZONEMASTER.cs" />
@@ -1059,6 +1061,7 @@
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
     <Compile Include="MQTTControl\MQTTControl.cs" />
+    <Compile Include="ObjectRelay\HIDObjToShow.cs" />
     <Compile Include="ObjectRelay\CMD_MCSObjToShow.cs" />
     <Compile Include="ObjectRelay\IDataGridUpdateNotify.cs" />
     <Compile Include="ObjectRelay\VehicleObjToShow.cs" />
@@ -1185,11 +1188,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DLL\BlockControlFramework.dll" />
+    <Content Include="DLL\BlockControlFramework.pdb" />
     <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
     <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll" />
     <Content Include="DLL\Mirle.AK0.Hlt.Utils.dll" />
     <Content Include="DLL\MPLC.dll" />
     <Content Include="DLL\MPLC.NetMQ.dll" />
+    <Content Include="DLL\MPLCConnectionControl.pdb" />
     <Content Include="DLL\opencv_world412.dll" />
     <Content Include="DLL\TCPIPTrxControl.pdb" />
     <Content Include="DLL\Xceed.Wpf.Toolkit.dll" />

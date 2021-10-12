@@ -2507,6 +2507,17 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     return false;
                 }
+
+                bool check_hid_zone_is_enough = tryCheckHIDBlockIsEnough(eqpt, req_block_id);
+                if (!check_hid_zone_is_enough)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Vh:{eqpt.VEHICLE_ID} ask hid entry section:{req_block_id},but this hid zone is not enough!",
+                       VehicleID: eqpt.VEHICLE_ID,
+                       CarrierID: eqpt.CST_ID);
+                    return false;
+                }
+
                 foreach (var detail in block_detail_section)
                 {
                     HltDirection hltDirection = HltDirection.None;
@@ -2544,7 +2555,20 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
-
+        private bool tryCheckHIDBlockIsEnough(AVEHICLE vh, string entrySection)
+        {
+            var try_get_result = scApp.HIDBLL.cache.tryGetHIDZoneMaster(entrySection);
+            if (!try_get_result.isExist)
+            {
+                return true;
+            }
+            var check_enough_result = try_get_result.hid_zone_master.IsEnough(scApp.EquipmentBLL, scApp.VehicleBLL);
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"vh:{vh.VEHICLE_ID} try ask entry hid:{entrySection}, is enough:{check_enough_result.isEnough} current vh count:{check_enough_result.currentVhCount} max load vh:{try_get_result.hid_zone_master.MAX_LOAD_COUNT}",
+               VehicleID: vh.VEHICLE_ID,
+               CarrierID: vh.CST_ID);
+            return check_enough_result.isEnough;
+        }
 
 
 

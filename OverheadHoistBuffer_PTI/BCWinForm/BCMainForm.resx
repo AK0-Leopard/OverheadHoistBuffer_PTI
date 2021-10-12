@@ -414,6 +414,12 @@
   <data name="reserveInfoToolStripMenuItem.Text" xml:space="preserve">
     <value>Reserve Info</value>
   </data>
+  <data name="hIDInfoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 26</value>
+  </data>
+  <data name="hIDInfoToolStripMenuItem.Text" xml:space="preserve">
+    <value>HID Info</value>
+  </data>
   <data name="mataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>128, 26</value>
   </data>
@@ -1443,6 +1449,12 @@
     <value>命令卡匣資料ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;命令卡匣資料ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hIDInfoToolStripMenuItem.Name" xml:space="preserve">
+    <value>hIDInfoToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;hIDInfoToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

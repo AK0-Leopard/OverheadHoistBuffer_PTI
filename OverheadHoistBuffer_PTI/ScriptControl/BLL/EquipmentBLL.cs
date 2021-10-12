@@ -270,6 +270,21 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
 
 
+            public HID getHID(string hidID)
+            {
+                var eqpt = eqObjCacheManager.getAllEquipment().
+                            Where(eq => eq is HID && SCUtility.isMatche(eq.EQPT_ID, hidID)).
+                            FirstOrDefault();
+                return eqpt as HID;
+            }
+            public List<HID> loadHID()
+            {
+                var eqpts = eqObjCacheManager.getAllEquipment().
+                            Where(eq => eq is HID).Select(eq => eq as HID).
+                            ToList();
+                return eqpts;
+            }
+
         }
 
     }
