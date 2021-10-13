@@ -1,0 +1,7 @@
+3: MTx已在car in中
+4: OHT車沒有連線
+5: OHT車address和section均為空
+6: OHT車不在MTx上
+7: MTx不為auto
+8: 相連的MTx不為auto
+9: 相連的MTx上有OHT

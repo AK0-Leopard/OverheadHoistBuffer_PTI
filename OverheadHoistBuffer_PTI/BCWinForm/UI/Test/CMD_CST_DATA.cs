@@ -40,8 +40,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
 
             foreach (var v in portInIList)
             {
-                if ( (BCApp.SCApplication.TransferService.isCVPort(v.PortName) && v.nowStage == v.Stage)
+                if ((BCApp.SCApplication.TransferService.isCVPort(v.PortName) && v.nowStage == v.Stage)
                     || BCApp.SCApplication.TransferService.isAGVZone(v.PortName)
+                    || BCApp.SCApplication.TransferService.isEQPort(v.PortName)
                    )
                 {
                     comboBox1.Items.Add(v.PortName);
@@ -141,8 +142,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
                 UpDate_CmdData();
             }
         }
-        
-        
+
+
         private void button3_Click(object sender, EventArgs e)
         {
             DialogResult result;
@@ -199,7 +200,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
             if (result == System.Windows.Forms.DialogResult.Yes)
             {
                 List<int> listInt = new List<int>();
-                
+
                 foreach (DataGridViewCell v in dataGridView2.SelectedCells)
                 {
                     if (listInt.Contains(v.RowIndex))
@@ -216,8 +217,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
                     label10.Text = BCApp.SCApplication.TransferService.Manual_DeleteCst(cstID, boxID);
                 }
                 UpDate_CstData();
-            }            
-        }        
+            }
+        }
         private void button7_Click(object sender, EventArgs e)
         {
             foreach (DataGridViewCell v in dataGridView2.SelectedCells)
@@ -233,7 +234,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
         }
         private void button14_Click(object sender, EventArgs e) //刪除OHCV所有帳
         {
-            foreach(var v in BCApp.SCApplication.TransferService.GetCVPort())
+            foreach (var v in BCApp.SCApplication.TransferService.GetCVPort())
             {
                 BCApp.SCApplication.TransferService.DeleteOHCVPortCst(v.PortName, "UI: CMD_CST_DATA");
             }
@@ -298,7 +299,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
             {
                 foreach (DataGridViewCell v in dataGridView2.SelectedCells)
                 {
-                    if(string.IsNullOrWhiteSpace(dataGridView2.Rows[v.RowIndex].Cells["BOXID"].Value?.ToString() ?? "")
+                    if (string.IsNullOrWhiteSpace(dataGridView2.Rows[v.RowIndex].Cells["BOXID"].Value?.ToString() ?? "")
                     || string.IsNullOrWhiteSpace(dataGridView2.Rows[v.RowIndex].Cells["Carrier_LOC"].Value?.ToString() ?? "")
                       )
                     {
@@ -336,7 +337,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
                     string cstID = dataGridView2.Rows[v.RowIndex].Cells["CSTID"].Value.ToString();
                     string boxID = dataGridView2.Rows[v.RowIndex].Cells["BOXID"].Value.ToString();
 
-                    if(string.IsNullOrWhiteSpace(cstID) && listInt.Contains(v.RowIndex) == false)
+                    if (string.IsNullOrWhiteSpace(cstID) && listInt.Contains(v.RowIndex) == false)
                     {
                         BCApp.SCApplication.ReportBLL.ReportEmptyBoxRecycling(boxID);
                         listInt.Add(v.RowIndex);
