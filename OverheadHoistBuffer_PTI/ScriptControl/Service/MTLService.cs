@@ -346,7 +346,8 @@ namespace com.mirle.ibg3k0.sc.Service
             if (mtx.DokingMaintainDevice != null && mtx.DokingMaintainDevice is MaintainSpace)
             {
                 MaintainSpace dockingMaintainSpace = mtx.DokingMaintainDevice as MaintainSpace;
-                if (!SpinWait.SpinUntil(() => dockingMaintainSpace.MTSBackDoorStatus == MTSDoorStatus.Open &&
+                //2021.10.13 MTS to MTL的狀況下，開前門就算檢查通過了
+                if (!SpinWait.SpinUntil(() => (dockingMaintainSpace.MTSBackDoorStatus == MTSDoorStatus.Open || isMTStoMTL) &&
                                              dockingMaintainSpace.MTSFrontDoorStatus == MTSDoorStatus.Open,
                                              MTS_DOOR_OPEN_TIME_OUT_ms))
                 {
@@ -1042,7 +1043,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //mtx.SetCarInMoving(false);
             if (mtx is MaintainLift)
             {
-                //CarInFinish(mtx as MaintainLift);
+                CarInFinish(mtx as MaintainLift);
                 //VehicleService.doAskVhToSystemInAddress(vhID, (mtx as MaintainLift).MTL_SYSTEM_IN_ADDRESS);
             }
             else if (mtx is MaintainSpace)
