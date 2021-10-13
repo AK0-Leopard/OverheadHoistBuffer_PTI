@@ -207,6 +207,24 @@ namespace com.mirle.ibg3k0.sc.Service
         public string agvcTriggerResult_ST03 = "無";
         #endregion
 
+        #region 命令時間優先權間隔設定
+        private int _timePriorityIncreseInterval;
+        public int TimePriorityIncreseInterval
+        {
+            get
+            {
+                return _timePriorityIncreseInterval;
+            }
+            set
+            {
+                if (0 < value)
+                    _timePriorityIncreseInterval = value;
+                else
+                    _timePriorityIncreseInterval = 60;
+            }
+        }
+        #endregion
+
         #endregion
 
         #region 初始化
@@ -848,16 +866,25 @@ namespace com.mirle.ibg3k0.sc.Service
                                 {
                                     DateTime nowTime = DateTime.Now;
 
-                                    int addtime = v.TIME_PRIORITY / SystemParameter.cmdPriorityAdd;
+                                    //int addtime = v.TIME_PRIORITY / SystemParameter.cmdPriorityAdd;
 
-                                    DateTime cmdTime = v.CMD_INSER_TIME.AddMinutes(addtime);
+                                    //DateTime cmdTime = v.CMD_INSER_TIME.AddMinutes(addtime);
 
-                                    TimeSpan span = nowTime - cmdTime;
-                                    if (span.Minutes >= 1)
+                                    //TimeSpan span = nowTime - cmdTime;
+                                    //if (span.Minutes >= 1)
+                                    //{
+                                    //    TimeSpan span1 = nowTime - v.CMD_INSER_TIME;
+                                    //    cmdBLL.updateCMD_MCS_TimePriority(v.CMD_ID, span1.Minutes * SystemParameter.cmdPriorityAdd);
+                                    //}
+                                    int secondsAfterLastIncresePriority = v.TIME_PRIORITY / SystemParameter.cmdPriorityAdd * TimePriorityIncreseInterval;
+                                    DateTime lastIncresePriorityTime = v.CMD_INSER_TIME.AddSeconds(secondsAfterLastIncresePriority);
+                                    TimeSpan timeSpanAfterLastIncrese = nowTime - lastIncresePriorityTime;
+                                    if (timeSpanAfterLastIncrese.Seconds > TimePriorityIncreseInterval)
                                     {
-                                        TimeSpan span1 = nowTime - v.CMD_INSER_TIME;
-                                        cmdBLL.updateCMD_MCS_TimePriority(v.CMD_ID, span1.Minutes * SystemParameter.cmdPriorityAdd);
-                                        //cmdBLL.updateCMD_MCS_sumPriority(v.CMD_ID);
+                                        int timeSpanStep = timeSpanAfterLastIncrese.Seconds / TimePriorityIncreseInterval;
+                                        int oldTimePriority = v.TIME_PRIORITY;
+                                        int timePriorityIncreseValue = SystemParameter.cmdPriorityAdd * timeSpanStep;
+                                        cmdBLL.updateCMD_MCS_TimePriority(v.CMD_ID, oldTimePriority + timePriorityIncreseValue);
                                     }
                                 }
                                 #endregion                                

@@ -865,6 +865,8 @@ namespace com.mirle.ibg3k0.sc.App
             cmdBLL.PortPriorityWeight = getDouble("PortPriorityWeight", 1);
             cmdBLL.TimePriorityWeight = getDouble("TimePriorityWeight", 1);
             cmdBLL.MCSPriorityWeight = getDouble("MCSPriorityWeight", 1);
+
+            transferService.TimePriorityIncreseInterval = getInt("TimePriorityIncreseInterval", 60);
         }
 
         private void initialRouteBan()
