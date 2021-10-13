@@ -5,6 +5,7 @@
 // 2020/06/04    Jason Wu       N/A            A20.06.04   修改priority判定部分(由僅用priority sum大小比較 變為分組比較99 up or 99 down)   
 // 2020/06/09    Jason Wu       N/A            A20.06.09.0 修改判定部分(新增判定來源目的地是非shelf的優先)   
 //**********************************************************************************
+using com.mirle.ibg3k0.sc.App;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -188,17 +189,17 @@ namespace com.mirle.ibg3k0.sc
 
                 //A20.06.04
                 // 1.先取priority 判斷
-                if ((MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM >= 99) ||
-                    (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM < 99))
+                if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
+                    (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
                 {
                     //代表兩者相等，不動，且接著判斷距離
                 }
-                if (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM >= 99)
+                if (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
                 {
                     return 1;
                     //代表後者較優先，換位
                 }
-                if (MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM < 99)
+                if (MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX)
                 {
                     return -1;
                     //代表前者較優先，不動
@@ -252,17 +253,17 @@ namespace com.mirle.ibg3k0.sc
 
                 //A20.06.04
                 // 1.先取priority 判斷
-                if ((MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM >= 99) ||
-                    (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM < 99))
+                if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
+                    (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
                 {
                     //代表兩者相等，不動，且接著判斷距離
                 }
-                if (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM >= 99)
+                if (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
                 {
                     return 1;
                     //代表後者較優先，換位
                 }
-                if (MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM < 99)
+                if (MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX)
                 {
                     return -1;
                     //代表前者較優先，不動

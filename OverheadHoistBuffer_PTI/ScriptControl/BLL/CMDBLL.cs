@@ -1096,7 +1096,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         (_, double distance) = scApp.VehicleBLL.findBestSuitableVhStepByNearest(sourceAddr);
                         cmdMCS.DistanceFromVehicleToHostSource = (int)distance;
                     }
-                    if (cmdMCS.PRIORITY_SUM >= 99)
+                    if (cmdMCS.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
                     {
                         isCmdPriorityMoreThan99 = true;
                     }
@@ -1116,7 +1116,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
-                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> DB|MCS排序因有命令之Priority >= 99 ");
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "OHB >> DB|MCS排序因有命令之Priority >= 999 ");
                 }
                 #endregion
 
@@ -1164,17 +1164,17 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             //A20.06.04
             // 1.先取priority 判斷
-            if ((MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM >= 99) ||
-                (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM < 99))
+            if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
+                (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
             {
                 //代表兩者相等，不動，且接著判斷距離
             }
-            if (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM >= 99)
+            if (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
             {
                 return 1;
                 //代表後者較優先，換位
             }
-            if (MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM < 99)
+            if (MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX)
             {
                 return -1;
                 //代表前者較優先，不動
@@ -1244,17 +1244,17 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             //A20.06.04
             // 1.先取priority 判斷
-            if ((MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM >= 99) ||
-                (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM < 99))
+            if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
+                (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
             {
                 //代表兩者相等，不動，且接著判斷距離
             }
-            if (MCSCmd1.PRIORITY_SUM < 99 && MCSCmd2.PRIORITY_SUM >= 99)
+            if (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
             {
                 return 1;
                 //代表後者較優先，換位
             }
-            if (MCSCmd1.PRIORITY_SUM >= 99 && MCSCmd2.PRIORITY_SUM < 99)
+            if (MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX)
             {
                 return -1;
                 //代表前者較優先，不動

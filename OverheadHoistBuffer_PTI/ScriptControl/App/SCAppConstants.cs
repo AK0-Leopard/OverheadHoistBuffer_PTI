@@ -200,6 +200,10 @@ namespace com.mirle.ibg3k0.sc.App
         /// The cs t_ sequenc e_ numbe r_ minimum
         /// </summary>
         public static readonly int CST_SEQUENCE_NUMBER_MIN = 0;
+        /// <summary>
+        /// The maximum value of command priority
+        /// </summary>
+        public static readonly int CMD_PRIORITY_MAX = 999;
 
 
         public enum GenOHxCCommandType
