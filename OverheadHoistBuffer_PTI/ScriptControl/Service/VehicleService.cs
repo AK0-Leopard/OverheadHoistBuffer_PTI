@@ -3426,7 +3426,10 @@ namespace com.mirle.ibg3k0.sc.Service
                             var maintain_device = scApp.EquipmentBLL.cache.GetMaintainDeviceBySystemInAdr(cur_adr_id);
                             if (maintain_device != null)
                             {
-                                scApp.MTLService.carInComplete(maintain_device, eqpt.VEHICLE_ID);
+                                foreach (var mtx in maintain_device)
+                                {
+                                    scApp.MTLService.carInComplete(mtx, eqpt.VEHICLE_ID);
+                                }
                                 Install(eqpt.VEHICLE_ID);
                             }
                             break;
@@ -4065,6 +4068,7 @@ namespace com.mirle.ibg3k0.sc.Service
             AVEHICLE vh = scApp.VehicleBLL.getVehicleByID(vh_id);
             if (vh.MODE_STATUS != VHModeStatus.Manual)
             {
+                vh.MODE_STATUS = mode_status;
                 scApp.VehicleBLL.updataVehicleMode(vh_id, mode_status);
                 vh.NotifyVhStatusChange();
                 return true;

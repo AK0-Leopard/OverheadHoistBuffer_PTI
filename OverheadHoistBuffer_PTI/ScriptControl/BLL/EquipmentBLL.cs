@@ -197,13 +197,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                             SingleOrDefault();
                 return eqpt as MaintainSpace;
             }
-            public IMaintainDevice GetMaintainDeviceBySystemInAdr(string systemInAdr)
+            public List<IMaintainDevice> GetMaintainDeviceBySystemInAdr(string systemInAdr)
             {
                 var eqpt = eqObjCacheManager.getAllEquipment().
                             Where(eq => eq is MaintainLift && (eq as MaintainLift).MTL_SYSTEM_IN_ADDRESS == systemInAdr.Trim() ||
-                                        eq is MaintainSpace && (eq as MaintainSpace).MTS_SYSTEM_IN_ADDRESS == systemInAdr.Trim()).
-                            SingleOrDefault();
-                return eqpt as IMaintainDevice;
+                                        eq is MaintainSpace && (eq as MaintainSpace).MTS_SYSTEM_IN_ADDRESS == systemInAdr.Trim());
+                //return eqpt as IMaintainDevice;
+                return eqpt.Select(eq => eq as IMaintainDevice).ToList();
             }
 
             public MaintainLift GetExcuteCarOutMTL(string vhID)
