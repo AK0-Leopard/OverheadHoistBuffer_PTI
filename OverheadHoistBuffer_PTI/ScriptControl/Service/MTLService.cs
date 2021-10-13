@@ -717,7 +717,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         CarInFinish(mtl);
                     }
                 }
-                else if (car_in_vh.MODE_STATUS == VHModeStatus.AutoMtl && car_in_vh.MODE_STATUS == VHModeStatus.AutoMts)
+                else if (car_in_vh.MODE_STATUS == VHModeStatus.AutoMtl || car_in_vh.MODE_STATUS == VHModeStatus.AutoMts)
                 {
                     //mtl.SetCarInMoving(true);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLService), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
