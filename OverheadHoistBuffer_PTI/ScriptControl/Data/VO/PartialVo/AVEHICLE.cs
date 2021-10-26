@@ -554,7 +554,50 @@ namespace com.mirle.ibg3k0.sc
             CurrentCommandExcuteTime.Reset();
         }
 
-
+        public bool TransferReady(BLL.CMDBLL cmdBLL)
+        {
+            if (!isTcpIpConnect)
+            {
+                return false;
+            }
+            if (!IS_INSTALLED)
+            {
+                return false;
+            }
+            if (isSynchronizing)
+            {
+                return false;
+            }
+            if (MODE_STATUS != VHModeStatus.AutoRemote)
+            {
+                return false;
+            }
+            if (IsError)
+            {
+                return false;
+            }
+            if (!SCUtility.isEmpty(MCS_CMD))
+            {
+                return false;
+            }
+            if (HAS_CST == 1)
+            {
+                return false;
+            }
+            if (SCUtility.isEmpty(CUR_ADR_ID))
+            {
+                return false;
+            }
+            if (!SCUtility.isEmpty(OHTC_CMD))
+            {
+                return false;
+            }
+            if (cmdBLL.isCMD_OHTCQueueByVh(VEHICLE_ID))
+            {
+                return false;
+            }
+            return true;
+        }
         public string getCurrentSegment(BLL.SectionBLL sectionBLL)
         {
             return sectionBLL.cache.GetSection(CUR_SEC_ID)?.SEG_NUM;

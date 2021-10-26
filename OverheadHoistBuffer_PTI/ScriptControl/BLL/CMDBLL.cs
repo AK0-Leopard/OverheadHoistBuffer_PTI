@@ -2644,12 +2644,25 @@ namespace com.mirle.ibg3k0.sc.BLL
                     AVEHICLE bestSuitableVh = null;
                     E_VH_TYPE vh_type = E_VH_TYPE.None;
 
+                    bool has_pre_wait_assign_vh = !SCUtility.isEmpty(mcs_cmd.PreAssignVhID);
+
                     if (mcs_cmd.CMD_ID.StartsWith("SCAN-"))
                     {
                         ShelfDef targetShelf = scApp.ShelfDefBLL.loadShelfDataByID(mcs_cmd.HOSTSOURCE);
 
                         scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                        bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                        if (has_pre_wait_assign_vh)
+                        {
+                            var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(mcs_cmd.PreAssignVhID);
+                            if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
+                            {
+                                bestSuitableVh = pre_wait_assign_vh;
+                            }
+                        }
+                        if (bestSuitableVh == null)
+                        {
+                            bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                        }
                         if (bestSuitableVh == null)
                         {
                             return false;
@@ -2702,7 +2715,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                         else
                         {
                             scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                            bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                            if (has_pre_wait_assign_vh)
+                            {
+                                var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(mcs_cmd.PreAssignVhID);
+                                if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
+                                {
+                                    bestSuitableVh = pre_wait_assign_vh;
+                                }
+                            }
+                            if (bestSuitableVh == null)
+                            {
+                                bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                            }
                             cmd_type = E_CMD_TYPE.LoadUnload;
                         }
 

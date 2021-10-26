@@ -75,6 +75,7 @@ namespace com.mirle.ibg3k0.sc
         }
         public bool IsCanNotServiceReasonChanged;
         public string CanNotServiceReason;
+        public string PreAssignVhID;
 
         public enum CmdType
         {
@@ -310,6 +311,55 @@ namespace com.mirle.ibg3k0.sc
             }
             return isCmdSourceTypeAGV;
         }
+
+        public bool setCanNotServiceReason(string reason)
+        {
+            if (!sc.Common.SCUtility.isMatche(CanNotServiceReason, reason))
+            {
+                CanNotServiceReason = reason;
+                IsCanNotServiceReasonChanged = true;
+                return true;
+            }
+            return false;
+        }
+        public void setPreAssignVh(string vhID)
+        {
+            PreAssignVhID = vhID;
+        }
+
+        #region 順途搬送
+        public string getHostSourceSegment(BLL.PortStationBLL portStationBLL, BLL.SectionBLL sectionBLL)
+        {
+            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTSOURCE);
+            if (port_st == null) return "";
+            var sections = sectionBLL.cache.GetSectionsByToAddress(port_st.ADR_ID);
+            if (sections == null || sections.Count == 0) return "";
+            return sections.FirstOrDefault().SEG_NUM;
+        }
+        public string getHostDestSegment(BLL.PortStationBLL portStationBLL, BLL.SectionBLL sectionBLL)
+        {
+            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTDESTINATION);
+            if (port_st == null) return "";
+            var sections = sectionBLL.cache.GetSectionsByToAddress(port_st.ADR_ID);
+            if (sections == null || sections.Count == 0) return "";
+            return sections.FirstOrDefault().SEG_NUM;
+        }
+
+        public string getHostSourceAdr(BLL.PortStationBLL portStationBLL)
+        {
+            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTSOURCE);
+            if (port_st == null) return "";
+            return port_st.ADR_ID;
+        }
+
+        public string getHostDestAdr(BLL.PortStationBLL portStationBLL)
+        {
+            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTDESTINATION);
+            if (port_st == null) return "";
+            return port_st.ADR_ID;
+        }
+        #endregion
+
         public bool put(ACMD_MCS ortherObj)
         {
             bool has_change = false;
