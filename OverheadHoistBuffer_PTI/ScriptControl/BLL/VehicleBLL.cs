@@ -1162,22 +1162,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             //*******************
             //A0.03
-            foreach (AVEHICLE vh in vhs.ToList())
-            {
-                if (!SCUtility.isEmpty(vh.OHTC_CMD))
-                {
-                    vhs.Remove(vh);
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                       Data: $"vh id:{vh.VEHICLE_ID} has excute OHTC command:{vh.MCS_CMD.Trim()}," +
-                             $"so filter it out",
-                       VehicleID: vh.VEHICLE_ID,
-                       CarrierID: vh.CST_ID);
-                }
-            }
+            //2021.10.26 Hsinyu Chang 為了命令改派功能取消這段檢查
+            //foreach (AVEHICLE vh in vhs.ToList())
+            //{
+            //    if (!SCUtility.isEmpty(vh.OHTC_CMD))
+            //    {
+            //        vhs.Remove(vh);
+            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+            //           Data: $"vh id:{vh.VEHICLE_ID} has excute OHTC command:{vh.MCS_CMD.Trim()}," +
+            //                 $"so filter it out",
+            //           VehicleID: vh.VEHICLE_ID,
+            //           CarrierID: vh.CST_ID);
+            //    }
+            //}
             //A0.03
             foreach (AVEHICLE vh in vhs.ToList())
             {
-                if (scApp.CMDBLL.isCMD_OHTCQueueByVh(vh.VEHICLE_ID))
+                if (scApp.CMDBLL.isCMD_OHTCWillSending(vh.VEHICLE_ID))
                 {
                     vhs.Remove(vh);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",

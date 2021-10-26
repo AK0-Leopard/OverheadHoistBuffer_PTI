@@ -592,7 +592,7 @@ namespace com.mirle.ibg3k0.sc
             {
                 return false;
             }
-            if (cmdBLL.isCMD_OHTCQueueByVh(VEHICLE_ID))
+            if (cmdBLL.isCMD_OHTCWillSending(VEHICLE_ID))
             {
                 return false;
             }
