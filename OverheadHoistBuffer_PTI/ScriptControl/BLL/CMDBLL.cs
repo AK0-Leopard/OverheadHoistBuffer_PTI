@@ -385,6 +385,27 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return (false);
             }
         }
+
+        public bool updateCMD_MCS_PauseFlag(string cmd_id, string pauseFlag)
+        {
+            bool isSuccess = true;
+            //using (DBConnection_EF con = new DBConnection_EF())
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
+                    cmd.PAUSEFLAG = pauseFlag;
+                    cmd_mcsDao.update(con, cmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exection:");
+                isSuccess = false;
+            }
+            return isSuccess;
+        }
         public string doCheckMCSCommand(string command_id, string Priority, string cstID, string box_id, string lotID,
                                         ref string HostSource, ref string HostDestination,
                                         out string check_result, out bool isFromVh)
@@ -2201,9 +2222,27 @@ namespace com.mirle.ibg3k0.sc.BLL
                 logger.Error(ex, "Exception");
                 return null;
             }
-
-
         }
+        public List<ACMD_MCS> loadExcuteAndNonLoaded()
+        {
+            List<ACMD_MCS> cmds_mcs = null;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cmds_mcs = cmd_mcsDao.loadACMD_MCSIsUnfinished(con);
+            }
+            //1.找出目前所有的Transfer command且尚未載到貨的
+            //2.如果準備去執行的OHT已經在Load Port的Segment就不執行
+            //3.要過濾掉已經在執行command shift的命令(Pause flag = S)
+            cmds_mcs =
+                cmds_mcs.Where(cmd =>
+                //cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial &&
+                cmd.COMMANDSTATE >= ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE &&
+                cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE &&
+                !SCUtility.isMatche(cmd.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT)).
+                ToList();
+            return cmds_mcs;
+        }
+
         public List<ACMD_MCS> loadMcsCmd_ByTransferring()
         {
             try
@@ -5842,6 +5881,44 @@ namespace com.mirle.ibg3k0.sc.BLL
                 command = null;
                 return false;
             }
+        }
+
+        public bool assignCommnadToVehicleByCommandShift(string vh_id, ACMD_MCS cmdMCS)
+        {
+            string cmd_mcs_id = SCUtility.Trim(cmdMCS.CMD_ID, true);
+            int rpiority_sum = cmdMCS.PRIORITY_SUM;
+            string carrier_id = cmdMCS.CARRIER_ID;
+            string hostsource = cmdMCS.HOSTSOURCE;
+            string hostdest = cmdMCS.HOSTDESTINATION;
+            scApp.MapBLL.getAddressID(hostsource, out string from_adr);
+            scApp.MapBLL.getAddressID(hostdest, out string to_adr);
+
+            bool isSuccess = true;
+            using (TransactionScope tx = SCUtility.getTransactionScope())
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+
+                    isSuccess &= scApp.CMDBLL.doCreatTransferCommand(vh_id, cmd_mcs_id, carrier_id,
+                                        E_CMD_TYPE.LoadUnload,
+                                        from_adr,
+                                        to_adr,
+                                        rpiority_sum, 0);
+                    //在找到車子後先把它改成PreInitial，防止Timer再找到該筆命令
+                    if (isSuccess)
+                    {
+                        isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2PreInitial(cmd_mcs_id);
+                    }
+                    if (isSuccess)
+                    {
+                        tx.Complete();
+                    }
+                }
+            }
+            //如果最後Assign沒有成功的話，就要將他改回queue的狀態
+            if (!isSuccess)
+                scApp.CMDBLL.updateCMD_MCS_TranStatus2Queue(cmd_mcs_id);
+            return isSuccess;
         }
     }
 }

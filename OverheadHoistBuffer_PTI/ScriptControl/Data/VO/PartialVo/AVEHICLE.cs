@@ -181,6 +181,8 @@ namespace com.mirle.ibg3k0.sc
         [JsonIgnore]
         public virtual double Y_Axis { get; set; }
 
+        public virtual bool IsProcessingCommandFinish { get; set; }
+
         [JsonIgnore]
         public virtual List<string> WillPassSectionID { get; set; }
 

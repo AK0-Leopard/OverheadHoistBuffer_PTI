@@ -22,6 +22,11 @@ namespace com.mirle.ibg3k0.sc
         //**********************************************************************************
         //A20.05.22 給定一個私有變數去儲存2點間距離
         private int _distanceFromVehicleToHostSource;
+
+        //2021.10.29 命令改派用
+        public const string COMMAND_PAUSE_FLAG_EMPTY = "";
+        public const string COMMAND_PAUSE_FLAG_COMMAND_SHIFT = "S";
+
         /// <summary>
         /// 1 2 4 8 16 32 64 128
         /// 1 1 1 1 1  1  1  1
@@ -359,6 +364,12 @@ namespace com.mirle.ibg3k0.sc
             return port_st.ADR_ID;
         }
         #endregion
+
+        public ACMD_OHTC getExcuteCMD_OHTC(BLL.CMDBLL cmdBLL)
+        {
+            var excuting_ohtc_cmd = cmdBLL.getCMD_OHTCByMCScmdID(CMD_ID);
+            return excuting_ohtc_cmd;
+        }
 
         public bool put(ACMD_MCS ortherObj)
         {
