@@ -3494,7 +3494,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                                 else
                                 {
-                                    scApp.CMDBLL.checkMCS_TransferCommand();
+                                    //scApp.CMDBLL.checkMCS_TransferCommand();  //2021.11.8 marked
                                     //scApp.VehicleBLL.DoIdleVehicleHandle_NoAction(eqpt.VEHICLE_ID);
                                 }
                             }
