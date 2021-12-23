@@ -627,12 +627,14 @@ namespace com.mirle.ibg3k0.bc.winform
         /// The menu strip1
         /// </summary>
         private System.Windows.Forms.MenuStrip menuStrip1;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_MAINTENANCE_FUN)]
         private System.Windows.Forms.ToolStripMenuItem mataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changePasswordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uASToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem operatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logInToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_OPERATION_FUN)]
         private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zh_twToolStripMenuItem;
@@ -640,8 +642,10 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem tipMessageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem communectionStatusToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_MAINTENANCE_FUN)]
         private System.Windows.Forms.ToolStripMenuItem engineerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_ENGINEER_FUN)]
         private System.Windows.Forms.ToolStripMenuItem engineerToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem engineeringModeToolStripMenuItem;
@@ -649,13 +653,16 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem languageChangeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zhTwToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem enUSToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_MAINTENANCE_FUN)]
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sectionDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hostConnectionToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_OPERATION_FUN)]
         private System.Windows.Forms.ToolStripMenuItem maintainDeviceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem transferCommandToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_ENGINEER_FUN)]
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reserveInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 搬送模擬ToolStripMenuItem;

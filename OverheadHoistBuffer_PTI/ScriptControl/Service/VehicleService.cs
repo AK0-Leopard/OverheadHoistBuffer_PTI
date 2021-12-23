@@ -3276,40 +3276,77 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (recive_str.CmpStatus == CompleteStatus.CmpStatusInterlockError)
                 {
                     SpinWait.SpinUntil(() => false, 1000);
-                    if (eqpt.IsDoubleStorageHappnding)
-                    {
-                        TransferServiceLogger.Info
-                        (
-                            $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsDoubleStorageHappnding)}"
-                        );
-
-                        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
-                                eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE);
-                    }
-                    else if (eqpt.IsEmptyRetrievalHappnding)
-                    {
-                        TransferServiceLogger.Info
-                        (
-                            $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsEmptyRetrievalHappnding)}"
-                        );
-
-                        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
-                               eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL);
-                    }
-                    else
-                    {
-                        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
-                            eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_InterlockError,
-                            out ACMD_OHTC cmdOhtc);
-                        //B0.03
-                        var action_port_id = getActionPortID(eqpt, cmdOhtc);
-                        string msg = $"vh:{vh_id} interlock error happend-port:{action_port_id}";
-                        BCFApplication.onWarningMsg(msg);
-                        scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString(), action_port_id);
-                        scApp.TransferService.OHBC_AlarmCleared(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString());
-                        //
-                    }
+                    scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                        eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_InterlockError,
+                        out ACMD_OHTC cmdOhtc);
+                    //B0.03
+                    var action_port_id = getActionPortID(eqpt, cmdOhtc);
+                    string msg = $"vh:{vh_id} interlock error happend-port:{action_port_id}";
+                    BCFApplication.onWarningMsg(msg);
+                    scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString(), action_port_id);
+                    scApp.TransferService.OHBC_AlarmCleared(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString());
+                    //
                 }
+                else if (recive_str.CmpStatus == CompleteStatus.CmpStatusIddoubleStorage)
+                {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    TransferServiceLogger.Info
+                    (
+                        $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsDoubleStorageHappnding)}"
+                    );
+
+                    scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                            eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE);
+                }
+                else if (recive_str.CmpStatus == CompleteStatus.CmpStatusIdemptyRetrival)
+                {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    TransferServiceLogger.Info
+                    (
+                        $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsEmptyRetrievalHappnding)}"
+                    );
+
+                    scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                           eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL);
+                }
+
+                //if (recive_str.CmpStatus == CompleteStatus.CmpStatusInterlockError)
+                //{
+                //    SpinWait.SpinUntil(() => false, 1000);
+                //    if (eqpt.IsDoubleStorageHappnding)
+                //    {
+                //        TransferServiceLogger.Info
+                //        (
+                //            $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsDoubleStorageHappnding)}"
+                //        );
+
+                //        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                //                eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_DOUBLE_STORAGE);
+                //    }
+                //    else if (eqpt.IsEmptyRetrievalHappnding)
+                //    {
+                //        TransferServiceLogger.Info
+                //        (
+                //            $"{DateTime.Now.ToString("HH:mm:ss.fff")} OHT >> OHB| {nameof(eqpt.IsEmptyRetrievalHappnding)}"
+                //        );
+
+                //        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                //               eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL);
+                //    }
+                //    else
+                //    {
+                //        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
+                //            eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_InterlockError,
+                //            out ACMD_OHTC cmdOhtc);
+                //        //B0.03
+                //        var action_port_id = getActionPortID(eqpt, cmdOhtc);
+                //        string msg = $"vh:{vh_id} interlock error happend-port:{action_port_id}";
+                //        BCFApplication.onWarningMsg(msg);
+                //        scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString(), action_port_id);
+                //        scApp.TransferService.OHBC_AlarmCleared(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_INTERLOCK_ERROR).ToString());
+                //        //
+                //    }
+                //}
                 else if (recive_str.CmpStatus == CompleteStatus.CmpStatusVehicleAbort)
                 {
                     if (is_direct_finish)

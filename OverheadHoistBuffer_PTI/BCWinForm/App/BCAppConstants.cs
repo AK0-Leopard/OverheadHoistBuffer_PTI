@@ -46,6 +46,10 @@ namespace com.mirle.ibg3k0.bc.winform.App
         public const string FUNC_BUTTONCONTROL = "FUNC_BUTTONCONTROL";    //Button Control  //A0.04
         public const string FUNC_BUTTONCONTROL_CIMON = "FUNC_BUTTONCONTROL_CIMON";                        //Button Control (CIM On)
 
+        public const string FUNC_MAINTENANCE_FUN = "FUNC_MAINTENANCE_FUN";    //Host Mode Change  //A0.01
+        public const string FUNC_ENGINEER_FUN = "FUNC_ENGINEER_FUN";    //AutoLogoutTimeForm  //A0.03
+        public const string FUNC_OPERATION_FUN = "FUNC_OPERATION_FUN";    //AutoLogoutTimeForm  //A0.03
+        public const string FUNC_HIGHT_LEVEL_ACTION = "FUNC_HIGHT_LEVEL_ACTION";    //AutoLogoutTimeForm  //A0.03
         /******************************************************************/
         public const string LOGIN_USER_DEFAULT = "";
 

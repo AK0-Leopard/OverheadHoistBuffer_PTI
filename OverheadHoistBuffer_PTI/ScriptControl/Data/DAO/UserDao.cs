@@ -147,8 +147,9 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             {
                 UASUSR rtnUser = null;
                 var query = from user in conn.UASUSR
-                            where user.ADMIN_FLG == SCAppConstants.YES_FLAG.Trim()
+                            where user.USER_ID.Trim() == user_id.Trim()
                             select user;
+                rtnUser = query.SingleOrDefault();
                 conn.UASUSR.Remove(rtnUser);
                 conn.SaveChanges();
             }

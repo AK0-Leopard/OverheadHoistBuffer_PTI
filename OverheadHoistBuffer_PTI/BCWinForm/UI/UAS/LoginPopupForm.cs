@@ -96,10 +96,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI.UAS
         /// <returns>System.String.</returns>
         public string getLoginPassword() 
         {
-            if (BCFUtility.isMatche(UserIDTBx.Text, "ADMIN"))
-            {
-                return "hello@123";
-            }
+            //if (BCFUtility.isMatche(UserIDTBx.Text, "ADMIN"))
+            //{
+            //    return "hello@123";
+            //}
             return PwdTBx.Text;
         }
 
