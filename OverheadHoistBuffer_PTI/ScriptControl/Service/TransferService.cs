@@ -1828,7 +1828,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                         string cmdSource = cst.Carrier_LOC.Trim();
                                         string cmdDest = shelfID;
 
-                                        //Manual_InsertCmd(cmdSource, cmdDest, 5, "cstTimeOut", CmdType.OHBC); //PTI-- PTI認為等MCS給予下一筆命令即可，不要自己搬。
+                                        //2021.12.28 Hsinyu Chang: PTI還是需要自動入庫
+                                        Manual_InsertCmd(cmdSource, cmdDest, 5, "cstTimeOut", CmdType.OHBC); //PTI-- PTI認為等MCS給予下一筆命令即可，不要自己搬。
 
                                         //portINIData[cst.Carrier_LOC.Trim()].timeOutForAutoInZone = "";
                                     }
