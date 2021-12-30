@@ -39,10 +39,16 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             scApp = app;
             List<AEQPT> eqpts = app.getEQObjCacheManager().getAllEquipment();
-           
+            foreach (var eqpt in eqpts)
+            {
+                if (eqpt is IMaintainDevice)
+                {
+                    IMaintainDevice maintainDevice = eqpt as IMaintainDevice;
+                    maintainDevices.Add(maintainDevice);
+                }
+            }
             //由於7/1更新完OHTC版本後，現場有發生一直跳Nats的例外導致最後程序也無法進行位置更新的問題
             //因此先取消該部分的Nats事件通知 //20210802 Kevin Wei
-
             //registerMTxStatusChengeEvent(eqpts);
 
             VehicleService = app.VehicleService;
@@ -53,39 +59,34 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private void registerMTxStatusChengeEvent(List<AEQPT> eqpts)
         {
-            foreach (var eqpt in eqpts)
+            foreach (var maintainDevice in maintainDevices)
             {
-                if (eqpt is IMaintainDevice)
+                if (maintainDevice is MaintainSpace)
                 {
-                    IMaintainDevice maintainDevice = eqpt as IMaintainDevice;
-                    maintainDevices.Add(maintainDevice);
-                    if (maintainDevice is MaintainSpace)
-                    {
-                        MaintainSpace maintainSpace = eqpt as MaintainSpace;
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Plc_Link_Stat), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Is_Eq_Alive), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.MTxMode), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Interlock), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentCarID), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentPreCarOurDistance), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.SynchronizeTime), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CarOutInterlock), PublishMTSInfo);
-                        maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CarInMoving), PublishMTSInfo);
-                    }
-                    else if (maintainDevice is MaintainLift)
-                    {
-                        MaintainLift maintainLift = eqpt as MaintainLift;
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Plc_Link_Stat), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Is_Eq_Alive), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.MTxMode), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Interlock), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CurrentCarID), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.MTLLocation), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CurrentPreCarOurDistance), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.SynchronizeTime), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CarOutInterlock), PublishMTLInfo);
-                        maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CarInMoving), PublishMTLInfo);
-                    }
+                    MaintainSpace maintainSpace = maintainDevice as MaintainSpace;
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Plc_Link_Stat), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Is_Eq_Alive), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.MTxMode), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.Interlock), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentCarID), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CurrentPreCarOurDistance), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.SynchronizeTime), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CarOutInterlock), PublishMTSInfo);
+                    maintainSpace.addEventHandler(nameof(MTLService), nameof(maintainSpace.CarInMoving), PublishMTSInfo);
+                }
+                else if (maintainDevice is MaintainLift)
+                {
+                    MaintainLift maintainLift = maintainDevice as MaintainLift;
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Plc_Link_Stat), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Is_Eq_Alive), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.MTxMode), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.Interlock), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CurrentCarID), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.MTLLocation), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CurrentPreCarOurDistance), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.SynchronizeTime), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CarOutInterlock), PublishMTLInfo);
+                    maintainLift.addEventHandler(nameof(MTLService), nameof(maintainLift.CarInMoving), PublishMTLInfo);
                 }
             }
 
