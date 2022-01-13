@@ -2158,7 +2158,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (is_unknow_old_name_cst)
                         {
                             //new_carrier_id = "ERROR1";
-                            new_carrier_id = "UNKF" + eqpt.VEHICLE_ID.Trim() + scApp.TransferService.GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
+                            new_carrier_id = "UNK" + eqpt.VEHICLE_ID.Trim() + scApp.TransferService.GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
 
                             scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
                         }
@@ -2653,7 +2653,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
             }
         }
-        const string CST_ID_ERROR_RENAME_SYMBOL = "UNKF";
+        const string CST_ID_ERROR_RENAME_SYMBOL = "UNK";
         const string CST_ID_ERROR_SYMBOL = "ERR";
         public Logger TransferServiceLogger = NLog.LogManager.GetLogger("TransferServiceLogger");
         private void TransferReportInitial(BCFApplication bcfApp, AVEHICLE eqpt, int seq_num, EventType eventType, string boxID)
@@ -2769,7 +2769,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             else
                             {
                                 string new_carrier_id =
-                                  $"UNKF{eqpt.Real_ID.Trim()}{DateTime.Now.ToString(SCAppConstants.TimestampFormat_12)}";
+                                  $"UNK{eqpt.Real_ID.Trim()}{DateTime.Now.ToString(SCAppConstants.TimestampFormat_12)}";
                                 final_cst_id = new_carrier_id;
                                 scApp.TransferService.OHBC_InsertCassette("", new_carrier_id, eqpt.VEHICLE_ID, "TransferReportInitial");
                                 TransferServiceLogger.Info($"vh id:{eqpt.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為unknwon:{boxID}，故將其rename為unknown id:{final_cst_id}");

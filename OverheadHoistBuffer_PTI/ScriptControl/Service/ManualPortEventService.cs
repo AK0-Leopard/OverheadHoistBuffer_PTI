@@ -200,7 +200,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             var year = DateTime.Now.Year % 100;
             var date = string.Format("{0}{1:00}{2:00}{3:00}{4:00}", year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute);
-            var id = "UNKD" + carrierId + date + string.Format("{0:00}", DateTime.Now.Second);
+            var id = "UNKDP" + carrierId + date + string.Format("{0:00}", DateTime.Now.Second);
 
             return id;
         }

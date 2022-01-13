@@ -2720,7 +2720,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             }
                             else
                             {
-                                if (ScanCstData.BOXID.Contains("UNKF"))
+                                if (ScanCstData.BOXID.Contains("UNK"))
                                 {
                                     scanReportType = ScanReportType.failed;
                                 }
@@ -3232,7 +3232,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     else
                     {
-                        if (dbCstData.BOXID.Contains("UNKF"))
+                        if (dbCstData.BOXID.Contains("UNK"))
                         {
                             //ohtBoxData.CSTID = dbCstData.CSTID;
                             ohtBoxData.CSTID = "";
@@ -5691,7 +5691,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public string CarrierReadFail(string loc)   //卡匣讀不到
         {
-            return "UNKF" + loc.Trim() + GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
+            return "UNK" + loc.Trim() + GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
         }
         public string CarrierReadFailAtTargetAGV(string loc)   //卡匣讀不到
         {
@@ -5699,7 +5699,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public string CarrierReadduplicate(string bcrcsid)  //卡匣重複
         {
-            return "UNKD" + bcrcsid + GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
+            return "UNKDP" + bcrcsid + GetStDate() + string.Format("{0:00}", DateTime.Now.Second);
         }
         public bool ase_ID_Check(string str)    //ASE CST BOX 帳料命名規則
         {
@@ -6192,7 +6192,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         datainfo.CSTState = E_CSTState.Installed;
                         cassette_dataBLL.insertCassetteData(datainfo);
-                        if (datainfo.BOXID.Contains("UNKF"))
+                        if (datainfo.BOXID.Contains("UNK"))
                         {
                             //reportBLL.ReportCarrierBoxIDRename(datainfo.CSTID, datainfo.BOXID, datainfo.Carrier_LOC);
                             //reportBLL.ReportCarrierRemovedCompleted(portCSTData.CSTID, portCSTData.BOXID); //PTI需要上報
@@ -6230,7 +6230,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     datainfo.CSTState = E_CSTState.Transferring;
                     cassette_dataBLL.insertCassetteData(datainfo);
 
-                    if (datainfo.BOXID.Contains("UNKF"))
+                    if (datainfo.BOXID.Contains("UNK"))
                     {
                         reportBLL.ReportCarrierBoxIDRename(datainfo.CSTID, datainfo.BOXID, datainfo.Carrier_LOC);
                     }
@@ -6453,7 +6453,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 var dbCstData = cassette_dataBLL.loadCassetteData()
                     .Where(data => data.CSTID == ""
                             && isUnitType(data.Carrier_LOC, UnitType.SHELF)
-                            && (data.BOXID.Contains("UNKF") == false)   //200623 SCC+ 不要補 "UNKF" (讀不到) 的 空BOX 到 AGVPort 
+                            && (data.BOXID.Contains("UNK") == false)   //200623 SCC+ 不要補 "UNKF" (讀不到) 的 空BOX 到 AGVPort 
                             && cmdBLL.GetCmdDataBySource(data.Carrier_LOC) == null
                     ).OrderBy(cst => scApp.ShelfDefBLL.GetDistance(cst.Carrier_LOC, portData.ADR_ID))
                     .ToList();
@@ -7369,7 +7369,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
             if (redisEnable)
             {
-                if (ase_ID_Check(boxID) && cstID.Contains("UNKF"))
+                if (ase_ID_Check(boxID) && cstID.Contains("UNK"))
                 {
                     var redis = cassette_dataBLL.redis.tryGetCSTIDByBoxID(boxID);
 
