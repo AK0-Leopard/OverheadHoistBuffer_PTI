@@ -782,6 +782,16 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                 }
 
+                //PTI不接受source = dest的命令，必須全部拒絕
+                if ((HostSource == HostDestination) &&
+                    (string.IsNullOrWhiteSpace(HostSource) == false) && (string.IsNullOrWhiteSpace(HostDestination) == false))
+                {
+                    isSuccess = false;
+                    check_result = "Source and destination is the same";
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "MCS >> OHB|S2F50: source/destination are invalid" + check_result);
+                    return SECSConst.HCACK_Rejected;
+                }
+
                 checkcode = SECSConst.HCACK_Confirm;
 
                 return checkcode;
