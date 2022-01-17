@@ -1509,7 +1509,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         else
                         {
                             sourcePortType = AreSourceEnable(mcsCmd.HOSTSOURCE);
-                            if (sourcePortType && isCVPort(mcsCmd.HOSTSOURCE))
+                            if (sourcePortType && isCVPort(mcsCmd.HOSTSOURCE) && !mcsCmd.BOX_ID.Trim().StartsWith("UNK"))
                             {
                                 PortPLCInfo sourcePort = GetPLC_PortData(mcsCmd.HOSTSOURCE);
                                 if (sourcePort.BoxID.Trim() != mcsCmd.BOX_ID.Trim())
