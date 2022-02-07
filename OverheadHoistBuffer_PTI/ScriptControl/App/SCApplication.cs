@@ -2420,6 +2420,9 @@ namespace com.mirle.ibg3k0.sc.App
         public static Boolean isForcedRejectReserve = false;
 
         public static bool isUsingFindStartAdr = false;
+
+        public static bool isOpenAdjustmentParkingZone = false;
+
         public enum CycleRunType
         {
             AGVStation,

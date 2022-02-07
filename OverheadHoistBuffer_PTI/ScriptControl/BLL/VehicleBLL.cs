@@ -2353,6 +2353,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 var vhs = eqObjCacheManager.getAllVehicle();
                 return vhs;
             }
+            public List<AVEHICLE> loadIdleVhs()
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                vhs = vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.NoCommand).ToList();
+                return vhs;
+            }
             public List<AVEHICLE> loadVhsBySegmentID(string segmentID)
             {
                 var vhs = eqObjCacheManager.getAllVehicle();

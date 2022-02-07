@@ -46,6 +46,8 @@ namespace com.mirle.ibg3k0.sc.Common
         //BlockMaster
         private List<ABLOCKZONEMASTER> BlockZoneMasters;
         private List<AHIDZONEMASTER> HIDZoneMasters;
+        private List<APARKZONEDETAIL> ParkZoneDetails;
+        private List<APARKZONEMASTER> ParkZoneMasters;
         private CommonInfo CommonInfo;
 
         private CommObjCacheManager() { }
@@ -74,6 +76,10 @@ namespace com.mirle.ibg3k0.sc.Common
             Sections = scApp.MapBLL.loadAllSection();
             BlockZoneMasters = scApp.MapBLL.loadAllBlockZoneMaster();
             HIDZoneMasters = scApp.HIDBLL.loadAllHidZoneMaster();
+            ParkZoneDetails = scApp.ParkBLL.LoadAllParkZoneDetails();
+            ParkZoneMasters = scApp.ParkBLL.LoadAllParkZoneMaster();
+            ParkZoneDetails.ForEach(detail => SCUtility.TrimAllParameter(detail));
+            ParkZoneMasters.ForEach(master => SCUtility.TrimAllParameter(master));
 
             ReserveEnhanceInfos = scApp.ReserveEnhanceInfoDao.loadReserveInfos(scApp);
             foreach (ASEGMENT segment in Segments)
@@ -87,6 +93,10 @@ namespace com.mirle.ibg3k0.sc.Common
             foreach (AADDRESS addresses in Addresses)
             {
                 addresses.initialAddressType();
+            }
+            foreach (var park_zone_master in ParkZoneMasters)
+            {
+                park_zone_master.setParkDetails(ParkZoneDetails);
             }
             CommonInfo = new CommonInfo();
         }
@@ -163,6 +173,15 @@ namespace com.mirle.ibg3k0.sc.Common
         public List<AHIDZONEMASTER> getHIDMasterZone()
         {
             return HIDZoneMasters;
+        }
+
+        public List<APARKZONEMASTER> LoadParkZoneMater()
+        {
+            return ParkZoneMasters.ToList();
+        }
+        public List<APARKZONEDETAIL> LoadParkZoneDetail()
+        {
+            return ParkZoneDetails.ToList();
         }
 
         #region 將最新物件資料，放置入Cache的方法

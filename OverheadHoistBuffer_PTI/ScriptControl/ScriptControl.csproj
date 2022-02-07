@@ -937,6 +937,8 @@
     <Compile Include="Data\VO\PartialVo\ACMD_OHTC.cs" />
     <Compile Include="Data\VO\PartialVo\AADDRESS.cs" />
     <Compile Include="Data\VO\PartialVo\ABLOCKZONEMASTER.cs" />
+    <Compile Include="Data\VO\PartialVo\APARKZONEDETAIL.cs" />
+    <Compile Include="Data\VO\PartialVo\APARKZONEMASTER.cs" />
     <Compile Include="Data\VO\PartialVo\ASECTION.cs" />
     <Compile Include="Data\VO\PartialVo\ASEGMENT.cs" />
     <Compile Include="Data\VO\PartialVo\APORTSTATION.cs" />
