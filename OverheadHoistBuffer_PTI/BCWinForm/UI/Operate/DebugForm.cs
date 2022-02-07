@@ -118,7 +118,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             DebugParameter.isForcedPassReserve = cb_FroceReservePass.Checked;
         }
-
+        private void cbParkZoneAdjustment_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.isOpenAdjustmentParkingZone = cbParkZoneAdjustment.Checked;
+        }
 
         AVEHICLE noticeCar = null;
         string vh_id = null;

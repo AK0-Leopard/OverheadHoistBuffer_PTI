@@ -350,6 +350,7 @@
             this.ck_SaftyCheckComplete = new System.Windows.Forms.CheckBox();
             this.ck_SaftyCheckRequest = new System.Windows.Forms.CheckBox();
             this.ck_Alive = new System.Windows.Forms.CheckBox();
+            this.cbParkZoneAdjustment = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -628,6 +629,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.cbParkZoneAdjustment);
             this.groupBox4.Controls.Add(this.btn_initialTest);
             this.groupBox4.Controls.Add(this.label76);
             this.groupBox4.Controls.Add(this.num_vh_y);
@@ -2639,7 +2641,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4262,6 +4264,17 @@
             this.ck_Alive.UseVisualStyleBackColor = true;
             this.ck_Alive.CheckedChanged += new System.EventHandler(this.ck_Alive_CheckedChanged);
             // 
+            // cbParkZoneAdjustment
+            // 
+            this.cbParkZoneAdjustment.AutoSize = true;
+            this.cbParkZoneAdjustment.Location = new System.Drawing.Point(831, 148);
+            this.cbParkZoneAdjustment.Name = "cbParkZoneAdjustment";
+            this.cbParkZoneAdjustment.Size = new System.Drawing.Size(259, 26);
+            this.cbParkZoneAdjustment.TabIndex = 61;
+            this.cbParkZoneAdjustment.Text = "Parking Zone Adjustment";
+            this.cbParkZoneAdjustment.UseVisualStyleBackColor = true;
+            this.cbParkZoneAdjustment.CheckedChanged += new System.EventHandler(this.cbParkZoneAdjustment_CheckedChanged);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -4668,5 +4681,6 @@
         private System.Windows.Forms.NumericUpDown num_vh_x;
         private System.Windows.Forms.CheckBox cb_isUsingFindStartAdr;
         private Components.uctlButton btn_initialTest;
+        private System.Windows.Forms.CheckBox cbParkZoneAdjustment;
     }
 }
