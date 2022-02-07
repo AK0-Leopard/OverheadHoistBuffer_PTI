@@ -1797,6 +1797,12 @@ namespace com.mirle.ibg3k0.sc.Service
                             success = true;
 
                             //portINIData[cst.Carrier_LOC.Trim()].timeOutForAutoInZone = scApp.ZoneDefBLL.loadZoneData().FirstOrDefault().ZoneID;
+                            //2022.02.07 cancel executing command here
+                            ACMD_MCS cmd = cmdBLL.getCMD_ByBoxID(cst.BOXID);
+                            if (cmd != null && cmd.TRANSFERSTATE == E_TRAN_STATUS.Queue)
+                            {
+                                Manual_DeleteCmd(cmd.CMD_ID, "Already timed out but still cannot unload to port. Cancel this command now. Will create another unload command later.");
+                            }
                         }
 
                         if (cstTimeOut != 0 && success)
