@@ -2807,6 +2807,23 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                         //如果有找到車子則將產生一筆Transfer command
                         bool isSuccess = true;
+
+                        //2021.10.26 Hsinyu Chang 命令改派時要先取消OHTC command
+                        if (isSuccess && !SCUtility.isEmpty(bestSuitableVh.OHTC_CMD))
+                        {
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Command shift start... MCSCommandID: {mcs_cmd.CMD_ID}, Vehicle: {bestSuitableVh.VEHICLE_ID}, Executing OHTCCommandID: {bestSuitableVh.OHTC_CMD}");
+                            //AVEHICLE VhCatchObj = scApp.getEQObjCacheManager().getVehicletByVHID(bestSuitableVh.VEHICLE_ID);
+                            isSuccess = bestSuitableVh.sned_Str37(bestSuitableVh.OHTC_CMD, CMDCancelType.CmdCancel);
+                            //再命令取消失敗後，要去確認一下目前VH的AVEHICLE Table跟ACMD_OHTC Table是否有發生已無ACMD_OHTC
+                            //但AVEHICLE Table卻還有殘留的資料，
+                            //如果沒有匹配則需要強制更新 AVEHICLE Table，使它資料一致
+                            if (!isSuccess)
+                            {
+                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Command shift failed... CommandID: {mcs_cmd.CMD_ID}, Vehicle: {bestSuitableVh.VEHICLE_ID}");
+                                Task.Run(() => scApp.VehicleService.vhCommandExcuteStatusCheck(bestSuitableVh.VEHICLE_ID));
+                            }
+                        }
+
                         isSuccess &= scApp.CMDBLL.doCreatTransferCommand(best_suitable_vehicle_id, mcs_cmd.CMD_ID, mcs_cmd.CARRIER_ID,
                                             cmd_type,
                                             hostsource,
@@ -2820,19 +2837,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                             if (mcs_cmd.CRANE != best_suitable_vehicle_id)
                             {
                                 updateCMD_MCS_CRANE(mcs_cmd.CMD_ID, best_suitable_vehicle_id);
-                            }
-                            //2021.10.26 Hsinyu Chang 命令改派時要先取消OHTC command
-                            if (isSuccess && !SCUtility.isEmpty(bestSuitableVh.OHTC_CMD))
-                            {
-                                //AVEHICLE VhCatchObj = scApp.getEQObjCacheManager().getVehicletByVHID(bestSuitableVh.VEHICLE_ID);
-                                isSuccess = bestSuitableVh.sned_Str37(bestSuitableVh.OHTC_CMD, CMDCancelType.CmdCancel);
-                                //再命令取消失敗後，要去確認一下目前VH的AVEHICLE Table跟ACMD_OHTC Table是否有發生已無ACMD_OHTC
-                                //但AVEHICLE Table卻還有殘留的資料，
-                                //如果沒有匹配則需要強制更新 AVEHICLE Table，使它資料一致
-                                //if (!isSuccess)
-                                //{
-                                //    Task.Run(() => scApp.VehicleService.vhCommandExcuteStatusCheck(bestSuitableVh.VEHICLE_ID));
-                                //}
                             }
                         }
                         //如果產生完命令後，發現該Vh正在執行OHTC的移動命令時，則需要將該命令Cancel

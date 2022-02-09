@@ -5019,5 +5019,47 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
         }
+
+        /// <summary>
+        /// 如果在車子已有回報是無命令狀態下，但在OHXC的AVEHICLE欄位"CMD_OHTC"卻還有命令時，
+        /// 則需要在檢查在ACMD_OHTC是否已無命令，如果也沒有的話，則要將AVEHICLE改成正確的
+        /// </summary>
+        /// <param name="vh"></param>
+        public void vhCommandExcuteStatusCheck(string vhID)
+        {
+            try
+            {
+                AVEHICLE vh = scApp.VehicleBLL.cache.getVhByID(vhID);
+                VHActionStatus actionStat = vh.ACT_STATUS;
+                bool has_ohtc_cmd = !SCUtility.isEmpty(vh.OHTC_CMD);
+                if (has_ohtc_cmd &&
+                    actionStat == VHActionStatus.NoCommand)
+                {
+                    bool has_excuted_cmd_in_cmd_table = scApp.CMDBLL.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID);
+                    if (has_excuted_cmd_in_cmd_table)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"[AVEHICLE - Act Status:{actionStat}] with [AVEHICLE - OHTC_CMD:{SCUtility.Trim(vh.OHTC_CMD, true)}] status mismatch," +
+                                 $"but in Table: CMD_OHTC has cmd excuted, pass this one check",
+                           VehicleID: vh?.VEHICLE_ID,
+                           CarrierID: vh?.CST_ID);
+                        //Not thing...
+                    }
+                    else
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"[AVEHICLE - Act Status:{actionStat}] with [AVEHICLE - OHTC_CMD:{SCUtility.Trim(vh.OHTC_CMD, true)}] status mismatch," +
+                                 $"force update vehicle excute status",
+                           VehicleID: vh?.VEHICLE_ID,
+                           CarrierID: vh?.CST_ID);
+                        scApp.VehicleBLL.updateVehicleExcuteCMD(vh.VEHICLE_ID, string.Empty, string.Empty);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
     }
 }

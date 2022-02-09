@@ -891,10 +891,12 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                                 #endregion
                                 #region 搬送命令
-                                //2021.10.26 順途搬送檢查
+                                //2021.10.26 同bay搬送檢查
                                 var check_can_after_on_the_way_result = checkHasVhAfterOnTheWay(v, transferCmdData);
                                 if (check_can_after_on_the_way_result.hasVh)
                                 {
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran.CMD_ID}" +
+                                        $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran.CRANE}");
                                     SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
                                     SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
                                 }
@@ -1073,11 +1075,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 var same_segment_tran_cmds = transferCmdData.Where(cmd => SCUtility.isMatche(queueCmd.getHostSourceSegment(scApp.PortStationBLL, scApp.SectionBLL),
                                                                           cmd.getHostDestSegment(scApp.PortStationBLL, scApp.SectionBLL))).ToList();
-                //確認確認命令是否可以順途搬送
+                //確認確認命令是否可以同bay搬送
+                if (same_segment_tran_cmds != null && same_segment_tran_cmds.Count > 0)
+                {
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"有同bay搬送候選命令... MCSCommandID: {queueCmd.CMD_ID}");
+                }
                 foreach (var transfer_cmd in same_segment_tran_cmds.ToList())
                 {
                     if (transfer_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE)
                     {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因尚未到load complete");
                         same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
@@ -1085,28 +1092,27 @@ namespace com.mirle.ibg3k0.sc.Service
                     string transfering_cmd_adr = transfer_cmd.getHostDestAdr(scApp.PortStationBLL);
                     if (SCUtility.isEmpty(transfering_cmd_adr))
                     {
-                        same_segment_tran_cmds.Remove(transfer_cmd);
-                        continue;
-                    }
-                    if (SCUtility.isEmpty(transfering_cmd_adr))
-                    {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因目的address不明");
                         same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
                     var tran_dest_to_queue_source_result = scApp.GuideBLL.IsRoadWalkable(transfering_cmd_adr, queue_cmd_adr_id);
                     if (!tran_dest_to_queue_source_result.isSuccess)
                     {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因上一個To - 下一個From路徑不通");
                         same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
                     var queue_source_to_tran_dest_result = scApp.GuideBLL.IsRoadWalkable(queue_cmd_adr_id, transfering_cmd_adr);
                     if (!queue_source_to_tran_dest_result.isSuccess)
                     {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因下一個From - 上一個To路徑不通");
                         same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
                     if (tran_dest_to_queue_source_result.distance > queue_source_to_tran_dest_result.distance)
                     {
+                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因上一個To - 下一個From距離太遠");
                         same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
