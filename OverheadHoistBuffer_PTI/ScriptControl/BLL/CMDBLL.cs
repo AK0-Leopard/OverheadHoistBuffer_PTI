@@ -5912,12 +5912,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
-
                     isSuccess &= scApp.CMDBLL.doCreatTransferCommand(vh_id, cmd_mcs_id, carrier_id,
-                                        E_CMD_TYPE.LoadUnload,
-                                        from_adr,
-                                        to_adr,
-                                        rpiority_sum, 0);
+                        E_CMD_TYPE.LoadUnload,
+                        hostsource,
+                        hostdest, rpiority_sum, 0,
+                        source_address: from_adr, destination_address: to_adr);
                     //在找到車子後先把它改成PreInitial，防止Timer再找到該筆命令
                     if (isSuccess)
                     {
