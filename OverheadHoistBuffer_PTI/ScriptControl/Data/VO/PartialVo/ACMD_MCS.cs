@@ -335,7 +335,7 @@ namespace com.mirle.ibg3k0.sc
         #region 順途搬送
         public string getHostSourceSegment(BLL.PortStationBLL portStationBLL, BLL.SectionBLL sectionBLL)
         {
-            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTSOURCE);
+            var port_st = portStationBLL.OperateCatch.getPortStation(HOSTSOURCE);
             if (port_st == null) return "";
             var sections = sectionBLL.cache.GetSectionsByToAddress(port_st.ADR_ID);
             if (sections == null || sections.Count == 0) return "";
@@ -343,7 +343,7 @@ namespace com.mirle.ibg3k0.sc
         }
         public string getHostDestSegment(BLL.PortStationBLL portStationBLL, BLL.SectionBLL sectionBLL)
         {
-            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTDESTINATION);
+            var port_st = portStationBLL.OperateCatch.getPortStation(HOSTDESTINATION);
             if (port_st == null) return "";
             var sections = sectionBLL.cache.GetSectionsByToAddress(port_st.ADR_ID);
             if (sections == null || sections.Count == 0) return "";
@@ -352,14 +352,14 @@ namespace com.mirle.ibg3k0.sc
 
         public string getHostSourceAdr(BLL.PortStationBLL portStationBLL)
         {
-            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTSOURCE);
+            var port_st = portStationBLL.OperateCatch.getPortStation(HOSTSOURCE);
             if (port_st == null) return "";
             return port_st.ADR_ID;
         }
 
         public string getHostDestAdr(BLL.PortStationBLL portStationBLL)
         {
-            var port_st = portStationBLL.OperateCatch.getPortStationByID(HOSTDESTINATION);
+            var port_st = portStationBLL.OperateCatch.getPortStation(HOSTDESTINATION);
             if (port_st == null) return "";
             return port_st.ADR_ID;
         }
