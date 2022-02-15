@@ -892,7 +892,9 @@ namespace com.mirle.ibg3k0.sc.Service
                                 #endregion
                                 #region 搬送命令
                                 //2021.10.26 同bay搬送檢查
+                                var beforeWayExecutingCommand = checkHasVhBeforeOnTheWay(v, transferCmdData);
                                 var check_can_after_on_the_way_result = checkHasVhAfterOnTheWay(v, transferCmdData);
+                                bool pauseBeforeWayCommand = false;
                                 if (check_can_after_on_the_way_result.hasVh)
                                 {
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran.CMD_ID}" +
@@ -900,7 +902,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                     SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
                                     SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
                                 }
-                                if (!check_can_after_on_the_way_result.hasVh && TransferCommandHandler(v))
+                                else if (beforeWayExecutingCommand != null)
+                                {
+                                    string vehicle = beforeWayExecutingCommand.CRANE;
+                                    pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
+                                    if (pauseBeforeWayCommand)
+                                        SetTransferCommandPreAssignVh(v.CMD_ID, vehicle);
+                                }
+                                if (!check_can_after_on_the_way_result.hasVh && !pauseBeforeWayCommand && TransferCommandHandler(v))
                                 {
                                     cmdFail = false;
                                     OHBC_OHT_QueueCmdTimeOutCmdIDCleared(v.CMD_ID);
@@ -1133,6 +1142,88 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        private ACMD_MCS checkHasVhBeforeOnTheWay(ACMD_MCS queueCmd, List<ACMD_MCS> transferCmdData)
+        {
+            try
+            {
+                ACMD_MCS beforeTheWayCommand = null;
+                var candidateTransferCommands = transferCmdData.Where(cmd => cmd.COMMANDSTATE == ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE).ToList();
+
+                if (candidateTransferCommands != null)
+                {
+                    TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} MCSCommandID {queueCmd} 有前順途候選命令");
+                    //確認命令是否可以同bay搬送
+                    foreach (var candidateTransferCommand in candidateTransferCommands)
+                    {
+                        string cmdLoadAddress = queueCmd.getHostSourceAdr(scApp.PortStationBLL);
+                        string cmdUnloadAddress = queueCmd.getHostDestAdr(scApp.PortStationBLL);
+                        var guideInfo = scApp.GuideBLL.getGuideInfo(cmdLoadAddress, cmdUnloadAddress);
+
+                        int indexOfFirstSection = candidateTransferCommand.RouteSection_Vehicle2From.BinarySearch(guideInfo.guideSectionIds.First());
+                        if (indexOfFirstSection < 0) continue;
+
+                        int i = indexOfFirstSection, guideIndex = 0;
+                        while (i < candidateTransferCommand.RouteSection_Vehicle2From.Count() &&
+                            guideIndex < guideInfo.guideSectionIds.Count())
+                        {
+                            if (candidateTransferCommand.RouteSection_Vehicle2From[i] != guideInfo.guideSectionIds[guideIndex])
+                                break;
+                            i++;
+                            guideIndex++;
+                        }
+                        if (guideIndex == guideInfo.guideSectionIds.Count())
+                        {
+                            TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} MCSCommandID {queueCmd}，前順途命令{candidateTransferCommand} OK");
+                            beforeTheWayCommand = candidateTransferCommand;
+                            break;
+                        }
+                        else
+                        {
+                            TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} MCSCommandID {queueCmd} 和執行中命令{candidateTransferCommand} 路徑不完全重合，排除");
+                        }
+                    }
+                }
+                return beforeTheWayCommand;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return null;
+            }
+        }
+
+        private bool startPauseCommandBeforeOnTheWay(ACMD_MCS executingMCSCommand)
+        {
+            try
+            {
+                ACMD_OHTC excuting_cmd_ohtc = executingMCSCommand.getExcuteCMD_OHTC(scApp.CMDBLL);
+                string excuting_cmd_id = SCUtility.Trim(excuting_cmd_ohtc.CMD_ID, true);
+                string excuting_vh_id = SCUtility.Trim(excuting_cmd_ohtc.VH_ID, true);
+                AVEHICLE excuting_vh = scApp.VehicleBLL.cache.getVhByID(excuting_vh_id);
+
+                scApp.CMDBLL.updateCMD_MCS_PauseFlag(executingMCSCommand.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_BEFORE_ON_THE_WAY);
+                //下達 command cancel，若回復OK，則將產生一筆queue的命令給waitting_cmd_shift_vh
+                //並將原本執行的MCS cmd改回pre initial
+                bool is_cnacel_success = scApp.VehicleService.doAbortCommand(excuting_vh, excuting_cmd_id, CMDCancelType.CmdCancel);
+                if (!is_cnacel_success)
+                {
+                    TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} excuting vh:{excuting_vh.VEHICLE_ID}, 前順途搬送命令 ID:{executingMCSCommand.CMD_ID},CMD_OHTC:{excuting_cmd_id} 命令取消失敗");
+                    return false;
+                }
+                else
+                {
+                    //當下達成功以後，便開始等待被cancel的車子是否已經確實結束了命令
+                    TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} excuting vh:{excuting_vh.VEHICLE_ID},前順途搬送命令 ID:{executingMCSCommand.CMD_ID},CMD_OHTC:{excuting_cmd_id} 命令取消成功");
+                    bool is_success = scApp.CMDBLL.updateCMD_MCS_TranStatus2Queue(executingMCSCommand.CMD_ID);
+                    return is_success;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return false;
+            }
+        }
         private void refreshACMD_MCSInfoList(List<ACMD_MCS> currentExcuteMCSCmd)
         {
             try
