@@ -5172,12 +5172,26 @@ namespace com.mirle.ibg3k0.sc.BLL
             List<string> guide_to_dest_section_ids = null;
             List<string> guide_to_dest_address_ids = null;
             int total_cost = 0;
+
+            //2022.2.15 取得MTL segment，讓維修以外的命令不會經過MTL區
+            List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
+                .Select(eq => eq as MaintainLift)
+                .Select(mtl => mtl.DeviceSegment)
+                .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
+            List<ASECTION> MTLSections = new List<ASECTION>();
+            foreach (var segment in MTLSegments)
+            {
+                MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
+            }
+            var MTLSectionIDs = MTLSections.Select(section => section.SEC_ID);
+
             //1.取得行走路徑的詳細資料
             try
             {
                 switch (active_type)
                 {
                     case ActiveType.Loadunload:
+                        byPassSectionIDs.AddRange(MTLSectionIDs);
                         if (has_carray)
                         {
                             if (!SCUtility.isMatche(vh_current_address, dest_adr))
@@ -5201,6 +5215,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                         break;
                     case ActiveType.Load:
+                        byPassSectionIDs.AddRange(MTLSectionIDs);
                         if (!SCUtility.isMatche(vh_current_address, source_adr))
                         {
                             (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost)
@@ -5212,6 +5227,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                         break;
                     case ActiveType.Scan:
+                        byPassSectionIDs.AddRange(MTLSectionIDs);
                         if (!SCUtility.isMatche(vh_current_address, source_adr))
                         {
                             (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost)
@@ -5223,6 +5239,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                         break;
                     case ActiveType.Unload:
+                        byPassSectionIDs.AddRange(MTLSectionIDs);
                         if (!SCUtility.isMatche(vh_current_address, dest_adr))
                         {
                             (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
@@ -5234,6 +5251,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                         break;
                     case ActiveType.Move:
+                        byPassSectionIDs.AddRange(MTLSectionIDs);
                         if (!SCUtility.isMatche(vh_current_address, dest_adr))
                         {
                             (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
