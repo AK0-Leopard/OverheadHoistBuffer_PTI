@@ -1000,6 +1000,27 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             AVEHICLE firstVh = null;
             double distance = double.MaxValue;
+
+            List<string> MTLSectionIDs;
+            try
+            {
+                List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
+                    .Select(eq => eq as MaintainLift)
+                    .Select(mtl => mtl.DeviceSegment)
+                    .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
+                List<ASECTION> MTLSections = new List<ASECTION>();
+                foreach (var segment in MTLSegments)
+                {
+                    MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
+                }
+                MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                MTLSectionIDs = new List<string>();
+            }
+
             foreach (AVEHICLE vh in vhs)
             {
                 //if (SCUtility.isMatche(vh.CUR_ADR_ID, source))
@@ -1030,7 +1051,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                 }
                 //var check_result = scApp.GuideBLL.IsRoadWalkable(vh.CUR_ADR_ID, source);
-                var check_result = scApp.GuideBLL.IsRoadWalkable(start_adr, source);
+                var check_result = scApp.GuideBLL.IsRoadWalkable(start_adr, source, MTLSectionIDs);
                 if (check_result.isSuccess)
                 {
                     if (check_result.distance < distance)

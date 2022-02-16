@@ -115,14 +115,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             return segment;
         }
 
-        public (bool isSuccess, int distance) IsRoadWalkable(string startAddress, string targetAddress)
+        public (bool isSuccess, int distance) IsRoadWalkable(string startAddress, string targetAddress, List<string> byPassSectionIDs = null)
         {
             try
             {
                 if (SCUtility.isMatche(startAddress, targetAddress))
                     return (true, 0);
 
-                var guide_info = getGuideInfo(startAddress, targetAddress);
+                var guide_info = getGuideInfo(startAddress, targetAddress, byPassSectionIDs);
                 //if ((guide_info.guideAddressIds != null && guide_info.guideAddressIds.Count != 0) &&
                 //    ((guide_info.guideSectionIds != null && guide_info.guideSectionIds.Count != 0)))
                 if (guide_info.isSuccess)

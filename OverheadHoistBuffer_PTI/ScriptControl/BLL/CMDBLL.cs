@@ -5164,7 +5164,7 @@ namespace com.mirle.ibg3k0.sc.BLL
              List<string> guide_to_dest_address_ids)
             FindGuideInfo(string vh_current_address, string source_adr, string dest_adr, ActiveType active_type, bool has_carray = false, List<string> byPassSectionIDs = null)
         {
-            bool isSuccess = true;
+            bool isSuccess = false;
             List<string> guide_start_to_from_segment_ids = null;
             List<string> guide_start_to_from_section_ids = null;
             List<string> guide_start_to_from_address_ids = null;
