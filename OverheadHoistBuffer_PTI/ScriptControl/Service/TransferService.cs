@@ -1890,6 +1890,10 @@ namespace com.mirle.ibg3k0.sc.Service
 
         public bool OHT_TransportRequest(ACMD_MCS cmd)  //詢問 OHT 此筆命令是否能執行 
         {
+            //2022.2.16 預防掃到改派流程中的命令
+            if (SCUtility.isMatche(cmd.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                return false;
+
             if (string.IsNullOrWhiteSpace(cmd.RelayStation) == false)
             {
                 cmd.HOSTSOURCE = cmd.RelayStation;
