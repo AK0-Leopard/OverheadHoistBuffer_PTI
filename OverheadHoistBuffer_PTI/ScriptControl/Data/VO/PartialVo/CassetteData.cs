@@ -8,6 +8,9 @@ namespace com.mirle.ibg3k0.sc
 {
     public partial class CassetteData
     {
+        public const string CassetteData_UNKNOWN_BOOKING_SCAN = "S";
+        public const string CassetteData_NORMAL = "";
+
         public enum OHCV_STAGE
         {
             OHTtoPort = 0,  //入料進行中

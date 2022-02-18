@@ -1472,6 +1472,9 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 #region E_TRAN_STATUS.Queue
                 case E_TRAN_STATUS.Queue:
+                    //2022.2.16 預防掃到改派流程中的命令
+                    if (SCUtility.isMatche(mcsCmd.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                        return false;
 
                     bool sourcePortType = false;
                     bool destPortType = false;
@@ -1890,10 +1893,6 @@ namespace com.mirle.ibg3k0.sc.Service
 
         public bool OHT_TransportRequest(ACMD_MCS cmd)  //詢問 OHT 此筆命令是否能執行 
         {
-            //2022.2.16 預防掃到改派流程中的命令
-            if (SCUtility.isMatche(cmd.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
-                return false;
-
             if (string.IsNullOrWhiteSpace(cmd.RelayStation) == false)
             {
                 cmd.HOSTSOURCE = cmd.RelayStation;
@@ -2706,6 +2705,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (dbCstData == null)
                         {
                             dbCstData = cassette_dataBLL.loadCassetteDataByLoc(ohtName.Trim());
+                        }
+                        if (dbCstData != null)
+                        {
+                            cassette_dataBLL.UpdateCSTTypeByID(CassetteData.CassetteData_NORMAL, dbCstData.BOXID, dbCstData.CSTID);
                         }
 
                         #region Log
@@ -10123,7 +10126,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 // 1. 取得目前CST DATA中有BOX異常者
                 /**掃描目前BOX CST Data List 確認其中是否有"為UNK 且非UNKU者"若有則選中該CST**/
                 List<CassetteData> cassetteData = null;
-                cassetteData = cassette_dataBLL.LoadCassetteDataByBOXID_UNK();
+                cassetteData = cassette_dataBLL.LoadCassetteDataByBOXID_UNK()
+                    .Where(cst => cst.CSTType != CassetteData.CassetteData_UNKNOWN_BOOKING_SCAN).ToList();
                 if (cassetteData != null && cassetteData.Count > 0)
                 {
                     string unknow_box_id = string.Join(",", cassetteData.Select(cst => cst.BOXID));
@@ -10145,6 +10149,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 bool is_success = SCUtility.isMatche(result, "OK");
                                 if (is_success == true)
                                 {
+                                    cassette_dataBLL.UpdateCSTTypeByID(CassetteData.CassetteData_UNKNOWN_BOOKING_SCAN, cst.BOXID);
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"OHB >> OHB| unkwno box :{cst.BOXID},success generate scan cmd");
                                     return true;
                                 }

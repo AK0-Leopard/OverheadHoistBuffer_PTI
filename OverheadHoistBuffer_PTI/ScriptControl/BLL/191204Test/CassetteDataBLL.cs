@@ -122,6 +122,42 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return isSuccess;
         }
+
+        public bool UpdateCSTTypeByID(string CassetteType, string BoxID = null, string CassetteID = null)
+        {
+            if (BoxID is null && CassetteID is null)
+                return false;
+
+            bool isSuccess = true;
+            try
+            {
+                if (BoxID != null)
+                {
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        var cassette = con.CassetteData.Where(x => x.BOXID == BoxID).FirstOrDefault();
+                        cassette.CSTType = CassetteType;
+                        cassettedataDao.UpdateCassetteData(con);
+                    }
+                }
+                else
+                {
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        var cassette = con.CassetteData.Where(x => x.CSTID == CassetteID).FirstOrDefault();
+                        cassette.CSTType = CassetteType;
+                        cassettedataDao.UpdateCassetteData(con);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                isSuccess = false;
+            }
+            return isSuccess;
+        }
+
         public bool DeleteCSTDataByID(string cstid, string boxid)
         {
             bool isSuccess = true;
