@@ -2693,16 +2693,24 @@ namespace com.mirle.ibg3k0.sc.BLL
                     AVEHICLE bestSuitableVh = null;
                     E_VH_TYPE vh_type = E_VH_TYPE.None;
 
-                    bool has_pre_wait_assign_vh = !SCUtility.isEmpty(mcs_cmd.PreAssignVhID);
+                    //bool has_pre_wait_assign_vh = false;
+                    string PreAssignVhID = string.Empty;
+                    bool isCmdInCache = ACMD_MCS.MCS_CMD_InfoList.TryGetValue(SCUtility.Trim(mcs_cmd.CMD_ID), out var cmd_mcs_obj);
+                    if (isCmdInCache)
+                    {
+                        //has_pre_wait_assign_vh = !SCUtility.isEmpty(cmd_mcs_obj.PreAssignVhID);
+                        PreAssignVhID = cmd_mcs_obj.PreAssignVhID;
+                    }
+                    //bool has_pre_wait_assign_vh = !SCUtility.isEmpty(mcs_cmd.PreAssignVhID);
 
                     if (mcs_cmd.CMD_ID.StartsWith("SCAN-"))
                     {
                         ShelfDef targetShelf = scApp.ShelfDefBLL.loadShelfDataByID(mcs_cmd.HOSTSOURCE);
 
                         scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                        if (has_pre_wait_assign_vh)
+                        if (!SCUtility.isEmpty(PreAssignVhID))
                         {
-                            var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(mcs_cmd.PreAssignVhID);
+                            var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(PreAssignVhID);
                             if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
                             {
                                 bestSuitableVh = pre_wait_assign_vh;
@@ -2764,9 +2772,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                         else
                         {
                             scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                            if (has_pre_wait_assign_vh)
+                            if (!SCUtility.isEmpty(PreAssignVhID))
                             {
-                                var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(mcs_cmd.PreAssignVhID);
+                                var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(PreAssignVhID);
                                 if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
                                 {
                                     bestSuitableVh = pre_wait_assign_vh;

@@ -3362,8 +3362,14 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (is_command_complete_by_command_shift)
                     {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                            Data: $"command id:{cmd_id} is terminated because of command shift...",
+                            VehicleID: eqpt.VEHICLE_ID,
+                            CarrierID: eqpt.CST_ID);
+
                         isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
+                        scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC);
                     }
                     else
                     {
@@ -3533,6 +3539,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                 {
                                     //scApp.CMDBLL.checkMCS_TransferCommand();  //2021.11.8 marked
                                     //scApp.VehicleBLL.DoIdleVehicleHandle_NoAction(eqpt.VEHICLE_ID);
+                                    Task.Run(() =>
+                                    {
+                                        scApp.TransferService.TransferRun();//B0.08.0 處發TransferRun，使MCS命令可以在多車情形下早於趕車CMD下達。
+                                    });
                                 }
                             }
                             break;
@@ -3547,10 +3557,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         scApp.LineService.TSCStateToPause("");
                     }
                 }
-                Task.Run(() =>
-                {
-                    scApp.TransferService.TransferRun();//B0.08.0 處發TransferRun，使MCS命令可以在多車情形下早於趕車CMD下達。
-                });
+                //Task.Run(() =>
+                //{
+                //    scApp.TransferService.TransferRun();//B0.08.0 處發TransferRun，使MCS命令可以在多車情形下早於趕車CMD下達。
+                //});
                 eqpt.onCommandComplete(completeStatus);
             }
             finally
@@ -4831,27 +4841,17 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (find_result.isFind)
                 {
                     is_command_shift_success = startExcuteCommandShift(commandFinishVh, find_result.suitableCmdShiftCmd);
+                    //if (is_command_shift_success)
+                    //    scApp.CMDBLL.updateCMD_MCS_PauseFlag(find_result.suitableCmdShiftCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(find_result.suitableCmdShiftCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
                 }
+                return is_command_shift_success;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Exception:");
+                return false;
             }
-            finally
-            {
-                try
-                {
-                    if (find_result.isFind)
-                    {
-                        scApp.CMDBLL.updateCMD_MCS_PauseFlag(find_result.suitableCmdShiftCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Exception:");
-                }
-            }
-            return is_command_shift_success;
         }
 
         private long cmdShiftSyncPoint = 0;
@@ -4894,8 +4894,29 @@ namespace com.mirle.ibg3k0.sc.Service
                         string cmd_source_adr = can_cmd_shift_mcs_cmd.getHostSourceAdr(scApp.PortStationBLL);
                         int waitting_shift_vh_distance = Int32.MaxValue;
                         int excuting_vh_distance = Int32.MinValue;
+
+                        List<string> MTLSectionIDs;
+                        try
+                        {
+                            List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
+                                .Select(eq => eq as MaintainLift)
+                                .Select(mtl => mtl.DeviceSegment)
+                                .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
+                            List<ASECTION> MTLSections = new List<ASECTION>();
+                            foreach (var segment in MTLSegments)
+                            {
+                                MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
+                            }
+                            MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, "Exception");
+                            MTLSectionIDs = new List<string>();
+                        }
+
                         bool is_walkable = false;
-                        (is_walkable, waitting_shift_vh_distance) = scApp.GuideBLL.IsRoadWalkable(cmdFinishVh_cur_adr_id, cmd_source_adr);
+                        (is_walkable, waitting_shift_vh_distance) = scApp.GuideBLL.IsRoadWalkable(cmdFinishVh_cur_adr_id, cmd_source_adr, MTLSectionIDs);
                         if (!is_walkable)
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
@@ -4904,10 +4925,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                CarrierID: commandFinishVh.CST_ID);
                             continue;
                         }
-                        (_, excuting_vh_distance) = scApp.GuideBLL.IsRoadWalkable(excuting_current_adr, cmd_source_adr);
+                        (_, excuting_vh_distance) = scApp.GuideBLL.IsRoadWalkable(excuting_current_adr, cmd_source_adr, MTLSectionIDs);
                         if (excuting_vh_distance > waitting_shift_vh_distance)
                         {
-                            scApp.CMDBLL.updateCMD_MCS_PauseFlag(can_cmd_shift_mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
+                            //scApp.CMDBLL.updateCMD_MCS_PauseFlag(can_cmd_shift_mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
                             return (true, can_cmd_shift_mcs_cmd);
                         }
                     }
@@ -4992,10 +5013,6 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 logger.Error(ex, "Exception:");
                 return false;
-            }
-            finally
-            {
-                scApp.CMDBLL.updateCMD_MCS_PauseFlag(can_cmd_shift_mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
             }
         }
 

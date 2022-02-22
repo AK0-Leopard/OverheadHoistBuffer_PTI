@@ -86,7 +86,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
         public ACMD_MCS getByID(DBConnection_EF con, String cmd_id)
         {
             var query = from cmd in con.ACMD_MCS
-                        where cmd.CMD_ID == cmd_id.Trim()
+                        where cmd.CMD_ID.Trim() == cmd_id.Trim()
                         select cmd;
             return query.SingleOrDefault();
         }

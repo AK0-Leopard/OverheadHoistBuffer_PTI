@@ -835,7 +835,9 @@ namespace com.mirle.ibg3k0.sc.Service
                             //
                             //  取消下一行註解即可使用。 但不確定邏輯以及程式部分是否完全沒有問題。
                             #endregion
-                            var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue).ToList();
+                            var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue)
+                                .Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                                .ToList();
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
 
@@ -1082,12 +1084,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 foreach (var transfer_cmd in same_segment_tran_cmds.ToList())
                 {
-                    if (transfer_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE)
-                    {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因尚未到load complete");
-                        same_segment_tran_cmds.Remove(transfer_cmd);
-                        continue;
-                    }
+                    //if (transfer_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE)
+                    //{
+                    //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因尚未到load complete");
+                    //    same_segment_tran_cmds.Remove(transfer_cmd);
+                    //    continue;
+                    //}
 
                     string transfering_cmd_adr = transfer_cmd.getHostDestAdr(scApp.PortStationBLL);
                     if (SCUtility.isEmpty(transfering_cmd_adr))
