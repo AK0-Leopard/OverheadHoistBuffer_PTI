@@ -556,48 +556,59 @@ namespace com.mirle.ibg3k0.sc
             CurrentCommandExcuteTime.Reset();
         }
 
-        public bool TransferReady(BLL.CMDBLL cmdBLL)
+        public bool TransferReady(BLL.CMDBLL cmdBLL, out string result)
         {
             if (!isTcpIpConnect)
             {
+                result = "Vehicle is disconnected.";
                 return false;
             }
             if (!IS_INSTALLED)
             {
+                result = "Vehicle is not installed.";
                 return false;
             }
             if (isSynchronizing)
             {
+                result = "Vehicle is synchronizing.";
                 return false;
             }
             if (MODE_STATUS != VHModeStatus.AutoRemote)
             {
+                result = "Vehicle mode status is not AutoRemote.";
                 return false;
             }
             if (IsError)
             {
+                result = "Vehicle is error.";
                 return false;
             }
             if (!SCUtility.isEmpty(MCS_CMD))
             {
+                result = "Vehicle is executing another MCS command.";
                 return false;
             }
             if (HAS_CST == 1)
             {
+                result = "Vehicle has cassette.";
                 return false;
             }
             if (SCUtility.isEmpty(CUR_ADR_ID))
             {
+                result = "Vehicle address ID is unknown.";
                 return false;
             }
             if (!SCUtility.isEmpty(OHTC_CMD))
             {
+                result = "Vehicle is executing another OHTC command.";
                 return false;
             }
-            if (cmdBLL.isCMD_OHTCWillSending(VEHICLE_ID))
-            {
-                return false;
-            }
+            //if (cmdBLL.isCMD_OHTCWillSending(VEHICLE_ID))
+            //{
+            //    result = "Vehicle command is sending.";
+            //    return false;
+            //}
+            result = "";
             return true;
         }
         public string getCurrentSegment(BLL.SectionBLL sectionBLL)

@@ -2711,9 +2711,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                         if (!SCUtility.isEmpty(PreAssignVhID))
                         {
                             var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(PreAssignVhID);
-                            if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
+                            if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL, out string result))
                             {
                                 bestSuitableVh = pre_wait_assign_vh;
+                            }
+                            else
+                            {
+                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Need to choose another vehicle, reason: {result}");
                             }
                         }
                         if (bestSuitableVh == null)
@@ -2775,9 +2779,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                             if (!SCUtility.isEmpty(PreAssignVhID))
                             {
                                 var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(PreAssignVhID);
-                                if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL))
+                                if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL, out string result))
                                 {
                                     bestSuitableVh = pre_wait_assign_vh;
+                                }
+                                else
+                                {
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Need to choose another vehicle, reason: {result}");
                                 }
                             }
                             if (bestSuitableVh == null)
