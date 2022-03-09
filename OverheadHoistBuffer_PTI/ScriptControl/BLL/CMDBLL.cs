@@ -2779,13 +2779,19 @@ namespace com.mirle.ibg3k0.sc.BLL
                             if (!SCUtility.isEmpty(PreAssignVhID))
                             {
                                 var pre_wait_assign_vh = scApp.VehicleBLL.cache.getVhByID(PreAssignVhID);
-                                if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL, out string result))
+                                //if (pre_wait_assign_vh.TransferReady(scApp.CMDBLL, out string result))
+                                string result = string.Empty;
+                                if (SpinWait.SpinUntil(() => pre_wait_assign_vh.TransferReady(scApp.CMDBLL, out result), 1500))
                                 {
                                     bestSuitableVh = pre_wait_assign_vh;
                                 }
                                 else
                                 {
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Need to choose another vehicle, reason: {result}");
+                                    //if (isCmdInCache)
+                                    //    cmd_mcs_obj.PreAssignVhID = string.Empty;
+
+                                    //return false;
                                 }
                             }
                             if (bestSuitableVh == null)
