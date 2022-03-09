@@ -16,6 +16,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         SCApplication scApp;
         Logger logger = LogManager.GetCurrentClassLogger();
 
+        public HashSet<string> ErrorVehicleSections { get; private set; } = new HashSet<string>();
+
         public void start(SCApplication _scApp)
         {
             scApp = _scApp;
@@ -33,14 +35,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             int.TryParse(targetAddress, out int i_target_address);
 
             List<RouteInfo> stratFromRouteInfoList = null;
-            if (byPassSectionIDs == null || byPassSectionIDs.Count == 0)
-            {
-                stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address);
-            }
-            else
-            {
-                stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, byPassSectionIDs);
-            }
+            //if (byPassSectionIDs == null || byPassSectionIDs.Count == 0)
+            //{
+            //    stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address);
+            //}
+            //else
+            //{
+            //    stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, byPassSectionIDs);
+            //}
+            List<string> bypassSections = new List<string>(ErrorVehicleSections);
+            if (byPassSectionIDs != null)
+                bypassSections.AddRange(byPassSectionIDs);
+            stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, bypassSections);
+
             RouteInfo min_stratFromRouteInfo = null;
             if (stratFromRouteInfoList != null && stratFromRouteInfoList.Count > 0)
             {

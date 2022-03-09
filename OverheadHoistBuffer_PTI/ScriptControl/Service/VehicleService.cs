@@ -3055,6 +3055,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 //ErrorStatus error_status =
                 //    errorStat == VhStopSingle.StopSingleOn ? ErrorStatus.ErrSet : ErrorStatus.ErrReset;
                 //scApp.ReportBLL.ReportAlarmHappend(error_status, alarm_code, alarm_desc);
+                if (errorStat == VhStopSingle.StopSingleOn)
+                    scApp.GuideBLL.ErrorVehicleSections.Add(recive_str.CurrentSecID);
+                else
+                    scApp.GuideBLL.ErrorVehicleSections.Remove(recive_str.CurrentSecID);
+
                 if (!SCUtility.isEmpty(eqpt.MCS_CMD))
                 {
                     scApp.ReportBLL.newReportTransferCommandPaused(eqpt.MCS_CMD, null);
