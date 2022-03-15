@@ -760,8 +760,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                     scApp.MapBLL.getAddressID(HostSource, out from_adr, out vh_type);
                     //AVEHICLE may_be_can_carry_vh = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr(from_adr, vh_type
                     //                                                                                    , is_check_has_vh_carry: true);
-                    AVEHICLE may_be_can_carry_vh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type
-                                                                                                    , is_check_has_vh_carry: true);
+                    AVEHICLE may_be_can_carry_vh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type, out _
+                                                                                                    ,is_check_has_vh_carry: true);
                     if (may_be_can_carry_vh == null)
                     {
                         isSuccess = false;
@@ -2568,7 +2568,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 else
                                 {
                                     scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                                    bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                                    bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type, out _);
                                     cmd_type = E_CMD_TYPE.LoadUnload;
                                 }
                                 scApp.MapBLL.getAddressID(hostdest, out to_adr);
@@ -2722,7 +2722,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         }
                         if (bestSuitableVh == null)
                         {
-                            bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                            bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type, out _);
                         }
                         if (bestSuitableVh == null)
                         {
@@ -2796,7 +2796,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             }
                             if (bestSuitableVh == null)
                             {
-                                bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type);
+                                bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type, out _);
                             }
                             cmd_type = E_CMD_TYPE.LoadUnload;
                         }

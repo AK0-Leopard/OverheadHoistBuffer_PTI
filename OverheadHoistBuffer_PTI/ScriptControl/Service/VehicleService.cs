@@ -3521,20 +3521,21 @@ namespace com.mirle.ibg3k0.sc.Service
                             else if ((eqpt.MODE_STATUS == VHModeStatus.AutoRemote) && eqpt.HAS_CST == 0)
                             {
                                 bool has_excute_command_shift = false;
+                                //2022.3.14 改以command為計算主體，並移至TransferService執行
                                 //如果是在完成了LoadUnload Complete或Unload Complete時，才進行Command Shift的功能
-                                if (completeStatus == CompleteStatus.CmpStatusLoadunload ||
-                                    completeStatus == CompleteStatus.CmpStatusUnload)
-                                {
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                                       Data: $"vh:{eqpt.VEHICLE_ID}命令結束,確認是否需要進行command shift...",
-                                       VehicleID: eqpt.VEHICLE_ID,
-                                       CarrierID: eqpt.CST_ID);
-                                    has_excute_command_shift = tryToExcuteCommandShiftNew(eqpt);
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                                       Data: $"vh:{eqpt.VEHICLE_ID}命令結束,確認是否需要進行command shift,result:{has_excute_command_shift}",
-                                       VehicleID: eqpt.VEHICLE_ID,
-                                       CarrierID: eqpt.CST_ID);
-                                }
+                                //if (completeStatus == CompleteStatus.CmpStatusLoadunload ||
+                                //    completeStatus == CompleteStatus.CmpStatusUnload)
+                                //{
+                                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                //       Data: $"vh:{eqpt.VEHICLE_ID}命令結束,確認是否需要進行command shift...",
+                                //       VehicleID: eqpt.VEHICLE_ID,
+                                //       CarrierID: eqpt.CST_ID);
+                                //    has_excute_command_shift = tryToExcuteCommandShiftNew(eqpt);
+                                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                //       Data: $"vh:{eqpt.VEHICLE_ID}命令結束,確認是否需要進行command shift,result:{has_excute_command_shift}",
+                                //       VehicleID: eqpt.VEHICLE_ID,
+                                //       CarrierID: eqpt.CST_ID);
+                                //}
                                 eqpt.IsProcessingCommandFinish = false;
                                 if (has_excute_command_shift)
                                 {

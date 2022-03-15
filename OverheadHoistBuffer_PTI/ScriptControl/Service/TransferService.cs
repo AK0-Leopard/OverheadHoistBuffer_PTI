@@ -836,7 +836,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             //  取消下一行註解即可使用。 但不確定邏輯以及程式部分是否完全沒有問題。
                             #endregion
                             var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue)
-                                .Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                                //.Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
                                 .ToList();
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
@@ -1474,9 +1474,28 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 #region E_TRAN_STATUS.Queue
                 case E_TRAN_STATUS.Queue:
-                    //2022.2.16 預防掃到改派流程中的命令
+                    //2022.3.14 改派流程中的命令
                     if (SCUtility.isMatche(mcsCmd.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
-                        return false;
+                    {
+                        TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 偵測到須執行命令轉移...");
+                        bool is_success = false;
+                        string PreAssignVhID = string.Empty;
+                        bool isCmdInCache = ACMD_MCS.MCS_CMD_InfoList.TryGetValue(SCUtility.Trim(mcsCmd.CMD_ID), out var cmd_mcs_obj);
+                        if (isCmdInCache)
+                        {
+                            PreAssignVhID = cmd_mcs_obj.PreAssignVhID;
+                            is_success = scApp.CMDBLL.assignCommnadToVehicleByCommandShift(PreAssignVhID, mcsCmd);
+                            if (is_success)
+                                TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 已成功轉移給{PreAssignVhID}.");
+                        }
+                        else
+                        {
+                            TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 命令轉移對象OHT車號遺失.");
+                            //TODO: 當場重找最佳車?
+                            scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                        }
+                        return is_success;
+                    }
 
                     bool sourcePortType = false;
                     bool destPortType = false;
@@ -1665,6 +1684,41 @@ namespace com.mirle.ibg3k0.sc.Service
                             //);
                             //#endregion
                             //cmdBLL.updateCMD_MCS_TranStatus(mcsCmd.CMD_ID, E_TRAN_STATUS.Queue);
+                            break;
+                        case COMMAND_STATUS_BIT_INDEX_ENROUTE:
+                            List<string> MTLSectionIDs;
+                            List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
+                                .Select(eq => eq as MaintainLift)
+                                .Select(mtl => mtl.DeviceSegment)
+                                .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
+                            List<ASECTION> MTLSections = new List<ASECTION>();
+                            foreach (var segment in MTLSegments)
+                            {
+                                MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
+                            }
+                            MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
+
+                            var otherBestVehicle = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double bestDistance);
+                            var executingVehicle = scApp.VehicleService.GetVehicleDataByVehicleID(mcsCmd.CRANE.Trim());
+                            var check_result = scApp.GuideBLL.IsRoadWalkable(executingVehicle.CUR_ADR_ID, mcsCmd.getHostSourceAdr(PortStationBLL), MTLSectionIDs);
+                            if (check_result.distance > bestDistance)
+                            {
+                                //2022.3.14 command shift...
+                                ACMD_OHTC excuting_cmd_ohtc = mcsCmd.getExcuteCMD_OHTC(scApp.CMDBLL);
+                                TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID},Vehicle:{mcsCmd.CRANE.Trim()} 有更近車{otherBestVehicle.VEHICLE_ID}可處理，command shifting...");
+                                scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
+                                bool isCancelSuccess = scApp.VehicleService.doAbortCommand(executingVehicle, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdCancel);
+                                if (!isCancelSuccess)
+                                {
+                                    TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消失敗，繼續下一筆的檢查");
+                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                }
+                                else
+                                {
+                                    TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消成功，準備命令轉移...");
+                                    SetTransferCommandPreAssignVh(mcsCmd.CMD_ID, otherBestVehicle.VEHICLE_ID);
+                                }
+                            }
                             break;
                         case COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH:
 

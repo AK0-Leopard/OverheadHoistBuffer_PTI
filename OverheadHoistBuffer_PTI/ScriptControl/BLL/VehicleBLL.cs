@@ -966,13 +966,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             return vh;
         }
 
-
-
-
-        public AVEHICLE findBestSuitableVhStepByNearest(string source, E_VH_TYPE vh_type, bool is_check_has_vh_carry = false)
+        public AVEHICLE findBestSuitableVhStepByNearest(string source, E_VH_TYPE vh_type, out double distance, bool is_check_has_vh_carry = false)
         {
             AVEHICLE firstVh = null;
-            double dietance = double.MaxValue;
+            //double distance = double.MaxValue;
             //1.列出所有車子
             List<AVEHICLE> vhs = cache.loadVhs().ToList();
 
@@ -980,7 +977,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             if (!is_check_has_vh_carry)
                 filterVh(ref vhs, vh_type);
 
-            (firstVh, dietance) = FindNearestVh(source, vhs);
+            (firstVh, distance) = FindNearestVh(source, vhs);
 
             return firstVh;
         }
