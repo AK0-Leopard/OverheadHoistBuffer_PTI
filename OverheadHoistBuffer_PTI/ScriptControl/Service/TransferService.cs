@@ -1479,21 +1479,30 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 偵測到須執行命令轉移...");
                         bool is_success = false;
-                        string PreAssignVhID = string.Empty;
-                        bool isCmdInCache = ACMD_MCS.MCS_CMD_InfoList.TryGetValue(SCUtility.Trim(mcsCmd.CMD_ID), out var cmd_mcs_obj);
-                        if (isCmdInCache)
-                        {
-                            PreAssignVhID = cmd_mcs_obj.PreAssignVhID;
-                            is_success = scApp.CMDBLL.assignCommnadToVehicleByCommandShift(PreAssignVhID, mcsCmd);
-                            if (is_success)
-                                TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 已成功轉移給{PreAssignVhID}.");
-                        }
+                        //string PreAssignVhID = string.Empty;
+                        //bool isCmdInCache = ACMD_MCS.MCS_CMD_InfoList.TryGetValue(SCUtility.Trim(mcsCmd.CMD_ID), out var cmd_mcs_obj);
+                        //if (isCmdInCache)
+                        //{
+                        //    PreAssignVhID = cmd_mcs_obj.PreAssignVhID;
+                        //    is_success = scApp.CMDBLL.assignCommnadToVehicleByCommandShift(PreAssignVhID, mcsCmd);
+                        //    if (is_success)
+                        //        TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 已成功轉移給{PreAssignVhID}.");
+                        //}
+                        //else
+                        //{
+                        //    TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 命令轉移對象OHT車號遺失.");
+                        //    //TODO: 當場重找最佳車?
+                        //}
+                        var newBestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double _);
+                        is_success = scApp.CMDBLL.assignCommnadToVehicleByCommandShift(newBestSuitableVh.VEHICLE_ID, mcsCmd);
+                        if (is_success)
+                            TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 已成功轉移給{newBestSuitableVh.VEHICLE_ID}.");
                         else
                         {
-                            TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 命令轉移對象OHT車號遺失.");
-                            //TODO: 當場重找最佳車?
+                            TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 轉移給{newBestSuitableVh.VEHICLE_ID}失敗.");
                             scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
                         }
+
                         return is_success;
                     }
 
