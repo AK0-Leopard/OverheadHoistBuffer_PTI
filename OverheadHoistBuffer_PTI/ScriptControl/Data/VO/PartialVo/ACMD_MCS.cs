@@ -6,6 +6,7 @@
 // 2020/06/09    Jason Wu       N/A            A20.06.09.0 修改判定部分(新增判定來源目的地是非shelf的優先)   
 //**********************************************************************************
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace com.mirle.ibg3k0.sc
         //2021.10.29 命令改派用
         public const string COMMAND_PAUSE_FLAG_EMPTY = "";
         public const string COMMAND_PAUSE_FLAG_COMMAND_SHIFT = "S";
+        public const string COMMAND_PAUSE_FLAG_BEFORE_ON_THE_WAY = "B";
 
         /// <summary>
         /// 1 2 4 8 16 32 64 128
@@ -81,6 +83,11 @@ namespace com.mirle.ibg3k0.sc
         public bool IsCanNotServiceReasonChanged;
         public string CanNotServiceReason;
         public string PreAssignVhID;
+
+        public List<string> RouteSection_Vehicle2From { get; set; }
+        public List<string> RouteSection_From2To { get; set; }
+
+        public bool IsCommandPauseBeforeOnTheWay => SCUtility.isMatche(PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_BEFORE_ON_THE_WAY);
 
         public enum CmdType
         {

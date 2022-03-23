@@ -2794,7 +2794,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     //return false;
                                 }
                             }
-                            if (bestSuitableVh == null)
+                            else //if (bestSuitableVh == null) Hsinyu Chang 2022.2.11 變更判定條件，以防已被綁定台車的命令被派給其他車
                             {
                                 bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(from_adr, vh_type, out _);
                             }

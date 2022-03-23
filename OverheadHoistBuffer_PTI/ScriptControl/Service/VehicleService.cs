@@ -1021,6 +1021,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
                         isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
+                        //填入路徑資訊(前順途判斷用)
+                        bool is_exist = ACMD_MCS.MCS_CMD_InfoList.TryGetValue(SCUtility.Trim(cmd.CMD_ID_MCS), out var cmd_mcs_obj);
+                        if (is_exist)
+                        {
+                            cmd_mcs_obj.RouteSection_Vehicle2From = minRouteSec_Vh2From?.ToList();
+                            cmd_mcs_obj.RouteSection_From2To = minRouteSec_From2To?.ToList();
+                        }
                     }
                 }
                 else
@@ -3375,6 +3382,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
                         scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC);
+                    }
+                    else if (completeStatus == CompleteStatus.CmpStatusCancel &&
+                        cmd_mcs != null && cmd_mcs.IsCommandPauseBeforeOnTheWay)
+                    {
+                        isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
+                        scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
                     }
                     else
                     {
