@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.bc.winform.Common;
 using com.mirle.ibg3k0.bcf.Common;
 using com.mirle.ibg3k0.sc;
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using System;
@@ -447,6 +448,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
             Task.Run(() =>
             {
+                var ohtCommand = bcApp.SCApplication.CMDBLL.getCMD_OHTCByID(noticeCar.OHTC_CMD);
+                if (!SCUtility.isEmpty(ohtCommand.CMD_ID_MCS))
+                    bcApp.SCApplication.CMDBLL.updateCMD_MCS_PauseFlag(ohtCommand.CMD_ID_MCS, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
                 noticeCar.sned_Str37(noticeCar.OHTC_CMD, type);
             });
 
