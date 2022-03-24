@@ -911,7 +911,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                     if (pauseBeforeWayCommand)
                                         SetTransferCommandPreAssignVh(v.CMD_ID, vehicle);
                                 }
-                                if (!check_can_after_on_the_way_result.hasVh && !pauseBeforeWayCommand && TransferCommandHandler(v))
+                                if (!check_can_after_on_the_way_result.hasVh /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
                                 {
                                     cmdFail = false;
                                     OHBC_OHT_QueueCmdTimeOutCmdIDCleared(v.CMD_ID);
@@ -1206,8 +1206,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.CMDBLL.updateCMD_MCS_PauseFlag(executingMCSCommand.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_BEFORE_ON_THE_WAY);
                 //下達 command cancel，若回復OK，則將產生一筆queue的命令給waitting_cmd_shift_vh
                 //並將原本執行的MCS cmd改回pre initial
-                bool is_cnacel_success = scApp.VehicleService.doAbortCommand(excuting_vh, excuting_cmd_id, CMDCancelType.CmdCancel);
-                if (!is_cnacel_success)
+                bool isCancelSuccess = scApp.VehicleService.doAbortCommand(excuting_vh, excuting_cmd_id, CMDCancelType.CmdCancel);
+                if (!isCancelSuccess)
                 {
                     TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff")} excuting vh:{excuting_vh.VEHICLE_ID}, 前順途搬送命令 ID:{executingMCSCommand.CMD_ID},CMD_OHTC:{excuting_cmd_id} 命令取消失敗");
                     return false;
