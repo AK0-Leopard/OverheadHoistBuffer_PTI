@@ -630,6 +630,7 @@ namespace com.mirle.ibg3k0.bc.winform
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_MAINTENANCE_FUN)]
         private System.Windows.Forms.ToolStripMenuItem mataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changePasswordToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_USER_MANAGEMENT)]
         private System.Windows.Forms.ToolStripMenuItem uASToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem operatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logInToolStripMenuItem;
@@ -647,6 +648,7 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_ENGINEER_FUN)]
         private System.Windows.Forms.ToolStripMenuItem engineerToolStripMenuItem1;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_DEBUG_FORM)]
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem engineeringModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem roadControlToolStripMenuItem;
@@ -656,18 +658,26 @@ namespace com.mirle.ibg3k0.bc.winform
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_MAINTENANCE_FUN)]
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sectionDataToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_HOST_MODE_CHG)]
         private System.Windows.Forms.ToolStripMenuItem hostConnectionToolStripMenuItem;
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_OPERATION_FUN)]
         private System.Windows.Forms.ToolStripMenuItem maintainDeviceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_COMMAND_MAIN)]
         private System.Windows.Forms.ToolStripMenuItem transferCommandToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_CST_REMOVE)]
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_ENGINEER_FUN)]
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_RESERVEINFO_CONTROL)]
         private System.Windows.Forms.ToolStripMenuItem reserveInfoToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_COMMAND_MAIN)]
         private System.Windows.Forms.ToolStripMenuItem 搬送模擬ToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_EQPTPARAMETER)]
         private System.Windows.Forms.ToolStripMenuItem port內容值ToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_CST_REMOVE)]
         private System.Windows.Forms.ToolStripMenuItem 命令卡匣資料ToolStripMenuItem;
+        [AuthorityCheck(FUNCode = BCAppConstants.FUNC_EQPTPARAMETER)]
         private System.Windows.Forms.ToolStripMenuItem hIDInfoToolStripMenuItem;
     }
 

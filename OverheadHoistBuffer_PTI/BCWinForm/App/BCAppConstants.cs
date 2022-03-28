@@ -29,7 +29,7 @@ namespace com.mirle.ibg3k0.bc.winform.App
         //A0.01 public const string FUNC_PPID_EDIT = "FUNC_PPID_EDIT";                //PPID/Recipe Edit
         //A0.01 public const string FUNC_ECID_EDIT = "FUNC_ECID_EDIT";                //ECID Edit
         //A0.01 public const string FUNC_ROBOT_CMD_RESET = "FUNC_ROBOT_CMD_RESET";    //Robot Command Reset Button
-        //A0.01 public const string FUNC_DEBUG_FORM = "FUNC_DEBUG_FORM";              //Debug Form
+        public const string FUNC_DEBUG_FORM = "FUNC_DEBUG_FORM";              //Debug Form
         //A0.01 public const string FUNC_GLASS_SORT_FORM = "FUNC_GLASS_SORT_FORM";    //Glass Sort Form
         public const string FUNC_EXCUTE_SEMI_AUTO_PROC = "FUNC_EXCUTE_SEMI_AUTO_PROC";    //Excute Semi-Auto Process Button
         public const string FUNC_CONNECTION_MANAGEMENT = "FUNC_CONNECTION_MANAGEMENT";    //Start / Stop Connection
@@ -50,6 +50,8 @@ namespace com.mirle.ibg3k0.bc.winform.App
         public const string FUNC_ENGINEER_FUN = "FUNC_ENGINEER_FUN";    //AutoLogoutTimeForm  //A0.03
         public const string FUNC_OPERATION_FUN = "FUNC_OPERATION_FUN";    //AutoLogoutTimeForm  //A0.03
         public const string FUNC_HIGHT_LEVEL_ACTION = "FUNC_HIGHT_LEVEL_ACTION";    //AutoLogoutTimeForm  //A0.03
+
+        public const string FUNC_RESERVEINFO_CONTROL = "FUNC_RESERVEINFO_CONTROL";
         /******************************************************************/
         public const string LOGIN_USER_DEFAULT = "";
 
