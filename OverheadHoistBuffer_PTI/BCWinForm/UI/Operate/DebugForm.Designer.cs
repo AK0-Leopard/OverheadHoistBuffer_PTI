@@ -51,6 +51,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cbParkZoneAdjustment = new System.Windows.Forms.CheckBox();
             this.btn_initialTest = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.label76 = new System.Windows.Forms.Label();
             this.num_vh_y = new System.Windows.Forms.NumericUpDown();
@@ -350,7 +351,10 @@
             this.ck_SaftyCheckComplete = new System.Windows.Forms.CheckBox();
             this.ck_SaftyCheckRequest = new System.Windows.Forms.CheckBox();
             this.ck_Alive = new System.Windows.Forms.CheckBox();
-            this.cbParkZoneAdjustment = new System.Windows.Forms.CheckBox();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
+            this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
+            this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -388,6 +392,7 @@
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox13.SuspendLayout();
             this.groupBox10.SuspendLayout();
+            this.tabPage8.SuspendLayout();
             this.SuspendLayout();
             // 
             // cb_FroceReservePass
@@ -687,6 +692,17 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Specify Vehicle Action";
             this.groupBox4.Enter += new System.EventHandler(this.groupBox4_Enter);
+            // 
+            // cbParkZoneAdjustment
+            // 
+            this.cbParkZoneAdjustment.AutoSize = true;
+            this.cbParkZoneAdjustment.Location = new System.Drawing.Point(831, 148);
+            this.cbParkZoneAdjustment.Name = "cbParkZoneAdjustment";
+            this.cbParkZoneAdjustment.Size = new System.Drawing.Size(259, 26);
+            this.cbParkZoneAdjustment.TabIndex = 61;
+            this.cbParkZoneAdjustment.Text = "Parking Zone Adjustment";
+            this.cbParkZoneAdjustment.UseVisualStyleBackColor = true;
+            this.cbParkZoneAdjustment.CheckedChanged += new System.EventHandler(this.cbParkZoneAdjustment_CheckedChanged);
             // 
             // btn_initialTest
             // 
@@ -1282,6 +1298,7 @@
             this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage7);
+            this.tabControl1.Controls.Add(this.tabPage8);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -2641,7 +2658,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4264,16 +4281,54 @@
             this.ck_Alive.UseVisualStyleBackColor = true;
             this.ck_Alive.CheckedChanged += new System.EventHandler(this.ck_Alive_CheckedChanged);
             // 
-            // cbParkZoneAdjustment
+            // tabPage8
             // 
-            this.cbParkZoneAdjustment.AutoSize = true;
-            this.cbParkZoneAdjustment.Location = new System.Drawing.Point(831, 148);
-            this.cbParkZoneAdjustment.Name = "cbParkZoneAdjustment";
-            this.cbParkZoneAdjustment.Size = new System.Drawing.Size(259, 26);
-            this.cbParkZoneAdjustment.TabIndex = 61;
-            this.cbParkZoneAdjustment.Text = "Parking Zone Adjustment";
-            this.cbParkZoneAdjustment.UseVisualStyleBackColor = true;
-            this.cbParkZoneAdjustment.CheckedChanged += new System.EventHandler(this.cbParkZoneAdjustment_CheckedChanged);
+            this.tabPage8.Controls.Add(this.cbCommandShift);
+            this.tabPage8.Controls.Add(this.cbAfterOnWay);
+            this.tabPage8.Controls.Add(this.cbBeforeOnWay);
+            this.tabPage8.Location = new System.Drawing.Point(4, 31);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(1455, 845);
+            this.tabPage8.TabIndex = 8;
+            this.tabPage8.Text = "Transfer Optimization";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // cbBeforeOnWay
+            // 
+            this.cbBeforeOnWay.AutoSize = true;
+            this.cbBeforeOnWay.Location = new System.Drawing.Point(54, 33);
+            this.cbBeforeOnWay.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cbBeforeOnWay.Name = "cbBeforeOnWay";
+            this.cbBeforeOnWay.Size = new System.Drawing.Size(92, 26);
+            this.cbBeforeOnWay.TabIndex = 8;
+            this.cbBeforeOnWay.Text = "前順途";
+            this.cbBeforeOnWay.UseVisualStyleBackColor = true;
+            this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
+            // 
+            // cbAfterOnWay
+            // 
+            this.cbAfterOnWay.AutoSize = true;
+            this.cbAfterOnWay.Location = new System.Drawing.Point(54, 83);
+            this.cbAfterOnWay.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cbAfterOnWay.Name = "cbAfterOnWay";
+            this.cbAfterOnWay.Size = new System.Drawing.Size(92, 26);
+            this.cbAfterOnWay.TabIndex = 9;
+            this.cbAfterOnWay.Text = "後順途";
+            this.cbAfterOnWay.UseVisualStyleBackColor = true;
+            this.cbAfterOnWay.CheckedChanged += new System.EventHandler(this.cbAfterOnWay_CheckedChanged);
+            // 
+            // cbCommandShift
+            // 
+            this.cbCommandShift.AutoSize = true;
+            this.cbCommandShift.Location = new System.Drawing.Point(54, 135);
+            this.cbCommandShift.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cbCommandShift.Name = "cbCommandShift";
+            this.cbCommandShift.Size = new System.Drawing.Size(113, 26);
+            this.cbCommandShift.TabIndex = 10;
+            this.cbCommandShift.Text = "命令改派";
+            this.cbCommandShift.UseVisualStyleBackColor = true;
+            this.cbCommandShift.CheckedChanged += new System.EventHandler(this.cbCommandShift_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -4353,6 +4408,8 @@
             this.groupBox13.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
+            this.tabPage8.ResumeLayout(false);
+            this.tabPage8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4682,5 +4739,9 @@
         private System.Windows.Forms.CheckBox cb_isUsingFindStartAdr;
         private Components.uctlButton btn_initialTest;
         private System.Windows.Forms.CheckBox cbParkZoneAdjustment;
+        private System.Windows.Forms.TabPage tabPage8;
+        private System.Windows.Forms.CheckBox cbBeforeOnWay;
+        private System.Windows.Forms.CheckBox cbCommandShift;
+        private System.Windows.Forms.CheckBox cbAfterOnWay;
     }
 }

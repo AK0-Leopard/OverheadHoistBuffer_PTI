@@ -99,6 +99,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_Cache_data_Name.Items.Add("APORTSTATION");
             dgv_cache_object_data.AutoGenerateColumns = false;
             comboBox_HID_control.SelectedIndex = 0;
+
+            cbBeforeOnWay.Checked = DebugParameter.BeforeOnTheWay;
+            cbAfterOnWay.Checked = DebugParameter.AfterOnTheWay;
+            cbCommandShift.Checked = DebugParameter.CommandShift;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1281,6 +1285,21 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             };
             Task.Run(() => bcApp.SCApplication.VehicleService.TranEventTest(noticeCar, send_obj));
 
+        }
+
+        private void cbBeforeOnWay_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.BeforeOnTheWay = cbBeforeOnWay.Checked;
+        }
+
+        private void cbAfterOnWay_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.AfterOnTheWay = cbAfterOnWay.Checked;
+        }
+
+        private void cbCommandShift_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.CommandShift = cbCommandShift.Checked;
         }
     }
 }

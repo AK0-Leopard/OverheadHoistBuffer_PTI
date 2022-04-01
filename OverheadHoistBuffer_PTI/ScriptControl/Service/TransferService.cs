@@ -894,8 +894,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                 #endregion
                                 #region 搬送命令
                                 //2021.10.26 同bay搬送檢查
-                                var beforeWayExecutingCommand = checkHasVhBeforeOnTheWay(v, transferCmdData);
-                                var check_can_after_on_the_way_result = checkHasVhAfterOnTheWay(v, transferCmdData);
+                                ACMD_MCS beforeWayExecutingCommand = default;
+                                (bool hasVh, ACMD_MCS sameSegmentTran) check_can_after_on_the_way_result = default;
+
+                                if (DebugParameter.BeforeOnTheWay)
+                                    beforeWayExecutingCommand = checkHasVhBeforeOnTheWay(v, transferCmdData);
+                                if (DebugParameter.AfterOnTheWay)
+                                    check_can_after_on_the_way_result = checkHasVhAfterOnTheWay(v, transferCmdData);
+
                                 bool pauseBeforeWayCommand = false;
                                 if (check_can_after_on_the_way_result.hasVh)
                                 {
@@ -1786,37 +1792,40 @@ namespace com.mirle.ibg3k0.sc.Service
                             //cmdBLL.updateCMD_MCS_TranStatus(mcsCmd.CMD_ID, E_TRAN_STATUS.Queue);
                             break;
                         case COMMAND_STATUS_BIT_INDEX_ENROUTE:
-                            List<string> MTLSectionIDs;
-                            List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
-                                .Select(eq => eq as MaintainLift)
-                                .Select(mtl => mtl.DeviceSegment)
-                                .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
-                            List<ASECTION> MTLSections = new List<ASECTION>();
-                            foreach (var segment in MTLSegments)
+                            if (DebugParameter.CommandShift)
                             {
-                                MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
-                            }
-                            MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
-
-                            var otherBestVehicle = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double bestDistance);
-                            var executingVehicle = scApp.VehicleService.GetVehicleDataByVehicleID(mcsCmd.CRANE.Trim());
-                            var check_result = scApp.GuideBLL.IsRoadWalkable(executingVehicle.CUR_ADR_ID, mcsCmd.getHostSourceAdr(PortStationBLL), MTLSectionIDs);
-                            if (check_result.distance > bestDistance)
-                            {
-                                //2022.3.14 command shift...
-                                ACMD_OHTC excuting_cmd_ohtc = mcsCmd.getExcuteCMD_OHTC(scApp.CMDBLL);
-                                TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID},Vehicle:{mcsCmd.CRANE.Trim()} 有更近車{otherBestVehicle.VEHICLE_ID}可處理，command shifting...");
-                                scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
-                                bool isCancelSuccess = scApp.VehicleService.doAbortCommand(executingVehicle, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdCancel);
-                                if (!isCancelSuccess)
+                                List<string> MTLSectionIDs;
+                                List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)
+                                    .Select(eq => eq as MaintainLift)
+                                    .Select(mtl => mtl.DeviceSegment)
+                                    .Select(segID => scApp.SegmentBLL.cache.GetSegment(segID)).ToList();
+                                List<ASECTION> MTLSections = new List<ASECTION>();
+                                foreach (var segment in MTLSegments)
                                 {
-                                    TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消失敗，繼續下一筆的檢查");
-                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                    MTLSections.AddRange(scApp.SectionBLL.cache.loadSectionsBySegmentID(segment.SEG_NUM));
                                 }
-                                else
+                                MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
+
+                                var otherBestVehicle = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double bestDistance);
+                                var executingVehicle = scApp.VehicleService.GetVehicleDataByVehicleID(mcsCmd.CRANE.Trim());
+                                var check_result = scApp.GuideBLL.IsRoadWalkable(executingVehicle.CUR_ADR_ID, mcsCmd.getHostSourceAdr(PortStationBLL), MTLSectionIDs);
+                                if (check_result.distance > bestDistance)
                                 {
-                                    TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消成功，準備命令轉移...");
-                                    SetTransferCommandPreAssignVh(mcsCmd.CMD_ID, otherBestVehicle.VEHICLE_ID);
+                                    //2022.3.14 command shift...
+                                    ACMD_OHTC excuting_cmd_ohtc = mcsCmd.getExcuteCMD_OHTC(scApp.CMDBLL);
+                                    TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID},Vehicle:{mcsCmd.CRANE.Trim()} 有更近車{otherBestVehicle.VEHICLE_ID}可處理，command shifting...");
+                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
+                                    bool isCancelSuccess = scApp.VehicleService.doAbortCommand(executingVehicle, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdCancel);
+                                    if (!isCancelSuccess)
+                                    {
+                                        TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消失敗，繼續下一筆的檢查");
+                                        scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcsCmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                    }
+                                    else
+                                    {
+                                        TransferServiceLogger.Info($"excuting vh:{mcsCmd.CRANE.Trim()}, 搬送命令 ID:{mcsCmd.CMD_ID},CMD_OHTC:{excuting_cmd_ohtc.CMD_ID} 命令取消成功，準備命令轉移...");
+                                        SetTransferCommandPreAssignVh(mcsCmd.CMD_ID, otherBestVehicle.VEHICLE_ID);
+                                    }
                                 }
                             }
                             break;

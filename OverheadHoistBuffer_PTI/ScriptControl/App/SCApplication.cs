@@ -2423,6 +2423,10 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static bool isOpenAdjustmentParkingZone = false;
 
+        public static bool BeforeOnTheWay = false;
+        public static bool AfterOnTheWay = true;
+        public static bool CommandShift = true;
+
         public enum CycleRunType
         {
             AGVStation,
