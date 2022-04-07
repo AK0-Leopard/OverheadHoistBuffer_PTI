@@ -1914,6 +1914,7 @@
           <Member Name="Canceling" Value="4" />
           <Member Name="Paused" Value="3" />
           <Member Name="TransferCompleted" Value="6" />
+          <Member Name="PreInitial" Value="11" />
         </EnumType>
         <EnumType Name="E_VH_TYPE" >
           <Member Name="Clean" Value="1" />

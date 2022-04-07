@@ -1701,7 +1701,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
                     ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
-                    //cmd.TRANSFERSTATE = E_TRAN_STATUS.PreInitial;
+                    cmd.TRANSFERSTATE = E_TRAN_STATUS.PreInitial;
                     cmd_mcsDao.update(con, cmd);
                 }
             }
