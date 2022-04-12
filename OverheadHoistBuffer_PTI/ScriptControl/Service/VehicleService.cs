@@ -5097,5 +5097,23 @@ namespace com.mirle.ibg3k0.sc.Service
                 logger.Error(ex, "Exception:");
             }
         }
+
+        public bool IsOneVehicleSystem()
+        {
+            try
+            {
+                var vhs = scApp.VehicleBLL.cache.loadVhs();
+                if (vhs == null || vhs.Count == 0)
+                    return false;
+                if (vhs.Count == 1)
+                    return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
     }
 }
