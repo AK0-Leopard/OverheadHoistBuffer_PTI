@@ -16,7 +16,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         SCApplication scApp;
         Logger logger = LogManager.GetCurrentClassLogger();
 
-        public HashSet<string> ErrorVehicleSections { get; private set; } = new HashSet<string>();
+        public Dictionary<string, string> ErrorVehicleSections { get; private set; } = new Dictionary<string, string>();
 
         public void start(SCApplication _scApp)
         {
@@ -43,7 +43,9 @@ namespace com.mirle.ibg3k0.sc.BLL
             //{
             //    stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, byPassSectionIDs);
             //}
-            List<string> bypassSections = new List<string>(ErrorVehicleSections);
+            //2022.4.14 TODO: 繞過故障車
+            //List<string> bypassSections = new List<string>(ErrorVehicleSections.Values);
+            List<string> bypassSections = new List<string>();
             if (byPassSectionIDs != null)
                 bypassSections.AddRange(byPassSectionIDs);
             stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, bypassSections);
