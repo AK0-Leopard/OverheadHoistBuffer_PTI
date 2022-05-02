@@ -4,6 +4,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         SCApplication scApp;
         Logger logger = LogManager.GetCurrentClassLogger();
 
-        public Dictionary<string, string> ErrorVehicleSections { get; private set; } = new Dictionary<string, string>();
+        public ConcurrentDictionary<string, string> ErrorVehicleSections { get; private set; } = new ConcurrentDictionary<string, string>();
 
         public void start(SCApplication _scApp)
         {
@@ -43,11 +44,17 @@ namespace com.mirle.ibg3k0.sc.BLL
             //{
             //    stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, byPassSectionIDs);
             //}
-            //2022.4.14 TODO: 繞過故障車
-            //List<string> bypassSections = new List<string>(ErrorVehicleSections.Values);
-            List<string> bypassSections = new List<string>();
+            //2022.4.14 繞過故障車
+            List<string> bypassSections = new List<string>(ErrorVehicleSections.Values);
             if (byPassSectionIDs != null)
                 bypassSections.AddRange(byPassSectionIDs);
+
+            string bypassSecIDList = string.Join(",", bypassSections);
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(GuideBLL), Device: "OHxC",
+               Data: $"Bypass section IDs: {bypassSecIDList}",
+               VehicleID: "",
+               CarrierID: "");
+
             stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, bypassSections);
 
             RouteInfo min_stratFromRouteInfo = null;

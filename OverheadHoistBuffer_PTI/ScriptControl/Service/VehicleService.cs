@@ -739,6 +739,19 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     scApp.VehicleBLL.setAndPublishPositionReportInfo2Redis(vh.VEHICLE_ID, receive_gpp);
                     scApp.VehicleBLL.getAndProcPositionReportFromRedis(vh.VEHICLE_ID);
+
+                    if (errorStat == VhStopSingle.StopSingleOn)
+                    {
+                        if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(vh_id))
+                            scApp.GuideBLL.ErrorVehicleSections[vh_id] = receive_gpp.CurrentSecID;
+                        else
+                            scApp.GuideBLL.ErrorVehicleSections.TryAdd(vh_id, receive_gpp.CurrentSecID);
+                    }
+                    else
+                    {
+                        if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(vh_id))
+                            scApp.GuideBLL.ErrorVehicleSections.TryRemove(vh_id, out _);
+                    }
                     // 0317 Jason 此部分之loadBOXStatus 原為loadCSTStatus ，現在之狀況為暫時解法
                     if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh, cstID,
                                            modeStat, actionStat,
@@ -3062,21 +3075,33 @@ namespace com.mirle.ibg3k0.sc.Service
                 //ErrorStatus error_status =
                 //    errorStat == VhStopSingle.StopSingleOn ? ErrorStatus.ErrSet : ErrorStatus.ErrReset;
                 //scApp.ReportBLL.ReportAlarmHappend(error_status, alarm_code, alarm_desc);
-                if (errorStat == VhStopSingle.StopSingleOn)
-                    scApp.GuideBLL.ErrorVehicleSections.Add(eqpt.VEHICLE_ID, recive_str.CurrentSecID);
-                else
-                    scApp.GuideBLL.ErrorVehicleSections.Remove(eqpt.VEHICLE_ID);
+                //if (errorStat == VhStopSingle.StopSingleOn)
+                //    scApp.GuideBLL.ErrorVehicleSections.Add(eqpt.VEHICLE_ID, recive_str.CurrentSecID);
+                //else
+                //    scApp.GuideBLL.ErrorVehicleSections.Remove(eqpt.VEHICLE_ID);
 
                 if (!SCUtility.isEmpty(eqpt.MCS_CMD))
                 {
                     scApp.ReportBLL.newReportTransferCommandPaused(eqpt.MCS_CMD, null);
                 }
             }
-            else if (errorStat == VhStopSingle.StopSingleOn)
-            {
-                scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
-            }
+            //else if (errorStat == VhStopSingle.StopSingleOn)
+            //{
+            //    scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
+            //}
 
+            if (errorStat == VhStopSingle.StopSingleOn)
+            {
+                if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(eqpt.VEHICLE_ID))
+                    scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
+                else
+                    scApp.GuideBLL.ErrorVehicleSections.TryAdd(eqpt.VEHICLE_ID, recive_str.CurrentSecID);
+            }
+            else
+            {
+                if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(eqpt.VEHICLE_ID))
+                    scApp.GuideBLL.ErrorVehicleSections.TryRemove(eqpt.VEHICLE_ID, out _);
+            }
 
             int obstacleDIST = recive_str.ObstDistance;
             string obstacleVhID = recive_str.ObstVehicleID;
@@ -4313,7 +4338,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 is_success = is_success && scApp.ReportBLL.newReportVehicleRemoved(vhID, reportqueues);
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
-                scApp.GuideBLL.ErrorVehicleSections.Remove(vhID);
+                scApp.GuideBLL.ErrorVehicleSections.TryRemove(vhID, out _);
             }
             catch (Exception ex)
             {
