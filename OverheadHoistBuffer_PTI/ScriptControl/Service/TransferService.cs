@@ -912,10 +912,16 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                                 else if (beforeWayExecutingCommand != null)
                                 {
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID}" +
+                                        $"Vehicle: {beforeWayExecutingCommand.CRANE}");
                                     string vehicle = beforeWayExecutingCommand.CRANE;
                                     pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
                                     if (pauseBeforeWayCommand)
+                                    {
+                                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID} 暫緩執行成功" +
+                                            $"Vehicle: {beforeWayExecutingCommand.CRANE}");
                                         SetTransferCommandPreAssignVh(v.CMD_ID, vehicle);
+                                    }
                                 }
                                 if (!check_can_after_on_the_way_result.hasVh /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
                                 {
@@ -2056,7 +2062,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
-        public bool OHT_TransportRequest(ACMD_MCS cmd)  //詢問 OHT 此筆命令是否能執行 
+        public bool OHT_TransportRequest(ACMD_MCS cmd)  //詢問 OHT 此筆命令是否能執行
         {
             if (string.IsNullOrWhiteSpace(cmd.RelayStation) == false)
             {
