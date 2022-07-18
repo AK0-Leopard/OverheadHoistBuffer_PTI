@@ -67,6 +67,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string[] ohcv_devices_id = ohcvDevices.Select(eq => eq.EQPT_ID).ToArray();
             BCUtility.setComboboxDataSource(cb_cv_ids, ohcv_devices_id.ToArray());
 
+            var HIDs = bcApp.SCApplication.EquipmentBLL.cache.loadHID();
+            BCUtility.setComboboxDataSource(comboBox_HID, HIDs.Select(hid => hid.EQPT_ID).ToArray());
+
             cb_isUsingFindStartAdr.Checked = DebugParameter.isUsingFindStartAdr;
 
             cb_OperMode.DataSource = Enum.GetValues(typeof(sc.ProtocolFormat.OHTMessage.OperatingVHMode));
@@ -705,14 +708,19 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             btn_mtl_m2o_d2u_interlock.Checked = car_in_interlock;
         }
 
-        private void btn_SendHIDControl_Click(object sender, EventArgs e)
+        private async void btn_SendHIDControl_Click(object sender, EventArgs e)
         {
             SCApplication scApp = SCApplication.getInstance();
-            AEQPT eqpt_HID = scApp.getEQObjCacheManager().getEquipmentByEQPTID("HID");
-            HIDValueDefMapAction mapAction = (eqpt_HID.getMapActionByIdentityKey("HIDValueDefMapAction") as HIDValueDefMapAction);
-            bool signal = comboBox_HID_control.SelectedIndex == 0 ? true : false;
-            mapAction.HID_Control(signal);
-
+            HID eqpt_HID = scApp.getEQObjCacheManager().getEquipmentByEQPTID(comboBox_HID.Text) as HID;
+            if (eqpt_HID != null)
+            {
+                bool signal = comboBox_HID_control.SelectedIndex == 0 ? true : false;
+                await Task.Run(() => eqpt_HID.HIDControl(signal));
+            }
+            else
+            {
+                MessageBox.Show("Please Select HID.");
+            }
         }
 
         private void button7_Click_1(object sender, EventArgs e)
@@ -804,25 +812,27 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_hid_info_Click(object sender, EventArgs e)
         {
-            AEQPT eqpt_HID = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("HID");
-            var hid_info = eqpt_HID.HID_Info;
-            if (hid_info == null) return;
-            Adapter.Invoke((obj) =>
+            HID eqpt_HID = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID(comboBox_HID.Text) as HID;
+            if (eqpt_HID != null)
             {
-                lbl_hour_sigma_word_value.Text = hid_info.Hour_Sigma_Converted.ToString();
-                lbl_vr_value.Text = hid_info.VR_Converted.ToString();
-                lbl_vs_value.Text = hid_info.VS_Converted.ToString();
-                lbl_vt_value.Text = hid_info.VT_Converted.ToString();
+                Adapter.Invoke((obj) =>
+                {
+                    lbl_hour_sigma_word_value.Text = eqpt_HID.Hour_Sigma_Converted.ToString();
+                    lbl_vr_value.Text = eqpt_HID.VR_Converted.ToString();
+                    lbl_vs_value.Text = eqpt_HID.VS_Converted.ToString();
+                    lbl_vt_value.Text = eqpt_HID.VT_Converted.ToString();
 
-                lbl_ar_value.Text = hid_info.AR_Converted.ToString();
-                lbl_as_value.Text = hid_info.AS_Converted.ToString();
-                lbl_at_value.Text = hid_info.AT_Converted.ToString();
+                    lbl_ar_value.Text = eqpt_HID.AR_Converted.ToString();
+                    lbl_as_value.Text = eqpt_HID.AS_Converted.ToString();
+                    lbl_at_value.Text = eqpt_HID.AT_Converted.ToString();
 
-                lbl_sigma_w_value.Text = hid_info.Sigma_W_Converted.ToString();
-
-
-
-            }, null);
+                    lbl_sigma_w_value.Text = eqpt_HID.Sigma_W_Converted.ToString();
+                }, null);
+            }
+            else
+            {
+                MessageBox.Show("Please Select HID.");
+            }
         }
 
         private void btn_mtl_info_refresh_Click(object sender, EventArgs e)
@@ -1089,7 +1099,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             SCApplication scApp = SCApplication.getInstance();
             AEQPT eqpt_HID = scApp.getEQObjCacheManager().getEquipmentByEQPTID("HID");
             HIDValueDefMapAction mapAction = (eqpt_HID.getMapActionByIdentityKey("HIDValueDefMapAction") as HIDValueDefMapAction);
-            mapAction.PowerAlarm(null, null);
+            //mapAction.PowerAlarm(null, null);
         }
 
         private void button10_Click_1(object sender, EventArgs e)
@@ -1097,8 +1107,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             SCApplication scApp = SCApplication.getInstance();
             AEQPT eqpt_HID = scApp.getEQObjCacheManager().getEquipmentByEQPTID("HID");
             HIDValueDefMapAction mapAction = (eqpt_HID.getMapActionByIdentityKey("HIDValueDefMapAction") as HIDValueDefMapAction);
-            mapAction.TempAlarm(null, null);
-
+            //mapAction.TempAlarm(null, null);
         }
 
         private void set_Distance_btn_Click(object sender, EventArgs e)

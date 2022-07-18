@@ -100,6 +100,12 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
             transferService = app.TransferService;
+
+            var hids = scApp.EquipmentBLL.cache.loadHID();
+            foreach (var hid in hids)
+            {
+                hid.OnPowerOrTempAlarm += onHIDAlarm;
+            }
         }
 
 
@@ -5146,5 +5152,23 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
         }
+
+        #region HID event
+        private void onHIDAlarm(object sender, EventArgs e)
+        {
+            //scApp.getEQObjCacheManager().getLine().isHIDpause = true;
+            var vhs = scApp.getEQObjCacheManager().getAllVehicle();
+            foreach (var vehicle in vhs)
+            {
+                //2022.5.10: send emergency stop to all vehicle
+                if (vehicle.MODE_STATUS == VHModeStatus.AutoRemote && vehicle.ACT_STATUS == VHActionStatus.Commanding)
+                {
+                    var command = scApp.CMDBLL.GetExecutingCmdByVehicle(vehicle);
+                    if (command != null)
+                        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                }
+            }
+        }
+        #endregion
     }
 }

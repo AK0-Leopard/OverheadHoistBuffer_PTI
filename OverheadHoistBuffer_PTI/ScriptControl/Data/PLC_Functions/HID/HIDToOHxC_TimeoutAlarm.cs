@@ -9,14 +9,10 @@ using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
 {
-    public class HIDToOHxC_PowerAlarm : PLC_FunBase
+    public class HIDToOHxC_TimeoutAlarm : PLC_FunBase
     {
-        [PLCElement(ValueName = "HID_TO_OHXC_POWER_ALARM")]
-        public bool PowerAlarmHappend;
-
+        public string EQ_ID;
+        [PLCElement(ValueName = "HID_TO_OHXC_TIMEOUT_ALARM")]
+        public bool TimeoutAlarmHappend;
     }
-
-
-
-
 }

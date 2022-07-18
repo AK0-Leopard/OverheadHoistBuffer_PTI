@@ -3829,9 +3829,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                 logger.Error(ex, "Exception");
                 return null;
             }
-
-
         }
+
+        public ACMD_OHTC GetExecutingCmdByVehicle(AVEHICLE vehicle)
+        {
+            ACMD_OHTC cmd_ohtc = null;
+            using (DBConnection_EF con = new DBConnection_EF())
+            {
+                cmd_ohtc = cmd_ohtcDAO.getCMD_OHTCByVehicleID(con, vehicle.VEHICLE_ID);
+            }
+            return cmd_ohtc;
+        }
+
         public bool HasCmdWillGoTo(string toAdr)
         {
             bool has_cmd_will_go = false;

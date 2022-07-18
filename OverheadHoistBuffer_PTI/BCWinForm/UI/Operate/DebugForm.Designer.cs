@@ -352,9 +352,10 @@
             this.ck_SaftyCheckRequest = new System.Windows.Forms.CheckBox();
             this.ck_Alive = new System.Windows.Forms.CheckBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
-            this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
+            this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
+            this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
+            this.comboBox_HID = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -2658,7 +2659,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3674,6 +3675,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.comboBox_HID);
             this.tabPage5.Controls.Add(this.button10);
             this.tabPage5.Controls.Add(this.button7);
             this.tabPage5.Controls.Add(this.lbl_sigma_w_value);
@@ -3704,7 +3706,7 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(467, 115);
+            this.button10.Location = new System.Drawing.Point(469, 154);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(136, 58);
             this.button10.TabIndex = 21;
@@ -3714,7 +3716,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(467, 51);
+            this.button7.Location = new System.Drawing.Point(469, 90);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(136, 58);
             this.button7.TabIndex = 20;
@@ -3726,7 +3728,7 @@
             // 
             this.lbl_sigma_w_value.AutoSize = true;
             this.lbl_sigma_w_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_sigma_w_value.Location = new System.Drawing.Point(210, 403);
+            this.lbl_sigma_w_value.Location = new System.Drawing.Point(212, 442);
             this.lbl_sigma_w_value.Name = "lbl_sigma_w_value";
             this.lbl_sigma_w_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_sigma_w_value.TabIndex = 19;
@@ -3736,7 +3738,7 @@
             // 
             this.lbl_at_value.AutoSize = true;
             this.lbl_at_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_at_value.Location = new System.Drawing.Point(210, 364);
+            this.lbl_at_value.Location = new System.Drawing.Point(212, 403);
             this.lbl_at_value.Name = "lbl_at_value";
             this.lbl_at_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_at_value.TabIndex = 18;
@@ -3746,7 +3748,7 @@
             // 
             this.lbl_as_value.AutoSize = true;
             this.lbl_as_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_as_value.Location = new System.Drawing.Point(210, 336);
+            this.lbl_as_value.Location = new System.Drawing.Point(212, 375);
             this.lbl_as_value.Name = "lbl_as_value";
             this.lbl_as_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_as_value.TabIndex = 17;
@@ -3756,7 +3758,7 @@
             // 
             this.lbl_ar_value.AutoSize = true;
             this.lbl_ar_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_ar_value.Location = new System.Drawing.Point(210, 308);
+            this.lbl_ar_value.Location = new System.Drawing.Point(212, 347);
             this.lbl_ar_value.Name = "lbl_ar_value";
             this.lbl_ar_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_ar_value.TabIndex = 16;
@@ -3766,7 +3768,7 @@
             // 
             this.lbl_vt_value.AutoSize = true;
             this.lbl_vt_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_vt_value.Location = new System.Drawing.Point(210, 276);
+            this.lbl_vt_value.Location = new System.Drawing.Point(212, 315);
             this.lbl_vt_value.Name = "lbl_vt_value";
             this.lbl_vt_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_vt_value.TabIndex = 15;
@@ -3776,7 +3778,7 @@
             // 
             this.lbl_vs_value.AutoSize = true;
             this.lbl_vs_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_vs_value.Location = new System.Drawing.Point(210, 250);
+            this.lbl_vs_value.Location = new System.Drawing.Point(212, 289);
             this.lbl_vs_value.Name = "lbl_vs_value";
             this.lbl_vs_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_vs_value.TabIndex = 14;
@@ -3786,7 +3788,7 @@
             // 
             this.lbl_vr_value.AutoSize = true;
             this.lbl_vr_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_vr_value.Location = new System.Drawing.Point(210, 223);
+            this.lbl_vr_value.Location = new System.Drawing.Point(212, 262);
             this.lbl_vr_value.Name = "lbl_vr_value";
             this.lbl_vr_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_vr_value.TabIndex = 13;
@@ -3796,7 +3798,7 @@
             // 
             this.lbl_hour_sigma_word_value.AutoSize = true;
             this.lbl_hour_sigma_word_value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_hour_sigma_word_value.Location = new System.Drawing.Point(210, 188);
+            this.lbl_hour_sigma_word_value.Location = new System.Drawing.Point(212, 227);
             this.lbl_hour_sigma_word_value.Name = "lbl_hour_sigma_word_value";
             this.lbl_hour_sigma_word_value.Size = new System.Drawing.Size(212, 24);
             this.lbl_hour_sigma_word_value.TabIndex = 12;
@@ -3805,7 +3807,7 @@
             // label58
             // 
             this.label58.AutoSize = true;
-            this.label58.Location = new System.Drawing.Point(164, 405);
+            this.label58.Location = new System.Drawing.Point(166, 444);
             this.label58.Name = "label58";
             this.label58.Size = new System.Drawing.Size(40, 22);
             this.label58.TabIndex = 11;
@@ -3814,7 +3816,7 @@
             // label57
             // 
             this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(164, 364);
+            this.label57.Location = new System.Drawing.Point(166, 403);
             this.label57.Name = "label57";
             this.label57.Size = new System.Drawing.Size(40, 22);
             this.label57.TabIndex = 10;
@@ -3823,7 +3825,7 @@
             // label56
             // 
             this.label56.AutoSize = true;
-            this.label56.Location = new System.Drawing.Point(164, 338);
+            this.label56.Location = new System.Drawing.Point(166, 377);
             this.label56.Name = "label56";
             this.label56.Size = new System.Drawing.Size(40, 22);
             this.label56.TabIndex = 9;
@@ -3832,7 +3834,7 @@
             // label55
             // 
             this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(164, 312);
+            this.label55.Location = new System.Drawing.Point(166, 351);
             this.label55.Name = "label55";
             this.label55.Size = new System.Drawing.Size(40, 22);
             this.label55.TabIndex = 8;
@@ -3841,7 +3843,7 @@
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(164, 276);
+            this.label54.Location = new System.Drawing.Point(166, 315);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(40, 22);
             this.label54.TabIndex = 7;
@@ -3850,7 +3852,7 @@
             // label52
             // 
             this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(164, 252);
+            this.label52.Location = new System.Drawing.Point(166, 291);
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(40, 22);
             this.label52.TabIndex = 6;
@@ -3859,7 +3861,7 @@
             // label50
             // 
             this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(164, 227);
+            this.label50.Location = new System.Drawing.Point(166, 266);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(40, 22);
             this.label50.TabIndex = 5;
@@ -3868,7 +3870,7 @@
             // label48
             // 
             this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(34, 188);
+            this.label48.Location = new System.Drawing.Point(36, 227);
             this.label48.Name = "label48";
             this.label48.Size = new System.Drawing.Size(170, 22);
             this.label48.TabIndex = 4;
@@ -3876,7 +3878,7 @@
             // 
             // btn_hid_info
             // 
-            this.btn_hid_info.Location = new System.Drawing.Point(38, 101);
+            this.btn_hid_info.Location = new System.Drawing.Point(40, 140);
             this.btn_hid_info.Name = "btn_hid_info";
             this.btn_hid_info.Size = new System.Drawing.Size(228, 47);
             this.btn_hid_info.TabIndex = 3;
@@ -3890,14 +3892,14 @@
             this.comboBox_HID_control.Items.AddRange(new object[] {
             "ON",
             "OFF"});
-            this.comboBox_HID_control.Location = new System.Drawing.Point(38, 39);
+            this.comboBox_HID_control.Location = new System.Drawing.Point(40, 78);
             this.comboBox_HID_control.Name = "comboBox_HID_control";
             this.comboBox_HID_control.Size = new System.Drawing.Size(121, 30);
             this.comboBox_HID_control.TabIndex = 2;
             // 
             // btn_SendHIDControl
             // 
-            this.btn_SendHIDControl.Location = new System.Drawing.Point(184, 40);
+            this.btn_SendHIDControl.Location = new System.Drawing.Point(186, 79);
             this.btn_SendHIDControl.Name = "btn_SendHIDControl";
             this.btn_SendHIDControl.Size = new System.Drawing.Size(202, 26);
             this.btn_SendHIDControl.TabIndex = 0;
@@ -4294,17 +4296,17 @@
             this.tabPage8.Text = "Transfer Optimization";
             this.tabPage8.UseVisualStyleBackColor = true;
             // 
-            // cbBeforeOnWay
+            // cbCommandShift
             // 
-            this.cbBeforeOnWay.AutoSize = true;
-            this.cbBeforeOnWay.Location = new System.Drawing.Point(54, 33);
-            this.cbBeforeOnWay.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.cbBeforeOnWay.Name = "cbBeforeOnWay";
-            this.cbBeforeOnWay.Size = new System.Drawing.Size(92, 26);
-            this.cbBeforeOnWay.TabIndex = 8;
-            this.cbBeforeOnWay.Text = "前順途";
-            this.cbBeforeOnWay.UseVisualStyleBackColor = true;
-            this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
+            this.cbCommandShift.AutoSize = true;
+            this.cbCommandShift.Location = new System.Drawing.Point(54, 135);
+            this.cbCommandShift.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cbCommandShift.Name = "cbCommandShift";
+            this.cbCommandShift.Size = new System.Drawing.Size(113, 26);
+            this.cbCommandShift.TabIndex = 10;
+            this.cbCommandShift.Text = "命令改派";
+            this.cbCommandShift.UseVisualStyleBackColor = true;
+            this.cbCommandShift.CheckedChanged += new System.EventHandler(this.cbCommandShift_CheckedChanged);
             // 
             // cbAfterOnWay
             // 
@@ -4318,17 +4320,28 @@
             this.cbAfterOnWay.UseVisualStyleBackColor = true;
             this.cbAfterOnWay.CheckedChanged += new System.EventHandler(this.cbAfterOnWay_CheckedChanged);
             // 
-            // cbCommandShift
+            // cbBeforeOnWay
             // 
-            this.cbCommandShift.AutoSize = true;
-            this.cbCommandShift.Location = new System.Drawing.Point(54, 135);
-            this.cbCommandShift.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.cbCommandShift.Name = "cbCommandShift";
-            this.cbCommandShift.Size = new System.Drawing.Size(113, 26);
-            this.cbCommandShift.TabIndex = 10;
-            this.cbCommandShift.Text = "命令改派";
-            this.cbCommandShift.UseVisualStyleBackColor = true;
-            this.cbCommandShift.CheckedChanged += new System.EventHandler(this.cbCommandShift_CheckedChanged);
+            this.cbBeforeOnWay.AutoSize = true;
+            this.cbBeforeOnWay.Location = new System.Drawing.Point(54, 33);
+            this.cbBeforeOnWay.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cbBeforeOnWay.Name = "cbBeforeOnWay";
+            this.cbBeforeOnWay.Size = new System.Drawing.Size(92, 26);
+            this.cbBeforeOnWay.TabIndex = 8;
+            this.cbBeforeOnWay.Text = "前順途";
+            this.cbBeforeOnWay.UseVisualStyleBackColor = true;
+            this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
+            // 
+            // comboBox_HID
+            // 
+            this.comboBox_HID.FormattingEnabled = true;
+            this.comboBox_HID.Items.AddRange(new object[] {
+            "ON",
+            "OFF"});
+            this.comboBox_HID.Location = new System.Drawing.Point(40, 29);
+            this.comboBox_HID.Name = "comboBox_HID";
+            this.comboBox_HID.Size = new System.Drawing.Size(121, 30);
+            this.comboBox_HID.TabIndex = 22;
             // 
             // DebugForm
             // 
@@ -4743,5 +4756,6 @@
         private System.Windows.Forms.CheckBox cbBeforeOnWay;
         private System.Windows.Forms.CheckBox cbCommandShift;
         private System.Windows.Forms.CheckBox cbAfterOnWay;
+        private System.Windows.Forms.ComboBox comboBox_HID;
     }
 }
