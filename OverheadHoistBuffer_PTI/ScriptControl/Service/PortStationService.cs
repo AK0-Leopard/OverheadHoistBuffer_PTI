@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using com.mirle.ibg3k0.sc.Data.SECS.ASE;
+using System.ServiceModel;
+using System.Data;
 
 namespace com.mirle.ibg3k0.sc.Service
 {
@@ -150,15 +152,69 @@ namespace com.mirle.ibg3k0.sc.Service
             return isSuccess;
         }
 
-        public bool doPortTypeChgeCommandByMCSCmdID(string change_port_id, int type)
+        public bool doUpdateEqPortRequestStatus(string change_port_id, E_EQREQUEST_STATUS type)
         {
             var port = scApp.PortStationBLL.OperateDB.get(change_port_id);
             bool is_success = true;
-            if ((int)port.PORT_STATUS == SECSConst.PortState_InService)
+            if (port.PORT_TYPE != type)
             {
-                scApp.PortStationBLL.OperateDB.updatePortType(port, type);
+                scApp.PortStationBLL.OperateDB.updateEqPortRequestStatus(port, type);
+                switch (type)
+                {
+                    case E_EQREQUEST_STATUS.LoadRequest:
+                        scApp.ReportBLL.ReportLoadReq(change_port_id, null);
+                        break;
+                    case E_EQREQUEST_STATUS.UnloadRequest:
+                        scApp.ReportBLL.ReportUnLoadReq(change_port_id, null);
+                        break;
+                    case E_EQREQUEST_STATUS.NoRequest:
+                        scApp.ReportBLL.ReportNoReq(change_port_id, null);
+                        break;
+                }
             }
             return is_success;
         }
+
+        #region Get port data from WebService
+        //2022.7.21
+        public void GetPortDataFromWebService(string targetUrl = null)
+        {
+            if (targetUrl is null)
+                targetUrl = "http://localhost:44396/WLPService.asmx";
+
+            try
+            {
+                BasicHttpBinding binding = new BasicHttpBinding();
+                EndpointAddress endPoint = new EndpointAddress(targetUrl);
+                var serv = new EqServiceReference.ExecuteWLPServiceSoapClient(binding, endPoint);
+                DataTable dt = serv.Entity_QueryPortInfo("");
+
+                foreach (DataRow data in dt.Rows)
+                {
+                    string portId = data["ENT_NAME"].ToString();
+                    string eqStatusString = data["PORTSTATUS"].ToString();
+                    E_EQREQUEST_STATUS eqStatus;
+                    switch (eqStatusString)
+                    {
+                        case "LDRQ":
+                            eqStatus = E_EQREQUEST_STATUS.LoadRequest;
+                            break;
+                        case "UDRQ":
+                            eqStatus = E_EQREQUEST_STATUS.UnloadRequest;
+                            break;
+                        default:
+                            eqStatus = E_EQREQUEST_STATUS.NoRequest;
+                            break;
+                    }
+                    doUpdateEqPortRequestStatus(portId, eqStatus);
+                    //Console.WriteLine($"portId={portId}, eqStatus={eqStatus}");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Execption:");
+            }
+        }
+        #endregion Get port data from WebService
     }
 }

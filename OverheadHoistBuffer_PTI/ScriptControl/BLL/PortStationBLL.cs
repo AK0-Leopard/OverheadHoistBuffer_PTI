@@ -83,7 +83,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return true;
             }
 
-            public bool updatePortType(APORTSTATION port, int type)
+            public bool updateEqPortRequestStatus(APORTSTATION port, E_EQREQUEST_STATUS type)
             {
                 try
                 {
@@ -91,9 +91,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                     {
                         con.APORTSTATION.Attach(port);
                         port.PORT_TYPE = type;
-
+                        con.Entry(port).Property(p => p.PORT_TYPE).IsModified = true;
                         portStationDao.update(con, port);
-                        //con.Entry(port_statino).State = EntityState.Detached;
+                        con.Entry(port).State = EntityState.Detached;
                     }
                 }
                 catch (Exception ex)

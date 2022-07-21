@@ -2210,7 +2210,7 @@
           <Property Name="LD_VH_TYPE" Type="OHTC_DevModel.E_VH_TYPE" Nullable="false" />
           <Property Name="ULD_VH_TYPE" Type="OHTC_DevModel.E_VH_TYPE" Nullable="false" />
           <Property Name="PRIORITY" Type="Int32" Nullable="false" />
-          <Property Name="PORT_TYPE" Type="Int32" Nullable="false" />
+          <Property Name="PORT_TYPE" Type="OHTC_DevModel.E_EQREQUEST_STATUS" Nullable="false" />
           <Property Name="PORT_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
           <Property Name="PORT_DIR" Type="Int32" Nullable="false" />
           <Property Name="PORT_SERVICE_STATUS" Type="Int32" Nullable="false" />
@@ -2990,6 +2990,11 @@
           <Property Name="BOX_ID" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
           <Property Name="LOT_ID" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
         </EntityType>
+        <EnumType Name="E_EQREQUEST_STATUS">
+          <Member Name="NoRequest" />
+          <Member Name="LoadRequest" />
+          <Member Name="UnloadRequest" />
+        </EnumType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

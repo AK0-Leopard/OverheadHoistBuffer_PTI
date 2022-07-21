@@ -20,7 +20,7 @@ namespace com.mirle.ibg3k0.sc
         public E_VH_TYPE LD_VH_TYPE { get; set; }
         public E_VH_TYPE ULD_VH_TYPE { get; set; }
         public int PRIORITY { get; set; }
-        public int PORT_TYPE { get; set; }
+        public E_EQREQUEST_STATUS PORT_TYPE { get; set; }
         public E_PORT_STATUS PORT_STATUS { get; set; }
         public int PORT_DIR { get; set; }
         public int PORT_SERVICE_STATUS { get; set; }

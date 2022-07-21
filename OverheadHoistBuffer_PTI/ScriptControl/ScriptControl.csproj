@@ -548,6 +548,11 @@
     <Compile Include="ConfigHandler\SVDataConfigHandler.cs" />
     <Compile Include="ConfigHandler\RecipeParameterConfigHandler.cs" />
     <Compile Include="ConfigHandler\ECIDConfigHandler.cs" />
+    <Compile Include="Connected Services\EqServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="CONTROL_DATA.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
@@ -901,6 +906,7 @@
     <Compile Include="Data\SECS\SECSDriver\IBSEMDriver.cs" />
     <Compile Include="Data\SECS\SECSDriver\SEMDriver.cs" />
     <Compile Include="Data\TcpIp\MsgStructure.cs" />
+    <Compile Include="Data\TimerAction\GetEqPortRequestTimerAction.cs" />
     <Compile Include="Data\TimerAction\LogFileHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\EmptyBoxHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\OHCVAliveTimer.cs" />
@@ -1042,6 +1048,9 @@
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
     <Compile Include="E_ENCODER_POLE.cs">
+      <DependentUpon>OHTCContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="E_EQREQUEST_STATUS.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
     <Compile Include="E_HIDQueueStatus.cs">
@@ -1186,6 +1195,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\EqServiceReference\WLPService.wsdl" />
     <None Include="DLL\BlockControlFramework.dll.config" />
     <None Include="DLL\MPLCConnectionControl.dll.config" />
     <None Include="DLL\nhibernate-configuration.xsd">
@@ -1210,9 +1220,18 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\DataSources\System.Data.DataSet.datasource" />
+    <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="ProtocolFormat\ohtmessage.proto" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\EqServiceReference\WLPService.disco" />
+    <None Include="Connected Services\EqServiceReference\configuration91.svcinfo" />
+    <None Include="Connected Services\EqServiceReference\configuration.svcinfo" />
+    <None Include="Connected Services\EqServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="DLL\BlockControlFramework.dll" />
     <Content Include="DLL\BlockControlFramework.pdb" />
     <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
@@ -1308,13 +1327,16 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CommonMessage\CommonMessage.csproj">
       <Project>{0c1fd02b-6801-4bbc-be97-425c959302a0}</Project>
       <Name>CommonMessage</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\EqServiceReference\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
