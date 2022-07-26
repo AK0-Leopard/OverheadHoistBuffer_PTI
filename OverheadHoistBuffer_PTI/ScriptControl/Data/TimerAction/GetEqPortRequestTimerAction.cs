@@ -22,7 +22,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         {
             try
             {
-                scApp.PortStationService.GetPortDataFromWebService();
+                scApp.PortStationService.GetPortDataFromWebService(scApp.WebServiceUrl);
             }
             catch (Exception ex)
             {
