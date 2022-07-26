@@ -303,6 +303,7 @@
             this.MTLMTS_cb_box = new System.Windows.Forms.ComboBox();
             this.plc_link_btn = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.comboBox_HID = new System.Windows.Forms.ComboBox();
             this.button10 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.lbl_sigma_w_value = new System.Windows.Forms.Label();
@@ -355,7 +356,7 @@
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
-            this.comboBox_HID = new System.Windows.Forms.ComboBox();
+            this.btn_hid_datetime_sync = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -2659,7 +2660,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3675,6 +3676,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.btn_hid_datetime_sync);
             this.tabPage5.Controls.Add(this.comboBox_HID);
             this.tabPage5.Controls.Add(this.button10);
             this.tabPage5.Controls.Add(this.button7);
@@ -3704,9 +3706,20 @@
             this.tabPage5.Text = "HID Test";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // comboBox_HID
+            // 
+            this.comboBox_HID.FormattingEnabled = true;
+            this.comboBox_HID.Items.AddRange(new object[] {
+            "ON",
+            "OFF"});
+            this.comboBox_HID.Location = new System.Drawing.Point(40, 29);
+            this.comboBox_HID.Name = "comboBox_HID";
+            this.comboBox_HID.Size = new System.Drawing.Size(121, 30);
+            this.comboBox_HID.TabIndex = 22;
+            // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(469, 154);
+            this.button10.Location = new System.Drawing.Point(487, 154);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(136, 58);
             this.button10.TabIndex = 21;
@@ -3716,7 +3729,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(469, 90);
+            this.button7.Location = new System.Drawing.Point(487, 90);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(136, 58);
             this.button7.TabIndex = 20;
@@ -4332,16 +4345,15 @@
             this.cbBeforeOnWay.UseVisualStyleBackColor = true;
             this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
             // 
-            // comboBox_HID
+            // btn_hid_datetime_sync
             // 
-            this.comboBox_HID.FormattingEnabled = true;
-            this.comboBox_HID.Items.AddRange(new object[] {
-            "ON",
-            "OFF"});
-            this.comboBox_HID.Location = new System.Drawing.Point(40, 29);
-            this.comboBox_HID.Name = "comboBox_HID";
-            this.comboBox_HID.Size = new System.Drawing.Size(121, 30);
-            this.comboBox_HID.TabIndex = 22;
+            this.btn_hid_datetime_sync.Location = new System.Drawing.Point(280, 140);
+            this.btn_hid_datetime_sync.Name = "btn_hid_datetime_sync";
+            this.btn_hid_datetime_sync.Size = new System.Drawing.Size(183, 47);
+            this.btn_hid_datetime_sync.TabIndex = 47;
+            this.btn_hid_datetime_sync.Text = "DateTime Sync";
+            this.btn_hid_datetime_sync.UseVisualStyleBackColor = true;
+            this.btn_hid_datetime_sync.Click += new System.EventHandler(this.btn_hid_datetime_sync_Click);
             // 
             // DebugForm
             // 
@@ -4757,5 +4769,6 @@
         private System.Windows.Forms.CheckBox cbCommandShift;
         private System.Windows.Forms.CheckBox cbAfterOnWay;
         private System.Windows.Forms.ComboBox comboBox_HID;
+        private System.Windows.Forms.Button btn_hid_datetime_sync;
     }
 }

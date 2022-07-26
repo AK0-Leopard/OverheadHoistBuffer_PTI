@@ -96,6 +96,8 @@ namespace com.mirle.ibg3k0.sc.App
         /// <value>The b c_ identifier.</value>
         public string BC_ID { get; private set; }
         public static string ServerName { get; private set; }
+        public int HIDHeartbeatLostThreshold { get; private set; }
+        public string WebServiceUrl { get; private set; }
 
         /// <summary>
         /// The _lock
@@ -867,6 +869,9 @@ namespace com.mirle.ibg3k0.sc.App
             cmdBLL.MCSPriorityWeight = getDouble("MCSPriorityWeight", 1);
 
             transferService.TimePriorityIncreseInterval = getInt("TimePriorityIncreseInterval", 60);
+
+            HIDHeartbeatLostThreshold = getInt("HIDHeartbeatLostThreshold", 10);
+            WebServiceUrl = getString("WebServiceUrl", "");
         }
 
         private void initialRouteBan()

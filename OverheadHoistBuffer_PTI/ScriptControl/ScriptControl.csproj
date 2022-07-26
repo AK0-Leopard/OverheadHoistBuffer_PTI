@@ -907,6 +907,7 @@
     <Compile Include="Data\SECS\SECSDriver\SEMDriver.cs" />
     <Compile Include="Data\TcpIp\MsgStructure.cs" />
     <Compile Include="Data\TimerAction\GetEqPortRequestTimerAction.cs" />
+    <Compile Include="Data\TimerAction\HIDHeartbeatCheckTimerAction.cs" />
     <Compile Include="Data\TimerAction\LogFileHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\EmptyBoxHandlerTimer.cs" />
     <Compile Include="Data\TimerAction\OHCVAliveTimer.cs" />

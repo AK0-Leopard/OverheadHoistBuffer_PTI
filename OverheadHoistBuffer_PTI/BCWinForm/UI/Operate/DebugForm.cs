@@ -1310,5 +1310,27 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             DebugParameter.CommandShift = cbCommandShift.Checked;
         }
+
+        private void btn_hid_datetime_sync_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btn_hid_datetime_sync.Enabled = false;
+                SCApplication scApp = SCApplication.getInstance();
+                HID eqpt_HID = scApp.getEQObjCacheManager().getEquipmentByEQPTID(comboBox_HID.Text) as HID;
+                if (eqpt_HID != null)
+                {
+                    eqpt_HID.DateTimeSyncCommand(DateTime.Now);
+                }
+                else
+                {
+                    MessageBox.Show("Please Select HID.");
+                }
+            }
+            finally
+            {
+                btn_hid_datetime_sync.Enabled = true;
+            }
+        }
     }
 }
