@@ -50,7 +50,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         public APORTSTATION getByID(DBConnection_EF con, String port_id)
         {
             var query = from port in con.APORTSTATION
-                        where port.PORT_ID == port_id.Trim()
+                        where port.PORT_ID.Trim() == port_id.Trim()
                         select port;
             return query.SingleOrDefault();
         }

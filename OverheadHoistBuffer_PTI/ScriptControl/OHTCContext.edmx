@@ -2213,7 +2213,7 @@
           <Property Name="PORT_TYPE" Type="OHTC_DevModel.E_EQREQUEST_STATUS" Nullable="false" />
           <Property Name="PORT_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
           <Property Name="PORT_DIR" Type="Int32" Nullable="false" />
-          <Property Name="PORT_SERVICE_STATUS" Type="Int32" Nullable="false" />
+          <Property Name="PORT_SERVICE_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
         </EntityType>
         <EntityType Name="APORT">
           <Key>

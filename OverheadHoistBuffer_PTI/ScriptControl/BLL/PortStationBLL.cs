@@ -104,7 +104,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return true;
             }
 
-            public bool updateServiceStatus(string portID, int status)
+            public bool updateServiceStatus(string portID, E_PORT_STATUS status)
             {
                 try
                 {
@@ -207,7 +207,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return portTemp;
             }
 
-            public bool updateServiceStatus(string portID, int status)
+            public bool updateServiceStatus(string portID, E_PORT_STATUS status)
             {
                 try
                 {

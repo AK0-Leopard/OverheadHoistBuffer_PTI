@@ -23,6 +23,6 @@ namespace com.mirle.ibg3k0.sc
         public E_EQREQUEST_STATUS PORT_TYPE { get; set; }
         public E_PORT_STATUS PORT_STATUS { get; set; }
         public int PORT_DIR { get; set; }
-        public int PORT_SERVICE_STATUS { get; set; }
+        public E_PORT_STATUS PORT_SERVICE_STATUS { get; set; }
     }
 }
