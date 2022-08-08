@@ -332,7 +332,7 @@
           <Property Name="CMD_ID" Type="varchar" MaxLength="64" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'OHBC_PTI_HL.dbo.ALARMMAP' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'OHTC_PTI_v1.dbo.ALARMMAP' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="ALARMMAP">
           <Key>
             <PropertyRef Name="EQPT_ID" />
@@ -536,6 +536,7 @@
           <Property Name="PORT_STATUS" Type="int" Nullable="false" />
           <Property Name="PORT_DIR" Type="int" Nullable="false" />
           <Property Name="PORT_SERVICE_STATUS" Type="int" Nullable="false" />
+          <Property Name="ERROR_FLAG" Type="bit" />
         </EntityType>
         <EntityType Name="ARAIL">
           <Key>
@@ -1197,7 +1198,7 @@
           <Property Name="TrnDT" Type="varchar" MaxLength="20" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'OHBC_PTI_HL.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'OHTC_PTI_v1.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VACMD_MCS">
           <Key>
             <PropertyRef Name="CMD_ID" />
@@ -1233,7 +1234,7 @@
           <Property Name="VH_ID" Type="char" MaxLength="32" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'OHBC_PTI_HL.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'OHTC_PTI_v1.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VSECTION_100">
           <Key>
             <PropertyRef Name="SEC_ID" />
@@ -2214,6 +2215,7 @@
           <Property Name="PORT_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
           <Property Name="PORT_DIR" Type="Int32" Nullable="false" />
           <Property Name="PORT_SERVICE_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
+          <Property Name="ERROR_FLAG" Type="Boolean" />
         </EntityType>
         <EntityType Name="APORT">
           <Key>
@@ -3588,6 +3590,7 @@
     <EntitySetMapping Name="APORTSTATION">
       <EntityTypeMapping TypeName="IsTypeOf(OHTC_DevModel.APORTSTATION)">
         <MappingFragment StoreEntitySet="APORTSTATION">
+          <ScalarProperty Name="ERROR_FLAG" ColumnName="ERROR_FLAG" />
           <ScalarProperty Name="PORT_ID" ColumnName="PORT_ID" />
           <ScalarProperty Name="ADRTYPE" ColumnName="ADRTYPE" />
           <ScalarProperty Name="ADR_ID" ColumnName="ADR_ID" />

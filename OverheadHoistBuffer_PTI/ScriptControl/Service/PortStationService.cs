@@ -133,12 +133,14 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (port != null && port.PORT_SERVICE_STATUS != status)
                 {
                     portInfoLogger.Info($"Port {portID} service status changed, old status: {port.PORT_SERVICE_STATUS}, new status: {status}");
-                    isSuccess = scApp.PortStationBLL.OperateDB.updateServiceStatus(port.PORT_ID, status);
+                    isSuccess = scApp.PortStationBLL.OperateDB.updateServiceStatus(portID, status);
                     switch (status)
                     {
                         case E_PORT_STATUS.InService:
+                            scApp.ReportBLL.ReportPortInService(portID, null);
                             break;
                         case E_PORT_STATUS.OutOfService:
+                            scApp.ReportBLL.ReportPortOutOfService(portID, null);
                             break;
                         default:
                             break;
@@ -172,6 +174,27 @@ namespace com.mirle.ibg3k0.sc.Service
                     case E_EQREQUEST_STATUS.NoRequest:
                         scApp.ReportBLL.ReportNoReq(change_port_id, null);
                         break;
+                }
+            }
+            return is_success;
+        }
+        public bool doUpdateEqPortErrorStatus(string portId, bool isError)
+        {
+            var port = scApp.PortStationBLL.OperateDB.get(portId);
+            bool is_success = false;
+            if (port != null && port.ERROR_FLAG != isError)
+            {
+                portInfoLogger.Info($"Port {portId} error flag changed, old status: {port.PORT_TYPE}, new status: {isError}");
+                is_success = scApp.PortStationBLL.OperateDB.updateEqPortErrorStatus(port, isError);
+                if (isError)
+                {
+                    //report unit alarm set
+                    reportBLL.ReportUnitAlarmSet(portId, "100998", $"{portId} Error");
+                }
+                else
+                {
+                    //report unit alarm clear
+                    reportBLL.ReportUnitAlarmCleared(portId, "100998", $"{portId} Error");
                 }
             }
             return is_success;
@@ -219,7 +242,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 return $"ENT_NAME:{PortId}," +
                     $"CONTROLMODE:{ControlModeString}," +
-                    $"PORTSTATUS:{EqStatusString}" +
+                    $"PORTSTATUS:{EqStatusString}," +
                     $"ERROR:{ErrorString}";
             }
         }
@@ -248,6 +271,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     portInfoCsvLogger.Info(portInfo.ToString());
                     doUpdateEqPortRequestStatus(portInfo.PortId, portInfo.EqStatus);
                     doUpdatePortStationServiceStatus(portInfo.PortId, portInfo.ControlMode);
+                    doUpdateEqPortErrorStatus(portInfo.PortId, portInfo.IsError);
                 }
             }
             catch (Exception ex)

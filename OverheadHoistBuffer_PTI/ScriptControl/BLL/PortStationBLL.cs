@@ -104,6 +104,27 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return true;
             }
 
+            public bool updateEqPortErrorStatus(APORTSTATION port, bool isError)
+            {
+                try
+                {
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        con.APORTSTATION.Attach(port);
+                        port.ERROR_FLAG = isError;
+                        con.Entry(port).Property(p => p.ERROR_FLAG).IsModified = true;
+                        portStationDao.update(con, port);
+                        con.Entry(port).State = EntityState.Detached;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                    return false;
+                }
+                return true;
+            }
+
             public bool updateServiceStatus(string portID, E_PORT_STATUS status)
             {
                 try
