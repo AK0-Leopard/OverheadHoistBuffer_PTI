@@ -237,7 +237,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                 }
             }
-            public bool IsError => ErrorString.Equals("ON");
+            //public bool IsError => ErrorString != null && ErrorString.Equals("ON");
+            public bool IsError => "ON".Equals(ErrorString);
             public override string ToString()
             {
                 return $"ENT_NAME:{PortId}," +
@@ -266,7 +267,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         PortId = data["ENT_NAME"].ToString(),
                         ControlModeString = data["CONTROLMODE"].ToString(),
-                        EqStatusString = data["PORTSTATUS"].ToString()
+                        EqStatusString = data["PORTSTATUS"].ToString(),
+                        ErrorString = data["ERROR"].ToString(),
                     };
                     portInfoCsvLogger.Info(portInfo.ToString());
                     doUpdateEqPortRequestStatus(portInfo.PortId, portInfo.EqStatus);
