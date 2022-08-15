@@ -802,12 +802,25 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (canAbortCmd)
                 {
                     AVEHICLE ohtData = scApp.VehicleBLL.loadAllVehicle().Where(data => (data?.MCS_CMD.Trim() ?? "") == cancel_abort_cmd_id).FirstOrDefault();
+                    var ohtcCmd = scApp.CMDBLL.getCMD_OHTCByMCScmdID(cancel_abort_cmd_id);
 
                     var cancel_check_result1 = checkHostCommandAbort(s2f41 as S2F41);
 
                     if (ohtData != null)
                     {
                         scApp.VehicleService.doCancelOrAbortCommandByMCSCmdID(cancel_abort_cmd_id, ProtocolFormat.OHTMessage.CMDCancelType.CmdAbort);
+                    }
+                    else if (ohtcCmd != null)
+                    {
+                        scApp.ReportBLL.ReportTransferAbortInitiated(cancel_abort_cmd_id);
+                        var isSuccess = scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cancel_abort_cmd_id, E_CMD_STATUS.CancelEndByOHTC);
+                        if (isSuccess)
+                        {
+                            scApp.ReportBLL.ReportTransferAbortCompleted(cancel_abort_cmd_id);
+                            scApp.CMDBLL.updateCMD_MCS_TranStatus(cancel_abort_cmd_id, E_TRAN_STATUS.TransferCompleted);
+                        }
+                        else
+                            scApp.ReportBLL.newReportTransferAbortFailed(cancel_abort_cmd_id, null);
                     }
                     else
                     {
