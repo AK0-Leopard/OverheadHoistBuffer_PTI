@@ -248,7 +248,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
         //2022.7.21
-        public void GetPortDataFromWebService(string targetUrl = null)
+        public void GetPortDataFromWebService(string targetUrl = null, char splitChar = '-', char replaceFrom = 'P', char replaceTo = '0')
         {
             if (targetUrl is null)
                 targetUrl = "http://localhost:44396/WLPService.asmx";
@@ -263,9 +263,13 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 foreach (DataRow data in dt.Rows)
                 {
+                    string portIdRaw = data["ENT_NAME"].ToString();
+                    var portIdArr = portIdRaw.Split(splitChar);
+                    string portId = portIdArr[0] + portIdArr[1].Replace(replaceFrom, replaceTo);
+
                     var portInfo = new MesPortInfo()
                     {
-                        PortId = data["ENT_NAME"].ToString(),
+                        PortId = portId,
                         ControlModeString = data["CONTROLMODE"].ToString(),
                         EqStatusString = data["PORTSTATUS"].ToString(),
                         ErrorString = data["ERROR"].ToString(),
