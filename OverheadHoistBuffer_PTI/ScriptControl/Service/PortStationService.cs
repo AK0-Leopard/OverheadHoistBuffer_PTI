@@ -265,7 +265,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     string portIdRaw = data["ENT_NAME"].ToString();
                     var portIdArr = portIdRaw.Split(splitChar);
-                    string portId = portIdArr[0] + portIdArr[1].Replace(replaceFrom, replaceTo);
+                    string portId;
+                    if (portIdArr.Count() < 1)
+                        portId = portIdRaw;
+                    else
+                        portId = portIdArr[0] + portIdArr[1].Replace(replaceFrom, replaceTo);
 
                     var portInfo = new MesPortInfo()
                     {
