@@ -1059,5 +1059,11 @@ namespace com.mirle.ibg3k0.bc.winform
         {
             openForm(typeof(HIDMaintenanceForm).Name, true, false);
         }
+
+        private void eQPortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var eqPortForm = new ModifyPortStationData(bcApp);
+            ShowFrom(eqPortForm, null);
+        }
     }
 }

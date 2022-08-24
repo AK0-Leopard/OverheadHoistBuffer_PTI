@@ -282,6 +282,12 @@
     <Compile Include="UI\Test\CMD_CST_DATA.Designer.cs">
       <DependentUpon>CMD_CST_DATA.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Test\ModifyPortStationData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Test\ModifyPortStationData.Designer.cs">
+      <DependentUpon>ModifyPortStationData.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Test\S6F11Demo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1238,6 +1244,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Test\CMD_CST_DATA.resx">
       <DependentUpon>CMD_CST_DATA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Test\ModifyPortStationData.resx">
+      <DependentUpon>ModifyPortStationData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Test\S6F11Demo.resx">
       <DependentUpon>S6F11Demo.cs</DependentUpon>

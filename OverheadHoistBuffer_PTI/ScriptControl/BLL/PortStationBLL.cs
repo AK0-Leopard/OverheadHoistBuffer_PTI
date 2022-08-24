@@ -33,6 +33,24 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 portStationDao = _portStationDao;
             }
+            public List<APORTSTATION> loadAll()
+            {
+                List <APORTSTATION> ret = null;
+                try
+                {
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        ret = portStationDao.loadAll(con);
+                    }
+                    return ret;
+
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                    return null;
+                }
+            }
             public APORTSTATION get(string _id)
             {
                 APORTSTATION rtnPortStation = null;

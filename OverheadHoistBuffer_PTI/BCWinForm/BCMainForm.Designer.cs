@@ -93,6 +93,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.transferCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.reserveInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hIDInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zh_twToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,7 +108,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.搬送模擬ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.port內容值ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.命令卡匣資料ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hIDInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eQPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.CMS_OnLineMode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -407,6 +408,12 @@ namespace com.mirle.ibg3k0.bc.winform
             resources.ApplyResources(this.reserveInfoToolStripMenuItem, "reserveInfoToolStripMenuItem");
             this.reserveInfoToolStripMenuItem.Click += new System.EventHandler(this.reserveInfoToolStripMenuItem_Click);
             // 
+            // hIDInfoToolStripMenuItem
+            // 
+            this.hIDInfoToolStripMenuItem.Name = "hIDInfoToolStripMenuItem";
+            resources.ApplyResources(this.hIDInfoToolStripMenuItem, "hIDInfoToolStripMenuItem");
+            this.hIDInfoToolStripMenuItem.Click += new System.EventHandler(this.hIDInfoToolStripMenuItem_Click);
+            // 
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -478,7 +485,8 @@ namespace com.mirle.ibg3k0.bc.winform
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.搬送模擬ToolStripMenuItem,
             this.port內容值ToolStripMenuItem,
-            this.命令卡匣資料ToolStripMenuItem});
+            this.命令卡匣資料ToolStripMenuItem,
+            this.eQPortToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             resources.ApplyResources(this.testToolStripMenuItem, "testToolStripMenuItem");
             // 
@@ -500,11 +508,11 @@ namespace com.mirle.ibg3k0.bc.winform
             this.命令卡匣資料ToolStripMenuItem.Name = "命令卡匣資料ToolStripMenuItem";
             this.命令卡匣資料ToolStripMenuItem.Click += new System.EventHandler(this.命令卡匣資料ToolStripMenuItem_Click);
             // 
-            // hIDInfoToolStripMenuItem
+            // eQPortToolStripMenuItem
             // 
-            this.hIDInfoToolStripMenuItem.Name = "hIDInfoToolStripMenuItem";
-            resources.ApplyResources(this.hIDInfoToolStripMenuItem, "hIDInfoToolStripMenuItem");
-            this.hIDInfoToolStripMenuItem.Click += new System.EventHandler(this.hIDInfoToolStripMenuItem_Click);
+            this.eQPortToolStripMenuItem.Name = "eQPortToolStripMenuItem";
+            resources.ApplyResources(this.eQPortToolStripMenuItem, "eQPortToolStripMenuItem");
+            this.eQPortToolStripMenuItem.Click += new System.EventHandler(this.eQPortToolStripMenuItem_Click);
             // 
             // BCMainForm
             // 
@@ -679,6 +687,7 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem 命令卡匣資料ToolStripMenuItem;
         [AuthorityCheck(FUNCode = BCAppConstants.FUNC_EQPTPARAMETER)]
         private System.Windows.Forms.ToolStripMenuItem hIDInfoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem eQPortToolStripMenuItem;
     }
 
     /// <summary>
