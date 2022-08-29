@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using com.mirle.ibg3k0.sc.Service;
 using Stateless;
 using System;
 using System.Collections.Generic;
@@ -1410,6 +1411,24 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        private SCAppConstants.EarthquakeStatus _earthquakeStatus = SCAppConstants.EarthquakeStatus.Unknown;
+        public SCAppConstants.EarthquakeStatus EarthquakeStatus
+        {
+            get { return _earthquakeStatus; }
+            set
+            {
+                if (_earthquakeStatus != value)
+                {
+                    _earthquakeStatus = value;
+                    OnPropertyChanged(BCFUtility.getPropertyName(() => this.EarthquakeStatus));
+
+                    if (value == SCAppConstants.EarthquakeStatus.Earthquake)
+                        SCApplication.getInstance().VehicleService.PauseAllVehicleByOHxCPause();
+                    else if (value == SCAppConstants.EarthquakeStatus.Normal)
+                        SCApplication.getInstance().VehicleService.ResumeAllVehicleByOhxCPause();
+                }
+            }
+        }
 
 
         #region TSC state machine

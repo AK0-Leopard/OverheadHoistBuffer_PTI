@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
@@ -623,6 +625,43 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
             }
         }
+        protected virtual void MTL_EarthquakeStatusChanged(object sender, ValueChangedEventArgs args)
+        {
+            var recevie_function =
+                scApp.getFunBaseObj<MtlToOHxC_Earthquake>(eqpt.EQPT_ID) as MtlToOHxC_Earthquake;
+            try
+            {
+                recevie_function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTxValueDefMapActionBase), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
+                         Data: recevie_function.ToString(),
+                         XID: eqpt.EQPT_ID);
+                eqpt.SynchronizeTime = DateTime.Now;
+                //TODO: earthquake
+                if (recevie_function.Earthquake == (int)SCAppConstants.EarthquakeStatus.Earthquake)
+                {
+                    scApp.getEQObjCacheManager().getLine().EarthquakeStatus = SCAppConstants.EarthquakeStatus.Earthquake;
+                }
+                else if (recevie_function.Earthquake == (int)SCAppConstants.EarthquakeStatus.Normal)
+                {
+                    Task.Run(() => 
+                    {
+                        SpinWait.SpinUntil(() => false, 50000);
+                        var recvFunc = scApp.getFunBaseObj<MtlToOHxC_Earthquake>(eqpt.EQPT_ID) as MtlToOHxC_Earthquake;
+                        recvFunc.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                        if (recvFunc.Earthquake == (int)SCAppConstants.EarthquakeStatus.Normal)
+                            scApp.getEQObjCacheManager().getLine().EarthquakeStatus = SCAppConstants.EarthquakeStatus.Normal;
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<MtlToOHxC_Earthquake>(recevie_function);
+            }
+        }
 
         public abstract void OHxCResetAllhandshake();
 
@@ -840,6 +879,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //{
                 //    vr.afterValueChange += (_sender, _e) => MTL_LFTStatus(_sender, _e);
                 //}
+                if (bcfApp.tryGetReadValueEventstring(eqpt.EqptObjectCate, eqpt.EQPT_ID, "MTL_TO_OHXC_EARTHQUAKE", out vr))
+                {
+                    vr.afterValueChange += (_sender, _e) => MTL_EarthquakeStatusChanged(_sender, _e);
+                }
             }
             catch (Exception ex)
             {

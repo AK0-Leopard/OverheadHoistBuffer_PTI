@@ -1195,5 +1195,14 @@ namespace com.mirle.ibg3k0.sc.App
         public const string FUNC_DEBUG = "FUNC_DEBUG";
         /******************************************************************/
         #endregion UAS
+
+        #region Earthquake flag
+        public enum EarthquakeStatus
+        {
+            Unknown = 0,
+            Normal = 1,
+            Earthquake = 2,
+        }
+        #endregion
     }
 }

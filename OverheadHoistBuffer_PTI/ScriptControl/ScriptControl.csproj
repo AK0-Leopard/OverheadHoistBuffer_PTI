@@ -666,6 +666,7 @@
     <Compile Include="Data\PLC_Functions\MGV\MGVToOHxC_Alive.cs" />
     <Compile Include="Data\PLC_Functions\MGV\OHxCToMGV_Status.cs" />
     <Compile Include="Data\PLC_Functions\MtlToOHxC_CarOutActionType.cs" />
+    <Compile Include="Data\PLC_Functions\MtlToOHxC_Earthquake.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_RequestCarInDataCheck.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_MtlCarOutRepuest.cs" />
     <Compile Include="Data\PLC_Functions\MtsToOHxC_LFTStatus.cs" />
