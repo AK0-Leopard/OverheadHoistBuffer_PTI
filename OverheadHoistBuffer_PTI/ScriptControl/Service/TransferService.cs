@@ -837,6 +837,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             #endregion
                             var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue)
                                 //.Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                                .Where(data => checkCanExecuteByLoadEqPortStatus(data))
                                 .ToList();
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
@@ -1087,6 +1088,22 @@ namespace com.mirle.ibg3k0.sc.Service
                     Interlocked.Exchange(ref syncTranCmdPoint, 0);
                 }
             }
+        }
+
+        private bool checkCanExecuteByLoadEqPortStatus(ACMD_MCS command)
+        {
+            if (!isUnitType(command.HOSTSOURCE, UnitType.EQ))
+                return true;
+            
+            var loadLocation = scApp.PortStationBLL.OperateCatch.getPortStation(command.HOSTSOURCE);
+            if (loadLocation != null)
+            {
+                if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
+                    return false;
+                if (loadLocation.PORT_TYPE != E_EQREQUEST_STATUS.LoadRequest)
+                    return false;
+            }
+            return true;
         }
 
         private (bool hasVh, ACMD_MCS sameSegmentTran) checkHasVhAfterOnTheWay(ACMD_MCS queueCmd, List<ACMD_MCS> transferCmdData)
