@@ -35,6 +35,7 @@ using com.mirle.ibg3k0.sc.Data.SECS.PTI;
 using System.Reflection;
 using System.Threading.Tasks;
 using com.mirle.ibg3k0.sc.Data.Enum;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
@@ -813,7 +814,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     else if (ohtcCmd != null)
                     {
                         scApp.ReportBLL.ReportTransferAbortInitiated(cancel_abort_cmd_id);
-                        var isSuccess = scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cancel_abort_cmd_id, E_CMD_STATUS.CancelEndByOHTC);
+                        var isSuccess = scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cancel_abort_cmd_id, E_CMD_STATUS.CancelEndByOHTC, CompleteStatus.CmpStatusCancel);
                         if (isSuccess)
                         {
                             scApp.ReportBLL.ReportTransferAbortCompleted(cancel_abort_cmd_id);

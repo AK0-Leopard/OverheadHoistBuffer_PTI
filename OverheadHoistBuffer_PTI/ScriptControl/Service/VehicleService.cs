@@ -1056,7 +1056,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Queue(cmd.CMD_ID_MCS);
                     }
-                    scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHT);
+                    scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHT, CompleteStatus.CmpStatusAbort);
                 }
             }
             return isSuccess;
@@ -3416,7 +3416,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
-                        scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC);
+                        scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC, CompleteStatus.CmpStatusCancel);
                     }
                     else if (completeStatus == CompleteStatus.CmpStatusCancel &&
                         cmd_mcs != null && cmd_mcs.IsCommandPauseBeforeOnTheWay)
@@ -3656,7 +3656,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(eqpt.VEHICLE_ID, cmd_id, completeStatus);
                     E_CMD_STATUS ohtc_cmd_status = scApp.VehicleBLL.CompleteStatusToCmdStatus(completeStatus);
-                    isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, ohtc_cmd_status);
+                    isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, ohtc_cmd_status, completeStatus);
                     isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(eqpt.VEHICLE_ID);
 
 

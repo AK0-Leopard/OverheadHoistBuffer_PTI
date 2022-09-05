@@ -3720,7 +3720,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// <param name="cmd_id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public bool updateCommand_OHTC_StatusByCmdID(string cmd_id, E_CMD_STATUS status)
+        public bool updateCommand_OHTC_StatusByCmdID(string cmd_id, E_CMD_STATUS status, CompleteStatus? completeStatus = null)
         {
             bool isSuccess = false;
             //using (DBConnection_EF con = new DBConnection_EF())
@@ -3732,6 +3732,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                     ACMD_OHTC cmd = cmd_ohtcDAO.getByID(con, cmd_id);
                     if (cmd != null)
                     {
+                        if (completeStatus != null)
+                            cmd.COMPLETE_STATUS = completeStatus;
+
                         if (status == E_CMD_STATUS.Execution)
                         {
                             cmd.CMD_START_TIME = DateTime.Now;
@@ -4163,7 +4166,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         {
                             if (cmd.CMD_STAUS > E_CMD_STATUS.Queue)
                             {
-                                updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
+                                updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusForceFinishByOp);
                                 if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                                 {
                                     //scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(cmd.CMD_ID_MCS, E_TRAN_STATUS.Aborting);
@@ -4172,7 +4175,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             else
                             {
                                 ACMD_OHTC queue_cmd = cmd;
-                                updateCommand_OHTC_StatusByCmdID(queue_cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
+                                updateCommand_OHTC_StatusByCmdID(queue_cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusForceFinishByOp);
                                 if (!SCUtility.isEmpty(queue_cmd.CMD_ID_MCS))
                                 {
                                     ACMD_MCS pre_initial_cmd_mcs = getCMD_MCSByID(queue_cmd.CMD_ID_MCS);
@@ -4588,7 +4591,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             catch (Exception ex)
             {
-                updateCommand_OHTC_StatusByCmdID(acmd_ohtc.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
+                updateCommand_OHTC_StatusByCmdID(acmd_ohtc.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusAbort);
                 logger_VhRouteLog.Error(ex, "generateCmd_OHTC_Details happend");
                 return false;
             }
