@@ -99,5 +99,6 @@ namespace com.mirle.ibg3k0.sc
         public virtual DbSet<VSECTION_100> VSECTION_100 { get; set; }
         public virtual DbSet<HCMD_MCS> HCMD_MCS { get; set; }
         public virtual DbSet<HCMD_OHTC> HCMD_OHTC { get; set; }
+        public virtual DbSet<VHCMD_OHTC_MCS> VHCMD_OHTC_MCS { get; set; }
     }
 }

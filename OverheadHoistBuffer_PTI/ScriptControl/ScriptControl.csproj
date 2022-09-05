@@ -1173,6 +1173,9 @@
     </Compile>
     <Compile Include="ValueHandler\ProcessDataValueHandler.cs" />
     <Compile Include="ValueHandler\ValueHandlerBase.cs" />
+    <Compile Include="VHCMD_OHTC_MCS.cs">
+      <DependentUpon>OHTCContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="VSECTION_100.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
@@ -1227,6 +1230,7 @@
     <None Include="ProtocolFormat\ohtmessage.proto" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQL Schema\[2022-09-05]View Create.sql" />
     <None Include="Connected Services\EqServiceReference\WLPService.disco" />
     <None Include="Connected Services\EqServiceReference\configuration91.svcinfo" />
     <None Include="Connected Services\EqServiceReference\configuration.svcinfo" />
