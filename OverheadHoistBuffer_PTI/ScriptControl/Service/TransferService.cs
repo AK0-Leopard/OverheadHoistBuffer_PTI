@@ -1100,7 +1100,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
                     return false;
-                if (loadLocation.PORT_TYPE != E_EQREQUEST_STATUS.LoadRequest)
+                if (loadLocation.PORT_TYPE == E_EQREQUEST_STATUS.NoRequest)
                     return false;
             }
             return true;
