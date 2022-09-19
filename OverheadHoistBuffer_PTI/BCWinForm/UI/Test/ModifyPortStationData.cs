@@ -118,5 +118,27 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Test
             }
             refreshUI();
         }
+
+        private void btn_EnableCheckStatus_Click(object sender, EventArgs e)
+        {
+            var targetRow = dgvAPORTSTATIONData.SelectedRows;
+            if (targetRow != null)
+            {
+                var targetItem = targetRow[0].DataBoundItem as APORTSTATION;
+                BCApp.SCApplication.PortStationService.doUpdateEqIgnoreStatusFlag(targetItem.PORT_ID.Trim(), false);
+            }
+            refreshUI();
+        }
+
+        private void btn_DisableCheckStatus_Click(object sender, EventArgs e)
+        {
+            var targetRow = dgvAPORTSTATIONData.SelectedRows;
+            if (targetRow != null)
+            {
+                var targetItem = targetRow[0].DataBoundItem as APORTSTATION;
+                BCApp.SCApplication.PortStationService.doUpdateEqIgnoreStatusFlag(targetItem.PORT_ID.Trim(), true);
+            }
+            refreshUI();
+        }
     }
 }

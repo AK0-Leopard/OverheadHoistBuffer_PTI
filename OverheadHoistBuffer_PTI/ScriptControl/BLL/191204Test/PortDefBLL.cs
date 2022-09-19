@@ -172,6 +172,57 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return false;
             }
         }
+        public bool UpdateEqRequestStatus(string portName, E_EQREQUEST_STATUS status)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    con.PortDef.Where(data => data.PLCPortID == portName).First().RequestStatus = status;
+                    con.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
+        public bool UpdateEqErrorStatus(string portName, bool isError)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    con.PortDef.Where(data => data.PLCPortID == portName).First().ErrorFlag = isError;
+                    con.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
+        public bool UpdateEqIgnoreStatusFlag(string portName, bool isIgnore)
+        {
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    con.PortDef.Where(data => data.PLCPortID == portName).First().IgnoreStatusFlag = isIgnore;
+                    con.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
+        }
         public List<PortDef> GetOHB_PortData(string ohbName)
         {
             try

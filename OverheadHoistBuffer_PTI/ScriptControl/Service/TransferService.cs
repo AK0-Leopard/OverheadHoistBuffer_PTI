@@ -839,7 +839,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //.Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
                                 .Where(data => checkCanExecuteByLoadEqPortStatus(data))
                                 .Where(data => checkCanExecuteByUnloadPortStatus(data))
-                                //TODO: check status of destination port if dest is EQ
                                 .ToList();
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
@@ -1098,8 +1097,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 return true;
             
             var loadLocation = scApp.PortStationBLL.OperateDB.get(command.HOSTSOURCE);
-            if (loadLocation != null)   //TODO: loadLocation.enable == true, enable = need to check eq port status
+            if (loadLocation != null)
             {
+                if (loadLocation.IGNORE_STATUS_FLAG == true)
+                    return true;
                 if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
                     return false;
                 if (loadLocation.PORT_TYPE == E_EQREQUEST_STATUS.NoRequest)
@@ -1113,8 +1114,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 return true;
 
             var loadLocation = scApp.PortStationBLL.OperateDB.get(command.HOSTDESTINATION);
-            if (loadLocation != null)   //TODO: loadLocation.enable == true, enable = need to check eq port status
+            if (loadLocation != null)
             {
+                if (loadLocation.IGNORE_STATUS_FLAG == true)
+                    return true;
                 if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
                     return false;
                 if (loadLocation.PORT_TYPE == E_EQREQUEST_STATUS.NoRequest)

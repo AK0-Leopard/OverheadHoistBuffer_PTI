@@ -538,6 +538,7 @@
           <Property Name="PORT_DIR" Type="int" Nullable="false" />
           <Property Name="PORT_SERVICE_STATUS" Type="int" Nullable="false" />
           <Property Name="ERROR_FLAG" Type="bit" />
+          <Property Name="IGNORE_STATUS_FLAG" Type="bit" />
         </EntityType>
         <EntityType Name="ARAIL">
           <Key>
@@ -1102,6 +1103,9 @@
           <Property Name="ADR_ID" Type="char" MaxLength="5" Nullable="false" />
           <Property Name="ZoneName" Type="varchar" MaxLength="64" />
           <Property Name="PRIORITY" Type="int" Nullable="false" />
+          <Property Name="RequestStatus" Type="int" />
+          <Property Name="ErrorFlag" Type="bit" />
+          <Property Name="IgnoreStatusFlag" Type="bit" />
         </EntityType>
         <EntityType Name="SCALE_BASE_DATA">
           <Key>
@@ -2262,6 +2266,7 @@
           <Property Name="PORT_DIR" Type="Int32" Nullable="false" />
           <Property Name="PORT_SERVICE_STATUS" Type="OHTC_DevModel.E_PORT_STATUS" Nullable="false" />
           <Property Name="ERROR_FLAG" Type="Boolean" />
+          <Property Name="IGNORE_STATUS_FLAG" Type="Boolean" />
         </EntityType>
         <EntityType Name="APORT">
           <Key>
@@ -2852,6 +2857,9 @@
           <Property Name="PortTypeDef" Type="OHTC_DevModel.E_PortType" />
           <Property Name="PRIORITY" Type="Int32" Nullable="false" />
           <Property Name="ZoneName" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="RequestStatus" Type="OHTC_DevModel.E_EQREQUEST_STATUS" />
+          <Property Name="ErrorFlag" Type="Boolean" />
+          <Property Name="IgnoreStatusFlag" Type="Boolean" />
         </EntityType>
         <EnumType Name="E_CSTState">
           <Member Name="WaitIn" Value="1" />
@@ -3661,6 +3669,7 @@
     <EntitySetMapping Name="APORTSTATION">
       <EntityTypeMapping TypeName="IsTypeOf(OHTC_DevModel.APORTSTATION)">
         <MappingFragment StoreEntitySet="APORTSTATION">
+          <ScalarProperty Name="IGNORE_STATUS_FLAG" ColumnName="IGNORE_STATUS_FLAG" />
           <ScalarProperty Name="ERROR_FLAG" ColumnName="ERROR_FLAG" />
           <ScalarProperty Name="PORT_ID" ColumnName="PORT_ID" />
           <ScalarProperty Name="ADRTYPE" ColumnName="ADRTYPE" />
@@ -4207,8 +4216,11 @@
     <EntitySetMapping Name="PortDef">
       <EntityTypeMapping TypeName="IsTypeOf(OHTC_DevModel.PortDef)">
         <MappingFragment StoreEntitySet="PortDef">
+          <ScalarProperty Name="IgnoreStatusFlag" ColumnName="IgnoreStatusFlag" />
+          <ScalarProperty Name="ErrorFlag" ColumnName="ErrorFlag" />
+          <ScalarProperty Name="RequestStatus" ColumnName="RequestStatus" />
           <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
-                <ScalarProperty Name="PLCPortID" ColumnName="PLCPortID" />
+          <ScalarProperty Name="PLCPortID" ColumnName="PLCPortID" />
           <ScalarProperty Name="StockerID" ColumnName="StockerID" />
           <ScalarProperty Name="OHBName" ColumnName="OHBName" />
           <ScalarProperty Name="State" ColumnName="State" />

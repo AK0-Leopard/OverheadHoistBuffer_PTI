@@ -49,5 +49,8 @@ namespace com.mirle.ibg3k0.sc
         public Nullable<E_PortType> PortTypeDef { get; set; }
         public int PRIORITY { get; set; }
         public string ZoneName { get; set; }
+        public Nullable<E_EQREQUEST_STATUS> RequestStatus { get; set; }
+        public Nullable<bool> ErrorFlag { get; set; }
+        public Nullable<bool> IgnoreStatusFlag { get; set; }
     }
 }

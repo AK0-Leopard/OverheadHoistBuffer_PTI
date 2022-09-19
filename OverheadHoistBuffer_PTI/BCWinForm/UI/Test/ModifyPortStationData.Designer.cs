@@ -29,10 +29,6 @@
         private void InitializeComponent()
         {
             this.dgvAPORTSTATIONData = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnGetData = new System.Windows.Forms.Button();
             this.btnToLoadReq = new System.Windows.Forms.Button();
             this.btnToInServ = new System.Windows.Forms.Button();
@@ -41,6 +37,13 @@
             this.btnToNoReq = new System.Windows.Forms.Button();
             this.btnToOutServ = new System.Windows.Forms.Button();
             this.btnToErrOff = new System.Windows.Forms.Button();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_DisableCheckStatus = new System.Windows.Forms.Button();
+            this.btn_EnableCheckStatus = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAPORTSTATIONData)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +56,8 @@
             this.Column1,
             this.Column2,
             this.Column3,
-            this.Column4});
+            this.Column4,
+            this.Column5});
             this.dgvAPORTSTATIONData.Location = new System.Drawing.Point(33, 204);
             this.dgvAPORTSTATIONData.MultiSelect = false;
             this.dgvAPORTSTATIONData.Name = "dgvAPORTSTATIONData";
@@ -62,37 +66,6 @@
             this.dgvAPORTSTATIONData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvAPORTSTATIONData.Size = new System.Drawing.Size(908, 150);
             this.dgvAPORTSTATIONData.TabIndex = 0;
-            // 
-            // Column1
-            // 
-            this.Column1.DataPropertyName = "PORT_ID";
-            this.Column1.HeaderText = "Port ID";
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
-            // 
-            // Column2
-            // 
-            this.Column2.DataPropertyName = "PORT_TYPE";
-            this.Column2.HeaderText = "Request Status";
-            this.Column2.Name = "Column2";
-            this.Column2.ReadOnly = true;
-            this.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // Column3
-            // 
-            this.Column3.DataPropertyName = "PORT_SERVICE_STATUS";
-            this.Column3.HeaderText = "Service Status";
-            this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
-            this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Column4
-            // 
-            this.Column4.DataPropertyName = "ERROR_FLAG";
-            this.Column4.HeaderText = "Error";
-            this.Column4.Name = "Column4";
-            this.Column4.ReadOnly = true;
             // 
             // btnGetData
             // 
@@ -174,11 +147,71 @@
             this.btnToErrOff.UseVisualStyleBackColor = true;
             this.btnToErrOff.Click += new System.EventHandler(this.btnToErrOff_Click);
             // 
+            // Column1
+            // 
+            this.Column1.DataPropertyName = "PORT_ID";
+            this.Column1.HeaderText = "Port ID";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            // 
+            // Column2
+            // 
+            this.Column2.DataPropertyName = "PORT_TYPE";
+            this.Column2.HeaderText = "Request Status";
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column3
+            // 
+            this.Column3.DataPropertyName = "PORT_SERVICE_STATUS";
+            this.Column3.HeaderText = "Service Status";
+            this.Column3.Name = "Column3";
+            this.Column3.ReadOnly = true;
+            this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column4
+            // 
+            this.Column4.DataPropertyName = "ERROR_FLAG";
+            this.Column4.HeaderText = "Error";
+            this.Column4.Name = "Column4";
+            this.Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            this.Column5.DataPropertyName = "IGNORE_STATUS_FLAG";
+            this.Column5.HeaderText = "Disable";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            // 
+            // btn_DisableCheckStatus
+            // 
+            this.btn_DisableCheckStatus.Location = new System.Drawing.Point(476, 73);
+            this.btn_DisableCheckStatus.Name = "btn_DisableCheckStatus";
+            this.btn_DisableCheckStatus.Size = new System.Drawing.Size(90, 32);
+            this.btn_DisableCheckStatus.TabIndex = 10;
+            this.btn_DisableCheckStatus.Text = "Disable";
+            this.btn_DisableCheckStatus.UseVisualStyleBackColor = true;
+            this.btn_DisableCheckStatus.Click += new System.EventHandler(this.btn_DisableCheckStatus_Click);
+            // 
+            // btn_EnableCheckStatus
+            // 
+            this.btn_EnableCheckStatus.Location = new System.Drawing.Point(476, 24);
+            this.btn_EnableCheckStatus.Name = "btn_EnableCheckStatus";
+            this.btn_EnableCheckStatus.Size = new System.Drawing.Size(90, 32);
+            this.btn_EnableCheckStatus.TabIndex = 9;
+            this.btn_EnableCheckStatus.Text = "Enable";
+            this.btn_EnableCheckStatus.UseVisualStyleBackColor = true;
+            this.btn_EnableCheckStatus.Click += new System.EventHandler(this.btn_EnableCheckStatus_Click);
+            // 
             // ModifyPortStationData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 387);
+            this.Controls.Add(this.btn_DisableCheckStatus);
+            this.Controls.Add(this.btn_EnableCheckStatus);
             this.Controls.Add(this.btnToErrOff);
             this.Controls.Add(this.btnToOutServ);
             this.Controls.Add(this.btnToNoReq);
@@ -200,10 +233,6 @@
 
         private System.Windows.Forms.DataGridView dgvAPORTSTATIONData;
         private System.Windows.Forms.Button btnGetData;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.Button btnToLoadReq;
         private System.Windows.Forms.Button btnToInServ;
         private System.Windows.Forms.Button btnToErrOn;
@@ -211,5 +240,12 @@
         private System.Windows.Forms.Button btnToNoReq;
         private System.Windows.Forms.Button btnToOutServ;
         private System.Windows.Forms.Button btnToErrOff;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.Button btn_DisableCheckStatus;
+        private System.Windows.Forms.Button btn_EnableCheckStatus;
     }
 }

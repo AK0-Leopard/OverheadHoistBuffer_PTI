@@ -128,6 +128,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             bool isSuccess = true;
             var port = scApp.PortStationBLL.OperateDB.get(portID);
+            var portDef = scApp.PortDefBLL.GetPortDataByID(portID.Trim());
             try
             {
                 if (port != null && port.PORT_SERVICE_STATUS != status)
@@ -146,6 +147,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             break;
                     }
                 }
+                if (portDef != null && portDef.State != status)
+                    scApp.PortDefBLL.UpdataPortService(portID, status);
             }
             catch (Exception ex)
             {
@@ -158,45 +161,87 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool doUpdateEqPortRequestStatus(string change_port_id, E_EQREQUEST_STATUS type)
         {
             var port = scApp.PortStationBLL.OperateDB.get(change_port_id);
+            var portDef = scApp.PortDefBLL.GetPortDataByID(change_port_id.Trim());
             bool is_success = false;
-            if (port != null && port.PORT_TYPE != type)
+            try
             {
-                portInfoLogger.Info($"Port {change_port_id} status changed, old status: {port.PORT_TYPE}, new status: {type}");
-                is_success = scApp.PortStationBLL.OperateDB.updateEqPortRequestStatus(port, type);
-                switch (type)
+                if (port != null && port.PORT_TYPE != type)
                 {
-                    case E_EQREQUEST_STATUS.LoadRequest:
-                        scApp.ReportBLL.ReportLoadReq(change_port_id, null);
-                        break;
-                    case E_EQREQUEST_STATUS.UnloadRequest:
-                        scApp.ReportBLL.ReportUnLoadReq(change_port_id, null);
-                        break;
-                    case E_EQREQUEST_STATUS.NoRequest:
-                        scApp.ReportBLL.ReportNoReq(change_port_id, null);
-                        break;
+                    portInfoLogger.Info($"Port {change_port_id} status changed, old status: {port.PORT_TYPE}, new status: {type}");
+                    is_success = scApp.PortStationBLL.OperateDB.updateEqPortRequestStatus(port, type);
+                    switch (type)
+                    {
+                        case E_EQREQUEST_STATUS.LoadRequest:
+                            scApp.ReportBLL.ReportLoadReq(change_port_id, null);
+                            break;
+                        case E_EQREQUEST_STATUS.UnloadRequest:
+                            scApp.ReportBLL.ReportUnLoadReq(change_port_id, null);
+                            break;
+                        case E_EQREQUEST_STATUS.NoRequest:
+                            scApp.ReportBLL.ReportNoReq(change_port_id, null);
+                            break;
+                    }
                 }
+                if (portDef != null && portDef.RequestStatus != type)
+                    scApp.PortDefBLL.UpdateEqRequestStatus(change_port_id, type);
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Execption:");
+            }
+
             return is_success;
         }
         public bool doUpdateEqPortErrorStatus(string portId, bool isError)
         {
             var port = scApp.PortStationBLL.OperateDB.get(portId);
+            var portDef = scApp.PortDefBLL.GetPortDataByID(portId.Trim());
             bool is_success = false;
-            if (port != null && port.ERROR_FLAG != isError)
+            try
             {
-                portInfoLogger.Info($"Port {portId} error flag changed, old status: {port.PORT_TYPE}, new status: {isError}");
-                is_success = scApp.PortStationBLL.OperateDB.updateEqPortErrorStatus(port, isError);
-                if (isError)
+                if (port != null && port.ERROR_FLAG != isError)
                 {
-                    //report unit alarm set
-                    reportBLL.ReportUnitAlarmSet(portId, "100998", $"{portId} Error");
+                    portInfoLogger.Info($"Port {portId} error flag changed, old status: {port.PORT_TYPE}, new status: {isError}");
+                    is_success = scApp.PortStationBLL.OperateDB.updateEqPortErrorStatus(port, isError);
+                    if (isError)
+                    {
+                        //report unit alarm set
+                        reportBLL.ReportUnitAlarmSet(portId, "100998", $"{portId} Error");
+                    }
+                    else
+                    {
+                        //report unit alarm clear
+                        reportBLL.ReportUnitAlarmCleared(portId, "100998", $"{portId} Error");
+                    }
                 }
-                else
-                {
-                    //report unit alarm clear
-                    reportBLL.ReportUnitAlarmCleared(portId, "100998", $"{portId} Error");
-                }
+
+                if (portDef != null && portDef.ErrorFlag != isError)
+                    scApp.PortDefBLL.UpdateEqErrorStatus(portId, isError);
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Execption:");
+            }
+
+            return is_success;
+        }
+        public bool doUpdateEqIgnoreStatusFlag(string portId, bool isIgnore)
+        {
+            var port = scApp.PortStationBLL.OperateDB.get(portId);
+            var portDef = scApp.PortDefBLL.GetPortDataByID(portId.Trim());
+            bool is_success = false;
+            try
+            {
+                if (port != null && port.IGNORE_STATUS_FLAG != isIgnore)
+                    is_success = scApp.PortStationBLL.OperateDB.updateEqIgnoreStatusFlag(port, isIgnore);
+                if (portDef != null && portDef.IgnoreStatusFlag != isIgnore)
+                    is_success = scApp.PortDefBLL.UpdateEqIgnoreStatusFlag(portId, isIgnore);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Execption:");
+            }
+
             return is_success;
         }
 
