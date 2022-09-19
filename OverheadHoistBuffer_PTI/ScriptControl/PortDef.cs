@@ -51,6 +51,6 @@ namespace com.mirle.ibg3k0.sc
         public string ZoneName { get; set; }
         public Nullable<E_EQREQUEST_STATUS> RequestStatus { get; set; }
         public Nullable<bool> ErrorFlag { get; set; }
-        public Nullable<bool> IgnoreStatusFlag { get; set; }
+        public bool IgnoreStatusFlag { get; set; }
     }
 }

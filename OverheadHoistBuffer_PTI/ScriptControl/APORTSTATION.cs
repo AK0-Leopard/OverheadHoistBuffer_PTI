@@ -25,6 +25,6 @@ namespace com.mirle.ibg3k0.sc
         public int PORT_DIR { get; set; }
         public E_PORT_STATUS PORT_SERVICE_STATUS { get; set; }
         public Nullable<bool> ERROR_FLAG { get; set; }
-        public Nullable<bool> IGNORE_STATUS_FLAG { get; set; }
+        public bool IGNORE_STATUS_FLAG { get; set; }
     }
 }
