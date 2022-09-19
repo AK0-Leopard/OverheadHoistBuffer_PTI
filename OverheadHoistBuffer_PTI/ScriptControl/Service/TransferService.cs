@@ -838,6 +838,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             var queueCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE == E_TRAN_STATUS.Queue)
                                 //.Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
                                 .Where(data => checkCanExecuteByLoadEqPortStatus(data))
+                                .Where(data => checkCanExecuteByUnloadPortStatus(data))
+                                //TODO: check status of destination port if dest is EQ
                                 .ToList();
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
@@ -1095,8 +1097,8 @@ namespace com.mirle.ibg3k0.sc.Service
             if (!isUnitType(command.HOSTSOURCE, UnitType.EQ))
                 return true;
             
-            var loadLocation = scApp.PortStationBLL.OperateCatch.getPortStation(command.HOSTSOURCE);
-            if (loadLocation != null)
+            var loadLocation = scApp.PortStationBLL.OperateDB.get(command.HOSTSOURCE);
+            if (loadLocation != null)   //TODO: loadLocation.enable == true, enable = need to check eq port status
             {
                 if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
                     return false;
@@ -1105,6 +1107,22 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return true;
         }
+        private bool checkCanExecuteByUnloadPortStatus(ACMD_MCS command)
+        {
+            if (!isUnitType(command.HOSTDESTINATION, UnitType.EQ))
+                return true;
+
+            var loadLocation = scApp.PortStationBLL.OperateDB.get(command.HOSTDESTINATION);
+            if (loadLocation != null)   //TODO: loadLocation.enable == true, enable = need to check eq port status
+            {
+                if (loadLocation.PORT_SERVICE_STATUS == E_PORT_STATUS.OutOfService)
+                    return false;
+                if (loadLocation.PORT_TYPE == E_EQREQUEST_STATUS.NoRequest)
+                    return false;
+            }
+            return true;
+        }
+
 
         private (bool hasVh, ACMD_MCS sameSegmentTran) checkHasVhAfterOnTheWay(ACMD_MCS queueCmd, List<ACMD_MCS> transferCmdData)
         {
