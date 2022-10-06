@@ -27,6 +27,7 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -205,6 +206,8 @@ namespace com.mirle.ibg3k0.sc.Service
         public string agvcTriggerResult_ST01 = "無";
         public string agvcTriggerResult_ST02 = "無";
         public string agvcTriggerResult_ST03 = "無";
+
+        public ConcurrentDictionary<string, bool> CuncurrentQueueCommandID { get; set; } = new ConcurrentDictionary<string, bool>();
         #endregion
 
         #region 命令時間優先權間隔設定
@@ -840,6 +843,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                 .Where(data => checkCanExecuteByLoadEqPortStatus(data))
                                 .Where(data => checkCanExecuteByUnloadPortStatus(data))
                                 .ToList();
+                            foreach (var c in queueCmdData)
+                            {
+                                CuncurrentQueueCommandID.TryAdd(c.CMD_ID, true);
+                            }
                             queueCmdData = queueCmdData.OrderByDescending(data => data.PreAssignVhID).ToList();
                             var transferCmdData = cmdData.Where(data => data.CMDTYPE != CmdType.PortTypeChange.ToString() && data.TRANSFERSTATE != E_TRAN_STATUS.Queue).ToList();
 
@@ -1086,6 +1093,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 finally
                 {
+                    CuncurrentQueueCommandID.Clear();
                     Interlocked.Exchange(ref syncTranCmdPoint, 0);
                 }
             }

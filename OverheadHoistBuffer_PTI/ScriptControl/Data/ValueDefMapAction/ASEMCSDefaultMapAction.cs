@@ -1083,6 +1083,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     check_result = SECSConst.HCACK_Obj_Not_Exist;
                     is_ok = false;
                 }
+                else if (scApp.TransferService.CuncurrentQueueCommandID.ContainsKey(command_id))
+                {
+                    check_result = SECSConst.HCACK_Not_Able_Execute;
+                    is_ok = false;
+                }
             }
             else
             {
