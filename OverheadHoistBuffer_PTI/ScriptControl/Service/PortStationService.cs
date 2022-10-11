@@ -249,6 +249,7 @@ namespace com.mirle.ibg3k0.sc.Service
         class MesPortInfo
         {
             public string PortId { get; set; }
+            public string RawPortId { get; set; }
             public string ControlModeString { get; set; }
             public string EqStatusString { get; set; }
             public string ErrorString { get; set; }
@@ -287,6 +288,7 @@ namespace com.mirle.ibg3k0.sc.Service
             public override string ToString()
             {
                 return $"ENT_NAME:{PortId}," +
+                    $"ENT_NAME_ORIGINAL:{RawPortId}," +
                     $"CONTROLMODE:{ControlModeString}," +
                     $"PORTSTATUS:{EqStatusString}," +
                     $"ERROR:{ErrorString}";
@@ -319,6 +321,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     var portInfo = new MesPortInfo()
                     {
                         PortId = portId,
+                        RawPortId = portIdRaw,
                         ControlModeString = data["CONTROLMODE"].ToString(),
                         EqStatusString = data["PORTSTATUS"].ToString(),
                         ErrorString = data["ERROR"].ToString(),
