@@ -842,6 +842,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //.Where(data => !SCUtility.isMatche(data.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
                                 .Where(data => checkCanExecuteByLoadEqPortStatus(data))
                                 .Where(data => checkCanExecuteByUnloadPortStatus(data))
+                                .Where(data => (DateTime.Now - data.CMD_INSER_TIME).Seconds >= scApp.MCSCommandDelaySeconds)
                                 .ToList();
                             foreach (var c in queueCmdData)
                             {

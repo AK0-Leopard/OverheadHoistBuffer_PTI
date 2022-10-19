@@ -98,6 +98,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static string ServerName { get; private set; }
         public int HIDHeartbeatLostThreshold { get; private set; }
         public string WebServiceUrl { get; private set; }
+        public int MCSCommandDelaySeconds { get; private set; }
 
         /// <summary>
         /// The _lock
@@ -872,6 +873,7 @@ namespace com.mirle.ibg3k0.sc.App
 
             HIDHeartbeatLostThreshold = getInt("HIDHeartbeatLostThreshold", 10);
             WebServiceUrl = getString("WebServiceUrl", "");
+            MCSCommandDelaySeconds = getInt("MCSCommandDelaySeconds", 3);
         }
 
         private void initialRouteBan()
