@@ -826,8 +826,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     else
                     {
                         scApp.ReportBLL.ReportTransferAbortInitiated(cancel_abort_cmd_id);
-                        scApp.ReportBLL.ReportTransferAbortCompleted(cancel_abort_cmd_id);
-                        scApp.CMDBLL.updateCMD_MCS_TranStatus(cancel_abort_cmd_id, E_TRAN_STATUS.TransferCompleted);
+                        //scApp.ReportBLL.ReportTransferAbortCompleted(cancel_abort_cmd_id);
+                        //scApp.CMDBLL.updateCMD_MCS_TranStatus(cancel_abort_cmd_id, E_TRAN_STATUS.TransferCompleted);
+                        scApp.ReportBLL.newReportTransferAbortFailed(cancel_abort_cmd_id, null);
                     }
                 }
                 if (canUpdateCmd)
