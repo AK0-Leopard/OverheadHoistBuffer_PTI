@@ -2121,7 +2121,9 @@ namespace com.mirle.ibg3k0.sc.Service
                           (reservedVh.MODE_STATUS == VHModeStatus.AutoRemote ||
                            reservedVh.MODE_STATUS == VHModeStatus.AutoLocal) &&
                            reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
-                           !scApp.CMDBLL.isCMD_OHTCExcuteByVh(reservedVh.VEHICLE_ID);
+                           !scApp.CMDBLL.isCMD_OHTCExcuteByVh(reservedVh.VEHICLE_ID) &&
+                           !scApp.CMDBLL.isCMD_OHTCQueueByVh(reservedVh.VEHICLE_ID) &&
+                           !scApp.CMDBLL.isCMD_OHTCWillSending(reservedVh.VEHICLE_ID);
             return (is_can, CAN_NOT_AVOID_RESULT.Normal);
         }
         private void TransferReportBCRRead(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
