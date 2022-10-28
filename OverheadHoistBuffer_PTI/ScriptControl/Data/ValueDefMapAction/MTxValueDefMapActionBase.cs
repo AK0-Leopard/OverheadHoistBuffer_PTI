@@ -645,7 +645,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     Task.Run(() => 
                     {
-                        SpinWait.SpinUntil(() => false, 50000);
+                        SpinWait.SpinUntil(() => false, 5000);
                         var recvFunc = scApp.getFunBaseObj<MtlToOHxC_Earthquake>(eqpt.EQPT_ID) as MtlToOHxC_Earthquake;
                         recvFunc.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
                         if (recvFunc.Earthquake == (int)SCAppConstants.EarthquakeStatus.Normal)
