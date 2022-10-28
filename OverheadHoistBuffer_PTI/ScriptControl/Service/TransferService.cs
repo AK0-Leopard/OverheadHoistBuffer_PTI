@@ -2852,11 +2852,19 @@ namespace com.mirle.ibg3k0.sc.Service
                         //reportBLL.ReportTransferAbortCompleted(cmd.CMD_ID);
 
                         //string cstID = CarrierDouble(ohtCmd.DESTINATION.Trim());
-                        string cstID = "";
-                        string boxID = CarrierDouble(ohtCmd.DESTINATION.Trim());
-                        string loc = ohtCmd.DESTINATION;
-
-                        OHBC_InsertCassette(cstID, boxID, loc, "二重格異常");
+                        CassetteData existCst = cassette_dataBLL.loadCassetteDataByLoc(ohtCmd.DESTINATION.Trim());
+                        if (existCst is null)
+                        {
+                            string cstID = "";
+                            string boxID = CarrierDouble(ohtCmd.DESTINATION.Trim());
+                            string loc = ohtCmd.DESTINATION;
+                            OHBC_InsertCassette(cstID, boxID, loc, "二重格異常");
+                        }
+                        else
+                        {
+                            TransferServiceLogger.Info($"{DateTime.Now.ToString("HH:mm:ss.fff ")} " +
+                                $"OHT >> OHB|{ohtCmd.DESTINATION.Trim()} 發生Double storage，已有帳存在，不做變更");
+                        }
 
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
                         reportBLL.ReportTransferCompleted(cmd, null, ResultCode.DoubleStorage); // PTI需要上報
