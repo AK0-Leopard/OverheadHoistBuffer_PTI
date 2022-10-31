@@ -3006,13 +3006,18 @@ namespace com.mirle.ibg3k0.sc.Service
                     case COMMAND_STATUS_BIT_INDEX_EMPTY_RETRIEVAL: //空取異常
                         CassetteData emptyCstData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE.Trim());
 
-                        reportBLL.ReportCarrierIdentified(emptyCstData.CSTID, emptyCstData.BOXID, ScanReportType.no_carrier);
-
-
-                        //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
-                        reportBLL.S6F11SendCarrierRemovedCompletedForShelf(emptyCstData.BOXID, emptyCstData.Carrier_LOC);
-                        cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
-                        cassette_dataBLL.DeleteCSTbyBoxID(emptyCstData.BOXID);
+                        if (emptyCstData != null)
+                        {
+                            reportBLL.ReportCarrierIdentified(emptyCstData.CSTID, emptyCstData.BOXID, ScanReportType.no_carrier);
+                            //reportBLL.ReportCarrierRemovedCompleted(emptyData.CSTID, emptyData.BOXID); //PTI需要上報 此remove 動作 MCS 會自行處理
+                            reportBLL.S6F11SendCarrierRemovedCompletedForShelf(emptyCstData.BOXID, emptyCstData.Carrier_LOC);
+                            cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                            cassette_dataBLL.DeleteCSTbyBoxID(emptyCstData.BOXID);
+                        }
+                        else
+                        {
+                            cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+                        }
 
                         //if (emptyCstData != null)
                         //{
