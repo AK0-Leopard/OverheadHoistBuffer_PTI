@@ -5163,12 +5163,13 @@ namespace com.mirle.ibg3k0.sc.Service
             foreach (var vehicle in vhs)
             {
                 //2022.5.10: send emergency stop to all vehicle
-                if (vehicle.MODE_STATUS == VHModeStatus.AutoRemote && vehicle.ACT_STATUS == VHActionStatus.Commanding)
-                {
-                    var command = scApp.CMDBLL.GetExecutingCmdByVehicle(vehicle);
-                    if (command != null)
-                        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
-                }
+                //if (vehicle.MODE_STATUS == VHModeStatus.AutoRemote && vehicle.ACT_STATUS == VHActionStatus.Commanding)
+                //{
+                //    var command = scApp.CMDBLL.GetExecutingCmdByVehicle(vehicle);
+                //    if (command != null)
+                //        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                //}
+                PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
             }
         }
         #endregion
