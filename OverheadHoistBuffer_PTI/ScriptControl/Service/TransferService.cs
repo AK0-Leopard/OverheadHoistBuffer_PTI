@@ -2684,8 +2684,10 @@ namespace com.mirle.ibg3k0.sc.Service
                             break;
                         }
 
-                        cmd.HOSTSOURCE = ohtCmd.SOURCE;
-                        CassetteData LoadCSTData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE);
+                        //2022.11.10
+                        //cmd.HOSTSOURCE = ohtCmd.SOURCE;
+                        //CassetteData LoadCSTData = cassette_dataBLL.loadCassetteDataByLoc(cmd.HOSTSOURCE);
+                        CassetteData LoadCSTData = cassette_dataBLL.loadCassetteDataByBoxID(cmd.BOX_ID);    //2022.11.10
 
                         if (LoadCSTData != null)
                         {
@@ -2696,7 +2698,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             TransferServiceLogger.Info
                             (
                                 DateTime.Now.ToString("HH:mm:ss.fff ")
-                                + "OHT >> OHB|OHT_LoadCompleted 位置： " + cmd.HOSTSOURCE + " 找不到卡匣資料"
+                                + "OHT >> OHB|OHT_LoadCompleted BOX ID： " + cmd.BOX_ID + " 找不到卡匣資料"
                             );
                         }
                         break;
