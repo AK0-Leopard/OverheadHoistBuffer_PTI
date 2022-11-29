@@ -904,36 +904,78 @@ namespace com.mirle.ibg3k0.sc.Service
                                 #endregion
                                 #region 搬送命令
                                 //2021.10.26 同bay搬送檢查
+                                //2022.7.25 TODO: rewrite
                                 ACMD_MCS beforeWayExecutingCommand = default;
-                                (bool hasVh, ACMD_MCS sameSegmentTran) check_can_after_on_the_way_result = default;
+                                int minCostAfterWay = int.MaxValue;
+                                int minCostBeforeWay = int.MaxValue;
+                                int minCostIdleCar = int.MaxValue;
+                                (bool hasVh, ACMD_MCS sameSegmentTran, int minCostAfterWay) check_can_after_on_the_way_result = default;
 
                                 if (DebugParameter.BeforeOnTheWay)
                                     beforeWayExecutingCommand = checkHasVhBeforeOnTheWay(v, transferCmdData);
                                 if (DebugParameter.AfterOnTheWay)
                                     check_can_after_on_the_way_result = checkHasVhAfterOnTheWay(v, transferCmdData);
 
-                                bool pauseBeforeWayCommand = false;
+                                //bool pauseBeforeWayCommand = false;
+                                //if (check_can_after_on_the_way_result.hasVh)
+                                //{
+                                //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran.CMD_ID}" +
+                                //        $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran.CRANE}");
+                                //    SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
+                                //    SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
+                                //}
+                                //else if (beforeWayExecutingCommand != null)
+                                //{
+                                //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID}" +
+                                //        $"Vehicle: {beforeWayExecutingCommand.CRANE}");
+                                //    string vehicleID = beforeWayExecutingCommand.CRANE;
+                                //    pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
+                                //    if (pauseBeforeWayCommand)
+                                //    {
+                                //        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID} 暫緩執行成功" +
+                                //            $"Vehicle: {beforeWayExecutingCommand.CRANE}");
+                                //        SetTransferCommandPreAssignVh(v.CMD_ID, vehicleID);
+                                //    }
+                                //}
+                                var startAddr = v.getHostSourceAdr(scApp.PortStationBLL);
+                                if (beforeWayExecutingCommand != null)
+                                {
+                                    AVEHICLE beforeWayVh = scApp.VehicleBLL.cache.getVhByID(beforeWayExecutingCommand.CRANE);
+                                    (_, minCostBeforeWay) = scApp.GuideBLL.IsRoadWalkable(beforeWayVh.CUR_ADR_ID, startAddr);
+                                }
                                 if (check_can_after_on_the_way_result.hasVh)
                                 {
+                                    minCostAfterWay = check_can_after_on_the_way_result.minCostAfterWay;
+                                }
+                                scApp.VehicleBLL.findBestSuitableVhStepByNearest(startAddr, E_VH_TYPE.None, out double minCostIdleCarDouble);
+                                if (minCostIdleCarDouble < minCostIdleCar)
+                                    minCostIdleCar = Convert.ToInt32(minCostIdleCarDouble);
+                                int minCostFinal = Math.Min(minCostIdleCar, Math.Min(minCostBeforeWay, minCostAfterWay));
+                                if (minCostFinal >= minCostAfterWay)
+                                {
+                                    //符合後順途，這一輪直接跳過派車
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran.CMD_ID}" +
                                         $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran.CRANE}");
                                     SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
-                                    SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
+                                    //SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
                                 }
-                                else if (beforeWayExecutingCommand != null)
+                                else if (minCostFinal >= minCostBeforeWay)
                                 {
+                                    //符合前順途，暫停前順途命令
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID}" +
                                         $"Vehicle: {beforeWayExecutingCommand.CRANE}");
-                                    string vehicle = beforeWayExecutingCommand.CRANE;
-                                    pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
+                                    string vehicleID = beforeWayExecutingCommand.CRANE;
+                                    var pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
                                     if (pauseBeforeWayCommand)
                                     {
                                         TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID} 暫緩執行成功" +
                                             $"Vehicle: {beforeWayExecutingCommand.CRANE}");
-                                        SetTransferCommandPreAssignVh(v.CMD_ID, vehicle);
+                                        SetTransferCommandPreAssignVh(v.CMD_ID, vehicleID);
                                     }
                                 }
-                                if (!check_can_after_on_the_way_result.hasVh /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
+
+                                //if (!check_can_after_on_the_way_result.hasVh /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
+                                if (minCostFinal != minCostAfterWay /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
                                 {
                                     cmdFail = false;
                                     OHBC_OHT_QueueCmdTimeOutCmdIDCleared(v.CMD_ID);
@@ -1136,12 +1178,14 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        private (bool hasVh, ACMD_MCS sameSegmentTran) checkHasVhAfterOnTheWay(ACMD_MCS queueCmd, List<ACMD_MCS> transferCmdData)
+        private (bool hasVh, ACMD_MCS sameSegmentTran, int minCost) checkHasVhAfterOnTheWay(ACMD_MCS queueCmd, List<ACMD_MCS> transferCmdData)
         {
             try
             {
                 string queue_cmd_adr_id = queueCmd.getHostSourceAdr(scApp.PortStationBLL);
-                if (SCUtility.isEmpty(queue_cmd_adr_id)) return (false, null);
+                int minCost = int.MaxValue;
+                ACMD_MCS minCostCmd = default;
+                if (SCUtility.isEmpty(queue_cmd_adr_id)) return (false, null, minCost);
 
                 var same_segment_tran_cmds = transferCmdData.Where(cmd => SCUtility.isMatche(queueCmd.getHostSourceSegment(scApp.PortStationBLL, scApp.SectionBLL),
                                                                           cmd.getHostDestSegment(scApp.PortStationBLL, scApp.SectionBLL))).ToList();
@@ -1158,48 +1202,56 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    same_segment_tran_cmds.Remove(transfer_cmd);
                     //    continue;
                     //}
-
                     string transfering_cmd_adr = transfer_cmd.getHostDestAdr(scApp.PortStationBLL);
                     if (SCUtility.isEmpty(transfering_cmd_adr))
                     {
                         TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因目的address不明");
-                        same_segment_tran_cmds.Remove(transfer_cmd);
+                        //same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
                     var tran_dest_to_queue_source_result = scApp.GuideBLL.IsRoadWalkable(transfering_cmd_adr, queue_cmd_adr_id);
                     if (!tran_dest_to_queue_source_result.isSuccess)
                     {
                         TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因上一個To - 下一個From路徑不通");
-                        same_segment_tran_cmds.Remove(transfer_cmd);
+                        //same_segment_tran_cmds.Remove(transfer_cmd);
                         continue;
                     }
-                    var queue_source_to_tran_dest_result = scApp.GuideBLL.IsRoadWalkable(queue_cmd_adr_id, transfering_cmd_adr);
-                    if (!queue_source_to_tran_dest_result.isSuccess)
+                    //var queue_source_to_tran_dest_result = scApp.GuideBLL.IsRoadWalkable(queue_cmd_adr_id, transfering_cmd_adr);
+                    //if (!queue_source_to_tran_dest_result.isSuccess)
+                    //{
+                    //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因下一個From - 上一個To路徑不通");
+                    //    same_segment_tran_cmds.Remove(transfer_cmd);
+                    //    continue;
+                    //}
+                    //if (tran_dest_to_queue_source_result.distance > queue_source_to_tran_dest_result.distance)
+                    //{
+                    //    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因上一個To - 下一個From距離太遠");
+                    //    same_segment_tran_cmds.Remove(transfer_cmd);
+                    //    continue;
+                    //}
+                    AVEHICLE executingVh = scApp.VehicleBLL.cache.getVhByID(transfer_cmd.CRANE);
+                    (_, int costCurrentCmdRemain) = scApp.GuideBLL.IsRoadWalkable(executingVh.CUR_ADR_ID, transfering_cmd_adr);
+                    int costFinal = tran_dest_to_queue_source_result.distance + costCurrentCmdRemain;
+                    if (minCost > costFinal)
                     {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因下一個From - 上一個To路徑不通");
-                        same_segment_tran_cmds.Remove(transfer_cmd);
-                        continue;
-                    }
-                    if (tran_dest_to_queue_source_result.distance > queue_source_to_tran_dest_result.distance)
-                    {
-                        TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"移除候選命令 {transfer_cmd.CMD_ID}，因上一個To - 下一個From距離太遠");
-                        same_segment_tran_cmds.Remove(transfer_cmd);
-                        continue;
+                        minCost = costFinal;
+                        minCostCmd = transfer_cmd;
                     }
                 }
-                if (same_segment_tran_cmds == null || same_segment_tran_cmds.Count == 0)
+                //if (same_segment_tran_cmds == null || same_segment_tran_cmds.Count == 0)
+                if (minCostCmd is null)
                 {
-                    return (false, null);
+                    return (false, null, int.MaxValue);
                 }
                 else
                 {
-                    return (true, same_segment_tran_cmds.FirstOrDefault());
+                    return (true, minCostCmd, minCost);
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Exception:");
-                return (false, null);
+                return (false, null, int.MaxValue);
             }
         }
 
