@@ -297,6 +297,11 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                     }
                 }
+                if (isSuccess && mtx is MaintainSpace && mtx.HasVehicle)
+                {
+                    isSuccess = false;
+                    result = $"MTx:{mtx.DeviceID} {nameof(mtx.HasVehicle)}:{mtx.HasVehicle}, can't excute cat out requset.";
+                }
             }
 
             return (isSuccess, result);

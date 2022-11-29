@@ -6,6 +6,8 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.Data.VO.Interface;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using com.mirle.ibg3k0.sc.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -179,6 +181,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 AVEHICLE pre_car_out_vh = bcApp.SCApplication.VehicleBLL.cache.getVhByID(preCarOutVhID);
                 if (maintainDevice is sc.Data.VO.MaintainLift)
                 {
+                    if (isMTStoMTL && pre_car_out_vh.MODE_STATUS == VHModeStatus.Manual)
+                    {
+                        bcApp.SCApplication.VehicleService.ModeChangeRequest(pre_car_out_vh.VEHICLE_ID, OperatingVHMode.OperatingAuto);
+                    }
                     //sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace();
                     sc.Data.VO.Interface.IMaintainDevice dockingMTS = bcApp.SCApplication.EquipmentBLL.cache.GetDockingMTLOfMaintainSpace(maintainDevice);
                     if ((maintainDevice as sc.Data.VO.MaintainLift).EQPT_ID=="MTL"&& dockingMTS != null)
