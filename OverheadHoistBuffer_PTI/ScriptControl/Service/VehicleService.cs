@@ -96,6 +96,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.AssignCommandFailOverTimes += Vh_AssignCommandFailOverTimes;
                 vh.StatusRequestFailOverTimes += Vh_StatusRequestFailOverTimes;
                 vh.LongTimeNoCommuncation += Vh_LongTimeNoCommuncation;
+                vh.ConnectionStatusChange += Vh_ConnectionStatusChange;
                 vh.TimerActionStart();
             }
 
@@ -168,7 +169,25 @@ namespace com.mirle.ibg3k0.sc.Service
                    Data: ex);
             }
         }
+        private void Vh_ConnectionStatusChange(object sender, bool isConnected)
+        {
+            AVEHICLE vh = sender as AVEHICLE;
+            if (vh == null) return;
 
+            if (isConnected)
+            {
+                //2023.01.04 check HID status
+                var hids = scApp.EquipmentBLL.cache.loadHID();
+                foreach (var hid in hids)
+                {
+                    if (hid.IsPowerAlarm || hid.IsTemperatureAlarm || hid.IsHeartbeatLoss)
+                    {
+                        PauseRequest(vh.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                        break;
+                    }
+                }
+            }
+        }
 
         public bool stopVehicleTcpIpServer(string vhID)
         {
@@ -5169,7 +5188,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 //    if (command != null)
                 //        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
                 //}
-                PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                if (vehicle.isTcpIpConnect)
+                    PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
             }
         }
         #endregion
