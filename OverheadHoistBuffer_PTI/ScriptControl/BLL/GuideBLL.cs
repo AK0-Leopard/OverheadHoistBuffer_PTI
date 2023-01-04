@@ -57,7 +57,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, bypassSections);
 
-            RouteInfo min_stratFromRouteInfo = null;
+            //RouteInfo min_stratFromRouteInfo = null;
+            RouteInfo min_stratFromRouteInfo = new RouteInfo(new List<Section>(), new List<int>(), int.MaxValue);   //2023.01.04 avoid exception
             if (stratFromRouteInfoList != null && stratFromRouteInfoList.Count > 0)
             {
                 min_stratFromRouteInfo = stratFromRouteInfoList.First();
