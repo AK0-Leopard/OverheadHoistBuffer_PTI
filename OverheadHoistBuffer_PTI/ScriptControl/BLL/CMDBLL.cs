@@ -4569,7 +4569,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
-                    throw new Exception(string.Format("can't find from to of route.cmd id:{0}", acmd_ohtc.CMD_ID));
+                    throw new VehicleNoRouteException(string.Format("can't find from to of route.cmd id:{0}", acmd_ohtc.CMD_ID));
                 }
 
                 //找出路徑後，則將該路徑所有經過的Section存入資料庫中，並且將ACMD_OHTC的命令改為發送中
@@ -4589,10 +4589,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 throw blockedException;
             }
+            catch (VehicleNoRouteException ex)
+            {
+                updateCommand_OHTC_StatusByCmdID(acmd_ohtc.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusAbort);
+                //TODO: retry when it is MCS command
+                ACMD_MCS mcsCmd = GetCmdIDFromCmd(acmd_ohtc.CMD_ID_MCS.Trim());
+                if (mcsCmd != null)
+                {
+                    //scApp.ReportBLL.ReportVehicleUnassigned(mcsCmd.CMD_ID);
+                    scApp.CMDBLL.updateCMD_MCS_TranStatus(mcsCmd.CMD_ID, E_TRAN_STATUS.Queue);
+                }
+                logger_VhRouteLog.Error(ex, "generateCmd_OHTC_Details happend");
+                return false;
+            }
             catch (Exception ex)
             {
                 updateCommand_OHTC_StatusByCmdID(acmd_ohtc.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusAbort);
-                logger_VhRouteLog.Error(ex, "generateCmd_OHTC_Details happend");
+                logger.Error(ex, "Exception");
                 return false;
             }
         }
@@ -6001,6 +6014,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             if (!isSuccess)
                 scApp.CMDBLL.updateCMD_MCS_TranStatus2Queue(cmd_mcs_id);
             return isSuccess;
+        }
+    }
+
+    public class VehicleNoRouteException : Exception
+    {
+        public VehicleNoRouteException(string msg) : base(msg)
+        {
+
         }
     }
 }
