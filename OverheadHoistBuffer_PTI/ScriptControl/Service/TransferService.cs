@@ -909,7 +909,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 int minCostAfterWay = int.MaxValue;
                                 int minCostBeforeWay = int.MaxValue;
                                 int minCostIdleCar = int.MaxValue;
-                                (bool hasVh, ACMD_MCS sameSegmentTran, int minCostAfterWay) check_can_after_on_the_way_result = default;
+                                (bool hasVh, ACMD_MCS sameSegmentTran, int minCostAfterWay) check_can_after_on_the_way_result = (false, null, int.MaxValue);
 
                                 if (DebugParameter.BeforeOnTheWay)
                                     beforeWayExecutingCommand = checkHasVhBeforeOnTheWay(v, transferCmdData);
@@ -954,16 +954,16 @@ namespace com.mirle.ibg3k0.sc.Service
                                 if (minCostFinal >= minCostAfterWay)
                                 {
                                     //符合後順途，這一輪直接跳過派車
-                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran.CMD_ID}" +
-                                        $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran.CRANE}");
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran?.CMD_ID}" +
+                                        $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran?.CRANE}");
                                     SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
                                     //SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
                                 }
                                 else if (minCostFinal >= minCostBeforeWay)
                                 {
                                     //符合前順途，暫停前順途命令
-                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 前順途MCSCommandID: {beforeWayExecutingCommand.CMD_ID}" +
-                                        $"Vehicle: {beforeWayExecutingCommand.CRANE}");
+                                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 前順途MCSCommandID: {beforeWayExecutingCommand?.CMD_ID}" +
+                                        $"Vehicle: {beforeWayExecutingCommand?.CRANE}");
                                     string vehicleID = beforeWayExecutingCommand.CRANE;
                                     var pauseBeforeWayCommand = startPauseCommandBeforeOnTheWay(beforeWayExecutingCommand);
                                     if (pauseBeforeWayCommand)
