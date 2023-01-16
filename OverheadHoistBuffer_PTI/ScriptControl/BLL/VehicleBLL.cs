@@ -966,7 +966,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return vh;
         }
 
-        public AVEHICLE findBestSuitableVhStepByNearest(string source, E_VH_TYPE vh_type, out double distance, bool is_check_has_vh_carry = false)
+        public AVEHICLE findBestSuitableVhStepByNearest(string source, E_VH_TYPE vh_type, out int distance, bool is_check_has_vh_carry = false)
         {
             AVEHICLE firstVh = null;
             //double distance = double.MaxValue;
@@ -993,10 +993,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             return FindNearestVh(source, vhs);
         }
 
-        private (AVEHICLE firstVh, double dietance) FindNearestVh(string source, List<AVEHICLE> vhs)
+        private (AVEHICLE firstVh, int dietance) FindNearestVh(string source, List<AVEHICLE> vhs)
         {
             AVEHICLE firstVh = null;
-            double distance = double.MaxValue;
+            int distance = int.MaxValue;
 
             List<string> MTLSectionIDs;
             try

@@ -947,16 +947,19 @@ namespace com.mirle.ibg3k0.sc.Service
                                 {
                                     minCostAfterWay = check_can_after_on_the_way_result.minCostAfterWay;
                                 }
-                                scApp.VehicleBLL.findBestSuitableVhStepByNearest(startAddr, E_VH_TYPE.None, out double minCostIdleCarDouble);
-                                if (minCostIdleCarDouble < minCostIdleCar)
-                                    minCostIdleCar = Convert.ToInt32(minCostIdleCarDouble);
+                                scApp.VehicleBLL.findBestSuitableVhStepByNearest(startAddr, E_VH_TYPE.None, out minCostIdleCar);
+                                TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCSCommandID: {v.CMD_ID}, 閒置車cost: {minCostIdleCar}, 前順途cost: {minCostBeforeWay}, 後順途cost: {minCostAfterWay}");
                                 int minCostFinal = Math.Min(minCostIdleCar, Math.Min(minCostBeforeWay, minCostAfterWay));
-                                if (minCostFinal >= minCostAfterWay)
+                                if (minCostFinal >= minCostIdleCar)
+                                {
+                                    //do nothing...
+                                }
+                                else if (minCostFinal >= minCostAfterWay)
                                 {
                                     //符合後順途，這一輪直接跳過派車
                                     TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"符合同bay搬送... MCSCommandID: {v.CMD_ID}, 順途MCSCommandID: {check_can_after_on_the_way_result.sameSegmentTran?.CMD_ID}" +
                                         $"Vehicle: {check_can_after_on_the_way_result.sameSegmentTran?.CRANE}");
-                                    SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
+                                    SetTransferCommandNGReason(v.CMD_ID, $"vh:{check_can_after_on_the_way_result.sameSegmentTran?.CRANE} 即將搬送貨物至該Bay，等待順途搬送");
                                     //SetTransferCommandPreAssignVh(v.CMD_ID, check_can_after_on_the_way_result.sameSegmentTran.CRANE);
                                 }
                                 else if (minCostFinal >= minCostBeforeWay)
@@ -1695,7 +1698,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         //    TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 命令轉移對象OHT車號遺失.");
                         //    //TODO: 當場重找最佳車?
                         //}
-                        var newBestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double _);
+                        var newBestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out int _);
                         is_success = scApp.CMDBLL.assignCommnadToVehicleByCommandShift(newBestSuitableVh.VEHICLE_ID, mcsCmd);
                         if (is_success)
                             TransferServiceLogger.Info($"搬送命令 ID:{mcsCmd.CMD_ID} 已成功轉移給{newBestSuitableVh.VEHICLE_ID}.");
@@ -1911,7 +1914,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                                 MTLSectionIDs = MTLSections.Select(section => SCUtility.Trim(section.SEC_ID)).ToList();
 
-                                var otherBestVehicle = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out double bestDistance);
+                                var otherBestVehicle = scApp.VehicleBLL.findBestSuitableVhStepByNearest(mcsCmd.getHostSourceAdr(PortStationBLL), E_VH_TYPE.None, out int bestDistance);
                                 var executingVehicle = scApp.VehicleService.GetVehicleDataByVehicleID(mcsCmd.CRANE.Trim());
                                 var check_result = scApp.GuideBLL.IsRoadWalkable(executingVehicle.CUR_ADR_ID, mcsCmd.getHostSourceAdr(PortStationBLL), MTLSectionIDs);
                                 if (check_result.distance > bestDistance)
