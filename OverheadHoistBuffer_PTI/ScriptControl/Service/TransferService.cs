@@ -937,7 +937,16 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //        SetTransferCommandPreAssignVh(v.CMD_ID, vehicleID);
                                 //    }
                                 //}
-                                var startAddr = v.getHostSourceAdr(scApp.PortStationBLL);
+                                string startAddr;
+                                if (isUnitType(v.HOSTSOURCE, UnitType.CRANE))
+                                {
+                                    var unloadVh = scApp.VehicleBLL.cache.getVhByID(v.HOSTSOURCE);
+                                    startAddr = unloadVh.CUR_ADR_ID;
+                                }
+                                else
+                                {
+                                    startAddr = v.getHostSourceAdr(scApp.PortStationBLL);
+                                }
                                 if (beforeWayExecutingCommand != null)
                                 {
                                     AVEHICLE beforeWayVh = scApp.VehicleBLL.cache.getVhByID(beforeWayExecutingCommand.CRANE);
@@ -978,7 +987,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
 
                                 //if (!check_can_after_on_the_way_result.hasVh /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
-                                if (minCostFinal != minCostAfterWay /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
+                                if (minCostFinal < minCostAfterWay /*&& !pauseBeforeWayCommand*/ && TransferCommandHandler(v))
                                 {
                                     cmdFail = false;
                                     OHBC_OHT_QueueCmdTimeOutCmdIDCleared(v.CMD_ID);
@@ -1149,7 +1158,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             if (!isUnitType(command.HOSTSOURCE, UnitType.EQ))
                 return true;
-            
+
             var loadLocation = scApp.PortStationBLL.OperateDB.get(command.HOSTSOURCE);
             if (loadLocation != null)
             {
