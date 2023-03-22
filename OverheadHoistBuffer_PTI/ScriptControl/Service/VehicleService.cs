@@ -3322,11 +3322,16 @@ namespace com.mirle.ibg3k0.sc.Service
                 bool isSuccess = true;
                 ACMD_MCS cmd_mcs = scApp.CMDBLL.getCMD_MCSByID(finish_mcs_cmd);
                 bool is_direct_finish = true;
+                bool isRetryMCSCmd = false;
                 if (cmd_mcs != null)
                 {
                     if (cmd_mcs.isLoading || cmd_mcs.isUnloading)
                     {
                         is_direct_finish = false;
+                    }
+                    else if (vhLoadCSTStatus is VhLoadCarrierStatus.NotExist)
+                    {
+                        isRetryMCSCmd = true;
                     }
                 }
                 if (scApp.CMDBLL.isCMCD_OHTCFinish(cmd_id))
@@ -3417,9 +3422,13 @@ namespace com.mirle.ibg3k0.sc.Service
                 //}
                 else if (recive_str.CmpStatus == CompleteStatus.CmpStatusVehicleAbort)
                 {
-                    if (is_direct_finish)
-                        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd,
-                            eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT);
+                    if (isRetryMCSCmd)
+                    {
+                        scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
+                        scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
+                    }
+                    else if (is_direct_finish)
+                        scApp.TransferService.OHT_TransferStatus(finish_ohxc_cmd, eqpt.VEHICLE_ID, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT);
 
                     //B0.03
                     scApp.TransferService.OHBC_AlarmSet(eqpt.VEHICLE_ID, ((int)AlarmLst.OHT_VEHICLE_ABORT).ToString());
