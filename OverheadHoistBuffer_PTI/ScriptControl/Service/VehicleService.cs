@@ -3329,7 +3329,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         is_direct_finish = false;
                     }
-                    else if (vhLoadCSTStatus is VhLoadCarrierStatus.NotExist)
+                    //else if (vhLoadCSTStatus is VhLoadCarrierStatus.NotExist)
+                    else if (cmd_mcs.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE)
                     {
                         isRetryMCSCmd = true;
                     }

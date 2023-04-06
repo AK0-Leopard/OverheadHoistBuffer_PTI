@@ -2957,6 +2957,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
                         reportBLL.ReportTransferCompleted(cmd, null, ResultCode.InterlockError);
                         cmdBLL.updateCMD_MCS_TranStatus(cmd.CMD_ID, E_TRAN_STATUS.TransferCompleted);
+
+                        //2023.03.28
+                        if (isNeedToRemoveFailCST(cmd)) cassette_dataBLL.DeleteCSTbyBoxID(cmd.BOX_ID.Trim());
                         break;
                     case COMMAND_STATUS_BIT_INDEX_VEHICLE_ABORT:
                         reportBLL.ReportCraneIdle(ohtName, cmd.CMD_ID);
@@ -2978,6 +2981,28 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
         }
+        //2023.03.28
+        private bool isNeedToRemoveFailCST(ACMD_MCS cmd)
+        {
+            if (cmd.CMDTYPE.Equals(CmdType.OHBC.ToString()) && cmd.BOX_ID.StartsWith("UNK"))
+            {
+                var loadCst = cassette_dataBLL.loadCassetteDataByCSTID(cmd.BOX_ID.Trim());
+                if (SCUtility.Equals(loadCst.Carrier_LOC.Trim(), cmd.HOSTSOURCE.Trim()))
+                {
+                    if (isUnitType(cmd.HOSTSOURCE, UnitType.OHCV))
+                    {
+                        var loadPortInfo = GetPLC_PortData(cmd.HOSTSOURCE);
+                        if (!loadPortInfo.IsCSTPresence)
+                        {
+                            //cassette_dataBLL.DeleteCSTbyBoxID(cmd.BOX_ID.Trim());
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public void OHT_ScanProcess(ACMD_MCS cmd, string ohtName, int status)
         {
             try
