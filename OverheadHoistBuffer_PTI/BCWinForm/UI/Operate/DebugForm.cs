@@ -106,6 +106,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cbBeforeOnWay.Checked = DebugParameter.BeforeOnTheWay;
             cbAfterOnWay.Checked = DebugParameter.AfterOnTheWay;
             cbCommandShift.Checked = DebugParameter.CommandShift;
+
+            cb_DoubleCheckBlockReq.Checked = DebugParameter.isOpenDoubleCheckBlockReqFun;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1331,6 +1333,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             {
                 btn_hid_datetime_sync.Enabled = true;
             }
+        }
+
+        private void cb_DoubleCheckBlockReq_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.isOpenDoubleCheckBlockReqFun = cb_DoubleCheckBlockReq.Checked;
         }
     }
 }

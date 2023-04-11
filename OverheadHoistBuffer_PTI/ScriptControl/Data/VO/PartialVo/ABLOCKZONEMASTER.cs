@@ -20,6 +20,7 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler<string> VehicleLeave;
         public event EventHandler<string> VehicleEntry;
 
+        public string CurrentRequestVhID { get; private set; }
 
         private void onSectinoLeave(string vh_id)
         {
@@ -59,6 +60,28 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        object block_reserve_release_lock_obj = new object();
+        public void BlockReserve(string reserveVhID)
+        {
+            lock (block_reserve_release_lock_obj)
+            {
+                CurrentRequestVhID = reserveVhID;
+            }
+        }
+        public void BlockRelease(string releaseVhID)
+        {
+            lock (block_reserve_release_lock_obj)
+            {
+                if (sc.Common.SCUtility.isMatche(releaseVhID, CurrentRequestVhID))
+                {
+                    CurrentRequestVhID = "";
+                }
+                else
+                {
+
+                }
+            }
+        }
     }
 
 }

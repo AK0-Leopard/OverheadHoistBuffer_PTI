@@ -303,6 +303,7 @@
             this.MTLMTS_cb_box = new System.Windows.Forms.ComboBox();
             this.plc_link_btn = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.btn_hid_datetime_sync = new System.Windows.Forms.Button();
             this.comboBox_HID = new System.Windows.Forms.ComboBox();
             this.button10 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
@@ -356,7 +357,7 @@
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
-            this.btn_hid_datetime_sync = new System.Windows.Forms.Button();
+            this.cb_DoubleCheckBlockReq = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1459,6 +1460,7 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.cb_DoubleCheckBlockReq);
             this.groupBox6.Controls.Add(this.btn_blocked_sec_refresh);
             this.groupBox6.Controls.Add(this.btn_release_block);
             this.groupBox6.Controls.Add(this.lbl_BlockedVh);
@@ -1467,7 +1469,7 @@
             this.groupBox6.Controls.Add(this.cb_block_section);
             this.groupBox6.Location = new System.Drawing.Point(1100, 220);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(284, 277);
+            this.groupBox6.Size = new System.Drawing.Size(309, 277);
             this.groupBox6.TabIndex = 24;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Block Manager";
@@ -2660,7 +2662,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3706,6 +3708,16 @@
             this.tabPage5.Text = "HID Test";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // btn_hid_datetime_sync
+            // 
+            this.btn_hid_datetime_sync.Location = new System.Drawing.Point(280, 140);
+            this.btn_hid_datetime_sync.Name = "btn_hid_datetime_sync";
+            this.btn_hid_datetime_sync.Size = new System.Drawing.Size(183, 47);
+            this.btn_hid_datetime_sync.TabIndex = 47;
+            this.btn_hid_datetime_sync.Text = "DateTime Sync";
+            this.btn_hid_datetime_sync.UseVisualStyleBackColor = true;
+            this.btn_hid_datetime_sync.Click += new System.EventHandler(this.btn_hid_datetime_sync_Click);
+            // 
             // comboBox_HID
             // 
             this.comboBox_HID.FormattingEnabled = true;
@@ -4345,15 +4357,16 @@
             this.cbBeforeOnWay.UseVisualStyleBackColor = true;
             this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
             // 
-            // btn_hid_datetime_sync
+            // cb_DoubleCheckBlockReq
             // 
-            this.btn_hid_datetime_sync.Location = new System.Drawing.Point(280, 140);
-            this.btn_hid_datetime_sync.Name = "btn_hid_datetime_sync";
-            this.btn_hid_datetime_sync.Size = new System.Drawing.Size(183, 47);
-            this.btn_hid_datetime_sync.TabIndex = 47;
-            this.btn_hid_datetime_sync.Text = "DateTime Sync";
-            this.btn_hid_datetime_sync.UseVisualStyleBackColor = true;
-            this.btn_hid_datetime_sync.Click += new System.EventHandler(this.btn_hid_datetime_sync_Click);
+            this.cb_DoubleCheckBlockReq.AutoSize = true;
+            this.cb_DoubleCheckBlockReq.Location = new System.Drawing.Point(128, 32);
+            this.cb_DoubleCheckBlockReq.Name = "cb_DoubleCheckBlockReq";
+            this.cb_DoubleCheckBlockReq.Size = new System.Drawing.Size(139, 26);
+            this.cb_DoubleCheckBlockReq.TabIndex = 61;
+            this.cb_DoubleCheckBlockReq.Text = "DoubleCheck";
+            this.cb_DoubleCheckBlockReq.UseVisualStyleBackColor = true;
+            this.cb_DoubleCheckBlockReq.CheckedChanged += new System.EventHandler(this.cb_DoubleCheckBlockReq_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -4770,5 +4783,6 @@
         private System.Windows.Forms.CheckBox cbAfterOnWay;
         private System.Windows.Forms.ComboBox comboBox_HID;
         private System.Windows.Forms.Button btn_hid_datetime_sync;
+        private System.Windows.Forms.CheckBox cb_DoubleCheckBlockReq;
     }
 }

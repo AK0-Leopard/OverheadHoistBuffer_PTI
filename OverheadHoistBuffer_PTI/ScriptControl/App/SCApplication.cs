@@ -2434,6 +2434,8 @@ namespace com.mirle.ibg3k0.sc.App
         public static bool AfterOnTheWay = false;
         public static bool CommandShift = false;
 
+        public static bool isOpenDoubleCheckBlockReqFun = false;
+
         public enum CycleRunType
         {
             AGVStation,

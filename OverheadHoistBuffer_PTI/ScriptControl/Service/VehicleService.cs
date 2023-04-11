@@ -1614,7 +1614,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                         string fromAdr, string toAdr, out string reason)
         {
             reason = "";
-            if (activeType == ActiveType.Home || activeType == ActiveType.Mtlhome)
+            if (activeType == ActiveType.Home || activeType == ActiveType.Mtlhome || activeType == ActiveType.Override)
             {
                 return true;
             }
@@ -2506,27 +2506,28 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
-        public bool ProcessBlockReqByReserveModule(BCFApplication bcfApp, AVEHICLE eqpt, string req_block_id)
+        public bool ProcessBlockReqByReserveModule(BCFApplication bcfApp, AVEHICLE request_block_vh, string req_block_id)
         {
-            string vhID = eqpt.VEHICLE_ID;
+            string vhID = request_block_vh.VEHICLE_ID;
+            request_block_vh.CurrentRequestBlockID = req_block_id;
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                Data: $"Process block request,request block id:{req_block_id}",
-               VehicleID: eqpt.VEHICLE_ID,
-               CarrierID: eqpt.CST_ID);
+               VehicleID: request_block_vh.VEHICLE_ID,
+               CarrierID: request_block_vh.CST_ID);
             if (DebugParameter.isForcedPassBlockControl)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                    Data: "test flag: Force pass block control is open, will driect reply to vh can pass block",
-                   VehicleID: eqpt.VEHICLE_ID,
-                   CarrierID: eqpt.CST_ID);
+                   VehicleID: request_block_vh.VEHICLE_ID,
+                   CarrierID: request_block_vh.CST_ID);
                 return true;
             }
             else if (DebugParameter.isForcedRejectBlockControl)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
                    Data: "test flag: Force reject block control is open, will driect reply to vh can't pass block",
-                   VehicleID: eqpt.VEHICLE_ID,
-                   CarrierID: eqpt.CST_ID);
+                   VehicleID: request_block_vh.VEHICLE_ID,
+                   CarrierID: request_block_vh.CST_ID);
                 return true;
             }
             else
@@ -2535,33 +2536,33 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (block_master == null)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                       Data: $"Vh:{eqpt.VEHICLE_ID} ask block:{req_block_id},but this block id not exist!",
-                       VehicleID: eqpt.VEHICLE_ID,
-                       CarrierID: eqpt.CST_ID);
+                       Data: $"Vh:{request_block_vh.VEHICLE_ID} ask block:{req_block_id},but this block id not exist!",
+                       VehicleID: request_block_vh.VEHICLE_ID,
+                       CarrierID: request_block_vh.CST_ID);
                     return false;
                 }
                 var block_detail_section = block_master.GetBlockZoneDetailSectionIDs();
                 if (block_detail_section == null || block_detail_section.Count == 0)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                       Data: $"Vh:{eqpt.VEHICLE_ID} ask block:{req_block_id},but this block id of detail is null!",
-                       VehicleID: eqpt.VEHICLE_ID,
-                       CarrierID: eqpt.CST_ID);
+                       Data: $"Vh:{request_block_vh.VEHICLE_ID} ask block:{req_block_id},but this block id of detail is null!",
+                       VehicleID: request_block_vh.VEHICLE_ID,
+                       CarrierID: request_block_vh.CST_ID);
                     return false;
                 }
-                bool is_first_vh = isNextPassVh(eqpt, req_block_id);
+                bool is_first_vh = isNextPassVh(request_block_vh, req_block_id);
                 if (!is_first_vh)
                 {
                     return false;
                 }
 
-                bool check_hid_zone_is_enough = tryCheckHIDBlockIsEnough(eqpt, req_block_id);
+                bool check_hid_zone_is_enough = tryCheckHIDBlockIsEnough(request_block_vh, req_block_id);
                 if (!check_hid_zone_is_enough)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                       Data: $"Vh:{eqpt.VEHICLE_ID} ask hid entry section:{req_block_id},but this hid zone is not enough!",
-                       VehicleID: eqpt.VEHICLE_ID,
-                       CarrierID: eqpt.CST_ID);
+                       Data: $"Vh:{request_block_vh.VEHICLE_ID} ask hid entry section:{req_block_id},but this hid zone is not enough!",
+                       VehicleID: request_block_vh.VEHICLE_ID,
+                       CarrierID: request_block_vh.CST_ID);
                     return false;
                 }
 
@@ -2583,6 +2584,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vhID);
                     if (!result.OK)
                     {
+                        DoubleCheckBlockStatusFrontAndRearCar(request_block_vh, block_master, result);
                         if (!SCUtility.isEmpty(result.VehicleID))
                         {
                             //Task.Run(() => scApp.VehicleBLL.whenVhObstacle(result.VehicleID, vhID));
@@ -2598,6 +2600,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                                                          sensorDir: hltDirection,
                                                                          isAsk: false);
                 }
+                block_master.BlockReserve(vhID);
+                request_block_vh.CurrentRequestBlockID = "";
                 return true;
             }
         }
@@ -2616,7 +2620,218 @@ namespace com.mirle.ibg3k0.sc.Service
                CarrierID: vh.CST_ID);
             return check_enough_result.isEnough;
         }
+        private void DoubleCheckBlockStatusFrontAndRearCar(AVEHICLE requestBlockVh, ABLOCKZONEMASTER requestBlockMaster, HltResult result)
+        {
+            try
+            {
+                string req_block_id = requestBlockMaster.ENTRY_SEC_ID;
+                var check_is_block_by_section = isBlockBySection(result);
+                if (!check_is_block_by_section.isBlockBySection)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"並非被其他車所預約的Section卡住，結束 double check block 流程",
+                       VehicleID: requestBlockVh.VEHICLE_ID);
+                    return;
+                }
+                AVEHICLE current_reserve_block_vh = scApp.VehicleBLL.cache.getVhByID(check_is_block_by_section.vhID);
+                if (!current_reserve_block_vh.IsObstacle)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"預約到Section:{result.SectionID}的vh:{result.VehicleID}，並沒有觸發障礙物停止，結束 double check block 流程",
+                       VehicleID: requestBlockVh.VEHICLE_ID);
+                    return;
+                }
+                var try_get_obstacle_vh_result = tryGetObstacleVh(current_reserve_block_vh);
+                if (!try_get_obstacle_vh_result.hasFindObsVh)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{result.VehicleID}有障礙物停止訊號，但無法取得前方擋住的車是誰，結束 double check block 流程",
+                       VehicleID: requestBlockVh.VEHICLE_ID);
+                    return;
+                }
+                if (!SCUtility.isMatche(try_get_obstacle_vh_result.obsVh, requestBlockVh.VEHICLE_ID))
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{result.VehicleID}有障礙物停止訊號，前方擋住的OHT:{try_get_obstacle_vh_result.obsVh}並非該次要求Block的vh:{requestBlockVh.VEHICLE_ID}，結束 double check block 流程",
+                       VehicleID: requestBlockVh.VEHICLE_ID);
+                    return;
+                }
 
+                //目前僅需要直接對該VH所擁有的路權，全部取消即可，暫時不須找出指定要取消的路段
+                //var has_find_related_block_master =
+                //        scApp.BlockControlBLL.cache.tryGetRelatedReserveBlock(req_block_id, current_reserve_block_vh.VEHICLE_ID);
+                //if (!has_find_related_block_master.hasRelatedReserveBlock)
+                //{
+                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                //       Data: $"vh:{result.VehicleID}並無找已預約的相關Block ID:{req_block_id}，結束 double check block 流程",
+                //       VehicleID: requestBlockVh.VEHICLE_ID);
+                //    return;
+                //}
+                if (!DebugParameter.isOpenDoubleCheckBlockReqFun)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"準備要求 vh:{current_reserve_block_vh.VEHICLE_ID} 進行cancel block rquest，但由於該功能目前關閉，故不下達命令",
+                       VehicleID: requestBlockVh.VEHICLE_ID);
+                    return;
+                }
+                if (current_reserve_block_vh.BlockCanceling_Sync == 0)
+                    Task.Run(() => ExcuteCancelBlockAction(current_reserve_block_vh));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
+        private (bool isBlockBySection, string vhID) isBlockBySection(HltResult hltResult)
+        {
+            if (hltResult.OK)
+            {
+                return (false, "");
+            }
+            if (!SCUtility.isEmpty(hltResult.SectionID) && !SCUtility.isEmpty(hltResult.VehicleID))
+            {
+                return (true, hltResult.VehicleID);
+            }
+            else
+            {
+                return (false, "");
+            }
+
+        }
+        const int MAX_SEARCH_OBSTACLE_SECTION_COUNT = 5;
+        private (bool hasFindObsVh, string obsVh) tryGetObstacleVh(AVEHICLE vh)
+        {
+            if (!vh.IsObstacle)
+            {
+                return (false, "");
+            }
+            string vh_current_section_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+
+            ASECTION vh_current_section = scApp.SectionBLL.cache.GetSection(vh_current_section_id);
+
+            //a.要先判斷在同一段Section是否有其他車輛且的他的距離在前面
+            var on_same_section_of_vhs = scApp.VehicleBLL.cache.loadVhsBySectionID(vh_current_section_id);
+            foreach (AVEHICLE same_section_vh in on_same_section_of_vhs)
+            {
+                if (same_section_vh == vh) continue;
+                if (same_section_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"與vh:{vh.VEHICLE_ID} 在同一段Section上的vh:{same_section_vh.VEHICLE_ID}，他位於vh:{vh.VEHICLE_ID}的前面",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return (true, same_section_vh.VEHICLE_ID);
+                }
+            }
+
+            string next_adr = vh_current_section.TO_ADR_ID;
+            int search_count = 0;
+            do
+            {
+
+                var next_sections = scApp.SectionBLL.cache.GetSectionsByFromAddress(next_adr);
+                if (next_sections.Count == 0)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"取得前擋車輛時Next adr:{next_adr} 並無對應的form adr-section資料，結束檢查",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return (false, "");//沒有資料就不再查詢
+                }
+                if (next_sections.Count > 1)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"取得前擋車輛時Next adr:{next_adr} 為分叉路線，結束檢查",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return (false, "");//找到叉路就停
+                }
+
+                ASECTION need_check_section = next_sections[0];
+
+                var on_same_section_of_vhs_part2 = scApp.VehicleBLL.cache.loadVhsBySectionID(need_check_section.SEC_ID);
+                if (on_same_section_of_vhs_part2.Count == 0)
+                {
+                    next_adr = need_check_section.TO_ADR_ID;
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Sec:{need_check_section.SEC_ID} 並無車輛，繼續往下檢查 Next adr:{next_adr}",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+                else
+                {
+                    var acc_sec_min_vh = getAccSectionMinVh(on_same_section_of_vhs_part2);
+                    return (true, acc_sec_min_vh.VEHICLE_ID);
+                }
+
+                search_count++;
+            } while (search_count < MAX_SEARCH_OBSTACLE_SECTION_COUNT);
+
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+               Data: $"取得前擋車輛時找尋超過 {MAX_SEARCH_OBSTACLE_SECTION_COUNT}段，結束檢查",
+               VehicleID: vh.VEHICLE_ID,
+               CarrierID: vh.CST_ID);
+
+            return (false, "");
+        }
+        private void ExcuteCancelBlockAction(AVEHICLE cancelBlockVh)
+        {
+            if (System.Threading.Interlocked.Exchange(ref cancelBlockVh.BlockCanceling_Sync, 1) == 0)
+            {
+                try
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"開始針對vh:{cancelBlockVh.VEHICLE_ID} 進行Block Cancel流程...",
+                       VehicleID: cancelBlockVh.VEHICLE_ID);
+                    bool is_success = cancelBlockRequest(cancelBlockVh.VEHICLE_ID, cancelBlockVh.OHTC_CMD);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"結束vh:{cancelBlockVh.VEHICLE_ID}Block Cancel流程，結果:{is_success}",
+                       VehicleID: cancelBlockVh.VEHICLE_ID);
+                    if (is_success)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                           Data: $"釋放vhID:{cancelBlockVh.VEHICLE_ID}所有預約的路徑",
+                           VehicleID: cancelBlockVh.VEHICLE_ID);
+                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(cancelBlockVh.VEHICLE_ID);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception:");
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref cancelBlockVh.BlockCanceling_Sync, 0);
+                }
+            }
+        }
+        private AVEHICLE getAccSectionMinVh(List<AVEHICLE> vhs)
+        {
+            AVEHICLE acc_sec_min_vh = null;
+            foreach (var vh in vhs)
+            {
+                if (acc_sec_min_vh == null)
+                    acc_sec_min_vh = vh;
+                else
+                {
+                    if (acc_sec_min_vh.ACC_SEC_DIST > vh.ACC_SEC_DIST)
+                    {
+                        acc_sec_min_vh = vh;
+                    }
+                }
+            }
+            return acc_sec_min_vh;
+        }
+        private bool cancelBlockRequest(string cancelBlockVhID, string blockID)
+        {
+            //由於OHT對於新增Function有困難，因此用ID_31其中的Type:Override，取代Cancel block request
+            //bool is_success = TransferRequset(cnacelBlockVhID, blockID, ActiveType.Override, "", new string[0], new string[0], "", "");
+            bool is_success = TransferRequset(cancelBlockVhID, blockID, string.Empty, ActiveType.Override,
+                string.Empty, string.Empty, string.Empty,
+                new string[0], new string[0], new string[0], new string[0],
+                string.Empty, string.Empty, string.Empty, string.Empty);
+            return is_success;
+        }
 
 
         private void PositionReport_ArriveAndComplete(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum

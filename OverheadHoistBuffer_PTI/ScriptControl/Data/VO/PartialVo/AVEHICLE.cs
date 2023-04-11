@@ -180,6 +180,8 @@ namespace com.mirle.ibg3k0.sc
         public virtual double X_Axis { get; set; }
         [JsonIgnore]
         public virtual double Y_Axis { get; set; }
+        [JsonIgnore]
+        public string CurrentRequestBlockID { get; set; }
 
         public virtual bool IsProcessingCommandFinish { get; set; }
 
@@ -250,6 +252,9 @@ namespace com.mirle.ibg3k0.sc
         [JsonIgnore]
         [BaseElement(NonChangeFromOtherVO = true)]
         public object DoCreatTransferCommand_Sync = new object();
+        [JsonIgnore]
+        [BaseElement(NonChangeFromOtherVO = true)]
+        public long BlockCanceling_Sync = 0;
         [JsonIgnore]
         [BaseElement(NonChangeFromOtherVO = true)]
         public object Connection_Sync = new object();
