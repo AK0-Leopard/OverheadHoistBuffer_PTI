@@ -124,7 +124,9 @@ namespace com.mirle.ibg3k0.sc.Data.VO
 
         public void CheckHeartbeatTimedOut(int threshold)
         {
-            if ((threshold > 0) && (Eq_Alive_Last_Change_time.AddSeconds(threshold) < DateTime.Now))
+            if ((threshold > 0) 
+                && (Eq_Alive_Last_Change_time > DateTime.MinValue) //2023.04.17: 已經至少被更新過一次，才檢查是否dead
+                && (Eq_Alive_Last_Change_time.AddSeconds(threshold) < DateTime.Now))
                 IsHeartbeatLoss = true;
             else
                 IsHeartbeatLoss = false;
