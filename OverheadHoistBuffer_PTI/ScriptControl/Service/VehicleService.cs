@@ -253,32 +253,50 @@ namespace com.mirle.ibg3k0.sc.Service
         private void Vh_LocationChange(object sender, LocationChangeEventArgs e)
         {
             AVEHICLE vh = sender as AVEHICLE;
-            ASECTION leave_section = scApp.SectionBLL.cache.GetSection(e.LeaveSection);
             ASECTION entry_section = scApp.SectionBLL.cache.GetSection(e.EntrySection);
+            if (entry_section == null)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"vh:{vh.VEHICLE_ID} entry section is null,don't process location change .",
+                   VehicleID: vh.VEHICLE_ID);
+                return;
+            }
+            string leave_section_id = e.LeaveSection;
+            //ASECTION leave_section = scApp.SectionBLL.cache.GetSection(e.LeaveSection);
+            ASECTION leave_section = scApp.SectionBLL.cache.GetSection(leave_section_id);
+            if (leave_section == null)
+            {
+                string pre_section_id = vh.PRE_SEC_ID;
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"vh:{vh.VEHICLE_ID} leave section is null,try get pre section id:{pre_section_id}.",
+                   VehicleID: vh.VEHICLE_ID);
+                leave_section = scApp.SectionBLL.cache.GetSection(pre_section_id);
+                leave_section_id = SCUtility.Trim(pre_section_id, true);
+            }
             leave_section?.Leave(vh.VEHICLE_ID);
             entry_section?.Entry(vh.VEHICLE_ID);
 
-            if (scApp.getEQObjCacheManager().getLine().ServiceMode == AppServiceMode.Active)
-                scApp.VehicleBLL.NetworkQualityTest(vh.VEHICLE_ID, e.EntrySection, vh.CUR_ADR_ID, 0);
-
             if (leave_section != null)
             {
-                scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh.VEHICLE_ID, leave_section.SEC_ID);
-                scApp.CMDBLL.removePassSection(vh.VEHICLE_ID, leave_section.SEC_ID);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                   Data: $"vh:{vh.VEHICLE_ID} leave section {leave_section.SEC_ID},remove reserved.",
-                   VehicleID: vh.VEHICLE_ID);
+                if (leave_section == entry_section)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vh.VEHICLE_ID} leave section:{leave_section.SEC_ID} equals entry section,don't remove reserved.",
+                       VehicleID: vh.VEHICLE_ID);
+                }
+                else
+                {
+                    scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh.VEHICLE_ID, leave_section.SEC_ID);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"vh:{vh.VEHICLE_ID} leave section {leave_section.SEC_ID},remove reserved.",
+                       VehicleID: vh.VEHICLE_ID);
+                }
             }
 
             var entry_sec_related_blocks = scApp.BlockControlBLL.cache.loadBlockZoneMasterBySectionID(e.EntrySection);
-            var leave_sec_related_blocks = scApp.BlockControlBLL.cache.loadBlockZoneMasterBySectionID(e.LeaveSection);
+            //var leave_sec_related_blocks = scApp.BlockControlBLL.cache.loadBlockZoneMasterBySectionID(e.LeaveSection);
+            var leave_sec_related_blocks = scApp.BlockControlBLL.cache.loadBlockZoneMasterBySectionID(leave_section_id);
             var entry_blocks = entry_sec_related_blocks.Except(leave_sec_related_blocks);
-
-            if (vh.WillPassSectionID != null)
-            {
-                vh.WillPassSectionID.Remove(SCUtility.Trim(leave_section.SEC_ID, true));
-            }
-
             foreach (var entry_block in entry_blocks)
             {
                 entry_block.Entry(vh.VEHICLE_ID);
@@ -286,32 +304,17 @@ namespace com.mirle.ibg3k0.sc.Service
             var leave_blocks = leave_sec_related_blocks.Except(entry_sec_related_blocks);
             foreach (var leave_block in leave_blocks)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                   Data: $"vh:{vh.VEHICLE_ID} leave block id:{leave_block.ENTRY_SEC_ID},remove reserved.",
-                   VehicleID: vh.VEHICLE_ID);
                 leave_block.Leave(vh.VEHICLE_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"vh:{vh.VEHICLE_ID} leave block {leave_block.ENTRY_SEC_ID},remove reserved.",
+                   VehicleID: vh.VEHICLE_ID);
             }
 
-
-            ////如果在進入該Section後，還有在該Section之前的Section沒有清掉的，就把它全部釋放
-            //if (entry_section != null)
+            //if (vh.WillPassSectionID != null && leave_section != null)
             //{
-            //    List<string> current_resreve_section = scApp.ReserveBLL.loadCurrentReserveSections(vh.VEHICLE_ID);
-            //    int current_section_index_in_reserve_section = current_resreve_section.IndexOf(entry_section.SEC_ID);
-            //    if (current_section_index_in_reserve_section > 0)//代表不是在第一個
-            //    {
-            //        for (int i = 0; i < current_section_index_in_reserve_section; i++)
-            //        {
-            //            scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh.VEHICLE_ID, current_resreve_section[i]);
-            //            scApp.CMDBLL.removePassSection(vh.VEHICLE_ID, current_resreve_section[i]);
-            //            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-            //               Data: $"vh:{vh.VEHICLE_ID} force release omission section {current_resreve_section[i]},remove reserved.",
-            //               VehicleID: vh.VEHICLE_ID);
-            //        }
-            //    }
+            //    vh.WillPassSectionID.Remove(SCUtility.Trim(leave_section.SEC_ID, true));
             //}
-
-
+            //tryDriveOutTheVhByLocationChange(vh);
         }
 
         private void Vh_SegementChange(object sender, SegmentChangeEventArgs e)
