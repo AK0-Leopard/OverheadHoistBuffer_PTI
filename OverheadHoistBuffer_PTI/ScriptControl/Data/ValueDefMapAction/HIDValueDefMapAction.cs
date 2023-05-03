@@ -93,11 +93,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //2.read log
                 function.Timestamp = DateTime.Now;
                 //LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
-                NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
-                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(EQStatusReport), Device: DEVICE_NAME_MTL,
-                //    XID: eqpt.EQPT_ID, Data: function.ToString());
+                //NLog.LogManager.GetCurrentClassLogger().Info(function.ToString());
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(HIDValueDefMapAction), Device: DEVICE_NAME_HID,
+                         Data: function.ToString(),
+                         VehicleID: eqpt.EQPT_ID);
                 //3.logical (include db save)
-                eqpt.Eq_Alive_Last_Change_time = DateTime.Now;
+                //eqpt.Eq_Alive_Last_Change_time = DateTime.Now;
             }
             catch (Exception ex)
             {
@@ -148,8 +149,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 eqpt.WT_Source = function.WT_Source;
                 eqpt.Sigma_W_Source = function.Sigma_W_Source;
 
-                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(EQStatusReport), Device: DEVICE_NAME_MTL,
-                //    XID: eqpt.EQPT_ID, Data: function.ToString());
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(HIDValueDefMapAction), Device: DEVICE_NAME_HID,
+                         Data: function.ToString(),
+                         VehicleID: eqpt.EQPT_ID);
                 //3.logical (include db save)
             }
             catch (Exception ex)
@@ -200,8 +202,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 eqpt.Alive = function.Alive;
                 eqpt.Eq_Alive_Last_Change_time = DateTime.Now;
 
-                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(EQStatusReport), Device: DEVICE_NAME_MTL,
-                //    XID: eqpt.EQPT_ID, Data: function.ToString());
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(HIDValueDefMapAction), Device: DEVICE_NAME_HID,
+                         Data: function.ToString(),
+                         VehicleID: eqpt.EQPT_ID);
                 //3.logical (include db save)
             }
             catch (Exception ex)
