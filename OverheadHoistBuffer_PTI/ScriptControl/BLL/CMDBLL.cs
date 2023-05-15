@@ -3308,30 +3308,31 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                     else
                     {
-                        if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, source))
-                        {
-                            check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but source is maintain device range of address:{source}");
-                            check_result.Result.AppendLine("");
-                            check_result.IsSuccess &= false;
-                        }
-                        if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, destination))
-                        {
-                            check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but destination is maintain device range of address:{destination}");
-                            check_result.Result.AppendLine("");
-                            check_result.IsSuccess &= false;
-                        }
-                        if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, vh.CUR_ADR_ID))
-                        {
-                            check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but current vh in maintain device range of address:{vh.CUR_ADR_ID}");
-                            check_result.Result.AppendLine("");
-                            check_result.IsSuccess &= false;
-                        }
-                        if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfSection(scApp.SegmentBLL, vh.CUR_SEC_ID))
-                        {
-                            check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but current vh in maintain device range of section:{vh.CUR_SEC_ID}");
-                            check_result.Result.AppendLine("");
-                            check_result.IsSuccess &= false;
-                        }
+                        //2023.05.11 marked: 非維修命令計算路徑時會自動排除MaintainDevice區域，不用在這邊卡
+                        //if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, source))
+                        //{
+                        //    check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but source is maintain device range of address:{source}");
+                        //    check_result.Result.AppendLine("");
+                        //    check_result.IsSuccess &= false;
+                        //}
+                        //if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, destination))
+                        //{
+                        //    check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but destination is maintain device range of address:{destination}");
+                        //    check_result.Result.AppendLine("");
+                        //    check_result.IsSuccess &= false;
+                        //}
+                        //if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfAddress(scApp.SegmentBLL, vh.CUR_ADR_ID))
+                        //{
+                        //    check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but current vh in maintain device range of address:{vh.CUR_ADR_ID}");
+                        //    check_result.Result.AppendLine("");
+                        //    check_result.IsSuccess &= false;
+                        //}
+                        //if (scApp.EquipmentBLL.cache.IsInMaintainDeviceRangeOfSection(scApp.SegmentBLL, vh.CUR_SEC_ID))
+                        //{
+                        //    check_result.Result.AppendLine($"vh:{vh_id} want to excute:{cmd_type} ,but current vh in maintain device range of section:{vh.CUR_SEC_ID}");
+                        //    check_result.Result.AppendLine("");
+                        //    check_result.IsSuccess &= false;
+                        //}
                     }
 
                     if (vh == null)
