@@ -67,8 +67,8 @@ namespace com.mirle.ibg3k0.sc
         {
             get
             {
-                COMMANDSTATE = COMMANDSTATE & 252;
-                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_LOADING;
+                var cmdState = COMMANDSTATE & 252;
+                return cmdState == COMMAND_STATUS_BIT_INDEX_LOADING;
             }
         }
         public bool isUnloading
@@ -76,8 +76,8 @@ namespace com.mirle.ibg3k0.sc
 
             get
             {
-                COMMANDSTATE = COMMANDSTATE & 224;
-                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_UNLOADING;
+                var cmdState = COMMANDSTATE & 224;
+                return cmdState == COMMAND_STATUS_BIT_INDEX_UNLOADING;
             }
         }
         public bool IsCanNotServiceReasonChanged;
