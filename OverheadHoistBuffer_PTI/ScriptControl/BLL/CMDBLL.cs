@@ -2843,6 +2843,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             {
                                 TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"Command shift failed... CommandID: {mcs_cmd.CMD_ID}, Vehicle: {bestSuitableVh.VEHICLE_ID}");
                                 Task.Run(() => scApp.VehicleService.vhCommandExcuteStatusCheck(bestSuitableVh.VEHICLE_ID));
+                                return false;
                             }
                         }
 
