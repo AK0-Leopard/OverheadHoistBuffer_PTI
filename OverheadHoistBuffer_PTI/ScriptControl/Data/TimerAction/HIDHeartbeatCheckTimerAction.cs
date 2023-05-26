@@ -35,13 +35,20 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         /// <param name="obj">The object.</param>
         public override void doProcess(object obj)
         {
-            var hids = scApp.EquipmentBLL.cache.loadHID();
-            foreach (var hid in hids)
+            try
             {
-                hid?.CheckHeartbeatTimedOut(scApp.HIDHeartbeatLostThreshold);
-                //if (!hid.IsHeartbeatLoss)
-                //    hid.SendHeartbeatCommand();
-                hid?.SendHeartbeatCommand();
+                var hids = scApp.EquipmentBLL.cache.loadHID();
+                foreach (var hid in hids)
+                {
+                    hid?.CheckHeartbeatTimedOut(scApp.HIDHeartbeatLostThreshold);
+                    //if (!hid.IsHeartbeatLoss)
+                    //    hid.SendHeartbeatCommand();
+                    hid?.SendHeartbeatCommand();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
             }
         }
 
