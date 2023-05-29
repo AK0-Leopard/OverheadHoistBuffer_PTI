@@ -109,6 +109,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
             cb_DoubleCheckBlockReq.Checked = DebugParameter.isOpenDoubleCheckBlockReqFun;
             cb_blockReqCheckSensor.Checked = DebugParameter.BlockReqCheckAreaSensorFun;
+            cb_CVOutSimpleMode.Checked = DebugParameter.CVOutputSimpleMode;
+            tb_CmdCountDiff.Text = DebugParameter.CmdNumDiffFromStage.ToString();
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1344,6 +1346,16 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void cb_blockReqCheckSensor_CheckedChanged(object sender, EventArgs e)
         {
             DebugParameter.BlockReqCheckAreaSensorFun = cb_blockReqCheckSensor.Checked;
+        }
+
+        private void cb_CVOutSimpleMode_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.CVOutputSimpleMode = cb_CVOutSimpleMode.Checked;
+        }
+
+        private void tb_CmdCountDiff_TextChanged(object sender, EventArgs e)
+        {
+            DebugParameter.CmdNumDiffFromStage = int.Parse(tb_CmdCountDiff.Text);
         }
     }
 }

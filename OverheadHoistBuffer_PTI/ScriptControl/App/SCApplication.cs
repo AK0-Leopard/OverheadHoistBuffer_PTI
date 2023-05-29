@@ -2436,6 +2436,8 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static bool isOpenDoubleCheckBlockReqFun = false;
         public static bool BlockReqCheckAreaSensorFun = false;
+        public static bool CVOutputSimpleMode = true;
+        public static int CmdNumDiffFromStage = 0;
 
         public enum CycleRunType
         {

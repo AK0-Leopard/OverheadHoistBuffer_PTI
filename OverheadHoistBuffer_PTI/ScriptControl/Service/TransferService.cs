@@ -2381,83 +2381,98 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else if (isCVPort(destName))
                 {
-                    //2023.05.29 marked 和以下邏輯重複
-                    //if (portINIData[destName].Stage == 1)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
-                    //{
-                    //    if (cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring).Count() != 0)
-                    //    {
-                    //        return false;
-                    //    }
-                    //}
-                    //2023.05.29 marked END
-                    var executingCmdByDestPort = cmdBLL.GetCmdDataByDest(destName)
-                        .Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring);
-                    if (portINIData[destName].Stage > 0 && executingCmdByDestPort.Count() >= portINIData[destName].Stage)
+                    if (!DebugParameter.CVOutputSimpleMode)
                     {
-                        destState = destState + $"CmdToDestPort.Count() = {executingCmdByDestPort.Count()}, " +
-                            $"PortStageNum = {portINIData[destName].Stage}";
-                        destPortType = false;
-                    }
-                    else
-                    {
+                        if (portINIData[destName].Stage == 1)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
+                        {
+                            if (cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring).Count() != 0)
+                            {
+                                return false;
+                            }
+                        }
+
                         PortPLCInfo destPort = GetPLC_PortData(destName);
 
                         if (destPort != null)
                         {
                             if (destPort.OpAutoMode)
                             {
-                                //2023.05.29 僅以Auto+Run+既有命令數判斷
-                                //if (destPort.IsReadyToLoad || (isUnitType(destName, UnitType.STK) && destPort.preLoadOK))
-                                //{
-                                //    if (isUnitType(destName, UnitType.AGV))
-                                //    {
-                                //        destPortType = true;
-                                //    }
-                                //    else
-                                //    {
-                                //        if (destPort.IsOutputMode)
-                                //        {
-                                //            destPortType = true;
-                                //        }
-                                //        else
-                                //        {
-                                //            destState = destState + " IsOutputMode:" + destPort.IsOutputMode;
-                                //        }
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    if (isUnitType(destName, UnitType.AGV) == false
-                                //        && destPort.IsOutputMode == false
-                                //        && destPort.IsModeChangable
-                                //       )
-                                //    {
-                                //        string cmdID = "PortTypeChange-" + destPort.EQ_ID.Trim() + ">>" + E_PortType.Out;
+                                if (destPort.IsReadyToLoad || (isUnitType(destName, UnitType.STK) && destPort.preLoadOK))
+                                {
+                                    if (isUnitType(destName, UnitType.AGV))
+                                    {
+                                        destPortType = true;
+                                    }
+                                    else
+                                    {
+                                        if (destPort.IsOutputMode)
+                                        {
+                                            destPortType = true;
+                                        }
+                                        else
+                                        {
+                                            destState = destState + " IsOutputMode:" + destPort.IsOutputMode;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (isUnitType(destName, UnitType.AGV) == false
+                                        && destPort.IsOutputMode == false
+                                        && destPort.IsModeChangable
+                                       )
+                                    {
+                                        string cmdID = "PortTypeChange-" + destPort.EQ_ID.Trim() + ">>" + E_PortType.Out;
 
-                                //        if (cmdBLL.getCMD_MCSByID(cmdID) == null)
-                                //        {
-                                //            //SetPortTypeCmd(destPort.EQ_ID.Trim(), E_PortType.Out);    //20210415 Mark by Mark
-                                //        }
-                                //    }
+                                        if (cmdBLL.getCMD_MCSByID(cmdID) == null)
+                                        {
+                                            //SetPortTypeCmd(destPort.EQ_ID.Trim(), E_PortType.Out);    //20210415 Mark by Mark
+                                        }
+                                    }
 
-                                //    destState = destState + " IsReadyToLoad: " + destPort.IsReadyToLoad + " IsOutputMode: " + destPort.IsOutputMode;
-                                //}
-                                destState = destState + " OpError:" + destPort.OpError;
-                                destPortType = !destPort.OpError;
-                                //2023.05.29 END
+                                    destState = destState + " IsReadyToLoad: " + destPort.IsReadyToLoad + " IsOutputMode: " + destPort.IsOutputMode;
+                                }
                             }
                             else
                             {
                                 destState = destState + " OpAutoMode:" + destPort.OpAutoMode;
-                                destPortType = false;
                             }
                         }
                         else
                         {
                             destState = destState + " PortPLCInfo " + destName + " = null";
-                            destPortType = false;
                         }
                     }
+                    else
+                    {
+                        //2023.05.29
+                        var executingCmdByDestPort = cmdBLL.GetCmdDataByDest(destName)
+                            .Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring);
+                        if (portINIData[destName].Stage > 0 &&
+                            (portINIData[destName].Stage + DebugParameter.CmdNumDiffFromStage) > 0 &&
+                            executingCmdByDestPort.Count() >= (portINIData[destName].Stage + DebugParameter.CmdNumDiffFromStage))
+                        {
+                            destState = destState + $"CmdToDestPort.Count() = {executingCmdByDestPort.Count()}, " +
+                                $"PortStageNum = {portINIData[destName].Stage}";
+                            destPortType = false;
+                        }
+                        else
+                        {
+                            PortPLCInfo destPort = GetPLC_PortData(destName);
+
+                            if (destPort != null)
+                            {
+                                destState = destState + " OpAutoMode:" + destPort.OpAutoMode + " OpError:" + destPort.OpError;
+                                destPortType = destPort.OpAutoMode && !destPort.OpError;
+                            }
+                            else
+                            {
+                                destState = destState + " PortPLCInfo " + destName + " = null";
+                                destPortType = false;
+                            }
+                        }
+                    }
+
                 }
                 else if (isUnitType(destName, UnitType.SHELF))
                 {
