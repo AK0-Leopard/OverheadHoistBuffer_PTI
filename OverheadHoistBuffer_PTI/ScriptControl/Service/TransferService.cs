@@ -2381,64 +2381,82 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else if (isCVPort(destName))
                 {
-                    if (portINIData[destName].Stage == 1)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
+                    //2023.05.29 marked 和以下邏輯重複
+                    //if (portINIData[destName].Stage == 1)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
+                    //{
+                    //    if (cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring).Count() != 0)
+                    //    {
+                    //        return false;
+                    //    }
+                    //}
+                    //2023.05.29 marked END
+                    var executingCmdByDestPort = cmdBLL.GetCmdDataByDest(destName)
+                        .Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring);
+                    if (portINIData[destName].Stage > 0 && executingCmdByDestPort.Count() >= portINIData[destName].Stage)
                     {
-                        if (cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring).Count() != 0)
-                        {
-                            return false;
-                        }
+                        destState = destState + $"CmdToDestPort.Count() = {executingCmdByDestPort.Count()}, " +
+                            $"PortStageNum = {portINIData[destName].Stage}";
+                        destPortType = false;
                     }
-
-                    PortPLCInfo destPort = GetPLC_PortData(destName);
-
-                    if (destPort != null)
+                    else
                     {
-                        if (destPort.OpAutoMode)
+                        PortPLCInfo destPort = GetPLC_PortData(destName);
+
+                        if (destPort != null)
                         {
-                            if (destPort.IsReadyToLoad || (isUnitType(destName, UnitType.STK) && destPort.preLoadOK))
+                            if (destPort.OpAutoMode)
                             {
-                                if (isUnitType(destName, UnitType.AGV))
-                                {
-                                    destPortType = true;
-                                }
-                                else
-                                {
-                                    if (destPort.IsOutputMode)
-                                    {
-                                        destPortType = true;
-                                    }
-                                    else
-                                    {
-                                        destState = destState + " IsOutputMode:" + destPort.IsOutputMode;
-                                    }
-                                }
+                                //2023.05.29 僅以Auto+Run+既有命令數判斷
+                                //if (destPort.IsReadyToLoad || (isUnitType(destName, UnitType.STK) && destPort.preLoadOK))
+                                //{
+                                //    if (isUnitType(destName, UnitType.AGV))
+                                //    {
+                                //        destPortType = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        if (destPort.IsOutputMode)
+                                //        {
+                                //            destPortType = true;
+                                //        }
+                                //        else
+                                //        {
+                                //            destState = destState + " IsOutputMode:" + destPort.IsOutputMode;
+                                //        }
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    if (isUnitType(destName, UnitType.AGV) == false
+                                //        && destPort.IsOutputMode == false
+                                //        && destPort.IsModeChangable
+                                //       )
+                                //    {
+                                //        string cmdID = "PortTypeChange-" + destPort.EQ_ID.Trim() + ">>" + E_PortType.Out;
+
+                                //        if (cmdBLL.getCMD_MCSByID(cmdID) == null)
+                                //        {
+                                //            //SetPortTypeCmd(destPort.EQ_ID.Trim(), E_PortType.Out);    //20210415 Mark by Mark
+                                //        }
+                                //    }
+
+                                //    destState = destState + " IsReadyToLoad: " + destPort.IsReadyToLoad + " IsOutputMode: " + destPort.IsOutputMode;
+                                //}
+                                destState = destState + " OpError:" + destPort.OpError;
+                                destPortType = !destPort.OpError;
+                                //2023.05.29 END
                             }
                             else
                             {
-                                if (isUnitType(destName, UnitType.AGV) == false
-                                    && destPort.IsOutputMode == false
-                                    && destPort.IsModeChangable
-                                   )
-                                {
-                                    string cmdID = "PortTypeChange-" + destPort.EQ_ID.Trim() + ">>" + E_PortType.Out;
-
-                                    if (cmdBLL.getCMD_MCSByID(cmdID) == null)
-                                    {
-                                        //SetPortTypeCmd(destPort.EQ_ID.Trim(), E_PortType.Out);    //20210415 Mark by Mark
-                                    }
-                                }
-
-                                destState = destState + " IsReadyToLoad: " + destPort.IsReadyToLoad + " IsOutputMode: " + destPort.IsOutputMode;
+                                destState = destState + " OpAutoMode:" + destPort.OpAutoMode;
+                                destPortType = false;
                             }
                         }
                         else
                         {
-                            destState = destState + " OpAutoMode:" + destPort.OpAutoMode;
+                            destState = destState + " PortPLCInfo " + destName + " = null";
+                            destPortType = false;
                         }
-                    }
-                    else
-                    {
-                        destState = destState + " PortPLCInfo " + destName + " = null";
                     }
                 }
                 else if (isUnitType(destName, UnitType.SHELF))
@@ -3811,7 +3829,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.BOXID = plcInfo.BoxID.Trim();        //填BOXID
                 datainfo.Carrier_LOC = plcInfo.EQ_ID.Trim();  //填Port 名稱
 
-                PortCarrierRemoved(datainfo, plcInfo.IsAGVMode, "PortPositionOFF");
+                var result = PortCarrierRemoved(datainfo, plcInfo.IsAGVMode, "PortPositionOFF");
             }
 
             string portLoc = GetPositionName(plcInfo.EQ_ID.Trim(), position);
@@ -4384,7 +4402,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 TransferServiceLogger.Error(ex, "PortToOHT");
             }
         }
-        public void PortCarrierRemoved(CassetteData cstData, bool isAGV, string cmdSource)
+        public bool PortCarrierRemoved(CassetteData cstData, bool isAGV, string cmdSource)
         {
             try
             {
@@ -4407,7 +4425,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
                         "PLC >> OHB|PortCarrierRemoved  找不到卡匣資料"
                     );
-                    return;
+                    return false;
                 }
 
                 string HandoffType = "2"; // 1 = manual, 2 = automated
@@ -4425,7 +4443,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         DateTime.Now.ToString("HH:mm:ss.fff ") +
                         "PLC >> OHB|PortCarrierRemoved  刪帳失敗，有命令再執行:" + GetCmdLog(cmd)
                     );
-                    return;
+                    return false;
                 }
 
                 reportBLL.ReportCarrierRemovedFromPort(dbData, HandoffType);
@@ -4439,10 +4457,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         PLC_AGV_Station(GetPLC_PortData(dbData.Carrier_LOC), "PortCarrierRemoved");
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 TransferServiceLogger.Error(ex, "PortCarrierRemoved");
+                return false;
             }
         }
         public void ReportPortType(string portID, E_PortType portType, string cmdSource)
