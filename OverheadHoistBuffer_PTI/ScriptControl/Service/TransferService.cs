@@ -1407,15 +1407,15 @@ namespace com.mirle.ibg3k0.sc.Service
                         var cmd_mcs = tran_item.Value;
                         if (cmd_mcs is null) continue;
                         var publish_cmd_mcs = new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommand();
-                        publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID;
-                        publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID;
+                        publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID ?? string.Empty;
+                        publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID ?? string.Empty;
                         publish_cmd_mcs.TRANSFERSTATE = convertTo(cmd_mcs.TRANSFERSTATE);
                         publish_cmd_mcs.COMMANDSTATE = cmd_mcs.COMMANDSTATE;
-                        publish_cmd_mcs.HOSTSOURCE = cmd_mcs.HOSTSOURCE;
-                        publish_cmd_mcs.HOSTDESTINATION = cmd_mcs.HOSTDESTINATION;
+                        publish_cmd_mcs.HOSTSOURCE = cmd_mcs.HOSTSOURCE ?? string.Empty;
+                        publish_cmd_mcs.HOSTDESTINATION = cmd_mcs.HOSTDESTINATION ?? string.Empty;
                         publish_cmd_mcs.PRIORITY = cmd_mcs.PRIORITY;
-                        publish_cmd_mcs.CHECKCODE = cmd_mcs.CHECKCODE;
-                        publish_cmd_mcs.PAUSEFLAG = cmd_mcs.PAUSEFLAG;
+                        publish_cmd_mcs.CHECKCODE = cmd_mcs.CHECKCODE ?? string.Empty;
+                        publish_cmd_mcs.PAUSEFLAG = cmd_mcs.PAUSEFLAG ?? string.Empty;
                         publish_cmd_mcs.CMDINSERTIME = ((DateTimeOffset)cmd_mcs.CMD_INSER_TIME).ToUnixTimeSeconds();
                         publish_cmd_mcs.CMDSTARTTIME =
                             cmd_mcs.CMD_START_TIME.HasValue ? ((DateTimeOffset)cmd_mcs.CMD_START_TIME).ToUnixTimeSeconds() : 0;
@@ -1425,7 +1425,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         publish_cmd_mcs.PORTPRIORITY = cmd_mcs.PORT_PRIORITY;
                         publish_cmd_mcs.PRIORITYSUM = cmd_mcs.PRIORITY_SUM;
                         publish_cmd_mcs.REPLACE = cmd_mcs.REPLACE;
-                        publish_cmd_mcs.DESCRIPTION = cmd_mcs.CanNotServiceReason;
+                        publish_cmd_mcs.DESCRIPTION = cmd_mcs.CanNotServiceReason ?? string.Empty;
                         info.Infos.Add(publish_cmd_mcs);
                     }
                     byte[] tran_info_serialize = new byte[info.CalculateSize()];
