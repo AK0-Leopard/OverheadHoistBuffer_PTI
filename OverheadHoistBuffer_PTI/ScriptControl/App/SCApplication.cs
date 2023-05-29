@@ -2435,6 +2435,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static bool CommandShift = false;
 
         public static bool isOpenDoubleCheckBlockReqFun = false;
+        public static bool BlockReqCheckAreaSensorFun = false;
 
         public enum CycleRunType
         {

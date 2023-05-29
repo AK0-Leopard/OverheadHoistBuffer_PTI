@@ -108,6 +108,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cbCommandShift.Checked = DebugParameter.CommandShift;
 
             cb_DoubleCheckBlockReq.Checked = DebugParameter.isOpenDoubleCheckBlockReqFun;
+            cb_blockReqCheckSensor.Checked = DebugParameter.BlockReqCheckAreaSensorFun;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1338,6 +1339,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void cb_DoubleCheckBlockReq_CheckedChanged(object sender, EventArgs e)
         {
             DebugParameter.isOpenDoubleCheckBlockReqFun = cb_DoubleCheckBlockReq.Checked;
+        }
+
+        private void cb_blockReqCheckSensor_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.BlockReqCheckAreaSensorFun = cb_blockReqCheckSensor.Checked;
         }
     }
 }

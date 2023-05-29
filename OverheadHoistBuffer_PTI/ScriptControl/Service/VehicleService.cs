@@ -972,7 +972,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: string.Empty,
                                Data: $"can't generate command road data, something is null,id:{SCUtility.Trim(cmd.CMD_ID)},vh id:{SCUtility.Trim(cmd.VH_ID)} current status not allowed." +
-                               $"assignVH.CUR_ADR_ID:{assignVH.CUR_ADR_ID }, assignVH.CUR_SEC_ID:{assignVH.CUR_SEC_ID } , current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
+                               $"assignVH.CUR_ADR_ID:{assignVH.CUR_ADR_ID}, assignVH.CUR_SEC_ID:{assignVH.CUR_SEC_ID} , current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
                                $"assignVH.ACT_STATUS:{assignVH.ACT_STATUS}.");
                             return isSuccess;
                         }
@@ -1024,7 +1024,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: string.Empty,
                                Data: $"can't generate command road data, something is null,id:{SCUtility.Trim(cmd.CMD_ID)},vh id:{SCUtility.Trim(cmd.VH_ID)} current status not allowed." +
-                               $"assignVH.CUR_ADR_ID:{assignVH.CUR_ADR_ID }, assignVH.CUR_SEC_ID:{assignVH.CUR_SEC_ID } , current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
+                               $"assignVH.CUR_ADR_ID:{assignVH.CUR_ADR_ID}, assignVH.CUR_SEC_ID:{assignVH.CUR_SEC_ID} , current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
                                $"assignVH.ACT_STATUS:{assignVH.ACT_STATUS}.");
                             return isSuccess;
                         }
@@ -2491,6 +2491,13 @@ namespace com.mirle.ibg3k0.sc.Service
             return true;
         }
 
+        //2023.05.29
+        private bool hasPortAreaSensorOn(string segmentID)
+        {
+            if (segmentID.Length > 3) segmentID = segmentID.Substring(0, 3);
+            var areaSensorOnPort = scApp.PortStationBLL.OperateCatch.LoadAllAreaSensorOnPortBySegmentID(segmentID, scApp.SectionBLL);
+            return areaSensorOnPort != null && areaSensorOnPort.Count > 0;
+        }
 
 
         private void ProcessBlockOrHIDReq(BCFApplication bcfApp, AVEHICLE eqpt, EventType eventType, int seqNum, string req_block_id, string req_hid_secid)
@@ -2567,6 +2574,18 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: request_block_vh.VEHICLE_ID,
                        CarrierID: request_block_vh.CST_ID);
                     return false;
+                }
+                if (DebugParameter.BlockReqCheckAreaSensorFun)
+                {
+                    var areaSensorCheck = hasPortAreaSensorOn(req_block_id);
+                    if (areaSensorCheck)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                            Data: $"Vh:{request_block_vh.VEHICLE_ID} ask block:{req_block_id},but at least 1 port after this block is area sensor on!",
+                            VehicleID: request_block_vh.VEHICLE_ID,
+                            CarrierID: request_block_vh.CST_ID);
+                        return false;
+                    }
                 }
 
                 foreach (var detail in block_detail_section)

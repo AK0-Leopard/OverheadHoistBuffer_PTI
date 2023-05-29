@@ -122,6 +122,7 @@
             this.label18 = new System.Windows.Forms.Label();
             this.cb_PortID = new System.Windows.Forms.ComboBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.cb_DoubleCheckBlockReq = new System.Windows.Forms.CheckBox();
             this.btn_blocked_sec_refresh = new System.Windows.Forms.Button();
             this.btn_release_block = new System.Windows.Forms.Button();
             this.lbl_BlockedVh = new System.Windows.Forms.Label();
@@ -357,7 +358,7 @@
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
-            this.cb_DoubleCheckBlockReq = new System.Windows.Forms.CheckBox();
+            this.cb_blockReqCheckSensor = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1473,6 +1474,17 @@
             this.groupBox6.TabIndex = 24;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Block Manager";
+            // 
+            // cb_DoubleCheckBlockReq
+            // 
+            this.cb_DoubleCheckBlockReq.AutoSize = true;
+            this.cb_DoubleCheckBlockReq.Location = new System.Drawing.Point(128, 32);
+            this.cb_DoubleCheckBlockReq.Name = "cb_DoubleCheckBlockReq";
+            this.cb_DoubleCheckBlockReq.Size = new System.Drawing.Size(139, 26);
+            this.cb_DoubleCheckBlockReq.TabIndex = 61;
+            this.cb_DoubleCheckBlockReq.Text = "DoubleCheck";
+            this.cb_DoubleCheckBlockReq.UseVisualStyleBackColor = true;
+            this.cb_DoubleCheckBlockReq.CheckedChanged += new System.EventHandler(this.cb_DoubleCheckBlockReq_CheckedChanged);
             // 
             // btn_blocked_sec_refresh
             // 
@@ -2662,7 +2674,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4310,6 +4322,7 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.cb_blockReqCheckSensor);
             this.tabPage8.Controls.Add(this.cbCommandShift);
             this.tabPage8.Controls.Add(this.cbAfterOnWay);
             this.tabPage8.Controls.Add(this.cbBeforeOnWay);
@@ -4324,7 +4337,7 @@
             // cbCommandShift
             // 
             this.cbCommandShift.AutoSize = true;
-            this.cbCommandShift.Location = new System.Drawing.Point(54, 135);
+            this.cbCommandShift.Location = new System.Drawing.Point(54, 106);
             this.cbCommandShift.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbCommandShift.Name = "cbCommandShift";
             this.cbCommandShift.Size = new System.Drawing.Size(113, 26);
@@ -4336,7 +4349,7 @@
             // cbAfterOnWay
             // 
             this.cbAfterOnWay.AutoSize = true;
-            this.cbAfterOnWay.Location = new System.Drawing.Point(54, 83);
+            this.cbAfterOnWay.Location = new System.Drawing.Point(54, 69);
             this.cbAfterOnWay.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbAfterOnWay.Name = "cbAfterOnWay";
             this.cbAfterOnWay.Size = new System.Drawing.Size(92, 26);
@@ -4357,16 +4370,17 @@
             this.cbBeforeOnWay.UseVisualStyleBackColor = true;
             this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
             // 
-            // cb_DoubleCheckBlockReq
+            // cb_blockReqCheckSensor
             // 
-            this.cb_DoubleCheckBlockReq.AutoSize = true;
-            this.cb_DoubleCheckBlockReq.Location = new System.Drawing.Point(128, 32);
-            this.cb_DoubleCheckBlockReq.Name = "cb_DoubleCheckBlockReq";
-            this.cb_DoubleCheckBlockReq.Size = new System.Drawing.Size(139, 26);
-            this.cb_DoubleCheckBlockReq.TabIndex = 61;
-            this.cb_DoubleCheckBlockReq.Text = "DoubleCheck";
-            this.cb_DoubleCheckBlockReq.UseVisualStyleBackColor = true;
-            this.cb_DoubleCheckBlockReq.CheckedChanged += new System.EventHandler(this.cb_DoubleCheckBlockReq_CheckedChanged);
+            this.cb_blockReqCheckSensor.AutoSize = true;
+            this.cb_blockReqCheckSensor.Location = new System.Drawing.Point(54, 177);
+            this.cb_blockReqCheckSensor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cb_blockReqCheckSensor.Name = "cb_blockReqCheckSensor";
+            this.cb_blockReqCheckSensor.Size = new System.Drawing.Size(339, 26);
+            this.cb_blockReqCheckSensor.TabIndex = 11;
+            this.cb_blockReqCheckSensor.Text = "Check Area Sensor when BlockReq";
+            this.cb_blockReqCheckSensor.UseVisualStyleBackColor = true;
+            this.cb_blockReqCheckSensor.CheckedChanged += new System.EventHandler(this.cb_blockReqCheckSensor_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -4784,5 +4798,6 @@
         private System.Windows.Forms.ComboBox comboBox_HID;
         private System.Windows.Forms.Button btn_hid_datetime_sync;
         private System.Windows.Forms.CheckBox cb_DoubleCheckBlockReq;
+        private System.Windows.Forms.CheckBox cb_blockReqCheckSensor;
     }
 }

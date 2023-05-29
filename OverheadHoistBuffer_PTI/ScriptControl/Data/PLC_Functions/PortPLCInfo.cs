@@ -123,5 +123,8 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
 
         [PLCElement(ValueName = "PreLoadOK")]
         public bool preLoadOK;
+
+        //2023.05.29 stub for area sensor
+        public bool IsAreaSensorOn = false;
     }
 }

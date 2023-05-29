@@ -35,7 +35,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             public List<APORTSTATION> loadAll()
             {
-                List <APORTSTATION> ret = null;
+                List<APORTSTATION> ret = null;
                 try
                 {
                     using (DBConnection_EF con = DBConnection_EF.GetUContext())
@@ -362,6 +362,37 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 );
                 return map_actions;
+            }
+
+            public List<APORTSTATION> LoadAllAreaSensorOnPortBySegmentID(string segment_id, BLL.SectionBLL sectionBLL)
+            {
+                try
+                {
+                    List<ASECTION> sections = sectionBLL.cache.loadSectionsBySegmentID(segment_id);
+                    List<string> adrs_from = sections.Select(sec => sec.FROM_ADR_ID.Trim()).ToList();
+                    List<string> adrs_to = sections.Select(sec => sec.TO_ADR_ID.Trim()).ToList();
+                    List<string> adrs = adrs_from.Concat(adrs_to).Distinct().ToList();
+
+                    var all_port_station = CacheManager.getALLPortStation();
+                    var query = from port in all_port_station
+                                where adrs.Contains(SCUtility.Trim(port.ADR_ID))
+                                orderby port.PORT_ID
+                                select port;
+
+                    var result = new List<APORTSTATION>();
+                    foreach (var p in query)
+                    {
+                        var plcInfo = p.getPortPLCInfo();
+                        if (plcInfo is null) continue;
+                        if (plcInfo.IsAreaSensorOn) result.Add(p);
+                    }
+                    return result;
+                }
+                catch (Exception ex) 
+                {
+                    logger.Error(ex, "Exception:");
+                    return new List<APORTSTATION>();
+                }
             }
         }
     }
