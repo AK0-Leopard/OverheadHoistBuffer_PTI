@@ -1405,6 +1405,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     foreach (var tran_item in ACMD_MCS.MCS_CMD_InfoList)
                     {
                         var cmd_mcs = tran_item.Value;
+                        if (cmd_mcs is null) continue;
                         var publish_cmd_mcs = new AK0.ProtocolFormat.VehicleControlPublishMessage.TransferCommand();
                         publish_cmd_mcs.CMDID = cmd_mcs.CMD_ID;
                         publish_cmd_mcs.CARRIERID = cmd_mcs.CARRIER_ID;
