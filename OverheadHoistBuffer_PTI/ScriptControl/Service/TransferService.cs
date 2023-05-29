@@ -7855,7 +7855,9 @@ namespace com.mirle.ibg3k0.sc.Service
                  || portINIData.ContainsKey(dest) == false
                    )
                 {
-                    return "來源或目的不存在";
+                    string returnLog = "來源或目的不存在";
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "Manual >> OHB|Manual_InsertCmd " + returnLog);
+                    return returnLog;
                 }
 
                 #region 新增 MCS 命令
@@ -7901,13 +7903,17 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 if (cmdBLL.getCMD_ByBoxID(datainfo.BOX_ID) != null)
                 {
-                    return datainfo.BOX_ID + " 已存在搬送命令";
+                    string returnLog = datainfo.BOX_ID + " 已存在搬送命令";
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "Manual >> OHB|Manual_InsertCmd " + returnLog);
+                    return returnLog;
                 }
 
                 if (cmdBLL.creatCommand_MCS(datainfo))
                 {
                     reportBLL.ReportOperatorInitiatedAction(datainfo.CMD_ID, reportMCSCommandType.Transfer.ToString());
-                    return "OK";
+                    string returnLog = "OK";
+                    TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + "Manual >> OHB|Manual_InsertCmd " + returnLog);
+                    return returnLog;
                 }
                 else
                 {
