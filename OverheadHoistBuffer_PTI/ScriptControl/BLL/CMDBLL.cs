@@ -1490,6 +1490,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                     if (scApp.TransferService.isCVPort(cmd.HOSTDESTINATION))
                     {
                         scApp.TransferService.PortCommanding(cmd.HOSTDESTINATION, false);
+                        var cstDBObj = cassette_dataBLL.loadCassetteDataByCSTID(cmd.BOX_ID.Trim());
+                        if (cstDBObj != null)
+                        {
+                            if (CassetteData.RetryDeleteStopwatch.ContainsKey(cmd.BOX_ID.Trim()))
+                            {
+                                scApp.ReportBLL.ReportCarrierRemovedFromPort(cstDBObj, "2");
+                                cassette_dataBLL.DeleteCSTbyBoxID(cmd.BOX_ID.Trim());
+                                CassetteData.RetryDeleteStopwatch[cmd.BOX_ID.Trim()].Stop();
+                                CassetteData.RetryDeleteStopwatch.TryRemove(cmd.BOX_ID.Trim(), out _);
+                            }
+                        }
                     }
 
                     scApp.TransferService.OHBC_OHT_QueueCmdTimeOutCmdIDCleared(cmd.CMD_ID);

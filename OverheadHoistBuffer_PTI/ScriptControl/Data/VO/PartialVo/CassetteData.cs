@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,8 @@ namespace com.mirle.ibg3k0.sc
 {
     public partial class CassetteData
     {
+        public static ConcurrentDictionary<string, Stopwatch> RetryDeleteStopwatch { get; private set; } = new ConcurrentDictionary<string, Stopwatch>();
+
         public const string CassetteData_UNKNOWN_BOOKING_SCAN = "S";
         public const string CassetteData_NORMAL = "";
 

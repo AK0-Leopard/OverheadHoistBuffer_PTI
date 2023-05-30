@@ -30,6 +30,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -206,6 +207,8 @@ namespace com.mirle.ibg3k0.sc.Service
         public string agvcTriggerResult_ST01 = "無";
         public string agvcTriggerResult_ST02 = "無";
         public string agvcTriggerResult_ST03 = "無";
+
+        private const int DeleteCstTimeout = 30000; //ms
 
         public ConcurrentDictionary<string, bool> CuncurrentQueueCommandID { get; set; } = new ConcurrentDictionary<string, bool>();
         #endregion
@@ -793,6 +796,16 @@ namespace com.mirle.ibg3k0.sc.Service
                     #region 卡匣資料處理
                     var cstDataList = cassette_dataBLL.LoadCassetteDataByNotCompleted();
                     BoxDataHandler(cstDataList);
+                    //2023.05.29 逾時無法刪除的帳從待刪列表中移除，不再理會
+                    var deleteTimeoutCst = CassetteData.RetryDeleteStopwatch
+                        .Where(v => v.Value.ElapsedMilliseconds > DeleteCstTimeout)
+                        .Select(v => v.Key);
+                    foreach (var cst in deleteTimeoutCst)
+                    {
+                        CassetteData.RetryDeleteStopwatch[cst].Stop();
+                        CassetteData.RetryDeleteStopwatch.TryRemove(cst, out _);
+                    }
+                    //2023.05.29 END
                     #endregion
                     #region 命令資料處理
                     //var vehicleData = scApp.VehicleBLL.loadAllVehicle();
@@ -3845,6 +3858,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 datainfo.Carrier_LOC = plcInfo.EQ_ID.Trim();  //填Port 名稱
 
                 var result = PortCarrierRemoved(datainfo, plcInfo.IsAGVMode, "PortPositionOFF");
+                if (!result)
+                    CassetteData.RetryDeleteStopwatch.TryAdd(plcInfo.BoxID.Trim(), Stopwatch.StartNew());
             }
 
             string portLoc = GetPositionName(plcInfo.EQ_ID.Trim(), position);
