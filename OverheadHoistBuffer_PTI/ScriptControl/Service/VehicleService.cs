@@ -5048,13 +5048,21 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         private long syncPoint_NotifyVhAvoid = 0;
 
-        private void tryDriveOutTheVh(string willPassVhID, string inTheWayVhID)
+        private void tryDriveOutTheVh(string willPassVhID, string onTheWayVhID)
         {
+
             if (System.Threading.Interlocked.Exchange(ref syncPoint_NotifyVhAvoid, 1) == 0)
             {
                 try
                 {
-                    findTheVhOfAvoidAddress(willPassVhID, inTheWayVhID);
+                    if (DebugParameter.IsOpenParkingZoneControlFunction)
+                    {
+                        findTheVhOfAvoidAddressNew(willPassVhID, onTheWayVhID);
+                    }
+                    else
+                    {
+                        findTheVhOfAvoidAddress(willPassVhID, onTheWayVhID);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -5108,6 +5116,47 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return is_success;
         }
+        private bool findTheVhOfAvoidAddressNew(string willPassVhID, string onTheWayVhID)
+        {
+            bool is_success = false;
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                                   Data: $"start try drive out vh:{onTheWayVhID}...",
+                                   VehicleID: willPassVhID);
+
+            //確認能否把該Vh趕走
+            AVEHICLE on_the_way_vh = scApp.VehicleBLL.cache.getVhByID(onTheWayVhID);
+            //var check_can_excute_parking_cmd = on_the_way_vh.CanCreatParkingCommand(scApp.CMDBLL);
+            var check_can_excute_parking_cmd = canCreatDriveOutCommand(on_the_way_vh);
+
+            if (check_can_excute_parking_cmd.is_can)
+            {
+                AVEHICLE will_pass_vh = scApp.VehicleBLL.cache.getVhByID(willPassVhID);
+                var find_result = findNotConflictSectionAndAvoidAddressNew(will_pass_vh, on_the_way_vh);
+                if (find_result.isFind)
+                {
+                    is_success = scApp.CMDBLL.doCreatTransferCommand(onTheWayVhID,
+                                                                         cmd_type: E_CMD_TYPE.Move,
+                                                                         destination_address: find_result.avoidAdr);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Try to notify vh avoid,requestVh:{willPassVhID} reservedVh:{onTheWayVhID} avoid address:{find_result.avoidAdr}," +
+                             $" is success :{is_success}.",
+                       VehicleID: willPassVhID);
+                }
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                       Data: $"Can't find the avoid address.",
+                       VehicleID: willPassVhID);
+                }
+            }
+            else
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                   Data: $"start try drive out vh:{onTheWayVhID},but vh status not ready,reason:{check_can_excute_parking_cmd.result}",
+                   VehicleID: willPassVhID);
+            }
+            return is_success;
+        }
         private (bool isFind, string avoidAdr) findAvoidAddressForFixPort(AVEHICLE willDrivenAwayVh)
         {
             //1.找看看是否有設定的固定避車點。
@@ -5154,6 +5203,179 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return (!SCUtility.isEmpty(nearest_avoid_adr), nearest_avoid_adr);
         }
+        private (bool isFind, string avoidAdr) findNotConflictSectionAndAvoidAddressNew
+    (AVEHICLE willPassVh, AVEHICLE findAvoidAdrOfVh)
+        {
+            string needToAvoidAdr = findNeedAvoidAddress(willPassVh);
+
+
+            bool isFindNotConflict = TryFindAvoidAddress(willPassVh, findAvoidAdrOfVh, needToAvoidAdr, out string escapeAddress);
+            if (isFindNotConflict)
+            {
+                return (true, escapeAddress);
+            }
+            bool isFindClosest = TryFindAvoidAddress(willPassVh, findAvoidAdrOfVh, "", out string escapeAddressClosest);
+            if (isFindClosest)
+            {
+                return (true, escapeAddressClosest);
+            }
+            return (false, "");
+
+        }
+
+        private string findNeedAvoidAddress(AVEHICLE willPassVh)
+        {
+            if (!willPassVh.IsExcuteCMD_OHTC)
+                return "";
+            if (willPassVh.IsExcuteCMD_MCS)
+            {
+                var get_mcs_cmd_resutl = scApp.CMDBLL.cache.tryGetCMD_MCS(willPassVh.MCS_CMD);
+                if (get_mcs_cmd_resutl.isExist)
+                {
+                    var cmd_mcs = get_mcs_cmd_resutl.cmdMCS;
+                    if (cmd_mcs.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE)
+                    {
+                        var source_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(cmd_mcs.HOSTSOURCE);
+                        return source_port_station == null ? string.Empty : source_port_station.ADR_ID;
+                    }
+                    else
+                    {
+                        var dest_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(cmd_mcs.HOSTDESTINATION);
+                        return dest_port_station == null ? string.Empty : dest_port_station.ADR_ID;
+                    }
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            else
+            {
+                var get_ohtc_cmd_resutl = scApp.CMDBLL.cache.tryGetExcuteCmd(willPassVh.OHTC_CMD);
+                if (get_ohtc_cmd_resutl.isExist)
+                {
+                    var cmd_ohtc = get_ohtc_cmd_resutl.cmdOHTC;
+                    if (cmd_ohtc.CMD_TPYE == E_CMD_TYPE.Move)
+                    {
+                        return cmd_ohtc.DESTINATION_ADR;
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+        private bool TryFindAvoidAddress(AVEHICLE commandingVehicle, AVEHICLE escapedVehicle, string needToAvoidAdr, out string escapeAddressID)
+        {
+            try
+            {
+                bool isSuccess = false;
+                escapeAddressID = String.Empty;
+                List<string> bypassSections = new List<string>();
+                if (!string.IsNullOrEmpty(needToAvoidAdr))
+                    bypassSections = scApp.SectionBLL.cache.GetSectionsByToAddress(needToAvoidAdr).Select(s => s.SEC_ID).ToList();
+
+                var avoidAddresses = scApp.ParkingZoneBLL.LoadAvoidParkingzoneAddresses(escapedVehicle);
+                isSuccess = findBestEscapeAddress(avoidAddresses, commandingVehicle, escapedVehicle.CUR_ADR_ID, bypassSections, out escapeAddressID);
+                if (!isSuccess)
+                {
+                    avoidAddresses = scApp.AddressBLL.OperateCatch.LoadCanAvoidAddresses()
+                        .Where(adr => !adr.ADR_ID.Equals(escapedVehicle.CUR_ADR_ID))
+                        .Select(adr => adr.ADR_ID.Trim()).ToList();
+                    isSuccess = findBestEscapeAddress(avoidAddresses, commandingVehicle, escapedVehicle.CUR_ADR_ID, bypassSections, out escapeAddressID);
+                }
+                return isSuccess;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                escapeAddressID = String.Empty;
+                return false;
+            }
+        }
+        //private bool findBestEscapeAddress(List<string> avoidAddresses, AVEHICLE commandingVehicle, string escapedVehicleaddress, List<string> bypassSections, out string escapeAddressID)
+        //{
+        //    int minCost = int.MaxValue;
+        //    bool isSuccess = false;
+        //    escapeAddressID = String.Empty;
+        //    foreach (var avoidPoint in avoidAddresses)
+        //    {
+        //        bool isOKPoint;
+        //        //確認退讓車移位後的結果，是否不在命令車的路徑上了，若找不到車輛路徑則無條件通過
+        //        if (commandingVehicle.WillPassSectionID == null || commandingVehicle.WillPassSectionID.Count == 0)
+        //            isOKPoint = true;
+        //        else
+        //            isOKPoint = !commandingVehicle.WillPassAddressIDs.Contains(avoidPoint);
+        //        if (isOKPoint)
+        //        {
+        //            //通過移位後路權檢驗，確認cost
+        //            var roadCheckResult = scApp.GuideBLL.getGuideInfo(escapedVehicleaddress, avoidPoint, bypassSections);
+        //            //logToVehicleServiceLogger($"check avoid candidate address {avoidPoint.ADR_ID}, " +
+        //            //    $"PassVehicle:{commandingVehicle.VEHICLE_ID}, AvoidVehicle:{escapedVehicle.VEHICLE_ID}, cost:{roadCheckResult.totalCost}.", LogLevel.Info);
+        //            if (roadCheckResult.totalCost < minCost && roadCheckResult.totalCost != 0)
+        //            {
+        //                minCost = roadCheckResult.totalCost;
+        //                escapeAddressID = avoidPoint;
+        //                isSuccess = true;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //移位後路權檢驗不通過
+        //            //logToVehicleServiceLogger($"Remove {avoidPoint.ADR_ID} from avoid candidate address list.", LogLevel.Info);
+        //        }
+        //    }
+        //    return isSuccess;
+        //}
+        private bool findBestEscapeAddress(List<string> avoidAddresses, AVEHICLE commandingVehicle, string escapedVehicleaddress, List<string> bypassSections, out string escapeAddressID)
+        {
+            int minCost = int.MaxValue;
+            bool isSuccess = false;
+            escapeAddressID = String.Empty;
+            foreach (var avoidPoint in avoidAddresses)
+            {
+                if (checkAvoidAdrIsCommandingVhWillPass(commandingVehicle, avoidPoint))
+                {
+                    continue;
+                }
+                var roadCheckResult = scApp.GuideBLL.getGuideInfo(escapedVehicleaddress, avoidPoint, bypassSections);
+                if (roadCheckResult.totalCost < minCost && roadCheckResult.totalCost != 0)
+                {
+                    minCost = roadCheckResult.totalCost;
+                    escapeAddressID = avoidPoint;
+                    isSuccess = true;
+                }
+            }
+            return isSuccess;
+        }
+        private bool checkAvoidAdrIsCommandingVhWillPass(AVEHICLE commandingVh, string avoidAdr)
+        {
+            if (commandingVh.WillPassSectionID == null || commandingVh.WillPassSectionID.Count == 0)
+            {
+                return false;
+            }
+
+            var avoid_sections = scApp.SectionBLL.cache.GetSectionsByToAddress(avoidAdr);
+            if (avoid_sections == null || avoid_sections.Count == 0)
+            {
+                return false;
+            }
+            foreach (var avoid_sec in avoid_sections)
+            {
+                if (commandingVh.WillPassSectionID.Contains(avoid_sec.SEC_ID))
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
 
         private bool tryToExcuteCommandShiftNew(AVEHICLE commandFinishVh)
         {

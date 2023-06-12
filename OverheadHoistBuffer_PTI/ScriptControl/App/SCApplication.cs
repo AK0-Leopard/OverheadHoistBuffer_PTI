@@ -605,6 +605,8 @@ namespace com.mirle.ibg3k0.sc.App
 
         private DataSyncBLL datasynBLL = null;
         public DataSyncBLL DataSyncBLL { get { return datasynBLL; } }
+        private ZoneService zoneservice = null;
+        public ZoneService ZoneService { get { return zoneservice; } }
 
 
         private HIDBLL hidBLL = null;
@@ -620,6 +622,7 @@ namespace com.mirle.ibg3k0.sc.App
         public CassetteDataBLL CassetteDataBLL { get; private set; } = null;
         public ReserveBLL ReserveBLL { get; private set; } = null; //A0.01
         public AddressBLL AddressBLL { get; private set; } = null;
+        public ParkingZoneBLL ParkingZoneBLL { get; private set; } = null; //A0.01
 
         //WIF
         /// <summary>
@@ -1527,6 +1530,8 @@ namespace com.mirle.ibg3k0.sc.App
             CassetteDataBLL = new CassetteDataBLL();
             ReserveBLL = new ReserveBLL(); //A0.01
             AddressBLL = new AddressBLL();
+            ParkingZoneBLL = new ParkingZoneBLL(); //A0.01
+
         }
 
 
@@ -1545,6 +1550,7 @@ namespace com.mirle.ibg3k0.sc.App
             blockControlService = new BlockControlService();
             shelfService = new ShelfService();
             emptyBoxHandlerService = new EmptyBoxHandlerService();
+            zoneservice = new ZoneService();
 
             manualPortControlService = new ManualPortControlService();
             manualPortEventService = new ManualPortEventService();
@@ -2418,6 +2424,8 @@ namespace com.mirle.ibg3k0.sc.App
             set { isforcedpassblockcontrol = value; }
             get { return isforcedpassblockcontrol; }
         }
+
+
         public static Boolean isForcedRejectBlockControl = false;
         public static Boolean isTestCarrierInterfaceError = false;
         /// <summary>
@@ -2438,6 +2446,9 @@ namespace com.mirle.ibg3k0.sc.App
         public static bool BlockReqCheckAreaSensorFun = false;
         public static bool CVOutputSimpleMode = false;
         public static int CmdNumDiffFromStage = 0;
+        public static Boolean IsOpenParkingZoneControlFunction = false;
+        public static Boolean IsOpenParkingZoneAutoPull = false;
+
 
         public enum CycleRunType
         {

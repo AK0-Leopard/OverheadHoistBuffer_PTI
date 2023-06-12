@@ -45,6 +45,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                                                .ToList();
                 return address_ids;
             }
+
+            public List<AADDRESS> LoadCanAvoidAddresses()
+            {
+                return CacheManager.GetAddresses().
+                       Where(adr => adr.IsAvoidAddress).
+                       ToList();
+            }
         }
     }
 }

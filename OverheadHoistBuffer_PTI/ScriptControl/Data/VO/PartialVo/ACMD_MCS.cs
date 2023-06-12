@@ -19,6 +19,12 @@ namespace com.mirle.ibg3k0.sc
     public partial class ACMD_MCS
     {
         public static ConcurrentDictionary<string, ACMD_MCS> MCS_CMD_InfoList { get; private set; } = new ConcurrentDictionary<string, ACMD_MCS>();
+        public static List<ACMD_MCS> tryGetMCSCommandList()
+        {
+            var cmd_mcs_Key_value_array = MCS_CMD_InfoList.ToArray();
+            var cmd_mcs_list = cmd_mcs_Key_value_array.Select(kv => kv.Value).ToList();
+            return cmd_mcs_list;
+        }
 
         //**********************************************************************************
         //A20.05.22 給定一個私有變數去儲存2點間距離

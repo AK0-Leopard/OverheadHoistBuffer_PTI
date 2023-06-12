@@ -5,6 +5,7 @@ using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
@@ -176,6 +177,7 @@ namespace com.mirle.ibg3k0.sc
                 }
             }
         }
+
         [JsonIgnore]
         public virtual double X_Axis { get; set; }
         [JsonIgnore]
@@ -1003,6 +1005,82 @@ namespace com.mirle.ibg3k0.sc
         [JsonIgnore]
         [BaseElement(NonChangeFromOtherVO = true)]
         public int Num { get; set; }
+        public bool IsExcuteCMD_OHTC
+        {
+            get
+            {
+                return !SCUtility.isEmpty(OHTC_CMD);
+            }
+        }
+        public bool IsExcuteCMD_MCS
+        {
+            get
+            {
+                return !SCUtility.isEmpty(MCS_CMD);
+            }
+        }
+
+        public enum CAN_NOT_AVOID_RESULT
+        {
+            Normal,
+            NoConnect,
+            NoAuto,
+            CommandEnding,
+            HasCommandExcute,
+            VehiclehasTransfercmd,
+            VehicleInError
+        }
+        public (bool is_can, CAN_NOT_AVOID_RESULT result) CanCreatParkingCommand(CMDBLL cmdBLL)
+        {
+            if (!this.isTcpIpConnect)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.NoConnect);
+            }
+            else if (this.IsError)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.VehicleInError);
+            }
+            else if (!IsAutoRemoteOrAutoLocal(this))
+            {
+                return (false, CAN_NOT_AVOID_RESULT.NoAuto);
+            }
+            else if (this.ACT_STATUS != VHActionStatus.NoCommand)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.HasCommandExcute);
+            }
+            else if (this.IsProcessingCommandFinish)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.CommandEnding);
+            }
+            else if (cmdBLL.isCMD_OHTCExcuteByVh(this.VEHICLE_ID))
+            {
+                return (false, CAN_NOT_AVOID_RESULT.HasCommandExcute);
+            }
+            if (this.HAS_CST == 1)
+            {
+                bool has_unload_cmd_mcs = cmdBLL.cache.hasCMD_MCSByHostSourcePort(this.Real_ID);
+                if (has_unload_cmd_mcs)
+                {
+                    return (false, CAN_NOT_AVOID_RESULT.VehiclehasTransfercmd);
+                }
+            }
+            return (true, CAN_NOT_AVOID_RESULT.Normal);
+        }
+        private bool IsAutoRemoteOrAutoLocal(AVEHICLE vh)
+        {
+            if (vh.MODE_STATUS == VHModeStatus.AutoRemote)
+            {
+                return true;
+            }
+            else if (vh.MODE_STATUS == VHModeStatus.AutoLocal)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
         void TransitionedHandler(Stateless.StateMachine<VehicleState, VehicleTrigger>.Transition transition)

@@ -49,6 +49,7 @@ namespace com.mirle.ibg3k0.sc.Common
         private List<APARKZONEDETAIL> ParkZoneDetails;
         private List<APARKZONEMASTER> ParkZoneMasters;
         private CommonInfo CommonInfo;
+        private List<ParkingZone> ParkingZones = null;
 
         private CommObjCacheManager() { }
         public static CommObjCacheManager getInstance()
@@ -80,6 +81,8 @@ namespace com.mirle.ibg3k0.sc.Common
             ParkZoneMasters = scApp.ParkBLL.LoadAllParkZoneMaster();
             ParkZoneDetails.ForEach(detail => SCUtility.TrimAllParameter(detail));
             ParkZoneMasters.ForEach(master => SCUtility.TrimAllParameter(master));
+
+            ParkingZones = scApp.ParkingZoneBLL.getAllParkingZoneData();
 
             ReserveEnhanceInfos = scApp.ReserveEnhanceInfoDao.loadReserveInfos(scApp);
             foreach (ASEGMENT segment in Segments)
@@ -183,6 +186,12 @@ namespace com.mirle.ibg3k0.sc.Common
         {
             return ParkZoneDetails.ToList();
         }
+        public List<ParkingZone> GetAllParkingZonesInfos()
+        {
+            return ParkingZones;
+        }
+
+
 
         #region 將最新物件資料，放置入Cache的方法
         //NotImplemented

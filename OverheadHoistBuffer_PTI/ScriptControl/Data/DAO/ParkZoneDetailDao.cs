@@ -113,19 +113,6 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         }
 
 
-        //public List<APARKZONEDETAIL> loadByParkZoneIDAndVhOnAdrIncludeOnWay(DBConnection_EF con, string zone_id)
-        //{
-        //    var query = from obj in con.APARKZONEDETAIL
-        //                join vh in con.AVEHICLE on obj.ADR_ID equals vh.PARK_ADR_ID into table_detailVh
-        //                from detail_Vh in table_detailVh.DefaultIfEmpty()
-        //                where obj.PARK_ZONE_ID == zone_id.Trim()
-        //                && (!(obj.CAR_ID == string.Empty || obj.CAR_ID == null)
-        //                || !(detail_Vh.VEHICLE_ID == string.Empty || detail_Vh.VEHICLE_ID == null))
-        //                orderby obj.PARK_ZONE_ID
-        //                select obj;
-        //    return query.ToList();
-        //}
-
         /// <summary>
         /// 用來計算是否還有足夠的停車格可以使用(包含在途的)
         /// 當Detail有狀態可以查詢時，就不用再去join vh
@@ -192,6 +179,33 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                         select detail;
             details = query.ToList();
             return details;
+        }
+
+        public Dictionary<string, List<string>> loadGroupByPZidAndPZaddresslist(DBConnection_EF con)
+        {
+            var query = from aparkzonedetail in con.APARKZONEDETAIL
+                        group aparkzonedetail by aparkzonedetail.PARK_ZONE_ID into g
+                        select new
+                        {
+                            g.Key,
+                            ADRs = from adrs in g
+                                   orderby adrs.PRIO
+                                   select adrs
+                        };
+
+            Dictionary<string, List<string>> dicPZAndPZaddress = new Dictionary<string, List<string>>();
+            foreach (var q in query)
+            {
+                string pzid = q.Key.Trim();
+                List<string> pzaddresses = new List<string>();
+
+                foreach (var addr in q.ADRs)
+                {
+                    pzaddresses.Add(addr.ADR_ID.Trim());
+                }
+                dicPZAndPZaddress.Add(pzid, pzaddresses);
+            }
+            return dicPZAndPZaddress;
         }
     }
 }
