@@ -2458,34 +2458,37 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     else
                     {
-                        //2023.05.29
-                        var executingCmdByDestPort = cmdBLL.GetCmdDataByDest(destName)
-                            .Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring);
-                        if (portINIData[destName].Stage > 0 &&
-                            (portINIData[destName].Stage + DebugParameter.CmdNumDiffFromStage) > 0 &&
-                            executingCmdByDestPort.Count() >= (portINIData[destName].Stage + DebugParameter.CmdNumDiffFromStage))
+                        //2023.06.29
+                        var destPort = GetPLC_PortData(destName);
+                        if (destPort is null)
                         {
-                            destState = destState + $"CmdToDestPort.Count() = {executingCmdByDestPort.Count()}, " +
-                                $"PortStageNum = {portINIData[destName].Stage}";
+                            destState = destState + " PortPLCInfo " + destName + " = null";
                             destPortType = false;
                         }
                         else
                         {
-                            PortPLCInfo destPort = GetPLC_PortData(destName);
-
-                            if (destPort != null)
+                            if (portINIData[destName].Stage > 0 && (portINIData[destName].Stage + DebugParameter.CmdNumDiffFromStage) > 0)
+                            {
+                                var executingCmdByDestPort = cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring);
+                                if (executingCmdByDestPort.Count() >= (portINIData[destName].Stage + destPort.BoxCount + DebugParameter.CmdNumDiffFromStage))
+                                {
+                                    destState = destState + $"CmdToDestPort.Count() = {executingCmdByDestPort.Count()}, " +
+                                        $"PortStageNum = {portINIData[destName].Stage}, PortCSTCount = {destPort.BoxCount}";
+                                    destPortType = false;
+                                }
+                                else
+                                {
+                                    destState = destState + " OpAutoMode:" + destPort.OpAutoMode + " OpError:" + destPort.OpError;
+                                    destPortType = destPort.OpAutoMode && !destPort.OpError;
+                                }
+                            }
+                            else
                             {
                                 destState = destState + " OpAutoMode:" + destPort.OpAutoMode + " OpError:" + destPort.OpError;
                                 destPortType = destPort.OpAutoMode && !destPort.OpError;
                             }
-                            else
-                            {
-                                destState = destState + " PortPLCInfo " + destName + " = null";
-                                destPortType = false;
-                            }
                         }
                     }
-
                 }
                 else if (isUnitType(destName, UnitType.SHELF))
                 {
