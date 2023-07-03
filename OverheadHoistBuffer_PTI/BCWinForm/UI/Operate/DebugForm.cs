@@ -111,6 +111,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_blockReqCheckSensor.Checked = DebugParameter.BlockReqCheckAreaSensorFun;
             cb_CVOutSimpleMode.Checked = DebugParameter.CVOutputSimpleMode;
             tb_CmdCountDiff.Text = DebugParameter.CmdNumDiffFromStage.ToString();
+            cb_ReRouteIfAlarmVhExist.Checked = DebugParameter.CommandReRoute;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1356,6 +1357,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void tb_CmdCountDiff_TextChanged(object sender, EventArgs e)
         {
             DebugParameter.CmdNumDiffFromStage = int.Parse(tb_CmdCountDiff.Text);
+        }
+
+        private void cb_ReRouteIfAlarmVhExist_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.CommandReRoute = cb_ReRouteIfAlarmVhExist.Checked;
         }
     }
 }

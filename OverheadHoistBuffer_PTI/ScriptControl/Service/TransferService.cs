@@ -1923,7 +1923,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             //cmdBLL.updateCMD_MCS_TranStatus(mcsCmd.CMD_ID, E_TRAN_STATUS.Queue);
                             break;
                         case COMMAND_STATUS_BIT_INDEX_ENROUTE:
-                            if (DebugParameter.CommandShift)
+                            if (DebugParameter.CommandShift || DebugParameter.CommandReRoute)
                             {
                                 List<string> MTLSectionIDs;
                                 List<ASEGMENT> MTLSegments = scApp.getEQObjCacheManager().getAllEquipment().Where(eq => eq is MaintainLift)

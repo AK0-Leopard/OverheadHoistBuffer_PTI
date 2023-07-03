@@ -2439,6 +2439,8 @@ namespace com.mirle.ibg3k0.sc.App
         public static bool CVOutputSimpleMode = false;
         public static int CmdNumDiffFromStage = 0;
 
+        public static bool CommandReRoute = false;
+
         public enum CycleRunType
         {
             AGVStation,
