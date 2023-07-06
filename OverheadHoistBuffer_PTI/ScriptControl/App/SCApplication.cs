@@ -2450,6 +2450,8 @@ namespace com.mirle.ibg3k0.sc.App
         public static Boolean IsOpenParkingZoneAutoPull = false;
 
 
+        public static bool CommandReRoute = false;
+
         public enum CycleRunType
         {
             AGVStation,

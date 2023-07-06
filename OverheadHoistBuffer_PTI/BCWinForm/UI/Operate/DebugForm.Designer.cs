@@ -362,8 +362,7 @@
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
-            this.cb_IsOpenParkingZoneAutoPullFun = new System.Windows.Forms.CheckBox();
-            this.cb_IsOpenParkingZoneFun = new System.Windows.Forms.CheckBox();
+            this.cb_ReRouteIfAlarmVhExist = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1289,7 +1288,7 @@
             // 
             // btn_forceReleaseAllBlock
             // 
-            this.btn_forceReleaseAllBlock.Location = new System.Drawing.Point(1100, 234);
+            this.btn_forceReleaseAllBlock.Location = new System.Drawing.Point(1100, 179);
             this.btn_forceReleaseAllBlock.Name = "btn_forceReleaseAllBlock";
             this.btn_forceReleaseAllBlock.Size = new System.Drawing.Size(284, 41);
             this.btn_forceReleaseAllBlock.TabIndex = 22;
@@ -1473,9 +1472,9 @@
             this.groupBox6.Controls.Add(this.label16);
             this.groupBox6.Controls.Add(this.label12);
             this.groupBox6.Controls.Add(this.cb_block_section);
-            this.groupBox6.Location = new System.Drawing.Point(1100, 271);
+            this.groupBox6.Location = new System.Drawing.Point(1100, 220);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(309, 229);
+            this.groupBox6.Size = new System.Drawing.Size(309, 277);
             this.groupBox6.TabIndex = 24;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Block Manager";
@@ -1504,7 +1503,7 @@
             // 
             // btn_release_block
             // 
-            this.btn_release_block.Location = new System.Drawing.Point(10, 180);
+            this.btn_release_block.Location = new System.Drawing.Point(6, 220);
             this.btn_release_block.Name = "btn_release_block";
             this.btn_release_block.Size = new System.Drawing.Size(156, 39);
             this.btn_release_block.TabIndex = 4;
@@ -1516,7 +1515,7 @@
             // 
             this.lbl_BlockedVh.AutoSize = true;
             this.lbl_BlockedVh.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_BlockedVh.Location = new System.Drawing.Point(10, 149);
+            this.lbl_BlockedVh.Location = new System.Drawing.Point(6, 174);
             this.lbl_BlockedVh.Name = "lbl_BlockedVh";
             this.lbl_BlockedVh.Size = new System.Drawing.Size(122, 24);
             this.lbl_BlockedVh.TabIndex = 3;
@@ -1525,7 +1524,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(6, 127);
+            this.label16.Location = new System.Drawing.Point(2, 152);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(160, 22);
             this.label16.TabIndex = 2;
@@ -1534,7 +1533,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 69);
+            this.label12.Location = new System.Drawing.Point(2, 89);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(160, 22);
             this.label12.TabIndex = 1;
@@ -1543,7 +1542,7 @@
             // cb_block_section
             // 
             this.cb_block_section.FormattingEnabled = true;
-            this.cb_block_section.Location = new System.Drawing.Point(10, 95);
+            this.cb_block_section.Location = new System.Drawing.Point(6, 115);
             this.cb_block_section.Name = "cb_block_section";
             this.cb_block_section.Size = new System.Drawing.Size(251, 30);
             this.cb_block_section.TabIndex = 0;
@@ -4327,8 +4326,7 @@
             // 
             // tabPage8
             // 
-            this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneAutoPullFun);
-            this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneFun);
+            this.tabPage8.Controls.Add(this.cb_ReRouteIfAlarmVhExist);
             this.tabPage8.Controls.Add(this.label77);
             this.tabPage8.Controls.Add(this.tb_CmdCountDiff);
             this.tabPage8.Controls.Add(this.cb_CVOutSimpleMode);
@@ -4421,25 +4419,17 @@
             this.cbBeforeOnWay.UseVisualStyleBackColor = true;
             this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
             // 
-            // cb_IsOpenParkingZoneAutoPullFun
+            // cb_ReRouteIfAlarmVhExist
             // 
-            this.cb_IsOpenParkingZoneAutoPullFun.AutoSize = true;
-            this.cb_IsOpenParkingZoneAutoPullFun.Location = new System.Drawing.Point(54, 387);
-            this.cb_IsOpenParkingZoneAutoPullFun.Name = "cb_IsOpenParkingZoneAutoPullFun";
-            this.cb_IsOpenParkingZoneAutoPullFun.Size = new System.Drawing.Size(260, 26);
-            this.cb_IsOpenParkingZoneAutoPullFun.TabIndex = 86;
-            this.cb_IsOpenParkingZoneAutoPullFun.Text = "開啟停車場自動拉車功能";
-            this.cb_IsOpenParkingZoneAutoPullFun.UseVisualStyleBackColor = true;
-            // 
-            // cb_IsOpenParkingZoneFun
-            // 
-            this.cb_IsOpenParkingZoneFun.AutoSize = true;
-            this.cb_IsOpenParkingZoneFun.Location = new System.Drawing.Point(54, 355);
-            this.cb_IsOpenParkingZoneFun.Name = "cb_IsOpenParkingZoneFun";
-            this.cb_IsOpenParkingZoneFun.Size = new System.Drawing.Size(176, 26);
-            this.cb_IsOpenParkingZoneFun.TabIndex = 85;
-            this.cb_IsOpenParkingZoneFun.Text = "開啟停車場機制";
-            this.cb_IsOpenParkingZoneFun.UseVisualStyleBackColor = true;
+            this.cb_ReRouteIfAlarmVhExist.AutoSize = true;
+            this.cb_ReRouteIfAlarmVhExist.Location = new System.Drawing.Point(54, 368);
+            this.cb_ReRouteIfAlarmVhExist.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cb_ReRouteIfAlarmVhExist.Name = "cb_ReRouteIfAlarmVhExist";
+            this.cb_ReRouteIfAlarmVhExist.Size = new System.Drawing.Size(419, 26);
+            this.cb_ReRouteIfAlarmVhExist.TabIndex = 32;
+            this.cb_ReRouteIfAlarmVhExist.Text = "Re-calculate route when error VH exists";
+            this.cb_ReRouteIfAlarmVhExist.UseVisualStyleBackColor = true;
+            this.cb_ReRouteIfAlarmVhExist.CheckedChanged += new System.EventHandler(this.cb_ReRouteIfAlarmVhExist_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -4861,7 +4851,6 @@
         private System.Windows.Forms.CheckBox cb_CVOutSimpleMode;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.TextBox tb_CmdCountDiff;
-        private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneAutoPullFun;
-        private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneFun;
+        private System.Windows.Forms.CheckBox cb_ReRouteIfAlarmVhExist;
     }
 }

@@ -41,9 +41,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_StartGenAntoCmd.Checked = DebugParameter.CanAutoRandomGeneratesCommand;
             cb_FroceReservePass.Checked = DebugParameter.isForcedPassBlockControl;
             cb_FroceReservePass.Checked = DebugParameter.isForcedRejectBlockControl;
-            cb_IsOpenParkingZoneFun.Checked = DebugParameter.IsOpenParkingZoneControlFunction;
-            cb_IsOpenParkingZoneAutoPullFun.Checked = DebugParameter.IsOpenParkingZoneAutoPull;
-
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
             lstVh.AddRange(bcApp.SCApplication.getEQObjCacheManager().getAllVehicle().Select(vh => vh.VEHICLE_ID).ToList());
@@ -114,6 +111,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_blockReqCheckSensor.Checked = DebugParameter.BlockReqCheckAreaSensorFun;
             cb_CVOutSimpleMode.Checked = DebugParameter.CVOutputSimpleMode;
             tb_CmdCountDiff.Text = DebugParameter.CmdNumDiffFromStage.ToString();
+            cb_ReRouteIfAlarmVhExist.Checked = DebugParameter.CommandReRoute;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1361,15 +1359,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             DebugParameter.CmdNumDiffFromStage = int.Parse(tb_CmdCountDiff.Text);
         }
 
-        private void cb_IsOpenParkingZoneFun_CheckedChanged(object sender, EventArgs e)
+        private void cb_ReRouteIfAlarmVhExist_CheckedChanged(object sender, EventArgs e)
         {
-            DebugParameter.IsOpenParkingZoneControlFunction = cb_IsOpenParkingZoneFun.Checked;
-
-        }
-
-        private void cb_IsOpenParkingZoneAutoPullFun_CheckedChanged(object sender, EventArgs e)
-        {
-            DebugParameter.IsOpenParkingZoneAutoPull = cb_IsOpenParkingZoneAutoPullFun.Checked;
+            DebugParameter.CommandReRoute = cb_ReRouteIfAlarmVhExist.Checked;
         }
     }
 }

@@ -1137,15 +1137,16 @@ namespace com.mirle.ibg3k0.sc.BLL
                 bool isAGVCmdNumMoreThan1 = false;
                 if (isCmdPriorityMoreThan99 != true)
                 {
-                    isAGVCmdNumMoreThan1 = IsAGVCmdNumMoreThanOne(originMCSCmdData);
-                    if (isAGVCmdNumMoreThan1 == true)
-                    {
-                        sortedMCSData.Sort(MCSCmdCompare_MoreThan1);
-                    }
-                    else
-                    {
-                        sortedMCSData.Sort(MCSCmdCompare_LessThan2);
-                    }
+                    //isAGVCmdNumMoreThan1 = IsAGVCmdNumMoreThanOne(originMCSCmdData);
+                    //if (isAGVCmdNumMoreThan1 == true)
+                    //{
+                    //    sortedMCSData.Sort(MCSCmdCompare_MoreThan1);
+                    //}
+                    //else
+                    //{
+                    //    sortedMCSData.Sort(MCSCmdCompare_LessThan2);
+                    //}
+                    sortedMCSData.Sort(MCSCmdCompare_ByPriorityFirst);
                 }
                 else
                 {
@@ -1328,6 +1329,60 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
 
             return _checkAGVCmdNumMoreThan1;
+        }
+        public int MCSCmdCompare_ByPriorityFirst(ACMD_MCS MCSCmd1, ACMD_MCS MCSCmd2)
+        {
+            // 1.先取priority 判斷
+            if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
+                (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
+            {
+                //代表兩者相等，不動，且接著判斷距離
+            }
+            if (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX)
+            {
+                return 1;
+                //代表後者較優先，換位
+            }
+            if (MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX)
+            {
+                return -1;
+                //代表前者較優先，不動
+            }
+
+            // 2. 若priority 相同，比較命令接受時間
+            if (MCSCmd1.CMD_INSER_TIME == MCSCmd2.CMD_INSER_TIME)
+            {
+                //return 0;
+                //代表兩者相等，不動
+            }
+            if (MCSCmd1.CMD_INSER_TIME > MCSCmd2.CMD_INSER_TIME)
+            {
+                return 1;
+                //代表後者較優先，換位
+            }
+            if (MCSCmd1.CMD_INSER_TIME < MCSCmd2.CMD_INSER_TIME)
+            {
+                return -1;
+                //代表前者較優先，不動
+            }
+
+            // 3. 若以上都相同，則獲得各自 shelf 的 address 與起始 address的距離
+            if (MCSCmd1.DistanceFromVehicleToHostSource == MCSCmd2.DistanceFromVehicleToHostSource)
+            {
+                return 0;
+                //代表兩者相等，不動
+            }
+            if (MCSCmd1.DistanceFromVehicleToHostSource > MCSCmd2.DistanceFromVehicleToHostSource)
+            {
+                return 1;
+                //代表後者較優先，換位
+            }
+            if (MCSCmd1.DistanceFromVehicleToHostSource < MCSCmd2.DistanceFromVehicleToHostSource)
+            {
+                return -1;
+                //代表前者較優先，不動
+            }
+            return 0;
         }
 
         //*************************************************

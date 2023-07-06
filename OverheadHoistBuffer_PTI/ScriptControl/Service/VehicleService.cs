@@ -774,6 +774,9 @@ namespace com.mirle.ibg3k0.sc.Service
                             scApp.GuideBLL.ErrorVehicleSections[vh_id] = receive_gpp.CurrentSecID;
                         else
                             scApp.GuideBLL.ErrorVehicleSections.TryAdd(vh_id, receive_gpp.CurrentSecID);
+
+                        //2023.06.30 改派即將通過同一segment的命令
+                        if (DebugParameter.CommandReRoute) obstacledCmdHandler(vh);
                     }
                     else
                     {
@@ -3360,6 +3363,9 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
                 else
                     scApp.GuideBLL.ErrorVehicleSections.TryAdd(eqpt.VEHICLE_ID, recive_str.CurrentSecID);
+
+                //2023.06.30 改派即將通過同一segment的命令
+                if (DebugParameter.CommandReRoute) obstacledCmdHandler(eqpt);
             }
             else
             {
@@ -3481,7 +3487,136 @@ namespace com.mirle.ibg3k0.sc.Service
             return modeStat;
         }
 
+        private void obstacledCmdHandler(AVEHICLE errorVh)
+        {
+            //還有命令還會通過這裡的車輛命令進行取消
+            ASECTION section = scApp.SectionBLL.cache.GetSection(errorVh.CUR_SEC_ID);
+            bool has_vh_will_pass = scApp.CMDBLL.HasCmdWillPassSegment(section.SEG_NUM, out List<string> will_be_pass_cmd_ids);
+            if (has_vh_will_pass)
+            {
+                List<AVEHICLE> will_pass_of_vh = scApp.VehicleBLL.cache.loadVhsByOHTCCommandIDs(will_be_pass_cmd_ids);
+                string[] will_pass_of_vh_ids = will_pass_of_vh.Select(vh => vh.VEHICLE_ID).ToArray();
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                         Data: $"disable segment:{section.SEG_NUM} clear,but has vh will pass. " +
+                         $"cmd ids:{string.Join(",", will_be_pass_cmd_ids)} and vh id:{string.Join(",", will_pass_of_vh_ids)}");
 
+                foreach (AVEHICLE vh in will_pass_of_vh)
+                {
+                    string mcs_cmd_id = vh.MCS_CMD;
+                    if (!string.IsNullOrWhiteSpace(mcs_cmd_id))
+                    {
+                        ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(mcs_cmd_id);
+                        if (mcs_cmd == null)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                Data: $"Can't find MCS command:[{mcs_cmd_id}] in database. ");
+                            //result = $"Can't find MCS command:[{mcs_cmd_id}] in database.";
+                        }
+                        else
+                        {
+                            if (mcs_cmd.COMMANDSTATE >= ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE && mcs_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE)
+                            {
+                                //2023.06.30 尚未取貨完成，比照CommandShift取消後重派命令
+                                ACMD_OHTC excuting_cmd_ohtc = mcs_cmd.getExcuteCMD_OHTC(scApp.CMDBLL);
+                                if (excuting_cmd_ohtc != null)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                        Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} start to cancel current task and retry...");
+
+                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT);
+                                    bool isCancelSuccess = scApp.VehicleService.doAbortCommand(vh, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdCancel);
+                                    if (!isCancelSuccess)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} cancel failed");
+                                        scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} cancel success, waiting for evaluating new route...");
+                                    }
+                                }
+                            }
+                            else if (mcs_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE)
+                            {
+                                //TODO: 已取貨完成未開始放貨...
+                                ACMD_OHTC excuting_cmd_ohtc = mcs_cmd.getExcuteCMD_OHTC(scApp.CMDBLL);
+                                if (excuting_cmd_ohtc != null)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                        Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} start to abort current task and retry...");
+
+                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_REROUTE);
+                                    bool isCancelSuccess = scApp.VehicleService.doAbortCommand(vh, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdAbort);
+                                    if (!isCancelSuccess)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} abort failed");
+                                        scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} abort success, waiting for evaluating new route...");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                    Data: $"MCS command:[{mcs_cmd_id}] can't excute cancel / abort,\r\ncurrent state:{mcs_cmd.TRANSFERSTATE}");
+                            }
+
+                            //if (mcs_cmd.TRANSFERSTATE < sc.E_TRAN_STATUS.Transferring)
+                            //{
+                            //    //actType = CMDCancelType.CmdCancel;
+                            //    //scApp.VehicleService.doCancelOrAbortCommandByMCSCmdID(mcs_cmd_id, actType);
+                            //    StartProcessCommandInterruptBeforeTransferring(vh);
+                            //}
+                            //else if (mcs_cmd.TRANSFERSTATE < sc.E_TRAN_STATUS.Canceling)
+                            //{
+                            //    //如果取到貨後，又即將前往該異常CV區放貨的，才需要將他的命令Abort
+                            //    string unload_port_seg = mcs_cmd.getUnloadPortSegment(scApp.PortStationBLL, scApp.SectionBLL);
+                            //    if (SCUtility.isMatche(unload_port_seg, section.SEG_NUM))
+                            //    {
+                            //        actType = CMDCancelType.CmdAbort;
+                            //        scApp.VehicleService.doCancelOrAbortCommandByMCSCmdID(mcs_cmd_id, actType);
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                            //        Data: $"MCS command:[{mcs_cmd_id}] can't excute cancel / abort,\r\ncurrent state:{mcs_cmd.TRANSFERSTATE}");
+                            //}
+                        }
+                    }
+                    else
+                    {
+                        string ohtc_cmd_id = vh.OHTC_CMD;
+                        if (string.IsNullOrWhiteSpace(ohtc_cmd_id))
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                Data: $"Vehicle:[{vh.VEHICLE_ID}] do not have command.");
+                        }
+                        else
+                        {
+                            ACMD_OHTC ohtc_cmd = scApp.CMDBLL.getCMD_OHTCByID(ohtc_cmd_id);
+                            if (ohtc_cmd == null)
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                    Data: $"Can't find vehicle command:[{ohtc_cmd_id}] in database.");
+                            }
+                            else
+                            {
+                                CMDCancelType actType = ohtc_cmd.CMD_STAUS >= E_CMD_STATUS.Execution ? CMDCancelType.CmdAbort : CMDCancelType.CmdCancel;
+                                scApp.VehicleService.doAbortCommand(vh, ohtc_cmd_id, actType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
 
@@ -3675,16 +3810,56 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
+                    bool needToRecalculateRoute = checkIsCommandCompleteByCommandReRoute(finish_mcs_cmd, completeStatus);
                     if (is_command_complete_by_command_shift)
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                            Data: $"command id:{cmd_id} is terminated because of command shift...",
+                            Data: $"command id:{cmd_id} is terminated because of command shift or recalculate path...",
                             VehicleID: eqpt.VEHICLE_ID,
                             CarrierID: eqpt.CST_ID);
 
                         isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
                         scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC, CompleteStatus.CmpStatusCancel);
+                    }
+                    else if (needToRecalculateRoute)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                            Data: $"command id:{cmd_id} is terminated because of recalculate path(unload only)...",
+                            VehicleID: eqpt.VEHICLE_ID,
+                            CarrierID: eqpt.CST_ID);
+
+                        isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
+                        scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusAbort);
+                        //TODO: 重派unload命令
+                        if (eqpt.IsError || eqpt.MODE_STATUS != VHModeStatus.AutoRemote)
+                        {
+                            isSuccess = false;
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: "OHxC",
+                               Data: $"vh id:{eqpt.VEHICLE_ID} current mode status is {eqpt.MODE_STATUS},is error flag:{eqpt.IsError}." +
+                                     $"can't excute mcs command:{SCUtility.Trim(finish_mcs_cmd)}",
+                               VehicleID: eqpt.VEHICLE_ID,
+                               CarrierID: eqpt.CST_ID);
+                        }
+                        scApp.MapBLL.getAddressID(cmd_mcs.HOSTDESTINATION, out var to_adr);
+                        isSuccess &= scApp.CMDBLL.doCreatTransferCommand(eqpt.VEHICLE_ID, finish_mcs_cmd, cmd_mcs.CARRIER_ID,
+                            E_CMD_TYPE.Unload,
+                            eqpt.Real_ID,
+                            cmd_mcs.HOSTDESTINATION, cmd_mcs.PRIORITY_SUM, 0,
+                            cmd_mcs.BOX_ID, cmd_mcs.LOT_ID,
+                            string.Empty, to_adr);
+                        if (isSuccess)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: "OHxC",
+                                Data: $"vh id:{eqpt.VEHICLE_ID} retry new path to unloading success.",
+                                VehicleID: eqpt.VEHICLE_ID,
+                                CarrierID: eqpt.CST_ID);
+                        }
+                        else
+                        {
+                            //TODO: go to abort flow
+                            //scApp.ReportBLL.ReportTransferAbortInitiated(cancel_abort_mcs_cmd_id);
+                        }
                     }
                     else if (completeStatus == CompleteStatus.CmpStatusCancel &&
                         cmd_mcs != null && cmd_mcs.IsCommandPauseBeforeOnTheWay)
@@ -3905,6 +4080,27 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (cmd_mcs == null)
                     return false;
                 if (!SCUtility.isMatche(cmd_mcs.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_SHIFT))
+                    return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return false;
+            }
+        }
+        private bool checkIsCommandCompleteByCommandReRoute(string finish_mcs_cmd, CompleteStatus completeStatus)
+        {
+            try
+            {
+                if (SCUtility.isEmpty(finish_mcs_cmd))
+                    return false;
+                if (completeStatus != CompleteStatus.CmpStatusCancel && completeStatus != CompleteStatus.CmpStatusAbort)
+                    return false;
+                var cmd_mcs = scApp.CMDBLL.getCMD_MCSByID(finish_mcs_cmd);
+                if (cmd_mcs == null)
+                    return false;
+                if (!SCUtility.isMatche(cmd_mcs.PAUSEFLAG, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_REROUTE))
                     return false;
                 return true;
             }

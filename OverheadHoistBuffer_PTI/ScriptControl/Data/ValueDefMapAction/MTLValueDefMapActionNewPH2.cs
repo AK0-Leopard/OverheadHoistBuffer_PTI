@@ -502,6 +502,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 ushort vh_num = recevie_function.CarID;
                 ushort hand_shake = recevie_function.Handshake;
                 string resultContent = string.Empty;
+                bool isSuccess = true;
 
                 AVEHICLE pre_car_in_vh = scApp.VehicleBLL.cache.getVhByNum(vh_num);
                 if (pre_car_in_vh != null)
@@ -512,9 +513,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                              Data: $"check mtl car in result, is success:{check_result.isSuccess},result:{check_result.result}",
                              XID: MTL.EQPT_ID);
                     resultContent = check_result.result;
+                    isSuccess = check_result.isSuccess;
                 }
                 else
                 {
+                    isSuccess = false;
                     send_function.ReturnCode = 2;
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(MTLValueDefMapActionNewPH2), Device: SCAppConstants.DeviceName.DEVICE_NAME_MTx,
                              Data: $"check mts car in result, vehicle num:{vh_num} not exist.",
@@ -528,7 +531,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                          Data: send_function.ToString(),
                          XID: MTL.EQPT_ID);
                 MTL.SynchronizeTime = DateTime.Now;
-                OHxCMessageDownload(resultContent);
+                if (!isSuccess) OHxCMessageDownload(resultContent);
             }
             catch (Exception ex)
             {
