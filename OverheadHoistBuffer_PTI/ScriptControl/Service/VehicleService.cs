@@ -3541,6 +3541,26 @@ namespace com.mirle.ibg3k0.sc.Service
                             else if (mcs_cmd.COMMANDSTATE < ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE)
                             {
                                 //TODO: 已取貨完成未開始放貨...
+                                ACMD_OHTC excuting_cmd_ohtc = mcs_cmd.getExcuteCMD_OHTC(scApp.CMDBLL);
+                                if (excuting_cmd_ohtc != null)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                        Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} start to abort current task and retry...");
+
+                                    scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_COMMAND_REROUTE);
+                                    bool isCancelSuccess = scApp.VehicleService.doAbortCommand(vh, excuting_cmd_ohtc.CMD_ID, CMDCancelType.CmdAbort);
+                                    if (!isCancelSuccess)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} abort failed");
+                                        scApp.CMDBLL.updateCMD_MCS_PauseFlag(mcs_cmd.CMD_ID, ACMD_MCS.COMMAND_PAUSE_FLAG_EMPTY);
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: "OHxC",
+                                            Data: $"excuting vh:{mcs_cmd.CRANE.Trim()}, MCS cmd ID:{mcs_cmd.CMD_ID},OHTC cmd ID:{excuting_cmd_ohtc.CMD_ID} abort success, waiting for evaluating new route...");
+                                    }
+                                }
                             }
                             else
                             {
@@ -3790,16 +3810,56 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
+                    bool needToRecalculateRoute = checkIsCommandCompleteByCommandReRoute(finish_mcs_cmd, completeStatus);
                     if (is_command_complete_by_command_shift)
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
-                            Data: $"command id:{cmd_id} is terminated because of command shift...",
+                            Data: $"command id:{cmd_id} is terminated because of command shift or recalculate path...",
                             VehicleID: eqpt.VEHICLE_ID,
                             CarrierID: eqpt.CST_ID);
 
                         isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
                         scApp.CMDBLL.updateCMD_MCS_TranStatus(finish_mcs_cmd, E_TRAN_STATUS.Queue);
                         scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.CancelEndByOHTC, CompleteStatus.CmpStatusCancel);
+                    }
+                    else if (needToRecalculateRoute)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_OHx,
+                            Data: $"command id:{cmd_id} is terminated because of recalculate path(unload only)...",
+                            VehicleID: eqpt.VEHICLE_ID,
+                            CarrierID: eqpt.CST_ID);
+
+                        isSuccess = scApp.ReportBLL.ReportVehicleUnassigned(finish_mcs_cmd);
+                        scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(finish_ohxc_cmd, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusAbort);
+                        //TODO: 重派unload命令
+                        if (eqpt.IsError || eqpt.MODE_STATUS != VHModeStatus.AutoRemote)
+                        {
+                            isSuccess = false;
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: "OHxC",
+                               Data: $"vh id:{eqpt.VEHICLE_ID} current mode status is {eqpt.MODE_STATUS},is error flag:{eqpt.IsError}." +
+                                     $"can't excute mcs command:{SCUtility.Trim(finish_mcs_cmd)}",
+                               VehicleID: eqpt.VEHICLE_ID,
+                               CarrierID: eqpt.CST_ID);
+                        }
+                        scApp.MapBLL.getAddressID(cmd_mcs.HOSTDESTINATION, out var to_adr);
+                        isSuccess &= scApp.CMDBLL.doCreatTransferCommand(eqpt.VEHICLE_ID, finish_mcs_cmd, cmd_mcs.CARRIER_ID,
+                            E_CMD_TYPE.Unload,
+                            eqpt.Real_ID,
+                            cmd_mcs.HOSTDESTINATION, cmd_mcs.PRIORITY_SUM, 0,
+                            cmd_mcs.BOX_ID, cmd_mcs.LOT_ID,
+                            string.Empty, to_adr);
+                        if (isSuccess)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: "OHxC",
+                                Data: $"vh id:{eqpt.VEHICLE_ID} retry new path to unloading success.",
+                                VehicleID: eqpt.VEHICLE_ID,
+                                CarrierID: eqpt.CST_ID);
+                        }
+                        else
+                        {
+                            //TODO: go to abort flow
+                            //scApp.ReportBLL.ReportTransferAbortInitiated(cancel_abort_mcs_cmd_id);
+                        }
                     }
                     else if (completeStatus == CompleteStatus.CmpStatusCancel &&
                         cmd_mcs != null && cmd_mcs.IsCommandPauseBeforeOnTheWay)
