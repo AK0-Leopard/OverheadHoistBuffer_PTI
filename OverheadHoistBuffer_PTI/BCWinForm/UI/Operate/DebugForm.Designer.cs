@@ -108,7 +108,6 @@
             this.btn_forceReleaseAllBlock = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.cb_IsOpenParkingZoneFun = new System.Windows.Forms.CheckBox();
             this.cb_isUsingFindStartAdr = new System.Windows.Forms.CheckBox();
             this.combox_cycle_type = new System.Windows.Forms.ComboBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
@@ -364,6 +363,7 @@
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
             this.cb_IsOpenParkingZoneAutoPullFun = new System.Windows.Forms.CheckBox();
+            this.cb_IsOpenParkingZoneFun = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1318,8 +1318,6 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
-            this.tabPage1.Controls.Add(this.cb_IsOpenParkingZoneAutoPullFun);
-            this.tabPage1.Controls.Add(this.cb_IsOpenParkingZoneFun);
             this.tabPage1.Controls.Add(this.cb_isUsingFindStartAdr);
             this.tabPage1.Controls.Add(this.combox_cycle_type);
             this.tabPage1.Controls.Add(this.groupBox12);
@@ -1336,17 +1334,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "TcpIp Control";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // cb_IsOpenParkingZoneFun
-            // 
-            this.cb_IsOpenParkingZoneFun.AutoSize = true;
-            this.cb_IsOpenParkingZoneFun.Location = new System.Drawing.Point(1129, 176);
-            this.cb_IsOpenParkingZoneFun.Name = "cb_IsOpenParkingZoneFun";
-            this.cb_IsOpenParkingZoneFun.Size = new System.Drawing.Size(176, 26);
-            this.cb_IsOpenParkingZoneFun.TabIndex = 61;
-            this.cb_IsOpenParkingZoneFun.Text = "開啟停車場機制";
-            this.cb_IsOpenParkingZoneFun.UseVisualStyleBackColor = true;
-            this.cb_IsOpenParkingZoneFun.CheckedChanged += new System.EventHandler(this.cb_IsOpenParkingZoneFun_CheckedChanged);
             // 
             // cb_isUsingFindStartAdr
             // 
@@ -2692,7 +2679,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4340,6 +4327,8 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneAutoPullFun);
+            this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneFun);
             this.tabPage8.Controls.Add(this.label77);
             this.tabPage8.Controls.Add(this.tb_CmdCountDiff);
             this.tabPage8.Controls.Add(this.cb_CVOutSimpleMode);
@@ -4435,13 +4424,22 @@
             // cb_IsOpenParkingZoneAutoPullFun
             // 
             this.cb_IsOpenParkingZoneAutoPullFun.AutoSize = true;
-            this.cb_IsOpenParkingZoneAutoPullFun.Location = new System.Drawing.Point(1129, 202);
+            this.cb_IsOpenParkingZoneAutoPullFun.Location = new System.Drawing.Point(54, 387);
             this.cb_IsOpenParkingZoneAutoPullFun.Name = "cb_IsOpenParkingZoneAutoPullFun";
             this.cb_IsOpenParkingZoneAutoPullFun.Size = new System.Drawing.Size(260, 26);
-            this.cb_IsOpenParkingZoneAutoPullFun.TabIndex = 84;
+            this.cb_IsOpenParkingZoneAutoPullFun.TabIndex = 86;
             this.cb_IsOpenParkingZoneAutoPullFun.Text = "開啟停車場自動拉車功能";
             this.cb_IsOpenParkingZoneAutoPullFun.UseVisualStyleBackColor = true;
-            this.cb_IsOpenParkingZoneAutoPullFun.CheckedChanged += new System.EventHandler(this.cb_IsOpenParkingZoneAutoPullFun_CheckedChanged);
+            // 
+            // cb_IsOpenParkingZoneFun
+            // 
+            this.cb_IsOpenParkingZoneFun.AutoSize = true;
+            this.cb_IsOpenParkingZoneFun.Location = new System.Drawing.Point(54, 355);
+            this.cb_IsOpenParkingZoneFun.Name = "cb_IsOpenParkingZoneFun";
+            this.cb_IsOpenParkingZoneFun.Size = new System.Drawing.Size(176, 26);
+            this.cb_IsOpenParkingZoneFun.TabIndex = 85;
+            this.cb_IsOpenParkingZoneFun.Text = "開啟停車場機制";
+            this.cb_IsOpenParkingZoneFun.UseVisualStyleBackColor = true;
             // 
             // DebugForm
             // 
@@ -4863,7 +4861,7 @@
         private System.Windows.Forms.CheckBox cb_CVOutSimpleMode;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.TextBox tb_CmdCountDiff;
-        private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneFun;
         private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneAutoPullFun;
+        private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneFun;
     }
 }
