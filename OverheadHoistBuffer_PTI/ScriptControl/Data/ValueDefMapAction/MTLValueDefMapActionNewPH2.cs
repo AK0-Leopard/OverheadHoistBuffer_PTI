@@ -531,7 +531,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                          Data: send_function.ToString(),
                          XID: MTL.EQPT_ID);
                 MTL.SynchronizeTime = DateTime.Now;
-                if (!isSuccess) OHxCMessageDownload(resultContent);
+                if (isSuccess) resultContent = $"Vehicle num:{vh_num} Car In OK.";
+                OHxCMessageDownload(resultContent);
             }
             catch (Exception ex)
             {
