@@ -1560,7 +1560,7 @@ namespace com.mirle.ibg3k0.sc.App
                 Services = { com.mirle.AK0.ProtocolFormat.VehicleControlFun.BindService(new WebAPI.VehicleControlFun()) },
                 Ports = { new Grpc.Core.ServerPort("0.0.0.0", 7001, Grpc.Core.ServerCredentials.Insecure) },
             };
-
+            zoneservice.Start(this);
         }
 
         /// <summary>
@@ -1606,6 +1606,7 @@ namespace com.mirle.ibg3k0.sc.App
             CassetteDataBLL.start(this);
             ReserveBLL.start(this);
             AddressBLL.start(this);
+            ParkingZoneBLL.start(this);
         }
 
         private void startService()

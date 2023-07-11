@@ -481,7 +481,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                         if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
                         {
-                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49: BOXID:{ box_id } db loction:{cstData.Carrier_LOC}與Host Source:{HostSource}不一樣，強制更新至Host指定位置。");
+                            TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCS >> OHB|S2F49: BOXID:{box_id} db loction:{cstData.Carrier_LOC}與Host Source:{HostSource}不一樣，強制更新至Host指定位置。");
                             cassette_dataBLL.UpdateCSTLoc(box_id, SCUtility.Trim(HostSource, true), 1);
                         }
                     }
@@ -490,7 +490,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         //若在Buffer Port上有帳但是OHBC認知的位置與MCS不符時，也要拒絕該命令 
                         if (!SCUtility.isMatche(cstData.Carrier_LOC, HostSource))
                         {
-                            check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id}， 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令";
+                            check_result = $"{DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: BOXID: {box_id}， 所在位置與MCS不相符，OHBC Loc:{cstData.Carrier_LOC} MCS:{HostSource}，故拒絕該命令";
                             TransferServiceLogger.Info(check_result);
                             return SECSConst.HCACK_Not_Able_Execute;
                         }
@@ -533,7 +533,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     var check_cmd_dest = IsCommandWillToGoDest(HostDestination);
                     if (check_cmd_dest.hasCmdToGo)
                     {
-                        check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
+                        check_result = $"{DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
                                        $"，已有命令 cmd:{check_cmd_dest.cmdMCS.CMD_ID} box:{check_cmd_dest.cmdMCS.BOX_ID} 即將前往，故拒絕該命令";
                         TransferServiceLogger.Info(check_result);
                         return SECSConst.HCACK_Not_Able_Execute;
@@ -541,7 +541,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     var check_has_box_on_dest = scApp.CassetteDataBLL.IsBoxOnLocation(HostDestination);
                     if (check_has_box_on_dest.isExist)
                     {
-                        check_result = $"{ DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
+                        check_result = $"{DateTime.Now.ToString("HH:mm:ss.fff ")} MCS >> OHB|S2F49: box: {box_id} dset:{HostDestination}" +
                                       $"，目的已有Box:{check_has_box_on_dest.onLocCst.BOXID}，故拒絕該命令";
                         TransferServiceLogger.Info(check_result);
                         return SECSConst.HCACK_Not_Able_Execute;
@@ -3492,6 +3492,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                                       Data: check_result.Result.ToString(),
                                       XID: check_result.Num);
                     }
+                    else
+                    {
+                        try
+                        {
+                            ACMD_OHTC.CMD_OHTC_InfoList.TryAdd(cmd_obj.CMD_ID, cmd_obj);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, "Exception");
+                        }
+                    }
                     setCallContext(CALL_CONTEXT_KEY_WORD_OHTC_CMD_CHECK_RESULT, check_result);
                 }
                 return check_result.IsSuccess;
@@ -4346,7 +4357,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(CMDBLL), Device: string.Empty,
                                Data: $"can't send command ,id:{SCUtility.Trim(cmd.CMD_ID)},vh id:{SCUtility.Trim(cmd.VH_ID)} current status not allowed." +
-                               $"is connect:{assignVH.isTcpIpConnect },is error:{assignVH.IsError }, current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
+                               $"is connect:{assignVH.isTcpIpConnect},is error:{assignVH.IsError}, current assign ohtc cmd id:{assignVH.OHTC_CMD}." +
                                $"assignVH.ACT_STATUS:{assignVH.ACT_STATUS}.");
                             continue;
                         }

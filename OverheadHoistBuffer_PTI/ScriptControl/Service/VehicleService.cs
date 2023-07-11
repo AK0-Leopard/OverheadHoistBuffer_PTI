@@ -5314,6 +5314,10 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return is_success;
         }
+        public void TestAvoidAddressNew(string vhID)
+        {
+            findTheVhOfAvoidAddressNew("", vhID);
+        }
         private bool findTheVhOfAvoidAddressNew(string willPassVhID, string onTheWayVhID)
         {
             bool is_success = false;
@@ -5423,7 +5427,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private string findNeedAvoidAddress(AVEHICLE willPassVh)
         {
-            if (!willPassVh.IsExcuteCMD_OHTC)
+            if (willPassVh == null || !willPassVh.IsExcuteCMD_OHTC)
                 return "";
             if (willPassVh.IsExcuteCMD_MCS)
             {
