@@ -33,22 +33,33 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         /// Timer Action的執行動作
         /// </summary>
         /// <param name="obj">The object.</param>
+        private long hidHeartbeatExecuting = 0;
         public override void doProcess(object obj)
         {
-            try
+            if (System.Threading.Interlocked.Exchange(ref hidHeartbeatExecuting, 1) == 0)
             {
-                var hids = scApp.EquipmentBLL.cache.loadHID();
-                foreach (var hid in hids)
+                try
                 {
-                    hid?.CheckHeartbeatTimedOut(scApp.HIDHeartbeatLostThreshold);
-                    //if (!hid.IsHeartbeatLoss)
-                    //    hid.SendHeartbeatCommand();
-                    hid?.SendHeartbeatCommand();
+                    var hids = scApp.EquipmentBLL.cache.loadHID();
+                    foreach (var hid in hids)
+                    {
+                        Task.Run(() =>
+                        {
+                            hid?.CheckHeartbeatTimedOut(scApp.HIDHeartbeatLostThreshold);
+                            //if (!hid.IsHeartbeatLoss)
+                            //    hid.SendHeartbeatCommand();
+                            hid?.SendHeartbeatCommand();
+                        });
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref hidHeartbeatExecuting, 0);
+                }
             }
         }
 

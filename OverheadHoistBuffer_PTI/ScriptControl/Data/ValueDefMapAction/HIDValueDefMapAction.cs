@@ -604,15 +604,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        object HeartbeatSyneObj = new object();
+        private long heartbeatSyneObj = 0;
         uint heartbeatIndex = 0;
         public virtual void SendHeartbeat()
         {
             OHxCToHID_AliveIndex send_function =
                scApp.getFunBaseObj<OHxCToHID_AliveIndex>(eqpt.EQPT_ID) as OHxCToHID_AliveIndex;
-            try
+            if (System.Threading.Interlocked.Exchange(ref heartbeatSyneObj, 1) == 0)
+
             {
-                lock (HeartbeatSyneObj)
+                try
                 {
                     if (heartbeatIndex >= 9999)
                         heartbeatIndex = 0;
@@ -624,14 +625,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     //3.發送訊息
                     send_function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-            finally
-            {
-                scApp.putFunBaseObj<OHxCToHID_AliveIndex>(send_function);
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                }
+                finally
+                {
+                    scApp.putFunBaseObj<OHxCToHID_AliveIndex>(send_function);
+                    System.Threading.Interlocked.Exchange(ref heartbeatSyneObj, 0);
+                }
             }
         }
 
