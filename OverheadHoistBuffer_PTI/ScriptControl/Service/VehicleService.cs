@@ -5557,7 +5557,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         private bool checkAvoidAdrIsCommandingVhWillPass(AVEHICLE commandingVh, string avoidAdr)
         {
-            if (commandingVh.WillPassSectionID == null || commandingVh.WillPassSectionID.Count == 0)
+            if (commandingVh == null || commandingVh.WillPassSectionID == null || commandingVh.WillPassSectionID.Count == 0)
             {
                 return false;
             }
