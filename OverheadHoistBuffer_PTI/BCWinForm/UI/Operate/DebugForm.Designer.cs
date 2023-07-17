@@ -51,7 +51,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btn_DriveOutTest = new System.Windows.Forms.Button();
             this.cbParkZoneAdjustment = new System.Windows.Forms.CheckBox();
             this.btn_initialTest = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.label76 = new System.Windows.Forms.Label();
@@ -645,7 +644,6 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.btn_DriveOutTest);
             this.groupBox4.Controls.Add(this.cbParkZoneAdjustment);
             this.groupBox4.Controls.Add(this.btn_initialTest);
             this.groupBox4.Controls.Add(this.label76);
@@ -704,17 +702,6 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Specify Vehicle Action";
             this.groupBox4.Enter += new System.EventHandler(this.groupBox4_Enter);
-            // 
-            // btn_DriveOutTest
-            // 
-            this.btn_DriveOutTest.Location = new System.Drawing.Point(854, 707);
-            this.btn_DriveOutTest.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.btn_DriveOutTest.Name = "btn_DriveOutTest";
-            this.btn_DriveOutTest.Size = new System.Drawing.Size(214, 38);
-            this.btn_DriveOutTest.TabIndex = 62;
-            this.btn_DriveOutTest.Text = "趕車測試";
-            this.btn_DriveOutTest.UseVisualStyleBackColor = true;
-            this.btn_DriveOutTest.Click += new System.EventHandler(this.btn_DriveOutTest_Click);
             // 
             // cbParkZoneAdjustment
             // 
@@ -2693,7 +2680,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4893,6 +4880,5 @@
         private System.Windows.Forms.CheckBox cb_ReRouteIfAlarmVhExist;
         private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneAutoPullFun;
         private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneFun;
-        private System.Windows.Forms.Button btn_DriveOutTest;
     }
 }

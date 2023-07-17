@@ -1378,7 +1378,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_DriveOutTest_Click(object sender, EventArgs e)
         {
-            Task.Run(() => bcApp.SCApplication.VehicleService.TestAvoidAddressNew(noticeCar.VEHICLE_ID));
+            //Task.Run(() => bcApp.SCApplication.VehicleService.TestAvoidAddressNew(noticeCar.VEHICLE_ID));
         }
     }
 }
