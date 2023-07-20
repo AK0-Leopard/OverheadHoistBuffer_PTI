@@ -2396,8 +2396,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (!DebugParameter.CVOutputSimpleMode)
                     {
-                        if (portINIData[destName].Stage == 1)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
+                        if (portINIData[destName].Stage > 0)    //200701 SCC+ MCS 士偉、冠皚提出，目的 Port 只有 1 節時，出現目前命令到相同的 Port 不要執行
                         {
+                            //2023.07.20 只要有設定Stage就固定只允許1筆命令去unload
                             if (cmdBLL.GetCmdDataByDest(destName).Where(data => data.TRANSFERSTATE == E_TRAN_STATUS.Transferring).Count() != 0)
                             {
                                 return false;

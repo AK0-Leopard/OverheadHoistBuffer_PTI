@@ -1333,8 +1333,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public int MCSCmdCompare_ByPriorityFirst(ACMD_MCS MCSCmd1, ACMD_MCS MCSCmd2)
         {
             // 1.先取priority 判斷
-            if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX) ||
-                (MCSCmd1.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM < SCAppConstants.CMD_PRIORITY_MAX))
+            if ((MCSCmd1.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX && MCSCmd2.PRIORITY_SUM >= SCAppConstants.CMD_PRIORITY_MAX))
             {
                 //代表兩者相等，不動，且接著判斷距離
             }
@@ -1347,6 +1346,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 return -1;
                 //代表前者較優先，不動
+            }
+            if (MCSCmd1.PRIORITY_SUM < MCSCmd2.PRIORITY_SUM)
+            {
+                return 1;
+            }
+            if (MCSCmd1.PRIORITY_SUM > MCSCmd2.PRIORITY_SUM)
+            {
+                return -1;
             }
 
             // 2. 若priority 相同，比較命令接受時間
