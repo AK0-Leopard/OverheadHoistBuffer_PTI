@@ -5846,8 +5846,18 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
         #region HID event
-        private void onHIDAlarm(object sender, EventArgs e)
+        private void onHIDAlarm(object sender, bool isAlarmSet)
         {
+            if (isAlarmSet)
+            {
+                var errorHID = sender as HID;
+                MPCTipMessage messageBox = new MPCTipMessage();
+                messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                messageBox.XID = "";
+                messageBox.Msg = $"HID:{errorHID?.EQPT_ID} error happened!";
+                scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+            }
+
             //scApp.getEQObjCacheManager().getLine().isHIDpause = true;
             var vhs = scApp.getEQObjCacheManager().getAllVehicle();
             foreach (var vehicle in vhs)
@@ -5860,7 +5870,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 //        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
                 //}
                 if (vehicle.isTcpIpConnect)
-                    PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                {
+                    if (isAlarmSet)
+                        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
+                    else
+                        PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Continue, OHxCPauseType.Hid);
+                }
             }
         }
         #endregion

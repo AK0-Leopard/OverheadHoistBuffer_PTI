@@ -70,11 +70,13 @@ namespace com.mirle.ibg3k0.sc.Data.VO
                     isHeartbeatLoss = value;
                     ReportHIDAlarm(HID_HEARTBEAT_LOST_CODE, isHeartbeatLoss ? ErrorStatus.ErrSet : ErrorStatus.ErrReset);
                     if (isHeartbeatLoss)
-                        OnPowerOrTempAlarm?.Invoke(this, null);
+                        OnPowerOrTempAlarm?.Invoke(this, true);
+                    else
+                        OnPowerOrTempAlarm?.Invoke(this, false);
                 }
             }
         }
-        public EventHandler OnPowerOrTempAlarm;
+        public EventHandler<bool> OnPowerOrTempAlarm;
 
         List<string> Segments { get; set; } = new List<string>();
         public void setSegments(List<string> segIDs)
@@ -146,10 +148,13 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             if (IsPowerAlarm)
             {
                 SCApplication.getInstance().AlarmBLL.setAlarmReport(NODE_ID, EQPT_ID, AlarmCode, null);
-                OnPowerOrTempAlarm?.Invoke(this, null);
+                OnPowerOrTempAlarm?.Invoke(this, true);
             }
             else
+            {
                 SCApplication.getInstance().AlarmBLL.resetAlarmReport(EQPT_ID, AlarmCode);
+                OnPowerOrTempAlarm?.Invoke(this, false);
+            }
         }
 
         internal void ReportHIDTemperatureAlarm(string AlarmCode, ErrorStatus status)
@@ -158,10 +163,13 @@ namespace com.mirle.ibg3k0.sc.Data.VO
             if (IsTemperatureAlarm)
             {
                 SCApplication.getInstance().AlarmBLL.setAlarmReport(NODE_ID, EQPT_ID, AlarmCode, null);
-                OnPowerOrTempAlarm?.Invoke(this, null);
+                OnPowerOrTempAlarm?.Invoke(this, true);
             }
             else
+            {
                 SCApplication.getInstance().AlarmBLL.resetAlarmReport(EQPT_ID, AlarmCode);
+                OnPowerOrTempAlarm?.Invoke(this, false);
+            }
         }
 
         private double convertValueOneWord(UInt64 unit, UInt64 dot, UInt64 source_value)
