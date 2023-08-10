@@ -969,7 +969,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 {
                                     minCostAfterWay = check_can_after_on_the_way_result.minCostAfterWay;
                                 }
-                                scApp.VehicleBLL.findBestSuitableVhStepByNearest(startAddr, E_VH_TYPE.None, out minCostIdleCar);
+                                scApp.VehicleBLL.findBestSuitableVhStepByNearest(startAddr, E_VH_TYPE.None, out minCostIdleCar, is_check_has_vh_carry: isUnitType(v.HOSTSOURCE, UnitType.CRANE));
                                 TransferServiceLogger.Info(DateTime.Now.ToString("HH:mm:ss.fff ") + $"MCSCommandID: {v.CMD_ID}, 閒置車cost: {minCostIdleCar}, 前順途cost: {minCostBeforeWay}, 後順途cost: {minCostAfterWay}");
                                 int minCostFinal = Math.Min(minCostIdleCar, Math.Min(minCostBeforeWay, minCostAfterWay));
                                 if (minCostFinal >= minCostIdleCar)
