@@ -2450,6 +2450,8 @@ namespace com.mirle.ibg3k0.sc.App
         public static Boolean IsOpenParkingZoneControlFunction = false;
         public static Boolean IsOpenParkingZoneAutoPull = false;
 
+        public static bool HIDAutoRecover = true;
+        public static bool EarthquakeAutoRecover = true;
 
         public static bool CommandReRoute = false;
 

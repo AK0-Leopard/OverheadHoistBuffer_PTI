@@ -365,6 +365,8 @@
             this.cbCommandShift = new System.Windows.Forms.CheckBox();
             this.cbAfterOnWay = new System.Windows.Forms.CheckBox();
             this.cbBeforeOnWay = new System.Windows.Forms.CheckBox();
+            this.cb_HIDAutoRecover = new System.Windows.Forms.CheckBox();
+            this.cb_EarthquakeAutoRecover = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -2680,7 +2682,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 9);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(178, 4);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(193, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -4328,6 +4330,8 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.cb_EarthquakeAutoRecover);
+            this.tabPage8.Controls.Add(this.cb_HIDAutoRecover);
             this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneAutoPullFun);
             this.tabPage8.Controls.Add(this.cb_IsOpenParkingZoneFun);
             this.tabPage8.Controls.Add(this.cb_ReRouteIfAlarmVhExist);
@@ -4456,6 +4460,28 @@
             this.cbBeforeOnWay.Text = "前順途";
             this.cbBeforeOnWay.UseVisualStyleBackColor = true;
             this.cbBeforeOnWay.CheckedChanged += new System.EventHandler(this.cbBeforeOnWay_CheckedChanged);
+            // 
+            // cb_HIDAutoRecover
+            // 
+            this.cb_HIDAutoRecover.AutoSize = true;
+            this.cb_HIDAutoRecover.Location = new System.Drawing.Point(53, 536);
+            this.cb_HIDAutoRecover.Name = "cb_HIDAutoRecover";
+            this.cb_HIDAutoRecover.Size = new System.Drawing.Size(169, 26);
+            this.cb_HIDAutoRecover.TabIndex = 86;
+            this.cb_HIDAutoRecover.Text = "HIDAutoRecover";
+            this.cb_HIDAutoRecover.UseVisualStyleBackColor = true;
+            this.cb_HIDAutoRecover.CheckedChanged += new System.EventHandler(this.cb_HIDAutoRecover_CheckedChanged);
+            // 
+            // cb_EarthquakeAutoRecover
+            // 
+            this.cb_EarthquakeAutoRecover.AutoSize = true;
+            this.cb_EarthquakeAutoRecover.Location = new System.Drawing.Point(53, 568);
+            this.cb_EarthquakeAutoRecover.Name = "cb_EarthquakeAutoRecover";
+            this.cb_EarthquakeAutoRecover.Size = new System.Drawing.Size(239, 26);
+            this.cb_EarthquakeAutoRecover.TabIndex = 87;
+            this.cb_EarthquakeAutoRecover.Text = "EarthquakeAutoRecover";
+            this.cb_EarthquakeAutoRecover.UseVisualStyleBackColor = true;
+            this.cb_EarthquakeAutoRecover.CheckedChanged += new System.EventHandler(this.cb_EarthquakeAutoRecover_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -4880,5 +4906,7 @@
         private System.Windows.Forms.CheckBox cb_ReRouteIfAlarmVhExist;
         private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneAutoPullFun;
         private System.Windows.Forms.CheckBox cb_IsOpenParkingZoneFun;
+        private System.Windows.Forms.CheckBox cb_EarthquakeAutoRecover;
+        private System.Windows.Forms.CheckBox cb_HIDAutoRecover;
     }
 }

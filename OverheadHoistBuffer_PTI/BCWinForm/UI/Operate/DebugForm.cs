@@ -114,6 +114,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_ReRouteIfAlarmVhExist.Checked = DebugParameter.CommandReRoute;
             cb_IsOpenParkingZoneFun.Checked = DebugParameter.IsOpenParkingZoneControlFunction;
             cb_IsOpenParkingZoneAutoPullFun.Checked = DebugParameter.IsOpenParkingZoneAutoPull;
+            cb_HIDAutoRecover.Checked = DebugParameter.HIDAutoRecover;
+            cb_EarthquakeAutoRecover.Checked = DebugParameter.EarthquakeAutoRecover;
         }
 
         private void DebugForm_Load(object sender, EventArgs e)
@@ -1379,6 +1381,16 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void btn_DriveOutTest_Click(object sender, EventArgs e)
         {
             //Task.Run(() => bcApp.SCApplication.VehicleService.TestAvoidAddressNew(noticeCar.VEHICLE_ID));
+        }
+
+        private void cb_HIDAutoRecover_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.HIDAutoRecover = cb_HIDAutoRecover.Checked;
+        }
+
+        private void cb_EarthquakeAutoRecover_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.EarthquakeAutoRecover = cb_EarthquakeAutoRecover.Checked;
         }
     }
 }

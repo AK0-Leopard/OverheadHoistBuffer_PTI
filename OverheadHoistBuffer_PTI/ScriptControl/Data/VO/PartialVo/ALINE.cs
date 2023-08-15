@@ -1425,7 +1425,11 @@ namespace com.mirle.ibg3k0.sc
                     if (value == SCAppConstants.EarthquakeStatus.Earthquake)
                         SCApplication.getInstance().VehicleService.PauseAllVehicleByOHxCPause();
                     else if (value == SCAppConstants.EarthquakeStatus.Normal)
-                        SCApplication.getInstance().VehicleService.ResumeAllVehicleByOhxCPause();
+                    {
+                        if (DebugParameter.EarthquakeAutoRecover)
+                            SCApplication.getInstance().VehicleService.ResumeAllVehicleByOhxCPause();
+                    }
+
                 }
             }
         }

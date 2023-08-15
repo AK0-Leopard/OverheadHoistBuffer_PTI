@@ -770,6 +770,13 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     if (errorStat == VhStopSingle.StopSingleOn)
                     {
+                        //2023.08.14 跳TipMessage
+                        MPCTipMessage messageBox = new MPCTipMessage();
+                        messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                        messageBox.XID = "";
+                        messageBox.Msg = $"OHT:{vh_id} at address: {vh.CUR_ADR_ID} and section: {vh.CUR_SEC_ID}, error happened!";
+                        scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+
                         if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(vh_id))
                             scApp.GuideBLL.ErrorVehicleSections[vh_id] = receive_gpp.CurrentSecID;
                         else
@@ -3359,6 +3366,13 @@ namespace com.mirle.ibg3k0.sc.Service
 
             if (errorStat == VhStopSingle.StopSingleOn)
             {
+                //2023.08.14 跳TipMessage
+                MPCTipMessage messageBox = new MPCTipMessage();
+                messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                messageBox.XID = "";
+                messageBox.Msg = $"OHT:{eqpt.VEHICLE_ID} at address: {eqpt.CUR_ADR_ID} and section: {eqpt.CUR_SEC_ID}, error happened!";
+                scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+
                 if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(eqpt.VEHICLE_ID))
                     scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
                 else
@@ -5873,7 +5887,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (isAlarmSet)
                         PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Pause, OHxCPauseType.Hid);
-                    else
+                    else if (DebugParameter.HIDAutoRecover)
                         PauseRequest(vehicle.VEHICLE_ID, PauseEvent.Continue, OHxCPauseType.Hid);
                 }
             }
