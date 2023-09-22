@@ -1827,7 +1827,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.VehicleBLL.updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis);
                 var update_result = scApp.VehicleBLL.updateVheiclePositionToReserveControlModule
                     (scApp.ReserveBLL, vh, current_sec_id, current_adr_id, sec_dis, 0, 0, 1,
-                     HltDirection.Forward, HltDirection.Forward);
+                     HltDirection.None, HltDirection.None);
 
                 if (line.ServiceMode == SCAppConstants.AppServiceMode.Active)
                 {
