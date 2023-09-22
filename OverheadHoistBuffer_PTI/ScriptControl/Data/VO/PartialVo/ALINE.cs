@@ -1423,7 +1423,10 @@ namespace com.mirle.ibg3k0.sc
                     OnPropertyChanged(BCFUtility.getPropertyName(() => this.EarthquakeStatus));
 
                     if (value == SCAppConstants.EarthquakeStatus.Earthquake)
+                    {
                         SCApplication.getInstance().VehicleService.PauseAllVehicleByOHxCPause();
+                        SCApplication.getInstance().AlarmBLL.onMainAlarm(SCAppConstants.MainAlarmCode.EARTHQUAKE_HAPPENING);
+                    }
                     else if (value == SCAppConstants.EarthquakeStatus.Normal)
                     {
                         if (DebugParameter.EarthquakeAutoRecover)

@@ -854,6 +854,9 @@ namespace com.mirle.ibg3k0.sc.App
         {
             public const string VH_WAIT_REPLY_TIME_OUT_0_1_2 = "WE001";
             public const string VH_SEND_MSG_ERROR_0_1_2 = "WE002";
+            public const string HID_ERROR = "WE003";
+            public const string VEHICLE_ERROR = "WE004";
+            public const string EARTHQUAKE_HAPPENING = "WE005";
             public const string OHxC_BOLCKED_BY_THE_ERROR_VEHICLE_0_1 = "AE001";
         }
         #endregion MainAlarm

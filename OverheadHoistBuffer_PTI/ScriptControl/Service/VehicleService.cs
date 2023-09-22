@@ -771,11 +771,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (errorStat == VhStopSingle.StopSingleOn)
                     {
                         //2023.08.14 跳TipMessage
-                        MPCTipMessage messageBox = new MPCTipMessage();
-                        messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
-                        messageBox.XID = "";
-                        messageBox.Msg = $"OHT:{vh_id} at address: {vh.CUR_ADR_ID} and section: {vh.CUR_SEC_ID}, error happened!";
-                        scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                        //MPCTipMessage messageBox = new MPCTipMessage();
+                        //messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                        //messageBox.XID = "";
+                        //messageBox.Msg = $"OHT:{vh_id} at address: {vh.CUR_ADR_ID} and section: {vh.CUR_SEC_ID}, error happened!";
+                        //scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                        scApp.AlarmBLL.onMainAlarm(SCAppConstants.MainAlarmCode.VEHICLE_ERROR,
+                            vh_id, vh.CUR_ADR_ID, vh.CUR_SEC_ID);
 
                         if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(vh_id))
                             scApp.GuideBLL.ErrorVehicleSections[vh_id] = receive_gpp.CurrentSecID;
@@ -790,6 +792,23 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(vh_id))
                             scApp.GuideBLL.ErrorVehicleSections.TryRemove(vh_id, out _);
                     }
+
+                    //2023.09.22
+                    if (DebugParameter.HIDAutoRecover && hidStat is VhStopSingle.StopSingleOn)
+                    {
+                        var hids = scApp.EquipmentBLL.cache.loadHID();
+                        bool hidError = false;
+                        foreach (var hid in hids)
+                        {
+                            hidError = hidError || hid.IsInAlarm;
+                        }
+                        if (!hidError)
+                        {
+                            PauseRequest(vh_id, PauseEvent.Continue, OHxCPauseType.Hid);
+                        }
+                    }
+                    //2023.09.22 END
+
                     // 0317 Jason 此部分之loadBOXStatus 原為loadCSTStatus ，現在之狀況為暫時解法
                     if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh, cstID,
                                            modeStat, actionStat,
@@ -3359,19 +3378,17 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.ReportBLL.newReportTransferCommandPaused(eqpt.MCS_CMD, null);
                 }
             }
-            //else if (errorStat == VhStopSingle.StopSingleOn)
-            //{
-            //    scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
-            //}
 
             if (errorStat == VhStopSingle.StopSingleOn)
             {
                 //2023.08.14 跳TipMessage
-                MPCTipMessage messageBox = new MPCTipMessage();
-                messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
-                messageBox.XID = "";
-                messageBox.Msg = $"OHT:{eqpt.VEHICLE_ID} at address: {eqpt.CUR_ADR_ID} and section: {eqpt.CUR_SEC_ID}, error happened!";
-                scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                //MPCTipMessage messageBox = new MPCTipMessage();
+                //messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                //messageBox.XID = "";
+                //messageBox.Msg = $"OHT:{eqpt.VEHICLE_ID} at address: {eqpt.CUR_ADR_ID} and section: {eqpt.CUR_SEC_ID}, error happened!";
+                //scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                scApp.AlarmBLL.onMainAlarm(SCAppConstants.MainAlarmCode.VEHICLE_ERROR,
+                    eqpt.VEHICLE_ID, eqpt.CUR_ADR_ID, eqpt.CUR_SEC_ID);
 
                 if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(eqpt.VEHICLE_ID))
                     scApp.GuideBLL.ErrorVehicleSections[eqpt.VEHICLE_ID] = recive_str.CurrentSecID;
@@ -3386,6 +3403,22 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (scApp.GuideBLL.ErrorVehicleSections.ContainsKey(eqpt.VEHICLE_ID))
                     scApp.GuideBLL.ErrorVehicleSections.TryRemove(eqpt.VEHICLE_ID, out _);
             }
+
+            //2023.09.22
+            if (DebugParameter.HIDAutoRecover && hidStat is VhStopSingle.StopSingleOn)
+            {
+                var hids = scApp.EquipmentBLL.cache.loadHID();
+                bool hidError = false;
+                foreach (var hid in hids)
+                {
+                    hidError = hidError || hid.IsInAlarm;
+                }
+                if (!hidError)
+                {
+                    PauseRequest(eqpt.VEHICLE_ID, PauseEvent.Continue, OHxCPauseType.Hid);
+                }
+            }
+            //2023.09.22 END
 
             int obstacleDIST = recive_str.ObstDistance;
             string obstacleVhID = recive_str.ObstVehicleID;
@@ -5865,11 +5898,13 @@ namespace com.mirle.ibg3k0.sc.Service
             if (isAlarmSet)
             {
                 var errorHID = sender as HID;
-                MPCTipMessage messageBox = new MPCTipMessage();
-                messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
-                messageBox.XID = "";
-                messageBox.Msg = $"HID:{errorHID?.EQPT_ID} error happened!";
-                scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                //MPCTipMessage messageBox = new MPCTipMessage();
+                //messageBox.MsgLevel = sc.ProtocolFormat.OHTMessage.MsgLevel.Warn;
+                //messageBox.XID = "";
+                //messageBox.Msg = $"HID:{errorHID?.EQPT_ID} error happened!";
+                //scApp.getEQObjCacheManager().CommonInfo.addMPCTipMsg(messageBox);
+                scApp.AlarmBLL.onMainAlarm(SCAppConstants.MainAlarmCode.HID_ERROR
+                           , errorHID?.EQPT_ID);
             }
 
             //scApp.getEQObjCacheManager().getLine().isHIDpause = true;

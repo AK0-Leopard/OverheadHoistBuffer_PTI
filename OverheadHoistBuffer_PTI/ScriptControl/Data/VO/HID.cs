@@ -76,6 +76,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
                 }
             }
         }
+        public bool IsInAlarm => (IsPowerAlarm || IsTemperatureAlarm || IsHeartbeatLoss);
         public EventHandler<bool> OnPowerOrTempAlarm;
 
         List<string> Segments { get; set; } = new List<string>();

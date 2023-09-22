@@ -1,4 +1,7 @@
 CODE,DESCRIPTION,ACTION
 WE001,Wait message reply time out.VH:{0} Packet ID:{1} Seq No:{2} ,
 WE002,Send message error happend.VH:{0} Packet ID:{1} Seq No:{2} ,
+WE003,HID:{0} error happened. ,
+WE004,"OHT:{0} at address: {1} and section: {2}, error happened. ,
+WE005,"Earthquaking, pause all vehicles. ",
 AE001,Can't find the way to transfer. VH:{0} OhxC Cmd ID:{1},
